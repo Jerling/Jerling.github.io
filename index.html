@@ -279,7 +279,7 @@
                 
                         <article class="mini-post">
                             <header>
-                                <h3><a href="/post/write_textor_1/">动手写编辑器(一)～～～文本模式</a></h3>
+                                <h3><a href="/post/write_textor_1/">动手写编辑器(一) ~ 文本模式</a></h3>
                                 
                                 <time class="published" datetime=
                                     '2019-01-20'>
@@ -528,8 +528,9 @@ C++ 的 <code>string</code> 数据类型即可。</p>
 <h3 id="窗口-size">窗口 size</h3>
 
 <p>在将内容追加到 buffer 之前，我们必须知道需要显示多少行，以及中间位置坐标是多少。这
-些都需要通过编辑器的窗口大小得出，因此先获取窗口的 size 。获取的方式呢有两种方式，
-先将简单的方式：</p>
+些都需要通过编辑器的窗口大小得出，因此先获取窗口的 size 。获取的方式呢有两种方式。</p>
+
+<h4 id="简单的方式">简单的方式：</h4>
 
 <ol>
 <li>先定义一个 <code>winsize</code> 的临时变量 <code>ws</code></li>
@@ -551,9 +552,10 @@ C++ 的 <code>string</code> 数据类型即可。</p>
 }
 </code></pre>
 
-<p>拼着追本溯源的执着，我们来揭开 <code>winsize</code> 和 <code>ioctl</code> 的神秘面纱。</p>
+<p>下面看看 <code>winsize</code> 和 <code>ioctl</code> 的作用。</p>
 
-<h4 id="winsize">winsize</h4>
+<ul>
+<li><p>winsize</p>
 
 <pre><code class="language-C">// /usr/include/bits/ioctl-types.h
 struct winsize
@@ -565,9 +567,9 @@ struct winsize
   };
 </code></pre>
 
-<p>我们只需要前两个属性，也就是窗口的行数和列数。后面的暂时不需要。</p>
+<p>我们只需要前两个属性，也就是窗口的行数和列数。后面的暂时不需要。</p></li>
 
-<h4 id="ioctl">ioctl</h4>
+<li><p>ioctl</p>
 
 <pre><code class="language-C">/* Perform the I/O control operation specified by REQUEST on FD.
    One argument may follow; its presence and type depend on REQUEST.
@@ -578,7 +580,8 @@ extern int ioctl (int __fd, unsigned long int __request, ...) __THROW;
 <p>从注释中可以看到，这个函数是 I/O 操作的相关函数，根据请求的操作码实现不同的操作，
 比如本项目需要获取窗口大小，因此需要请求获取 <code>winsize</code> 。操作码为 <code>TIOCGWINSZ</code>
 ，全称为 <code>Terminal I/O Control Get WINdow SiZe</code> 。操作结果呢就是将操作相关属性存
-入 <code>winsize</code> 实例中。最后存入到私有变量中保存起来。</p>
+入 <code>winsize</code> 实例中。最后存入到私有变量中保存起来。</p></li>
+</ul>
 
 <h4 id="复杂方式获取窗口-size">复杂方式获取窗口 size</h4>
 
@@ -719,12 +722,16 @@ inline void editor::read_key__() {
       switch (seq[1]) {
         case 'A':
           key_ = ARROW_UP;
+          return;
         case 'B':
           key_ = ARROW_DOWN;
+          return;
         case 'C':
           key_ = ARROW_RIGHT;
+          return;
         case 'D':
           key_ = ARROW_LEFT;
+          return;
       }
     }
   }
@@ -749,14 +756,26 @@ void editor::move_cursor__() {
       if (cx_ != 0) cx_--;
       break;
     case ARROW_DOWN:
-      if (cy_ == text_[cx_].size()) cy_ = 0;
-      if (cx_ != rows_ - 1 &amp;&amp; cx_ &lt; numrows_ - 1) cx_++;
+      if (cy_ == text_[cx_].size())
+        cy_ = 0;
+      else if (cx_ != rows_ - 1 &amp;&amp; cx_ &lt; numrows_ - 1)
+        cx_++;
       break;
     case ARROW_LEFT:
-      if (cy_ != 0) cy_--;
+      if (cy_ != 0)
+        cy_--;
+      else if (cx_ != 0) {
+        cx_--;
+        cy_ = cols_;
+      }
       break;
     case ARROW_RIGHT:
-      if (cy_ != cols_ - 1 &amp;&amp; cy_ &lt; text_[cx_].size()) cy_++;
+      if (cy_ != cols_ - 1 &amp;&amp; cy_ &lt; text_[cx_].size())
+        cy_++;
+      else if (cx_ &lt; numrows_ - 1) {
+        cx_++;
+        cy_ = 0;
+      }
       break;
   }
 }
@@ -802,7 +821,7 @@ void editor::move_cursor__() {
   while (!ifs.eof()) {
     std::string str;
     ifs &gt;&gt; str;
-    text_.push_back(str);
+    if (str.size()) text_.push_back(str);
   }
   numrows_ = text_.size();
   ifs.close();
@@ -932,7 +951,7 @@ void editor::move_cursor__() {
 <ul class="actions pagination">
     
         <li><a href="/post/write_textor_1/"
-                class="button big previous">动手写编辑器(一)～～～文本模式</a></li>
+                class="button big previous">动手写编辑器(一) ~ 文本模式</a></li>
     
 
     
@@ -1177,7 +1196,7 @@ void editor::move_cursor__() {
           <article class="mini-post">
             <header>
               <h3>
-                <a href="/post/write_textor_1/">动手写编辑器(一)～～～文本模式</a>
+                <a href="/post/write_textor_1/">动手写编辑器(一) ~ 文本模式</a>
               </h3>
               
               <time class="published" datetime='2019-01-20'>
