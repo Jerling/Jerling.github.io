@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>项目实战 on 北极狼徒</title>
+    <link>/categories/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98/</link>
+    <description>Recent content in 项目实战 on 北极狼徒</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 30 Jan 2019 11:06:21 +0800</lastBuildDate>
+    
+	<atom:link href="/categories/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>动手写编辑器（二） ~ 输入和输出</title>
+      <link>/post/write_textor_2/</link>
+      <pubDate>Wed, 30 Jan 2019 11:06:21 +0800</pubDate>
+      
+      <guid>/post/write_textor_2/</guid>
+      <description>Table of Contens  窗口  Buffer 窗口 size 波浪线 欢迎界面  输入  Ctrl+q 退出 移动光标 文本内容  输出  显示 buffer 刷新屏幕  总结  窗口 说到终端编辑器， vim 应该是用的最多的吧。在所有有关 Linux 基础的书本都会介绍 vi/vim 编辑器。因此在这里我将模仿 vim 编辑界面。话不多说，先看一下 vim 的启动界 面吧。
+  左边的波浪号表示没有内容的行，中间显示打开编辑器时的欢迎界面以及基本命令信息。现 在就模仿 vim 的界面，实现一个简单的编辑器。下面我们来将这个界面画出来。
+Buffer Buffer 是编辑器的主体部分，所有的信息都只能通过 buffer 显示。 buffer 里面是一串 很长的字符串，其中有些是转义序列表示终端的一些命令，在后续需要用到的时候再讲解。 说起字符串处理，应该是最常见的操作了，用 C 写的话可能需要自己管理字符串，比如申 请内存，释放内存等，不需要多线程，因此不需要考虑线程安全。我们直接使用 C++ 的 string 数据类型即可。
+struct editor{ ... /* buffer */ std::string abuf_; .</description>
+    </item>
+    
+    <item>
+      <title>动手写编辑器(一)～～～文本模式</title>
+      <link>/post/write_textor_1/</link>
+      <pubDate>Sun, 20 Jan 2019 18:31:32 +0800</pubDate>
+      
+      <guid>/post/write_textor_1/</guid>
+      <description>Table of Contens  写作动机 规范模式 文本模式 设置属性  本地模式标志 ~~ c_lflag 输入模式标志 ~~ c_iflag 输出模式标志 ~~ c_oflag 杂项标志  开启和关闭文本模式 总结  写作动机 因为是该项目的第一篇文章，在这里简单介绍实现该项目的动机。作为程序员，动手能力是 第一位的，不管看了多少经典书籍、亦或浏览过多少源码。如果没有自己动手去实现，这些 东西都不是自己的。本人可以说是一个编辑器爱好者吧，前前后后折腾过 N 多编辑器： 如编辑器之神 Vim, 神的编辑器 Emacs, 性感无比 Sublime text 以及宇宙最强 VSCode. 最终本人留下了 emacs 和 VSCode , 前者用于编程和写作，后者用于调试程序。 用了这么多的编辑器，是时候自己实现一个了。当然并不打算参与竞争，单纯为了学习。再 说了，目前我的 emacs+doom 已经能处理各种写作任务，而且我很享受在上面码字，就想 弹钢琴一样，无须鼠标干扰，安心写作。Ok~ 让我们开始一段奇妙的旅行吧～～～
+规范模式 我们平常使用的交互式命令终端就是所谓的 canonical mode。简单来说就是，它每次接收一行文本， 允许通过退格键进行删除输入的内容，以 enter 作为发送触发键发送给程序，然后程序 对其进行响应。这种模式大多用于交互命令处理中。但是用在文本编辑器(如 nano)中 显然是不合适，因为它要处理的是每一个按键(包括 enter)。
+文本模式 文本模式(raw mode)可以不处理 enter 触发的发送功能，而是把其作为键值进行处理。这个才 接近文本编辑器的要求。但是呢，终端默认都是规范模式，而且这两个模式之间的差别不仅 仅是这一个，而且要完全切换会涉及很多的标志位的设置。下面我们就一步步来让终端来实 现期望的文本模式。</description>
+    </item>
+    
+    <item>
+      <title>手把手实现一个 Linux shell</title>
+      <link>/post/writh_shell_with_cpp/</link>
+      <pubDate>Sat, 19 Jan 2019 20:17:47 +0800</pubDate>
+      
+      <guid>/post/writh_shell_with_cpp/</guid>
+      <description>Table of Contens  Linux shell 基本知识 shell 工作流程 shell 实现  可执行程序该有的样子 一探循环体究竟 解剖循环体  总结 参考  Linux shell 基本知识 目前市场上主要有三大主流操作系统，除了 windows 系列几乎不需要在终端工作，其它两 大操作系统大部份应该是和终端打交道。当然这和不同系统的定位不一样有很大的关系， W 系主要面向娱乐办公，Linux 系主要是用服务器系统，所以对于程序员来说，或多或少得面 对它。Mac 虽然面向个人用户，但是结合了前两者的优势，娱乐办公和开 发都可以完美应对。在使用 *nix(linux &amp;amp; Mac) 过程中，我们几乎每天都会对着终端一行 行的执行代码，解释我们的名令的程序就是我们所谓的 shell, 也是本文的所讲的对象。 shell 自从诞生以来，也出现各种版本，虽然实现不同，功能都是一样的。本文写个 shell 只是为了学习，没有其它目的。据本人所知，目前流行的 shell 有： bash , zsh , fish , xosh 等，这几种 shell 本人都用过，简单讲奖各自的特点吧， bash 不用说了吧，几乎 所有发行版的默认 shell。 zsh 集装逼与高效于一身的 shell。强烈建议于 oh-my-zsh 一 起使用，省去配置的时间。 fish 小众软件，智能补全，拥有类似 apt 一样的插件管理工 具，但是由于 shell 语法和 bash 不兼容，建议个人使用，不要用于工作中。 xosh 是用 python 实现的，所以终端直接执行 python 语句就可以执行，同时可以执行系统命令。 pythoner 可以尝试一波，随时随地测试 python 语句。</description>
+    </item>
+    
+  </channel>
+</rss>
