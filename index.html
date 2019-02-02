@@ -820,7 +820,7 @@ void editor::move_cursor__() {
   if (ifs.fail()) SPDLOG_ERROR(&quot;open file failed&quot;);
   while (!ifs.eof()) {
     std::string str;
-    ifs &gt;&gt; str;
+    getline(ifs, str);
     if (str.size()) text_.push_back(str);
   }
   numrows_ = text_.size();
@@ -828,7 +828,7 @@ void editor::move_cursor__() {
 }
 </code></pre>
 
-<p>使用 C++ 的文件流操作来读取文件，其中 <code>&gt;&gt;</code> 表示每次读取一行内容。为了显示内容，
+<p>使用 C++ 的文件流操作来读取文件，其中 <code>getline</code> 表示每次读取一行内容。为了显示内容，
 我们还需要将其追加到 buffer 中。这个在 <code>flush__</code> 中实现。</p>
 
 <h2 id="输出">输出</h2>
@@ -1068,7 +1068,7 @@ void editor::move_cursor__() {
     
       <header>
         <h2>北极狼徒</h2>
-        <p>友情链接 <br> <a href="https://www.codywei.com/">三向砖</a>  <a href="http://zilongshanren.com/">子龙山人</a></p>
+        <p>友情链接 <br> <a href="https://www.codywei.com/">三向砖</a>  <a href="http://zilongshanren.com/">子龙山人</a> <br> <a href="https://www.jianshu.com/u/9d07992df72b">程序员sunny </a></p>
       </header>
     
     
