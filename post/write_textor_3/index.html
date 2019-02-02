@@ -24,7 +24,7 @@
         "datePublished": "2019-02-02 13:27:35 &#43;0800 CST",
         "dateModified" : "2019-02-02 13:27:35 &#43;0800 CST",
         "url" : "/post/write_textor_3/",
-        "wordCount" : "414",
+        "wordCount" : "509",
         "keywords" : [ "textor","terminal","c&#43;&#43;","Blog" ]
     }
     </script>
@@ -55,7 +55,7 @@
 <meta property="og:description" content="Short description" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="/post/write_textor_3/" /><meta property="article:published_time" content="2019-02-02T13:27:35&#43;08:00"/>
-<meta property="article:modified_time" content="2019-02-02T14:57:58&#43;08:00"/>
+<meta property="article:modified_time" content="2019-02-02T19:02:47&#43;08:00"/>
 
         <meta property="og:image" content="//images/logo.png">
         <meta property="og:image:type" content="image/png">
@@ -67,8 +67,8 @@
 
 
 <meta itemprop="datePublished" content="2019-02-02T13:27:35&#43;08:00" />
-<meta itemprop="dateModified" content="2019-02-02T14:57:58&#43;08:00" />
-<meta itemprop="wordCount" content="414">
+<meta itemprop="dateModified" content="2019-02-02T19:02:47&#43;08:00" />
+<meta itemprop="wordCount" content="509">
 
 
 
@@ -464,7 +464,7 @@
             February 2, 2019</time>
         <span class="author">[Jerling]</span>
         
-            <p>2 minute read</p>
+            <p>3 minute read</p>
         
         
     </div>
@@ -588,9 +588,11 @@
 <ul>
 <li><a href="#垂直滚动">垂直滚动</a></li>
 <li><a href="#水平滚动">水平滚动</a></li>
+<li><a href="#修改边界检查">修改边界检查</a></li>
+<li><a href="#写入-buffer">写入 buffer</a></li>
+</ul></li>
 <li><a href="#总结">总结</a></li>
 <li><a href="#参考">参考</a></li>
-</ul></li>
 </ul>
 
 <h2 id="状态栏">状态栏</h2>
@@ -702,7 +704,7 @@
 
 <p>在初始化时值为 0, 也就是文件的第一行。</p>
 
-<p>更新文件的相对偏移位置。</p>
+<p>在窗口最上面和最下面的时候，我们继续向上或向下移动光标的时，需要更新文件的相对偏移位置。</p>
 
 <pre><code class="language-C++">void editor::scroll__() {
   if (cx_ &lt; rowoff_)
@@ -712,45 +714,6 @@
 ...
 }
 </code></pre>
-
-<p>下面我们就要修改 <code>draw_rows__</code> 函数，使其显示文件中的某个窗口大小的内容。</p>
-
-<pre><code class="language-C++">void editor::draw_rows__() {
-  for (int i = 0; i &lt; rows_; i++) {
-    int filerow = i + rowoff_;      /* 修改显示为相对文件的行 */
-    if (filerow &gt;= numrows_) {
-      if (i == rows_ / 3 &amp;&amp; !numrows_) {
-        std::string welcome(&quot;Textor editor -- version &quot;);
-        welcome += TEXTOR_VERSION;
-        if (welcome.size() &gt; cols_) welcome.resize(cols_);
-        int padding = (cols_ - welcome.size()) / 2;
-        if (padding) {
-          append_buf__(&quot;~&quot;);
-          padding--;
-        }
-        while (padding--) append_buf__(&quot; &quot;);
-        append_buf__(welcome);
-      } else {
-        append_buf__(&quot;~&quot;);
-      }
-    } else {
-      int len = text_[filerow].size() - coloff_;
-      if (len &lt; 0) {
-        len += coloff_;
-        append_buf__(text_[filerow].substr(len, 0));
-        return;
-      }
-      if (len &gt; cols_) len = cols_;
-      append_buf__(text_[filerow].substr(coloff_, len));
-    }
-    append_buf__(&quot;\x1b[K&quot;);
-    append_buf__(&quot;\r\n&quot;);
-  }
-}
-</code></pre>
-
-<p>这里实现也相对比较简单，将之前的相对窗口的坐标改为文件的坐标即可，后面的字符串也
-将随着修改。</p>
 
 <h3 id="水平滚动">水平滚动</h3>
 
@@ -776,9 +739,86 @@
 
 <p>然后将这些更新放在 <code>flush__</code> 即可，每次刷新屏幕就会更新文件内容。</p>
 
-<p>同样更新窗口要显示的列也在 <code>draw_rows__</code> 中，源码在前一个章节已经给出，不再重复。</p>
+<h3 id="修改边界检查">修改边界检查</h3>
 
-<h3 id="总结">总结</h3>
+<p>在之前的实现中，我们都是以窗口为单位。所以判断是否越界也是以窗口的 <code>size</code> 为基准。
+但是现在以文件作为基准，因此需要做点修改。</p>
+
+<pre><code class="language-C++">void editor::move_cursor__() {
+  switch (key_) {
+    case ARROW_UP:
+      if (cx_ != 0) cx_--;
+      break;
+    case ARROW_DOWN:
+      if (cx_ &lt; numrows_ - 1) cx_++;
+      if (!text_.empty() &amp;&amp; cy_ &gt; text_[cx_].size()) cy_ = text_[cx_].size();
+      break;
+    case ARROW_LEFT:
+      if (cy_ &gt; 0)
+        cy_--;
+      else if (cx_ != 0) {
+        cx_--;
+        cy_ = text_[cx_].size();
+      }
+      break;
+    case ARROW_RIGHT:
+      if (!text_.empty() &amp;&amp; cy_ &lt; text_[cx_].size())
+        cy_++;
+      else if (cx_ &lt; numrows_ - 1) {
+        cy_ = 0;
+        cx_++;
+      }
+      break;
+  }
+}
+</code></pre>
+
+<h3 id="写入-buffer-2">写入 buffer</h3>
+
+<p>我们目前已经知道如何实现滚动和更新滚动的相对起始位置，但是我们还没有将其应用到
+buffer 中，所以必须修改 buffer 要显示的内容，才能实现滚动的效果。</p>
+
+<p>下面我们就要修改 <code>draw_rows__</code> 函数，使其显示文件中的某个窗口大小的内容。</p>
+
+<pre><code class="language-C++">void editor::draw_rows__() {
+  for (int i = 0; i &lt; rows_; i++) {
+    int filerow = i + rowoff_;      /* 修改显示为相对文件的行 */
+    if (filerow &gt;= numrows_) {
+      if (i == rows_ / 3 &amp;&amp; !numrows_) {
+        std::string welcome(&quot;Textor editor -- version &quot;);
+        welcome += TEXTOR_VERSION;
+        if (welcome.size() &gt; cols_) welcome.resize(cols_);
+        int padding = (cols_ - welcome.size()) / 2;
+        if (padding) {
+          append_buf__(&quot;~&quot;);
+          padding--;
+        }
+        while (padding--) append_buf__(&quot; &quot;);
+        append_buf__(welcome);
+      } else {
+        append_buf__(&quot;~&quot;);
+      }
+    } else {
+      int len = text_[filerow].size() - coloff_;
+      if (len &lt; 0) {
+        len += coloff_;    /* 更新文件中的列 */
+        /* 更新文件中的行 */
+        append_buf__(text_[filerow].substr(len, 0));
+        return;
+      }
+      if (len &gt; cols_) len = cols_;
+      append_buf__(text_[filerow].substr(coloff_, len));
+    }
+    append_buf__(&quot;\x1b[K&quot;);
+    append_buf__(&quot;\r\n&quot;);
+  }
+}
+</code></pre>
+
+<p>这里实现也相对比较简单，将之前的相对窗口的坐标改为文件的坐标即可，后面的字符串也
+将随着修改。</p>
+
+<h2 id="总结">总结</h2>
 
 <p>好了，今天的内容就到这结束了，工作不同，只是基本的编辑器的功能。目前仅实现了查看
 器的功能，和 vim 的正常模式一样，只能查阅，不能修改或写入。后续继续更新。</p>
@@ -790,7 +830,7 @@
 </figure>
 
 
-<h3 id="参考">参考</h3>
+<h2 id="参考">参考</h2>
 
 <p><a href="https://viewsourcecode.org/snaptoken/kilo/04.aTextViewer.html">https://viewsourcecode.org/snaptoken/kilo/04.aTextViewer.html</a></p>
 
