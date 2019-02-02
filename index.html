@@ -543,9 +543,9 @@
 
 <h3 id="滞留时间">滞留时间</h3>
 
-<p>一般来说，消息最好不要一直显示，因为可能会转移视线。因此以时间戳为准，超过一段时
-间就不再显示消息即可。实现起来也比较简单，因为每次显示一个消息，所以每次有消息时
-只需要记住消息出现的时间，然后和当前的时间戳比较即可。</p>
+<p>一般来说，消息最好不要一直显示，因为没什么用，还可能会影响视觉焦点。因此以时间戳为准，超过一段时
+间（如5s）就不再显示消息即可。实现起来也比较简单，因为每次显示一个消息，所以每次有消息时
+只需要记住消息出现的当前时间点，然后和当前的时间点比较即可。</p>
 
 <pre><code class="language-C++">struct textor{
   /* 消息 */
@@ -572,12 +572,13 @@
 
 <h3 id="写入-buffer-1">写入 buffer</h3>
 
-<p>将消息写入 buffer 中便于显示。</p>
+<p>将消息写入 buffer 中便于显示。 <code>K</code> 命令是清除内容，因为每次刷新的时候先清空，然
+后如果时间在规定时间内，则重新写入。</p>
 
 <pre><code class="language-C++">void editor::draw_msg__() {
   append_buf__(&quot;\x1b[K&quot;); /* 清除消息框 */
   if (status_msg_.size() &gt; cols_) status_msg_.resize(cols_);
-  if (!status_msg_.empty() &amp;&amp; time(nullptr) - msg_time_ &lt; 5)
+  if (!status_msg_.empty() &amp;&amp; time(nullptr) - msg_time_ &lt; 5)  /* 5s 后不再显示 */
     append_buf__(status_msg_);
 }
 </code></pre>
@@ -717,7 +718,7 @@ buffer 中，所以必须修改 buffer 要显示的内容，才能实现滚动�
 
 <h2 id="总结">总结</h2>
 
-<p>好了，今天的内容就到这结束了，工作不同，只是基本的编辑器的功能。目前仅实现了查看
+<p>好了，今天的内容就到这结束了，工作不多，只是基本的编辑器的功能。目前仅实现了文件查看
 器的功能，和 vim 的正常模式一样，只能查阅，不能修改或写入。后续继续更新。</p>
 
 <p>看看今天的效果吧 :)</p>
