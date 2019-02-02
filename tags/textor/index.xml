@@ -13,10 +13,10 @@
     
     <item>
       <title>动手写编辑器 (三) ~ 文件查看器</title>
-      <link>/post/write_textor_3/</link>
+      <link>/blog/write_textor_3/</link>
       <pubDate>Sat, 02 Feb 2019 13:27:35 +0800</pubDate>
       
-      <guid>/post/write_textor_3/</guid>
+      <guid>/blog/write_textor_3/</guid>
       <description>Table of Contens  状态栏  腾出空间 写入 buffer  消息框  腾出空间 滞留时间 写入消息 写入 buffer  滚动  垂直滚动 水平滚动 修改边界检查 写入 buffer  总结 参考  状态栏 熟悉 vim 的朋友都知道, vim 有一个状态栏，位于下边。状态栏的功能主要时显示一些基 本的信息，如文件名、光标位置等。
 腾出空间 在之前的操作中，我们把整个窗口都用来显示文件内容了。所以我们必须将 rows_ 减去 一行用来显示状态信息。
 inline int editor::get_window_size__() { ... rows_ = ws.ws_row - 1; /* 腾出状态栏 */ ... }  写入 buffer 现在将我们要显示的信息写入 buffer 的最后一行，也就是状态栏。为了区分状态栏和文本 区的不同，因此将颜色反转。
@@ -25,11 +25,11 @@ void editor::status_bar__() { append_buf__(&amp;quot;\x1b[7m&amp;quot;); /* 颜�
     
     <item>
       <title>动手写编辑器（二） ~ 输入和输出</title>
-      <link>/post/write_textor_2/</link>
+      <link>/blog/write_textor_2/</link>
       <pubDate>Wed, 30 Jan 2019 11:06:21 +0800</pubDate>
       
-      <guid>/post/write_textor_2/</guid>
-      <description>Table of Contens  窗口  Buffer 窗口 size 波浪线 欢迎界面  输入  Ctrl+q 退出 移动光标 文本内容  输出  显示 buffer 刷新屏幕  总结  窗口 说到终端编辑器， vim 应该是用的最多的吧。在所有有关 Linux 基础的书本都会介绍 vi/vim 编辑器。因此在这里我将模仿 vim 编辑界面。话不多说，先看一下 vim 的启动界 面吧。
+      <guid>/blog/write_textor_2/</guid>
+      <description>Table of Contens  窗口  Buffer 窗口 size 波浪线 欢迎界面  输入  Ctrl+q 退出 移动光标 文本内容  输出  显示 buffer 刷新屏幕  总结 参考  窗口 说到终端编辑器， vim 应该是用的最多的吧。在所有有关 Linux 基础的书本都会介绍 vi/vim 编辑器。因此在这里我将模仿 vim 编辑界面。话不多说，先看一下 vim 的启动界 面吧。
   左边的波浪号表示没有内容的行，中间显示打开编辑器时的欢迎界面以及基本命令信息。现 在就模仿 vim 的界面，实现一个简单的编辑器。下面我们来将这个界面画出来。
 Buffer Buffer 是编辑器的主体部分，所有的信息都只能通过 buffer 显示。 buffer 里面是一串 很长的字符串，其中有些是转义序列表示终端的一些命令，在后续需要用到的时候再讲解。 说起字符串处理，应该是最常见的操作了，用 C 写的话可能需要自己管理字符串，比如申 请内存，释放内存等，不需要多线程，因此不需要考虑线程安全。我们直接使用 C++ 的 string 数据类型即可。
 struct editor{ ... /* buffer */ std::string abuf_; .</description>

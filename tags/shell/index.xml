@@ -13,10 +13,10 @@
     
     <item>
       <title>手把手实现一个 Linux shell</title>
-      <link>/post/writh_shell_with_cpp/</link>
+      <link>/blog/writh_shell_with_cpp/</link>
       <pubDate>Sat, 19 Jan 2019 20:17:47 +0800</pubDate>
       
-      <guid>/post/writh_shell_with_cpp/</guid>
+      <guid>/blog/writh_shell_with_cpp/</guid>
       <description>Table of Contens  Linux shell 基本知识 shell 工作流程 shell 实现  可执行程序该有的样子 一探循环体究竟 解剖循环体  总结 参考  Linux shell 基本知识 目前市场上主要有三大主流操作系统，除了 windows 系列几乎不需要在终端工作，其它两 大操作系统大部份应该是和终端打交道。当然这和不同系统的定位不一样有很大的关系， W 系主要面向娱乐办公，Linux 系主要是用服务器系统，所以对于程序员来说，或多或少得面 对它。Mac 虽然面向个人用户，但是结合了前两者的优势，娱乐办公和开 发都可以完美应对。在使用 *nix(linux &amp;amp; Mac) 过程中，我们几乎每天都会对着终端一行 行的执行代码，解释我们的名令的程序就是我们所谓的 shell, 也是本文的所讲的对象。 shell 自从诞生以来，也出现各种版本，虽然实现不同，功能都是一样的。本文写个 shell 只是为了学习，没有其它目的。据本人所知，目前流行的 shell 有： bash , zsh , fish , xosh 等，这几种 shell 本人都用过，简单讲奖各自的特点吧， bash 不用说了吧，几乎 所有发行版的默认 shell。 zsh 集装逼与高效于一身的 shell。强烈建议于 oh-my-zsh 一 起使用，省去配置的时间。 fish 小众软件，智能补全，拥有类似 apt 一样的插件管理工 具，但是由于 shell 语法和 bash 不兼容，建议个人使用，不要用于工作中。 xosh 是用 python 实现的，所以终端直接执行 python 语句就可以执行，同时可以执行系统命令。 pythoner 可以尝试一波，随时随地测试 python 语句。</description>
     </item>
     

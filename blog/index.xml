@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>项目实战 on 北极狼徒</title>
-    <link>/categories/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98/</link>
-    <description>Recent content in 项目实战 on 北极狼徒</description>
+    <title>Blog on 北极狼徒</title>
+    <link>/blog/</link>
+    <description>Recent content in Blog on 北极狼徒</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sat, 02 Feb 2019 13:27:35 +0800</lastBuildDate>
     
-	<atom:link href="/categories/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="/blog/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
@@ -53,6 +53,31 @@ struct editor{ ... /* buffer */ std::string abuf_; .</description>
       
       <guid>/blog/writh_shell_with_cpp/</guid>
       <description>Table of Contens  Linux shell 基本知识 shell 工作流程 shell 实现  可执行程序该有的样子 一探循环体究竟 解剖循环体  总结 参考  Linux shell 基本知识 目前市场上主要有三大主流操作系统，除了 windows 系列几乎不需要在终端工作，其它两 大操作系统大部份应该是和终端打交道。当然这和不同系统的定位不一样有很大的关系， W 系主要面向娱乐办公，Linux 系主要是用服务器系统，所以对于程序员来说，或多或少得面 对它。Mac 虽然面向个人用户，但是结合了前两者的优势，娱乐办公和开 发都可以完美应对。在使用 *nix(linux &amp;amp; Mac) 过程中，我们几乎每天都会对着终端一行 行的执行代码，解释我们的名令的程序就是我们所谓的 shell, 也是本文的所讲的对象。 shell 自从诞生以来，也出现各种版本，虽然实现不同，功能都是一样的。本文写个 shell 只是为了学习，没有其它目的。据本人所知，目前流行的 shell 有： bash , zsh , fish , xosh 等，这几种 shell 本人都用过，简单讲奖各自的特点吧， bash 不用说了吧，几乎 所有发行版的默认 shell。 zsh 集装逼与高效于一身的 shell。强烈建议于 oh-my-zsh 一 起使用，省去配置的时间。 fish 小众软件，智能补全，拥有类似 apt 一样的插件管理工 具，但是由于 shell 语法和 bash 不兼容，建议个人使用，不要用于工作中。 xosh 是用 python 实现的，所以终端直接执行 python 语句就可以执行，同时可以执行系统命令。 pythoner 可以尝试一波，随时随地测试 python 语句。</description>
+    </item>
+    
+    <item>
+      <title>树结构及其应用场景总结</title>
+      <link>/blog/data_struct_trees_conclusion/</link>
+      <pubDate>Sat, 05 Jan 2019 00:00:00 +0800</pubDate>
+      
+      <guid>/blog/data_struct_trees_conclusion/</guid>
+      <description>Table of Contens  数据结构 &amp;ndash; 树  二叉树 二叉查找树 平衡二叉树 B树 B+树 B*树 字典树/Trie树 基数树/radix树  树的应用 参考  数据结构 &amp;ndash; 树 树是学习数据结构必学的一种结构之一，其重要性不言而喻。本文对自己已知的树结构总结，如若有错，请在评论去留言，鄙人及时修改，以免误导别人。本文涉及的树结构包括：二叉树、二叉搜索树、基数树等。
+二叉树 二叉树是树家族结构中最为基础的一种数据结构。
+定义  每个结点最多两个子结点，即度 &amp;lt;= 2 子结点区分为左右子结点，顺序不能反过来，否则为不同的二叉树 第 i 层最多有 2i-1 个结点 深度为 k 的二叉树最多有 2k - 1个结点，即满二叉树 对任一二叉树，叶结点数n0 和 度为2的结点数 n2 的关系式为：n0 = n2 + 1  示例   特殊二叉树 在二叉树中存在满二叉树和完全二叉树两种特殊树结构。
+ 满二叉树
+ 定义
+除叶结点外，其它结点都有两个结点，即度为2。此时的二叉树结点数达到最大值：2h - 1。(h 为深度)
+ 性质
+ 叶结点数： 2h 第 k 层的结点数是：2k-1 总结点数是：2h - 1，且一定是奇数(废话)   完全二叉树</description>
+    </item>
+    
+    <item>
+      <title>Gentoo 系统初探</title>
+      <link>/blog/gentoo_linux_first_try/</link>
+      <pubDate>Sat, 22 Dec 2018 00:00:00 +0800</pubDate>
+      
+      <guid>/blog/gentoo_linux_first_try/</guid>
+      <description>Table of Contens  安装准备  系统镜像 虚拟软件 启动系统  配置网络 准备磁盘  创建分区 创建文件系统 挂载根分区  安装 stage3  配置编译选项  基本系统  镜像站点 复制 DNS 信息 挂载必要的文件系统 进入新环境 挂载 boot 分区 选择配置文件 更新 @world 集合 设置时区 配置地区  编译内核  安装源码 配置内核 编译和安装内核  配置系统  配置 fstab 文件 网络信息  系统工具  日志工具 文件索引 远程访问 文件系统工具 网络工具  安装引导  重启系统  后记  添加用户 清理垃圾  总结  系统安装 安装软件  参考链接  安装准备 Gentoo 一直是一个特别的存在，号称极客系统。网上对其推(装)崇(逼)备(必)至(备)。作为一个爱装逼的骚年，自然是想一探究尽。关于它的介绍，这里就不说了， 因为想挑战它的 Geeker 肯定都知道，如果没听过，还是选择隔壁 manjaro 。manjaro 是基于另一个优秀的发行版 Arch Linux，就是很贴心的省去了痛苦的 安装过程。想体验 Geeker 的成就感， Gentoo 和 Arch Linux 选择其中一个即可。这两者的区别是前者安装软件默认从源代码编译，而后者人性化一点，使用二进制安装包。 安装速度不知快了多少倍。也不知这些极客怎么忍受的，不过 Gentoo 的滚动更新没有 Arch 哪么快，所以安装完必要的软件之后就不须要频繁的更新，而 Arch 三天两头就可以 滚一滚了。</description>
     </item>
     
   </channel>
