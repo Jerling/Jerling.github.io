@@ -6,10 +6,22 @@
     <description>Recent content in c&#43;&#43; on 北极狼徒</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 30 Jan 2019 11:06:21 +0800</lastBuildDate>
+    <lastBuildDate>Sat, 02 Feb 2019 13:27:35 +0800</lastBuildDate>
     
 	<atom:link href="/tags/c++/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>动手写编辑器 ~ 文件查看器</title>
+      <link>/post/write_textor_3/</link>
+      <pubDate>Sat, 02 Feb 2019 13:27:35 +0800</pubDate>
+      
+      <guid>/post/write_textor_3/</guid>
+      <description>Table of Contens  状态栏  腾出空间 写入 buffer  消息框  腾出空间 滞留时间 写入消息 写入 buffer  滚动  垂直滚动 水平滚动 总结 参考   状态栏 熟悉 vim 的朋友都知道, vim 有一个状态栏，位于下边。状态栏的功能主要时显示一些基 本的信息，如文件名、光标位置等。
+腾出空间 在之前的操作中，我们把整个窗口都用来显示文件内容了。所以我们必须将 rows_ 减去 一行用来显示状态信息。
+inline int editor::get_window_size__() { ... rows_ = ws.ws_row - 1; /* 腾出状态栏 */ ... }  写入 buffer 现在将我们要显示的信息写入 buffer 的最后一行，也就是状态栏。为了区分状态栏和文本 区的不同，因此将颜色反转。
+void editor::status_bar__() { append_buf__(&amp;quot;\x1b[7m&amp;quot;); /* 颜色反转 */ std::string stats((filename_.empty() ?</description>
+    </item>
     
     <item>
       <title>动手写编辑器（二） ~ 输入和输出</title>
