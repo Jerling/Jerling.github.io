@@ -1,11 +1,3 @@
-
-
-
-    
-
-
-
-
 <!DOCTYPE HTML>
 
 <html>
@@ -18,26 +10,28 @@
              "@type": "WebPage",
              "@id": "/"
         },
-        "articleSection" : "tags",
-        "name" : "gentoo",
-        "headline" : "gentoo",
-        "description" : "",
+        "articleSection" : "post",
+        "name" : "动手写编辑器（四） ~ 文本编辑器",
+        "headline" : "动手写编辑器（四） ~ 文本编辑器",
+        "description" : "一步步实现终端编辑器",
         "inLanguage" : "en",
         "author" : "",
         "creator" : "",
         "publisher": "",
         "accountablePerson" : "",
         "copyrightHolder" : "",
-        "copyrightYear" : "2018",
-        "datePublished": "2018-12-22 00:00:00 &#43;0800 CST",
-        "dateModified" : "2018-12-22 00:00:00 &#43;0800 CST",
-        "url" : "/tags/gentoo/",
-        "wordCount" : "0",
-        "keywords" : [ "Blog" ]
+        "copyrightYear" : "2019",
+        "datePublished": "2019-02-17 16:51:33 &#43;0800 CST",
+        "dateModified" : "2019-02-17 16:51:33 &#43;0800 CST",
+        "url" : "/post/write_textor_4/",
+        "wordCount" : "440",
+        "keywords" : [ "liunx","c&#43;&#43;","textor","Blog" ]
     }
     </script>
         
-            <title>gentoo - 北极狼徒</title>
+            
+                <title>动手写编辑器（四） ~ 文本编辑器</title>
+            
         
 
         <meta charset="utf-8" />
@@ -47,30 +41,38 @@
 
 
         
+            <meta name="author" content="[Jerling]">
         
-            
-                <meta name="description" content="HTML5 UP theme, Future Imperfect with some extra goodies, ported by Julio Pescador. Powered by Hugo">
-            
+        
+            <meta name="description" content="一步步实现终端编辑器">
         
 
         <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="gentoo"/>
-<meta name="twitter:description" content="HTML5 UP theme, Future Imperfect with some extra goodies, ported by Julio Pescador. Powered by Hugo"/>
+<meta name="twitter:title" content="动手写编辑器（四） ~ 文本编辑器"/>
+<meta name="twitter:description" content="一步步实现终端编辑器"/>
 
-        <meta property="og:title" content="gentoo" />
-<meta property="og:description" content="HTML5 UP theme, Future Imperfect with some extra goodies, ported by Julio Pescador. Powered by Hugo" />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="/tags/gentoo/" />
-<meta property="og:updated_time" content="2018-12-22T00:00:00&#43;08:00"/>
+        <meta property="og:title" content="动手写编辑器（四） ~ 文本编辑器" />
+<meta property="og:description" content="一步步实现终端编辑器" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/post/write_textor_4/" /><meta property="article:published_time" content="2019-02-17T16:51:33&#43;08:00"/>
+<meta property="article:modified_time" content="2019-02-17T20:00:08&#43;08:00"/>
 
         <meta property="og:image" content="//images/logo.png">
         <meta property="og:image:type" content="image/png">
         <meta property="og:image:width" content="512">
         <meta property="og:image:height" content="512">
         
-<meta itemprop="name" content="gentoo">
-<meta itemprop="description" content="HTML5 UP theme, Future Imperfect with some extra goodies, ported by Julio Pescador. Powered by Hugo">
+<meta itemprop="name" content="动手写编辑器（四） ~ 文本编辑器">
+<meta itemprop="description" content="一步步实现终端编辑器">
 
+
+<meta itemprop="datePublished" content="2019-02-17T16:51:33&#43;08:00" />
+<meta itemprop="dateModified" content="2019-02-17T20:00:08&#43;08:00" />
+<meta itemprop="wordCount" content="440">
+
+
+
+<meta itemprop="keywords" content="liunx,c&#43;&#43;,textor," />
 
         
 
@@ -110,9 +112,10 @@
       <div id="wrapper">
 
     
+    
 <header id="header">
     
-      <h1><a href="/">tags</a></h1>
+      <h1><a href="/">post</a></h1>
     
 
     <nav class="links">
@@ -164,6 +167,10 @@
     </nav>
     <nav class="main">
         <ul>
+            
+            <li id="share-nav" class="share-menu" style="display:none;">
+                <a class="fa-share-alt" href="#share-menu">Share</a>
+            </li>
             
             <li class="search">
                 <a class="fa-search" href="#search">Search</a>
@@ -341,46 +348,483 @@
         
 </section>
 
+    <section id="share-menu">
+    <section id="social-share-nav">
+        <ul class="links">
+            <header>
+                <h3>Share this post <i class="fa fa-smile-o"></i></h3>
+            </header>
+            
+
+
+
+<li>
+  <a href="//twitter.com/share?url=%2fpost%2fwrite_textor_4%2f&amp;text=%e5%8a%a8%e6%89%8b%e5%86%99%e7%bc%96%e8%be%91%e5%99%a8%ef%bc%88%e5%9b%9b%ef%bc%89%20~%20%e6%96%87%e6%9c%ac%e7%bc%96%e8%be%91%e5%99%a8&amp;via=" target="_blank" class="share-btn twitter">
+    <i class="fa fa-twitter"></i>
+    <p>Twitter</p>
+    </a>
+</li>
+
+
+
+
+<li>
+  <a href="//plus.google.com/share?url=%2fpost%2fwrite_textor_4%2f" target="_blank" class="share-btn google-plus">
+    <i class="fa fa-google-plus"></i>
+    <p>Google+</p>
+  </a>
+</li>
+
+
+
+
+
+<li>
+  <a href="//www.facebook.com/sharer/sharer.php?u=%2fpost%2fwrite_textor_4%2f" target="_blank" class="share-btn facebook">
+    <i class="fa fa-facebook"></i>
+    <p>Facebook</p>
+    </a>
+</li>
+
+
+
+
+<li>
+  <a href="//reddit.com/submit?url=%2fpost%2fwrite_textor_4%2f&amp;title=%e5%8a%a8%e6%89%8b%e5%86%99%e7%bc%96%e8%be%91%e5%99%a8%ef%bc%88%e5%9b%9b%ef%bc%89%20~%20%e6%96%87%e6%9c%ac%e7%bc%96%e8%be%91%e5%99%a8" target="_blank" class="share-btn reddit">
+    <i class="fa fa-reddit-alien"></i>
+    <p>Reddit</p>
+  </a>
+</li>
+
+
+
+
+<li>
+  <a href="//www.linkedin.com/shareArticle?url=%2fpost%2fwrite_textor_4%2f&amp;title=%e5%8a%a8%e6%89%8b%e5%86%99%e7%bc%96%e8%be%91%e5%99%a8%ef%bc%88%e5%9b%9b%ef%bc%89%20~%20%e6%96%87%e6%9c%ac%e7%bc%96%e8%be%91%e5%99%a8" target="_blank" class="share-btn linkedin">
+      <i class="fa fa-linkedin"></i>
+      <p>LinkedIn</p>
+    </a>
+</li>
+
+
+
+
+<li>
+  <a href="//www.stumbleupon.com/submit?url=%2fpost%2fwrite_textor_4%2f&amp;title=%e5%8a%a8%e6%89%8b%e5%86%99%e7%bc%96%e8%be%91%e5%99%a8%ef%bc%88%e5%9b%9b%ef%bc%89%20~%20%e6%96%87%e6%9c%ac%e7%bc%96%e8%be%91%e5%99%a8" target="_blank" class="share-btn stumbleupon">
+    <i class="fa fa-stumbleupon"></i>
+    <p>StumbleUpon</p>
+  </a>
+</li>
+
+
+
+
+<li>
+  <a href="//www.pinterest.com/pin/create/button/?url=%2fpost%2fwrite_textor_4%2f&amp;description=%e5%8a%a8%e6%89%8b%e5%86%99%e7%bc%96%e8%be%91%e5%99%a8%ef%bc%88%e5%9b%9b%ef%bc%89%20~%20%e6%96%87%e6%9c%ac%e7%bc%96%e8%be%91%e5%99%a8" target="_blank" class="share-btn pinterest">
+    <i class="fa fa-pinterest-p"></i>
+    <p>Pinterest</p>
+  </a>
+</li>
+
+
+
+
+<li>
+  <a href="mailto:?subject=Check out this post by %5bJerling%5d&amp;body=%2fpost%2fwrite_textor_4%2f" target="_blank" class="share-btn email">
+    <i class="fa fa-envelope"></i>
+    <p>Email</p>
+  </a>
+</li>
+
+
+        </ul>
+    </section>
+</section>
+
     
     <div id="main">
-        <h1>gentoo</h1>
         
         
-            <article class="post">
+        <article class="post">
   <header>
     <div class="title">
         
-            <h2><a href="/blog/gentoo_linux_first_try/">Gentoo 系统初探</a></h2>
+            <h1><a href="/post/write_textor_4/">动手写编辑器（四） ~ 文本编辑器</a></h1>
+            
         
+        
+            <p>一步步实现终端编辑器</p>
         
     </div>
     <div class="meta">
         
 
         <time class="published"
-            datetime='2018-12-22'>
-            December 22, 2018</time>
+            datetime='2019-02-17'>
+            February 17, 2019</time>
         <span class="author">[Jerling]</span>
         
-            <p>6 minute read</p>
+            <p>3 minute read</p>
         
         
     </div>
 </header>
 
+
+  
+    <section id="social-share">
+      <ul class="icons">
+        
+
+
+
+<li>
+  <a href="//twitter.com/share?url=%2fpost%2fwrite_textor_4%2f&amp;text=%e5%8a%a8%e6%89%8b%e5%86%99%e7%bc%96%e8%be%91%e5%99%a8%ef%bc%88%e5%9b%9b%ef%bc%89%20~%20%e6%96%87%e6%9c%ac%e7%bc%96%e8%be%91%e5%99%a8&amp;via=" target="_blank" class="share-btn twitter">
+    <i class="fa fa-twitter"></i>
+    <p>Twitter</p>
+    </a>
+</li>
+
+
+
+
+<li>
+  <a href="//plus.google.com/share?url=%2fpost%2fwrite_textor_4%2f" target="_blank" class="share-btn google-plus">
+    <i class="fa fa-google-plus"></i>
+    <p>Google+</p>
+  </a>
+</li>
+
+
+
+
+
+<li>
+  <a href="//www.facebook.com/sharer/sharer.php?u=%2fpost%2fwrite_textor_4%2f" target="_blank" class="share-btn facebook">
+    <i class="fa fa-facebook"></i>
+    <p>Facebook</p>
+    </a>
+</li>
+
+
+
+
+<li>
+  <a href="//reddit.com/submit?url=%2fpost%2fwrite_textor_4%2f&amp;title=%e5%8a%a8%e6%89%8b%e5%86%99%e7%bc%96%e8%be%91%e5%99%a8%ef%bc%88%e5%9b%9b%ef%bc%89%20~%20%e6%96%87%e6%9c%ac%e7%bc%96%e8%be%91%e5%99%a8" target="_blank" class="share-btn reddit">
+    <i class="fa fa-reddit-alien"></i>
+    <p>Reddit</p>
+  </a>
+</li>
+
+
+
+
+<li>
+  <a href="//www.linkedin.com/shareArticle?url=%2fpost%2fwrite_textor_4%2f&amp;title=%e5%8a%a8%e6%89%8b%e5%86%99%e7%bc%96%e8%be%91%e5%99%a8%ef%bc%88%e5%9b%9b%ef%bc%89%20~%20%e6%96%87%e6%9c%ac%e7%bc%96%e8%be%91%e5%99%a8" target="_blank" class="share-btn linkedin">
+      <i class="fa fa-linkedin"></i>
+      <p>LinkedIn</p>
+    </a>
+</li>
+
+
+
+
+<li>
+  <a href="//www.stumbleupon.com/submit?url=%2fpost%2fwrite_textor_4%2f&amp;title=%e5%8a%a8%e6%89%8b%e5%86%99%e7%bc%96%e8%be%91%e5%99%a8%ef%bc%88%e5%9b%9b%ef%bc%89%20~%20%e6%96%87%e6%9c%ac%e7%bc%96%e8%be%91%e5%99%a8" target="_blank" class="share-btn stumbleupon">
+    <i class="fa fa-stumbleupon"></i>
+    <p>StumbleUpon</p>
+  </a>
+</li>
+
+
+
+
+<li>
+  <a href="//www.pinterest.com/pin/create/button/?url=%2fpost%2fwrite_textor_4%2f&amp;description=%e5%8a%a8%e6%89%8b%e5%86%99%e7%bc%96%e8%be%91%e5%99%a8%ef%bc%88%e5%9b%9b%ef%bc%89%20~%20%e6%96%87%e6%9c%ac%e7%bc%96%e8%be%91%e5%99%a8" target="_blank" class="share-btn pinterest">
+    <i class="fa fa-pinterest-p"></i>
+    <p>Pinterest</p>
+  </a>
+</li>
+
+
+
+
+<li>
+  <a href="mailto:?subject=Check out this post by %5bJerling%5d&amp;body=%2fpost%2fwrite_textor_4%2f" target="_blank" class="share-btn email">
+    <i class="fa fa-envelope"></i>
+    <p>Email</p>
+  </a>
+</li>
+
+
+      </ul>
+    </section>
   
 
   
-  <p><a href="https://www.gentoo.org/">Gentoo</a> 一直是一个特别的存在，号称极客系统。网上对其推(装)崇(逼)备(必)至(备)。作为一个爱装逼的骚年，自然是想一探究尽。关于它的介绍，这里就不说了，
-因为想挑战它的 Geeker 肯定都知道，如果没听过，还是选择隔壁 <a href="https://www.manjaro.cn/">manjaro</a> 。manjaro 是基于另一个优秀的发行版 <a href="https://www.archlinux.org/">Arch Linux</a>，就是很贴心的省去了痛苦的
-安装过程。想体验 Geeker 的成就感， Gentoo 和 Arch Linux 选择其中一个即可。这两者的区别是前者安装软件默认从源代码编译，而后者人性化一点，使用二进制安装包。
-安装速度不知快了多少倍。也不知这些极客怎么忍受的，不过 Gentoo 的滚动更新没有 Arch 哪么快，所以安装完必要的软件之后就不须要频繁的更新，而 Arch 三天两头就可以
-滚一滚了。</p>
+
+  <div id="content">
+    
+
+<h2 id="文本编辑器">文本编辑器</h2>
+
+<p>在之前的三篇博客中，编辑器实现了文件的浏览功能。这篇博客的工作主要是在前面的基础上修改
+和添加一些内容，使得程序可以真正的实现编辑的功能。</p>
+
+<h2 id="插入字符">插入字符</h2>
+
+<p>首先，要实现编辑功能，从小功能出发。我们使用编辑器的时候都是进行交互的操作，将键
+盘的字符一个个的输入到编辑器中。因此需要实现从键盘读入字符然后正确的显示到编辑区
+的对应位置。这意味着我们必须处理每一个可打印字符。在之前实现的功能中，我们使用
+h, j, k, l 作为方向键来定位光标的位置，但是它们是可打印字符。所以在这里必须重新
+映射方向键的返回值。</p>
+
+<h3 id="重新映射方向键">重新映射方向键</h3>
+
+<p>键盘上的每一个键都有一个 ASCII 码，不能将方向键映射到该范围。我们知道 ASCII 的范
+围是 0~127。因此只需要将方向键映射到 128, 127, 129, 130 即可。 之前定义保存
+ASCII 码的 <code>key_</code> 为 <code>char</code> 类型，最大值为 127。为保险起见，修改为 <code>usigned int</code>
+。修改代码如下：</p>
+
+<pre><code class="language-C++">enum key { ARROW_UP=128, ARROW_DOWN, ARROW_LEFT, ARROW_RIGHT };
+
+struct textor{
+...
+  /* 按键 */
+  unsigned char key_;
+...
+}
+</code></pre>
+
+<h3 id="按键处理">按键处理</h3>
+
+<p>现在已经移出了方向键的影响，那么默认我们按下任何可打印字符都应该显示在编辑器中。
+因此需要处理每一个按键，在 <code>process_key__</code> 中添加以下按键处理：</p>
+
+<pre><code class="language-C++">void process_key__(){
+  switch(key_){
+    ...
+    default:
+      insert_char__();
+      break;
+  }
+}
+</code></pre>
+
+<h3 id="插入字符-1">插入字符</h3>
+
+<p>现在就只需要实现上面的 <code>insert_char__</code> 函数即可，过程也比较简单，直接追加到
+<code>text_</code> 变量的对应位置并移动光标到下一个位置即可。</p>
+
+<pre><code class="language-C++">void editor::insert_char__() {
+  if (cy_ &lt; 0 || cy_ &gt; text_[cx_].size()) cy_ = text_[cx_].size();
+  text_[cx_].insert(cy_, 1, key_);
+  cy_++;
+}
+</code></pre>
+
+<h2 id="删除字符">删除字符</h2>
+
+<p>除了添加内容，也需要实现修改或者删除文件内容。因此需要实现删除字符的功能，并将次
+功能绑定到退格键上。</p>
+
+<pre><code class="language-c++">void process_key__(){
+  switch(key_){
+    ...
+    case BACKSPACE:
+    case CTRL('h'):
+      delete_char__();
+    ...
+    }
+}
+</code></pre>
+
+<h3 id="删除字符-1">删除字符</h3>
+
+<p>该功能是将光标的前面的字符删除。在这部分需要注意的是边界条件的检查。</p>
+
+<pre><code class="language-C++">void editor::delete_char__() {
+  if (cy_ &lt; 0 || cy_ &gt; text_[cx_].size()) return;
+  if (cy_ == 0) {                  // 行首
+    if (cx_ == 0) return;
+    while (text_.empty() &amp;&amp; cx_) { // 删除空行
+      cx_--;
+      numrows_--;
+    }
+    cx_--;
+    cy_ = text_[cx_].size();
+    text_[cx_] += text_[cx_ + 1];   // 合并两行
+    text_.erase(text_.begin() + cx_ + 1);
+  } else                            // 不在行首
+    text_[cx_].erase(--cy_, 1);
+}
+</code></pre>
+
+<h2 id="添加行">添加行</h2>
+
+<p>有时候我们有将长的一行拆分成两行的需求，因此需要实现拆分行的功能。这个功能由
+<code>Enter</code> 键触发。</p>
+
+<pre><code class="language-C++">void editor::process_key__() {
+  read_key__();
+  switch (key_) {
+    case '\r':
+      insert_row__();
+      break;
+   ...
+    }
+}
+</code></pre>
+
+<h3 id="换行">换行</h3>
+
+<p>将光标的后一部分保存起来，然后将其删除。即可得到两个字符串。将保存的字符串插入到
+光标后一行。</p>
+
+<pre><code class="language-C++">void editor::insert_row__() {
+  if (cy_ &lt; 0 || cy_ &gt;= text_[cx_].size()) return;
+  std::string tail(text_[cx_].begin() + cy_, text_[cx_].end());
+  text_[cx_].erase(text_[cx_].begin() + cy_ + 1, text_[cx_].end());
+  text_[cx_].resize(cy_);
+  cx_++;
+  text_.insert(text_.begin() + cx_, tail);
+  numrows_++;
+  cy_ = 0;
+}
+</code></pre>
+
+<h2 id="修改提示">修改提示</h2>
+
+<p>如果修改了文件，那么我们实现一个小小的功能来提示文件已经修改过。只需要一个
+<code>bool</code> 值即可，如果要获取修改的字节数，可以使用 <code>int</code> 类型。</p>
+
+<pre><code class="language-C++">struct textor{
+  /* 是否修改 */
+  bool dirty_;
+}
+</code></pre>
+
+<p>然后我们需要在修改文件的每个的最后添加修改检查。</p>
+
+<pre><code class="language-C++">  if (!dirty_) dirty_ = true;
+</code></pre>
+
+<h2 id="保存文件">保存文件</h2>
+
+<p>编辑器的编辑功能到这里已经完成了，但是目前的修改只是修改了内存缓冲区。要实现长久
+的修改，需要将其写入到硬盘中。</p>
+
+<pre><code class="language-C++">void editor::save__() {
+  if (filename_.empty()) return;
+  std::ofstream ofs;
+  ofs.open(filename_.c_str(), std::ifstream::out);
+  if (ofs.fail()) SPDLOG_ERROR(&quot;open file failed&quot;);
+  for (auto row : text_) ofs &lt;&lt; row + &quot;\n&quot;;
+  ofs.close();
+  status_msg__(&quot;Save to %s successful!&quot;, filename_.c_str());
+  dirty_ = false;
+  quit_times_ = 2;
+}
+</code></pre>
+
+<h2 id="退出提示">退出提示</h2>
+
+<p>如果修改了文件，我们却还没有保存，此时如果直接退出，那么修改的内容将不会写入磁盘。
+因此在文件修改了的情况下，退出时给出善意的提示是必要的。定义一个退出次数，初始化
+为两次，即连续两次退出即可不保存保存文件。</p>
+
+<pre><code class="language-C++">struct textor{
+  int quit_times_;
+}
+
+void process_key__(){
+...
+    case CTRL_KEY('q'):
+      if (dirty_ &amp;&amp; quit_times_) {
+        status_msg__(
+            &quot;WARNING!!! Files had modifed. Please press Ctrl+S to save or &quot;
+            &quot;Ctrl+Q to quit without save!&quot;);
+        quit_times_--;
+        return;
+      }
+      write(STDOUT_FILENO, &quot;\x1b[2J&quot;, 4);
+      write(STDOUT_FILENO, &quot;\x1b[H&quot;, 3);
+      exit(0);
+      break;
+...
+}
+</code></pre>
+
+<h2 id="另存为">另存为</h2>
+
+<p>当我们打开空白文件时，保存文件必须交互的给出文件的名字。也可以实现另存为的功能。
+因此先定义一个在消息框中获得文件名的函数。并将交互过程中的文件名存储在
+<code>filename_</code> 中。</p>
+
+<pre><code class="language-C++">void editor::prompt__(const std::string &amp;prompt) {
+  while (1) {
+    status_msg__(prompt.c_str(), filename_.c_str());
+    flush__();
+
+    read_key__();
+    if (key_ == BACKSPACE &amp;&amp; !filename_.empty()) {
+      filename_.pop_back();
+    } else if (key_ == '\x1b') {  // Esc 退出
+      filename_.clear();
+      return;
+    } else if (key_ == '\r') {
+      if (!filename_.empty()) return; // 文件为空持续等待，除非使用 Esc 退出
+    } else if (!iscntrl(key_) &amp;&amp; key_ &lt; 128) { // 可打印字符
+      filename_ += key_;
+    }
+  }
+}
+</code></pre>
+
+<p>同在保存的时候，如果 <code>filename_</code> 为空，则需要给出文件名进行保存。</p>
+
+<pre><code class="language-C++">void editor::save__() {
+  if (filename_.empty()) prompt__(&quot;Save as : %s (Esc to cancel)&quot;);
+  if (filename_.empty()) {
+    status_msg__(&quot;Save aborted&quot;);
+    return;
+  }
+...
+}
+</code></pre>
+
+<h2 id="效果">效果</h2>
+
+<p>修改并保存现有文件：</p>
+
+<figure>
+    <img src="https://jerling.github.io/images/%e6%b7%b1%e5%ba%a6%e5%bd%95%e5%b1%8f%5F%e9%80%89%e6%8b%a9%e5%8c%ba%e5%9f%9f%5F20190217194328.gif"/> 
+</figure>
+
+
+<p>保存新建文件：</p>
+
+<figure>
+    <img src="https://jerling.github.io/images/%e6%b7%b1%e5%ba%a6%e5%bd%95%e5%b1%8f%5F%e9%80%89%e6%8b%a9%e5%8c%ba%e5%9f%9f%5F20190217194921.gif"/> 
+</figure>
+
+
+<h2 id="总结">总结</h2>
+
+<p>目前已经实现了简单查看和编辑功能，麻雀虽小，五脏俱全。由于马上要找实习，该项目在
+过年期间利用空闲时间完成，可能还有很多 bug 以及没有考虑周全的地方。也算告一段落了吧。诸如高亮、丰富的快捷键这些功能以后有
+机会在实现吧。代码不多，先上传到 <code>github</code> 吧。</p>
+
+<p><a href="https://github.com/Jerling/Textor">https://github.com/Jerling/Textor</a></p>
+
+<h2 id="参考">参考</h2>
+
+<p><a href="https://viewsourcecode.org/snaptoken/kilo/05.aTextEditor.html">https://viewsourcecode.org/snaptoken/kilo/05.aTextEditor.html</a></p>
+
+  </div>
+
   <footer>
-    <ul class="actions">
-      <li><a href="/blog/gentoo_linux_first_try/" class="button big">Continue Reading</a></li>
-    </ul>
-  <ul class="stats">
+    <ul class="stats">
   <li class="categories">
     <ul>
         
@@ -389,7 +833,7 @@
                 <i class="fa fa-folder"></i>
                 
                 
-                <li><a class="article-category-link" href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F">操作系统</a></li>
+                <li><a class="article-category-link" href="/categories/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98">项目实战</a></li>
                 
             
         
@@ -403,13 +847,13 @@
                 <i class="fa fa-tags"></i>
                 
                 
-                <li><a class="article-category-link" href="/tags/linux">linux</a></li>
+                <li><a class="article-category-link" href="/tags/liunx">liunx</a></li>
                 
                 
-                <li><a class="article-category-link" href="/tags/gentoo">gentoo</a></li>
+                <li><a class="article-category-link" href="/tags/c&#43;&#43;">c&#43;&#43;</a></li>
                 
                 
-                <li><a class="article-category-link" href="/tags/funny">funny</a></li>
+                <li><a class="article-category-link" href="/tags/textor">textor</a></li>
                 
             
         
@@ -418,20 +862,16 @@
 </ul>
 
   </footer>
+
 </article>
 
-        
 
-        
 <ul class="actions pagination">
     
-        <li><a href="#" class="disabled button big previous">Previous Page</a></li>
-    
 
     
-        <li><a href="#" class="disabled button big next">Next Page</a></li>
-    
 </ul>
+
 
     </div>
     
@@ -455,7 +895,7 @@
       <ul class="icons">
         
           
-    <li><a href="/tags/gentoo/index.xml" type="application/rss+xml" target="_blank" title="RSS" class="fa fa-rss"></a></li>
+    <li><a href="/index.xml" type="application/rss+xml" target="_blank" title="RSS" class="fa fa-rss"></a></li>
 
 
         
@@ -720,7 +1160,7 @@
       <ul class="icons">
         
           
-    <li><a href="/tags/gentoo/index.xml" type="application/rss+xml" target="_blank" title="RSS" class="fa fa-rss"></a></li>
+    <li><a href="/index.xml" type="application/rss+xml" target="_blank" title="RSS" class="fa fa-rss"></a></li>
 
 
         
