@@ -465,7 +465,7 @@
 
 <h2 id="文本编辑器">文本编辑器</h2>
 
-<p>在之前的三篇博客中，编辑器实现了文件的浏览功能。这篇博客的工作主要是在前面的基础上修改
+<p>在之前的三篇博客中，编辑器实现了文件的查看功能。这篇博客的工作主要是在前面的基础上修改
 和添加一些内容，使得程序可以真正的实现编辑的功能。</p>
 
 <h2 id="插入字符">插入字符</h2>
@@ -514,6 +514,10 @@ struct textor{
 <code>text_</code> 变量的对应位置并移动光标到下一个位置即可。</p>
 
 <pre><code class="language-C++">void editor::insert_char__() {
+  if (cx_ == numrows_) {
+    text_.push_back(&quot;&quot;);
+    numrows_++;
+  }
   if (cy_ &lt; 0 || cy_ &gt; text_[cx_].size()) cy_ = text_[cx_].size();
   text_[cx_].insert(cy_, 1, key_);
   cy_++;
@@ -744,7 +748,7 @@ void process_key__(){
                 <i class="fa fa-tags"></i>
                 
                 
-                <li><a class="article-category-link" href="/tags/liunx">liunx</a></li>
+                <li><a class="article-category-link" href="/tags/terminal">terminal</a></li>
                 
                 
                 <li><a class="article-category-link" href="/tags/c&#43;&#43;">c&#43;&#43;</a></li>
