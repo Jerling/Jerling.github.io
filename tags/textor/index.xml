@@ -17,11 +17,10 @@
       <pubDate>Sun, 17 Feb 2019 16:51:33 +0800</pubDate>
       
       <guid>/post/write_textor_4/</guid>
-      <description>文本编辑器 在之前的三篇博客中，编辑器实现了文件的查看功能。这篇博客的工作主要是在前面的基础上修改 和添加一些内容，使得程序可以真正的实现编辑的功能。
+      <description>Table of Contens  文本编辑器 插入字符  重新映射方向键 按键处理 插入字符  删除字符  删除字符  添加行  换行  修改提示 保存文件 退出提示 另存为 效果 总结 参考  文本编辑器 在之前的三篇博客中，编辑器实现了文件的查看功能。这篇博客的工作主要是在前面的基础上修改 和添加一些内容，使得程序可以真正的实现编辑的功能。
 插入字符 首先，要实现编辑功能，从小功能出发。我们使用编辑器的时候都是进行交互的操作，将键 盘的字符一个个的输入到编辑器中。因此需要实现从键盘读入字符然后正确的显示到编辑区 的对应位置。这意味着我们必须处理每一个可打印字符。在之前实现的功能中，我们使用 h, j, k, l 作为方向键来定位光标的位置，但是它们是可打印字符。所以在这里必须重新 映射方向键的返回值。
 重新映射方向键 键盘上的每一个键都有一个 ASCII 码，不能将方向键映射到该范围。我们知道 ASCII 的范 围是 0~127。因此只需要将方向键映射到 128, 127, 129, 130 即可。 之前定义保存 ASCII 码的 key_ 为 char 类型，最大值为 127。为保险起见，修改为 usigned int 。修改代码如下：
-enum key { ARROW_UP=128, ARROW_DOWN, ARROW_LEFT, ARROW_RIGHT }; struct textor{ ... /* 按键 */ unsigned char key_; ... }  按键处理 现在已经移出了方向键的影响，那么默认我们按下任何可打印字符都应该显示在编辑器中。 因此需要处理每一个按键，在 process_key__ 中添加以下按键处理：
-void process_key__(){ switch(key_){ ... default: insert_char__(); break; } }  插入字符 现在就只需要实现上面的 insert_char__ 函数即可，过程也比较简单，直接追加到 text_ 变量的对应位置并移动光标到下一个位置即可。</description>
+enum key { ARROW_UP=128, ARROW_DOWN, ARROW_LEFT, ARROW_RIGHT }; struct textor{ .</description>
     </item>
     
     <item>
