@@ -6,10 +6,36 @@
     <description>Recent content in Blog on 北极狼徒</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 02 Feb 2019 13:27:35 +0800</lastBuildDate>
+    <lastBuildDate>Fri, 22 Feb 2019 20:07:56 +0800</lastBuildDate>
     
 	<atom:link href="/blog/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>关于对象那些事儿 ~~ 继承</title>
+      <link>/blog/about_cpp_inherits/</link>
+      <pubDate>Fri, 22 Feb 2019 20:07:56 +0800</pubDate>
+      
+      <guid>/blog/about_cpp_inherits/</guid>
+      <description>关于继承 随着软件功能的日益完善，随之而来的就是软件的也越来越大，变得难以维护。传统的面向 过程的编程范式难以满足日益丰富的用户需求，因此一种需要一种新的编程范式来应对这种 复杂的需求。面向对象在这个时候出现，很好的解决了这些难题。它是一种软件开发方法， 利用应对世界关系的分析方法来分析复杂软件体系关系，实践证明这是可行的。
+何为对象 世界的所有事物都可可以抽象为一个对象，一个对象拥有基本的属性以及作用在这些属性上 的功能。举个简单的例子：女朋友为一个对象，她有基本属性（身高、体重等），以及功能 （吃饭、说话等）。在面向对象的软件开发方法中，有三大特性：继承、封装及多态。今天 的主角是继承。
+何为继承 每个对象的可以抽象为不同的级别，我们将有某些共同属性或功能抽象成一个基类对象，然 后让派生类来继续延用（继承）公用的属性或功能。同样举个简单例子：父亲是一个基类或 父类，小孩就是派生类或子类，小孩会继承父亲遗传的某些性状（如血型）。
+继承是实现代码重用的重要手段，直接使用基类对象的属性和方法，呈现面向对象程序设计 的层次结构，体现由简单到复杂、一般到特殊的认知过程。继承的方式有三种：public继承、 protect继承、private继承。编译器通过三种方式对应的限定符进行区分。
+public 继承 公有继承是比较常见的继承方式，通过 public 关键字来表明。
+public 继承权限  父类的 public 成员继承为子类的 public 成员，子类可以访问。 父类的 protected 成员继承为子类的 protected 成员，子类成员函数可以访问。 父类的 private 成员仍为 父类 的 private 成员，子类不可以访问。  实例 #include &amp;lt;iostream&amp;gt; class Base { public: int int_pub = 0; protected: int int_pro = 0; private: int int_pri = 0; }; class Derive : public Base { public: void print() { std::cout &amp;lt;&amp;lt; &amp;quot;print:&amp;quot; &amp;lt;&amp;lt; int_pub &amp;lt;&amp;lt; std::endl; std::cout &amp;lt;&amp;lt; &amp;quot;print:&amp;quot; &amp;lt;&amp;lt; int_pro &amp;lt;&amp;lt; std::endl; // std::cout &amp;lt;&amp;lt; &amp;quot;print:&amp;quot; &amp;lt;&amp;lt; int_pri &amp;lt;&amp;lt; std::endl; } }; int main() { Derive d; std::cout &amp;lt;&amp;lt; &amp;quot;main:&amp;quot; &amp;lt;&amp;lt; d.</description>
+    </item>
+    
+    <item>
+      <title>动手写编辑器（四） ~ 文本编辑器</title>
+      <link>/blog/write_textor_4/</link>
+      <pubDate>Sun, 17 Feb 2019 16:51:33 +0800</pubDate>
+      
+      <guid>/blog/write_textor_4/</guid>
+      <description>Table of Contens  文本编辑器 插入字符  重新映射方向键 按键处理 插入字符  删除字符  删除字符  添加行  换行  修改提示 保存文件 退出提示 另存为 效果 总结 参考  文本编辑器 在之前的三篇博客中，编辑器实现了文件的查看功能。这篇博客的工作主要是在前面的基础上修改 和添加一些内容，使得程序可以真正的实现编辑的功能。
+插入字符 首先，要实现编辑功能，从小功能出发。我们使用编辑器的时候都是进行交互的操作，将键 盘的字符一个个的输入到编辑器中。因此需要实现从键盘读入字符然后正确的显示到编辑区 的对应位置。这意味着我们必须处理每一个可打印字符。在之前实现的功能中，我们使用 h, j, k, l 作为方向键来定位光标的位置，但是它们是可打印字符。所以在这里必须重新 映射方向键的返回值。
+重新映射方向键 键盘上的每一个键都有一个 ASCII 码，不能将方向键映射到该范围。我们知道 ASCII 的范 围是 0~127。因此只需要将方向键映射到 128, 127, 129, 130 即可。 之前定义保存 ASCII 码的 key_ 为 char 类型，最大值为 127。为保险起见，修改为 usigned int 。修改代码如下：
+enum key { ARROW_UP=128, ARROW_DOWN, ARROW_LEFT, ARROW_RIGHT }; struct textor{ .</description>
+    </item>
     
     <item>
       <title>动手写编辑器 (三) ~ 文件查看器</title>

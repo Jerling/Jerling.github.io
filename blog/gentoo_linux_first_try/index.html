@@ -36,7 +36,7 @@
 
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="generator" content="Hugo 0.53" />
+        <meta name="generator" content="Hugo 0.54.0" />
         
 
 
@@ -56,7 +56,8 @@
         <meta property="og:title" content="Gentoo 系统初探" />
 <meta property="og:description" content="Table of Contens  安装准备  系统镜像 虚拟软件 启动系统  配置网络 准备磁盘  创建分区 创建文件系统 挂载根分区  安装 stage3  配置编译选项  基本系统  镜像站点 复制 DNS 信息 挂载必要的文件系统 进入新环境 挂载 boot 分区 选择配置文件 更新 @world 集合 设置时区 配置地区  编译内核  安装源码 配置内核 编译和安装内核  配置系统  配置 fstab 文件 网络信息  系统工具  日志工具 文件索引 远程访问 文件系统工具 网络工具  安装引导  重启系统  后记  添加用户 清理垃圾  总结  系统安装 安装软件  参考链接  安装准备 Gentoo 一直是一个特别的存在，号称极客系统。网上对其推(装)崇(逼)备(必)至(备)。作为一个爱装逼的骚年，自然是想一探究尽。关于它的介绍，这里就不说了， 因为想挑战它的 Geeker 肯定都知道，如果没听过，还是选择隔壁 manjaro 。manjaro 是基于另一个优秀的发行版 Arch Linux，就是很贴心的省去了痛苦的 安装过程。想体验 Geeker 的成就感， Gentoo 和 Arch Linux 选择其中一个即可。这两者的区别是前者安装软件默认从源代码编译，而后者人性化一点，使用二进制安装包。 安装速度不知快了多少倍。也不知这些极客怎么忍受的，不过 Gentoo 的滚动更新没有 Arch 哪么快，所以安装完必要的软件之后就不须要频繁的更新，而 Arch 三天两头就可以 滚一滚了。" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="/blog/gentoo_linux_first_try/" /><meta property="article:published_time" content="2018-12-22T00:00:00&#43;08:00"/>
+<meta property="og:url" content="/blog/gentoo_linux_first_try/" />
+<meta property="article:published_time" content="2018-12-22T00:00:00&#43;08:00"/>
 <meta property="article:modified_time" content="2019-02-02T19:53:51&#43;08:00"/>
 
         <meta property="og:image" content="//images/logo.png">
@@ -277,7 +278,19 @@
                 
                         <article class="mini-post">
                             <header>
-                                <h3><a href="/post/write_textor_4/">动手写编辑器（四） ~ 文本编辑器</a></h3>
+                                <h3><a href="/blog/about_cpp_inherits/">关于对象那些事儿 ~~ 继承</a></h3>
+                                
+                                <time class="published" datetime=
+                                    '2019-02-22'>
+                                    February 22, 2019</time>
+                            </header>
+                            
+
+                        </article>
+                
+                        <article class="mini-post">
+                            <header>
+                                <h3><a href="/blog/write_textor_4/">动手写编辑器（四） ~ 文本编辑器</a></h3>
                                 
                                 <time class="published" datetime=
                                     '2019-02-17'>
@@ -318,18 +331,6 @@
                                 <time class="published" datetime=
                                     '2019-01-20'>
                                     January 20, 2019</time>
-                            </header>
-                            
-
-                        </article>
-                
-                        <article class="mini-post">
-                            <header>
-                                <h3><a href="/blog/writh_shell_with_cpp/">手把手实现一个 Linux shell</a></h3>
-                                
-                                <time class="published" datetime=
-                                    '2019-01-19'>
-                                    January 19, 2019</time>
                             </header>
                             
 
@@ -1482,7 +1483,21 @@ root #passwd jer
           <article class="mini-post">
             <header>
               <h3>
-                <a href="/post/write_textor_4/">动手写编辑器（四） ~ 文本编辑器</a>
+                <a href="/blog/about_cpp_inherits/">关于对象那些事儿 ~~ 继承</a>
+              </h3>
+              
+              <time class="published" datetime='2019-02-22'>
+                February 22, 2019
+              </time>
+            </header>
+            
+
+          </article>
+        
+          <article class="mini-post">
+            <header>
+              <h3>
+                <a href="/blog/write_textor_4/">动手写编辑器（四） ~ 文本编辑器</a>
               </h3>
               
               <time class="published" datetime='2019-02-17'>
@@ -1529,20 +1544,6 @@ root #passwd jer
               
               <time class="published" datetime='2019-01-20'>
                 January 20, 2019
-              </time>
-            </header>
-            
-
-          </article>
-        
-          <article class="mini-post">
-            <header>
-              <h3>
-                <a href="/blog/writh_shell_with_cpp/">手把手实现一个 Linux shell</a>
-              </h3>
-              
-              <time class="published" datetime='2019-01-19'>
-                January 19, 2019
               </time>
             </header>
             
@@ -1615,6 +1616,17 @@ root #passwd jer
             <header>
               
                 <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a>
+                <span style="float:right;">1</span>
+              
+            </header>
+          </article>
+        </p>
+        
+        <p>
+          <article>
+            <header>
+              
+                <a href="/categories/%E6%B8%A9%E6%95%85%E7%9F%A5%E6%96%B0/">温故知新</a>
                 <span style="float:right;">1</span>
               
             </header>

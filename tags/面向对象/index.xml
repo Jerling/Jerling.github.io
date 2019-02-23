@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>面向对象 on 北极狼徒</title>
+    <link>/tags/%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/</link>
+    <description>Recent content in 面向对象 on 北极狼徒</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 22 Feb 2019 20:07:56 +0800</lastBuildDate>
+    
+	<atom:link href="/tags/%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>关于对象那些事儿 ~~ 继承</title>
+      <link>/blog/about_cpp_inherits/</link>
+      <pubDate>Fri, 22 Feb 2019 20:07:56 +0800</pubDate>
+      
+      <guid>/blog/about_cpp_inherits/</guid>
+      <description>关于继承 随着软件功能的日益完善，随之而来的就是软件的也越来越大，变得难以维护。传统的面向 过程的编程范式难以满足日益丰富的用户需求，因此一种需要一种新的编程范式来应对这种 复杂的需求。面向对象在这个时候出现，很好的解决了这些难题。它是一种软件开发方法， 利用应对世界关系的分析方法来分析复杂软件体系关系，实践证明这是可行的。
+何为对象 世界的所有事物都可可以抽象为一个对象，一个对象拥有基本的属性以及作用在这些属性上 的功能。举个简单的例子：女朋友为一个对象，她有基本属性（身高、体重等），以及功能 （吃饭、说话等）。在面向对象的软件开发方法中，有三大特性：继承、封装及多态。今天 的主角是继承。
+何为继承 每个对象的可以抽象为不同的级别，我们将有某些共同属性或功能抽象成一个基类对象，然 后让派生类来继续延用（继承）公用的属性或功能。同样举个简单例子：父亲是一个基类或 父类，小孩就是派生类或子类，小孩会继承父亲遗传的某些性状（如血型）。
+继承是实现代码重用的重要手段，直接使用基类对象的属性和方法，呈现面向对象程序设计 的层次结构，体现由简单到复杂、一般到特殊的认知过程。继承的方式有三种：public继承、 protect继承、private继承。编译器通过三种方式对应的限定符进行区分。
+public 继承 公有继承是比较常见的继承方式，通过 public 关键字来表明。
+public 继承权限  父类的 public 成员继承为子类的 public 成员，子类可以访问。 父类的 protected 成员继承为子类的 protected 成员，子类成员函数可以访问。 父类的 private 成员仍为 父类 的 private 成员，子类不可以访问。  实例 #include &amp;lt;iostream&amp;gt; class Base { public: int int_pub = 0; protected: int int_pro = 0; private: int int_pri = 0; }; class Derive : public Base { public: void print() { std::cout &amp;lt;&amp;lt; &amp;quot;print:&amp;quot; &amp;lt;&amp;lt; int_pub &amp;lt;&amp;lt; std::endl; std::cout &amp;lt;&amp;lt; &amp;quot;print:&amp;quot; &amp;lt;&amp;lt; int_pro &amp;lt;&amp;lt; std::endl; // std::cout &amp;lt;&amp;lt; &amp;quot;print:&amp;quot; &amp;lt;&amp;lt; int_pri &amp;lt;&amp;lt; std::endl; } }; int main() { Derive d; std::cout &amp;lt;&amp;lt; &amp;quot;main:&amp;quot; &amp;lt;&amp;lt; d.</description>
+    </item>
+    
+  </channel>
+</rss>
