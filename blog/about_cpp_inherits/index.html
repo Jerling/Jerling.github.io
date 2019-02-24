@@ -24,7 +24,7 @@
         "datePublished": "2019-02-22 20:07:56 &#43;0800 CST",
         "dateModified" : "2019-02-22 20:07:56 &#43;0800 CST",
         "url" : "/blog/about_cpp_inherits/",
-        "wordCount" : "676",
+        "wordCount" : "613",
         "keywords" : [ "c&#43;&#43;","面向对象","继承","Blog" ]
     }
     </script>
@@ -56,7 +56,7 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="/blog/about_cpp_inherits/" />
 <meta property="article:published_time" content="2019-02-22T20:07:56&#43;08:00"/>
-<meta property="article:modified_time" content="2019-02-24T09:09:55&#43;08:00"/>
+<meta property="article:modified_time" content="2019-02-24T12:02:55&#43;08:00"/>
 
         <meta property="og:image" content="//images/logo.png">
         <meta property="og:image:type" content="image/png">
@@ -68,8 +68,8 @@
 
 
 <meta itemprop="datePublished" content="2019-02-22T20:07:56&#43;08:00" />
-<meta itemprop="dateModified" content="2019-02-24T09:09:55&#43;08:00" />
-<meta itemprop="wordCount" content="676">
+<meta itemprop="dateModified" content="2019-02-24T12:02:55&#43;08:00" />
+<meta itemprop="wordCount" content="613">
 
 
 
@@ -465,7 +465,7 @@
             February 22, 2019</time>
         <span class="author">[Jerling]</span>
         
-            <p>4 minute read</p>
+            <p>3 minute read</p>
         
         
     </div>
@@ -797,21 +797,10 @@ int main() {
 
 <p>虚基类表存储的是虚基类相对直接继承类的偏移；而虚函数表存储的是虚函数地址。</p>
 
-<pre><code class="language-ditaa">       普通继承                          虚继承
-+-------+ +--------+          +----------------+
-|   A   | |   A    |          |      A         |
-+---+---+ +---+----+          +----------------+
-    ^          ^                ^           ^
-    |          |                |           |
-+---+---+ +----+----+      +------+     +--------+
-|   B   | |   C     |      |  B   |     |   C    |
-+-------+ +---------+      +------+     +--------+
-     ^         ^               ^            ^
-     |         |               |            |
-  +---------------+         +-------------------+
-  |      D        |         |        D          |
-  +---------------+         +-------------------+
-</code></pre>
+<figure>
+    <img src="/images/virtual_inherit.png"/> 
+</figure>
+
 
 <h3 id="实例-3">实例</h3>
 
