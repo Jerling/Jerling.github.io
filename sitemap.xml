@@ -3,6 +3,11 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>/blog/the_art_of_command_01/</loc>
+    <lastmod>2019-02-24T14:17:03+08:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/blog/about_cpp_inherits/</loc>
     <lastmod>2019-02-24T12:02:55+08:00</lastmod>
   </url>
@@ -58,7 +63,7 @@
   
   <url>
     <loc>/blog/</loc>
-    <lastmod>2019-02-24T12:02:55+08:00</lastmod>
+    <lastmod>2019-02-24T14:17:03+08:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -88,6 +93,12 @@
   </url>
   
   <url>
+    <loc>/tags/command/</loc>
+    <lastmod>2019-02-24T14:17:03+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>/tags/conclusion/</loc>
     <lastmod>2019-02-02T19:52:45+08:00</lastmod>
     <priority>0</priority>
@@ -113,7 +124,13 @@
   
   <url>
     <loc>/tags/linux/</loc>
-    <lastmod>2019-02-02T19:53:21+08:00</lastmod>
+    <lastmod>2019-02-24T14:17:03+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/tags/powershell/</loc>
+    <lastmod>2019-02-24T14:17:03+08:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -149,7 +166,13 @@
   
   <url>
     <loc>/</loc>
-    <lastmod>2019-02-24T12:02:55+08:00</lastmod>
+    <lastmod>2019-02-24T14:17:03+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/categories/%E5%91%BD%E4%BB%A4%E8%A1%8C%E8%89%BA%E6%9C%AF/</loc>
+    <lastmod>2019-02-24T14:17:03+08:00</lastmod>
     <priority>0</priority>
   </url>
   

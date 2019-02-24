@@ -20,6 +20,15 @@
     </item>
     
     <item>
+      <title>command</title>
+      <link>/tags/command/</link>
+      <pubDate>Sun, 24 Feb 2019 09:54:13 +0800</pubDate>
+      
+      <guid>/tags/command/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>conclusion</title>
       <link>/tags/conclusion/</link>
       <pubDate>Sat, 05 Jan 2019 00:00:00 +0800</pubDate>
@@ -58,9 +67,18 @@
     <item>
       <title>linux</title>
       <link>/tags/linux/</link>
-      <pubDate>Sat, 19 Jan 2019 20:17:47 +0800</pubDate>
+      <pubDate>Sun, 24 Feb 2019 09:54:13 +0800</pubDate>
       
       <guid>/tags/linux/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>powershell</title>
+      <link>/tags/powershell/</link>
+      <pubDate>Sun, 24 Feb 2019 09:54:13 +0800</pubDate>
+      
+      <guid>/tags/powershell/</guid>
       <description></description>
     </item>
     
