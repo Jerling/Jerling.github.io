@@ -6,10 +6,22 @@
     <description>Recent content in shell on 北极狼徒</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 19 Jan 2019 20:17:47 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 24 Feb 2019 09:54:13 +0800</lastBuildDate>
     
 	<atom:link href="/tags/shell/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>命令行艺术 (1) ~~ 基础篇</title>
+      <link>/blog/the_art_of_command_01/</link>
+      <pubDate>Sun, 24 Feb 2019 09:54:13 +0800</pubDate>
+      
+      <guid>/blog/the_art_of_command_01/</guid>
+      <description>Table of Contens  什么命令行  让命令行人性化  基础命令  私人神器zsh 熟悉环境 帮助命令 编辑命令 重定向 通配符 任务管理工具 远程登录 文件管理工具 网络管理工具 版本控制 正则表达式 软件包管理工具  总结  什么命令行 每个学习计算机的人都应该知道命令行，因为它是计算机相关从事人员比不可少的一项技能。 通常所说的命令行就是在 linux 下使用 shell 或者 windows 下的 powershell 输入的命令进行工作的过程，这些可以是系统程序或者用户程序，也可以为指向可执行文件 的链接文件。
+让命令行人性化 这里主要说的汉化，可以通过发行版对应的软件包管理工具(apt-get, yum, pacman等)安装对应的汉化包，然后将系统 语言设置为中文即可。
+基础命令 私人神器zsh 在本人之前的 动手写 手把手实现一个 LINUX SHELL 中介绍到常用的 shell . 这一系列 的命令将会在 zsh 下完成，几乎所有的基础教程都用的 bash。但是 zsh 配合 oh-my-zsh 可以让效率提升数倍。这对于私人工作环境是不错的选择，但是如果在 公用服务器工作的还是使用 bash 吧。
+ 声明：这里没有上下之分，只是本人用 zsh 用习惯了，而且有现成提升效率的配置 oh-my-zsh。节省 打造得心称手 shell 工具的时间。</description>
+    </item>
     
     <item>
       <title>手把手实现一个 Linux shell</title>
