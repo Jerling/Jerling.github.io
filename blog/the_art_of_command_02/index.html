@@ -50,7 +50,7 @@
       "width": 800
     },
     "datePublished": "2019-03-02T09:43:05JST",
-    "dateModified": "2019-03-03T11:23:24JST",
+    "dateModified": "2019-03-03T16:47:00JST",
     "author": {
       "@type": "Person",
       "name": "北极狼徒"
@@ -154,7 +154,7 @@
     <article class="single">
   <header>
     <ul class="p-facts">
-      <li><i class="fa fa-calendar" aria-hidden="true"></i><time datetime="2019-03-03T11:23:24JST">Mar 3, 2019</time></li>
+      <li><i class="fa fa-calendar" aria-hidden="true"></i><time datetime="2019-03-03T16:47:00JST">Mar 3, 2019</time></li>
       <li><i class="fa fa-bookmark" aria-hidden="true"></i><a href="/blog/">blog</a></li>
       
     </ul>
@@ -191,60 +191,74 @@
 </ul></li>
 </ul>
 
+<h4 id="常用快健键--常用快健键"><a href="#常用快健键">常用快健键</a></h4>
+
+<p><strong>*</strong> <a href="#一般快捷键">一般快捷键</a>
+<strong>*</strong> <a href="#编辑器相关">编辑器相关</a>
+<strong>*</strong> <a href="#历史命令">历史命令</a>
+<strong>*</strong> <a href="#路径相关">路径相关</a></p>
+
+<h4 id="少用但非常有用的命令--少用但非常有用的命令"><a href="#少用但非常有用的命令">少用但非常有用的命令</a></h4>
+
+<p><strong>*</strong> <a href="#管理相关">管理相关</a>
+<strong>*</strong> <a href="#使用别名">使用别名</a>
+<strong>*</strong> <a href="#同步配置">同步配置</a>
+<strong>*</strong> <a href="#脚本相关">脚本相关</a>
+<strong>*</strong> <a href="#善用文档">善用文档</a>
+<strong>*</strong> <a href="#分屏管理">分屏管理</a>
+<strong>*</strong> <a href="#远程登录">远程登录</a>
+<strong>*</strong> <a href="#杂项">杂项</a></p>
+
 <h2 id="常用快健键">常用快健键</h2>
 
 <h3 id="一般快捷键">一般快捷键</h3>
 
-<ul>
-<li><p>通过按 <code>Tab</code> 键实现自动补全参数，使用 <code>ctrl-r</code> 搜索命令行历史
-记录（按下按键之后，输入关键字便可以搜索，重复按下 <code>ctrl-r</code> 会向后查找匹配项，
-按下 <code>Enter</code> 键会执行当前匹配的命令，而按下右方向键会将匹配项放入当前行中，不
-会直接执行，以便做出修改）。</p></li>
+<h4 id="通过按-tab-键实现自动补全参数-使用-ctrl-r-搜索命令行历史">通过按 <code>Tab</code> 键实现自动补全参数，使用 <code>ctrl-r</code> 搜索命令行历史</h4>
 
-<li><p>可以按下 <code>ctrl-w</code> 删除键入的最后一个单词， <code>ctrl-u</code> 可以删除行内光标所在位置
-之前的内容， <code>alt-b</code> 和 <code>alt-f</code> 可以以单词为单位移动光标， <code>ctrl-a</code> 可以将光标
+<p>记录（按下按键之后，输入关键字便可以搜索，重复按下 <code>ctrl-r</code> 会向后查找匹配项，
+按下 <code>Enter</code> 键会执行当前匹配的命令，而按下右方向键会将匹配项放入当前行中，不
+会直接执行，以便做出修改）。</p>
+
+<h4 id="可以按下-ctrl-w-删除键入的最后一个单词-ctrl-u-可以删除行内光标所在位置">可以按下 <code>ctrl-w</code> 删除键入的最后一个单词， <code>ctrl-u</code> 可以删除行内光标所在位置</h4>
+
+<p>之前的内容， <code>alt-b</code> 和 <code>alt-f</code> 可以以单词为单位移动光标， <code>ctrl-a</code> 可以将光标
 移至行首， <code>ctrl-e</code> 可以将光标移至行尾， <code>ctrl-k</code> 可以删除光标至行尾的所有内容，
 <code>ctrl-l</code> 可以清屏。键入 <code>man readline</code> 可以查看 Bash 中的默认快捷键。内容有很
-多，例如 <code>alt-.</code> 循环地移向前一个参数，而 <code>alt-*</code> 可以展开通配符</p></li>
-</ul>
+多，例如 <code>alt-.</code> 循环地移向前一个参数，而 <code>alt-*</code> 可以展开通配符</p>
 
 <h3 id="编辑器相关">编辑器相关</h3>
 
-<ul>
-<li><p>可以执行 <code>set -o vi</code> 来使用 <code>vi</code> 风格的快捷键，而执行 <code>set -o emacs</code> 可以把它改回来。</p></li>
+<h4 id="可以执行-set-o-vi-来使用-vi-风格的快捷键-而执行-set-o-emacs-可以把它改回来">可以执行 <code>set -o vi</code> 来使用 <code>vi</code> 风格的快捷键，而执行 <code>set -o emacs</code> 可以把它改回来。</h4>
 
-<li><p>为了便于编辑长命令，在设置默认编辑器后（例如 <code>export EDITOR=vim</code>），
-<code>ctrl-x ctrl-e</code> 会打开一个编辑器来编辑当前输入的命令。在 <code>vi</code> 风格下快捷键则是
-<code>escape-v</code> 。</p></li>
-</ul>
+<h4 id="为了便于编辑长命令-在设置默认编辑器后-例如-export-editor-vim">为了便于编辑长命令，在设置默认编辑器后（例如 <code>export EDITOR=vim</code>），</h4>
+
+<p><code>ctrl-x ctrl-e</code> 会打开一个编辑器来编辑当前输入的命令。在 <code>vi</code> 风格下快捷键则是
+<code>escape-v</code> 。</p>
 
 <h3 id="历史命令">历史命令</h3>
 
-<ul>
-<li>使用 <code>history</code> 查看命令行历史记录，再用 <code>!n</code> （n 是命令编号）就可以再次执行。
-其中有许多缩写，最有用的大概就是 <code>!$</code> ， 用于指代上次键入的参数，而 !! 可以指
+<h4 id="使用-history-查看命令行历史记录-再用-n-n-是命令编号-就可以再次执行">使用 <code>history</code> 查看命令行历史记录，再用 <code>!n</code> （n 是命令编号）就可以再次执行。</h4>
+
+<p>其中有许多缩写，最有用的大概就是 <code>!$</code> ， 用于指代上次键入的参数，而 !! 可以指
 代上次键入的命令了（参考 man 页面中的“HISTORY EXPANSION”）。不过这些功能，
-也可以通过快捷键 <code>ctrl-r</code> 和 <code>alt-.</code> 来实现。</li>
-</ul>
+也可以通过快捷键 <code>ctrl-r</code> 和 <code>alt-.</code> 来实现。</p>
 
 <h3 id="路径相关">路径相关</h3>
 
-<ul>
-<li><p><code>cd</code> 命令可以切换工作路径，输入 <code>cd ~</code> 可以进入 home 目录。要访问 home 目录中
-的文件，可以使用前缀 ~（例如 ~/.bashrc）。在 sh 脚本里则用环境变量 $HOME 指代 home 目录的路径。</p></li>
+<h4 id="cd-命令可以切换工作路径-输入-cd-可以进入-home-目录-要访问-home-目录中"><code>cd</code> 命令可以切换工作路径，输入 <code>cd ~</code> 可以进入 home 目录。要访问 home 目录中</h4>
 
-<li><p>回到前一个工作路径： <code>cd -</code> 。</p></li>
+<p>的文件，可以使用前缀 ~（例如 ~/.bashrc）。在 sh 脚本里则用环境变量 $HOME 指代 home 目录的路径。</p>
 
-<li><p>如果输入命令的时候中途改了主意，按下 <code>alt-#</code> 在行首添加 # 把它当做注释再按下回
-车执行（或者依次按下 <code>ctrl-a</code> ， #， <code>enter</code>）。这样做的话，之后借助命令行历史
-记录，可以很方便恢复刚才输入到一半的命令。</p></li>
-</ul>
+<h4 id="回到前一个工作路径-cd">回到前一个工作路径： <code>cd -</code> 。</h4>
+
+<h4 id="如果输入命令的时候中途改了主意-按下-alt-在行首添加-把它当做注释再按下回">如果输入命令的时候中途改了主意，按下 <code>alt-#</code> 在行首添加 # 把它当做注释再按下回</h4>
+
+<p>车执行（或者依次按下 <code>ctrl-a</code> ， #， <code>enter</code>）。这样做的话，之后借助命令行历史
+记录，可以很方便恢复刚才输入到一半的命令。</p>
 
 <h2 id="少用但非常有用的命令">少用但非常有用的命令</h2>
 
-<ul>
-<li>有些命令不支持管道传递参数，那么这时候可以使用 <code>xargs</code> （ 或 <code>parallel</code> ）。</li>
-</ul>
+<h4 id="有些命令不支持管道传递参数-那么这时候可以使用-xargs-或-parallel">有些命令不支持管道传递参数，那么这时候可以使用 <code>xargs</code> （ 或 <code>parallel</code> ）。</h4>
 
 <p>可以控制每行参数个数（-L）和最大并行数（-P）如果不确定它们是否会按想的那样工作，先使用 xargs echo 查看一下。此外，使用
   -I{} 会很方便， 它会使 {} 替换一行。例如：</p>
@@ -255,50 +269,47 @@
 
 <h3 id="管理相关">管理相关</h3>
 
-<ul>
-<li><p><code>pstree -p</code> 以一种优雅的方式展示进程树。</p></li>
+<h4 id="pstree-p-以一种优雅的方式展示进程树"><code>pstree -p</code> 以一种优雅的方式展示进程树。</h4>
 
-<li><p>使用 <code>pgrep</code> 和 <code>pkill</code> 根据名字查找进程或发送信号， <code>-l</code> 可以列出进程名。</p></li>
+<h4 id="使用-pgrep-和-pkill-根据名字查找进程或发送信号-l-可以列出进程名">使用 <code>pgrep</code> 和 <code>pkill</code> 根据名字查找进程或发送信号， <code>-l</code> 可以列出进程名。</h4>
 
-<li><p>了解可以发往进程的信号的种类。比如，使用 <code>kill -STOP [pid]</code> 停止一个进程。使用 <code>man 7 signal</code> 查看详细列表。</p></li>
+<h4 id="了解可以发往进程的信号的种类-比如-使用-kill-stop-pid-停止一个进程-使用-man-7-signal-查看详细列表">了解可以发往进程的信号的种类。比如，使用 <code>kill -STOP [pid]</code> 停止一个进程。使用 <code>man 7 signal</code> 查看详细列表。</h4>
 
-<li><p>使用 <code>nohup</code> 或 <code>disown</code> 使一个后台进程持续运行。</p></li>
+<h4 id="使用-nohup-或-disown-使一个后台进程持续运行">使用 <code>nohup</code> 或 <code>disown</code> 使一个后台进程持续运行。</h4>
 
-<li><p>使用 <code>netstat -lntp</code> 或 <code>ss -plat</code> 检查哪些进程在监听端口（默认是检查 <code>TCP</code> 端口; 添加参数 -u 则检查 UDP 端口）或者 lsof -iTCP -sTCP:LISTEN -P -n (这也可以在 OS X 上运行)。</p></li>
+<h4 id="使用-netstat-lntp-或-ss-plat-检查哪些进程在监听端口-默认是检查-tcp-端口-添加参数-u-则检查-udp-端口-或者-lsof-itcp-stcp-listen-p-n--这也可以在-os-x-上运行">使用 <code>netstat -lntp</code> 或 <code>ss -plat</code> 检查哪些进程在监听端口（默认是检查 <code>TCP</code> 端口; 添加参数 -u 则检查 UDP 端口）或者 lsof -iTCP -sTCP:LISTEN -P -n (这也可以在 OS X 上运行)。</h4>
 
-<li><p><code>lsof</code> 来查看开启的套接字和文件。</p></li>
+<h4 id="lsof-来查看开启的套接字和文件"><code>lsof</code> 来查看开启的套接字和文件。</h4>
 
-<li><p>使用 <code>uptime</code> 或 <code>w</code> 来查看系统已经运行多长时间。</p></li>
-</ul>
+<h4 id="使用-uptime-或-w-来查看系统已经运行多长时间">使用 <code>uptime</code> 或 <code>w</code> 来查看系统已经运行多长时间。</h4>
 
 <h3 id="使用别名">使用别名</h3>
 
-<ul>
-<li><p>使用 <code>alias</code> 来创建常用命令的快捷形式。例如：alias ll=&lsquo;ls -latr&rsquo; 创建了一个新的命令别名 ll。</p></li>
+<h4 id="使用-alias-来创建常用命令的快捷形式-例如-alias-ll-ls-latr-创建了一个新的命令别名-ll">使用 <code>alias</code> 来创建常用命令的快捷形式。例如：alias ll=&lsquo;ls -latr&rsquo; 创建了一个新的命令别名 ll。</h4>
 
-<li><p>可以把别名、shell 选项和常用函数保存在 ~/.bashrc，具体看下这篇文章。这样做的话
-就可以在所有 shell 会话中使用该配置。</p></li>
-</ul>
+<h4 id="可以把别名-shell-选项和常用函数保存在-dot-bashrc-具体看下这篇文章-这样做的话">可以把别名、shell 选项和常用函数保存在 ~/.bashrc，具体看下这篇文章。这样做的话</h4>
+
+<p>就可以在所有 shell 会话中使用该配置。</p>
 
 <h3 id="同步配置">同步配置</h3>
 
-<ul>
-<li><p>把环境变量的设定以及登陆时要执行的命令保存在 <code>~/.bash_profile</code> 。而对于从图形
-界面启动的 <code>shell</code> 和 <code>cron</code> 启动的 <code>shell</code>，则需要单独配置文件。</p></li>
+<h4 id="把环境变量的设定以及登陆时要执行的命令保存在-dot-bash-profile-而对于从图形">把环境变量的设定以及登陆时要执行的命令保存在 <code>~/.bash_profile</code> 。而对于从图形</h4>
 
-<li><p>要想在几台电脑中同步配置文件（例如 .bashrc 和 .bash_profile），可以借助 Git。</p></li>
-</ul>
+<p>界面启动的 <code>shell</code> 和 <code>cron</code> 启动的 <code>shell</code>，则需要单独配置文件。</p>
+
+<h4 id="要想在几台电脑中同步配置文件-例如-dot-bashrc-和-dot-bash-profile-可以借助-git">要想在几台电脑中同步配置文件（例如 .bashrc 和 .bash_profile），可以借助 Git。</h4>
 
 <h3 id="脚本相关">脚本相关</h3>
 
-<ul>
-<li><p>当变量和文件名中包含空格的时候要格外小心。Bash 变量要用引号括起来，比如 &ldquo;\(FOO&rdquo;。
-  尽量使用 -0 或 -print0 选项以便用 NULL 来分隔文件名，例如 =locate -0 pattern |
-  xargs -0 ls -al= 或 =find / -print0 -type d | xargs -0 ls -al=。如果 =for=
-  循环中循环访问的文件名含有空字符（空格、tab 等字符），只需用 =IFS=\)&rsquo;\n&rsquo;= 把内部字段分隔符设为换行符。</p></li>
+<h4 id="当变量和文件名中包含空格的时候要格外小心-bash-变量要用引号括起来-比如-foo">当变量和文件名中包含空格的时候要格外小心。Bash 变量要用引号括起来，比如 &ldquo;$FOO&rdquo;。</h4>
 
-<li><p>在 Bash 脚本中，使用 <code>set -x</code> 去调试输出（或者使用它的变体 <code>set -v</code>，它会记录
-原始输入，包括多余的参数和注释）。尽可能地使用严格模式：使用 set -e 令脚本在发
+<p>尽量使用 -0 或 -print0 选项以便用 NULL 来分隔文件名，例如 <code>locate -0 pattern |
+  xargs -0 ls -al</code> 或 <code>find / -print0 -type d | xargs -0 ls -al</code>。如果 <code>for</code>
+循环中循环访问的文件名含有空字符（空格、tab 等字符），只需用 <code>IFS=$'\n'</code> 把内部字段分隔符设为换行符。</p>
+
+<h4 id="在-bash-脚本中-使用-set-x-去调试输出-或者使用它的变体-set-v-它会记录">在 Bash 脚本中，使用 <code>set -x</code> 去调试输出（或者使用它的变体 <code>set -v</code>，它会记录</h4>
+
+<p>原始输入，包括多余的参数和注释）。尽可能地使用严格模式：使用 set -e 令脚本在发
 生错误时退出而不是继续运行；使用 <code>set -u</code> 来检查是否使用了未赋值的变量；试试
 <code>set -o pipefail</code>，它可以监测管道中的错误。当牵扯到很多脚本时，使用 <code>trap</code> 来
 检测 <code>ERR 和 EXIT</code>。一个好的习惯是在脚本文件开头这样写，这会使它能够检测一些
@@ -308,76 +319,75 @@
   trap &quot;echo 'error: Script failed: see failed command above'&quot; ERR
 </code></pre>
 
-<ul>
-<li>在 Bash 脚本中，子 shell（使用括号 (&hellip;)）是一种组织参数的便捷方式。一个常见的
-例子是临时地移动工作路径，代码如下：</li>
-</ul>
+<h4 id="在-bash-脚本中-子-shell-使用括号--dot-dot-dot--是一种组织参数的便捷方式-一个常见的">在 Bash 脚本中，子 shell（使用括号 (&hellip;)）是一种组织参数的便捷方式。一个常见的</h4>
+
+<p>例子是临时地移动工作路径，代码如下：</p>
 
 <pre><code class="language-bash">  # do something in current dir
   (cd /some/other/dir &amp;&amp; other-command)
   # continue in original dir
-</code></pre></li>
+</code></pre>
 
-<li><p>在 Bash 中，变量有许多的扩展方式。 <code>${name:?error message}</code> 用于检查变量是否存
-在。此外，当 Bash 脚本只需要一个参数时，可以使用这样的代码
+<h4 id="在-bash-中-变量有许多的扩展方式-name-error-message-用于检查变量是否存">在 Bash 中，变量有许多的扩展方式。 <code>${name:?error message}</code> 用于检查变量是否存</h4>
+
+<p>在。此外，当 Bash 脚本只需要一个参数时，可以使用这样的代码
 <code>input_file=${1:?usage: $0 input_file}</code> 。在变量为空时使用默认值：
 <code>${name:-default}</code> 。如果要在之前的例子中再加一个（可选的）参数，可以使用类
 似这样的代码 <code>output_file=${2:-logfile}</code> ，如果省略了 <code>$2</code> ，它的值就为空，
 于是 <code>output_file</code> 就会被设为 <code>logfile</code> 。数学表达式： <code>i=$(( (i + 1) % 5 ))</code> 。
 序列：{1..10} 。截断字符串： <code>${var%suffix}</code> 和 <code>${var#prefix}</code>。例如，假设
-var=foo.pdf，那么 echo ${var%.pdf}.txt 将输出 foo.txt。</p></li>
+var=foo.pdf，那么 echo ${var%.pdf}.txt 将输出 foo.txt。</p>
 
-<li><p>使用括号扩展（{&hellip;}）来减少输入相似文本，并自动化文本组合。这在某些情况下会很
-有用，例如 <code>mv foo.{txt,pdf} some-dir</code> （同时移动两个文件）， <code>cp
+<h4 id="使用括号扩展-dot-dot-dot-来减少输入相似文本-并自动化文本组合-这在某些情况下会很">使用括号扩展（{&hellip;}）来减少输入相似文本，并自动化文本组合。这在某些情况下会很</h4>
+
+<p>有用，例如 <code>mv foo.{txt,pdf} some-dir</code> （同时移动两个文件）， <code>cp
   somefile{,.bak}</code> （会被扩展成 cp somefile somefile.bak）或者 <code>mkdir -p
-  test-{a,b,c}/subtest-{1,2,3}</code> （会被扩展成所有可能的组合，并创建一个目录树）。</p></li>
+  test-{a,b,c}/subtest-{1,2,3}</code> （会被扩展成所有可能的组合，并创建一个目录树）。</p>
 
-<li><p>通过使用 <code>&lt; (some command)</code> 可以将输出视为文件。例如，对比本地文件 /etc/hosts 和一个远程文件：</p>
+<h4 id="通过使用--some-command--可以将输出视为文件-例如-对比本地文件-etc-hosts-和一个远程文件">通过使用 <code>&lt; (some command)</code> 可以将输出视为文件。例如，对比本地文件 /etc/hosts 和一个远程文件：</h4>
 
 <pre><code class="language-bash">  diff /etc/hosts &lt;(ssh somehost cat /etc/hosts)
 </code></pre>
 
-<ul>
-<li>编写脚本时，可能会想要把代码都放在大括号里。缺少右括号的话，代码就会因为语法
-错误而无法执行。如果的脚本是要放在网上分享供他人使用的，这样的写法就体现出它
-的好处了，因为这样可以防止下载不完全代码被执行。</li>
-</ul>
+<h4 id="编写脚本时-可能会想要把代码都放在大括号里-缺少右括号的话-代码就会因为语法">编写脚本时，可能会想要把代码都放在大括号里。缺少右括号的话，代码就会因为语法</h4>
+
+<p>错误而无法执行。如果的脚本是要放在网上分享供他人使用的，这样的写法就体现出它
+的好处了，因为这样可以防止下载不完全代码被执行。</p>
 
 <pre><code class="language-bash">  {
       # 在这里写代码
   }
-</code></pre></li>
-</ul>
+</code></pre>
 
 <h3 id="善用文档">善用文档</h3>
 
-<ul>
-<li><p>了解 Bash 中的“here documents”，例如 cat &lt;&lt;EOF &hellip;。</p></li>
+<h4 id="了解-bash-中的-here-documents-例如-cat-eof-dot-dot-dot">了解 Bash 中的“here documents”，例如 cat &lt;&lt;EOF &hellip;。</h4>
 
-<li><p>在 Bash 中，同时重定向标准输出和标准错误： <code>some-command &gt;logfile 2&gt;&amp;1</code> 或者
-<code>some-command &amp;&gt;logfile</code> 。通常，为了保证命令不会在标准输入里残留一个未关闭的
-文件句柄捆绑在当前所在的终端上，在命令后添加 <code>&lt;/dev/null</code> 是一个好习惯。</p></li>
+<h4 id="在-bash-中-同时重定向标准输出和标准错误-some-command-logfile-2-and-1-或者">在 Bash 中，同时重定向标准输出和标准错误： <code>some-command &gt;logfile 2&gt;&amp;1</code> 或者</h4>
 
-<li><p>使用 <code>man ascii</code> 查看具有十六进制和十进制值的 <code>ASCII</code> 表。 <code>man unicode</code> ，
-<code>man utf-8</code> ，以及 <code>man latin1</code> 有助于了解通用的编码信息。</p></li>
-</ul>
+<p><code>some-command &amp;&gt;logfile</code> 。通常，为了保证命令不会在标准输入里残留一个未关闭的
+文件句柄捆绑在当前所在的终端上，在命令后添加 <code>&lt;/dev/null</code> 是一个好习惯。</p>
+
+<h4 id="使用-man-ascii-查看具有十六进制和十进制值的-ascii-表-man-unicode">使用 <code>man ascii</code> 查看具有十六进制和十进制值的 <code>ASCII</code> 表。 <code>man unicode</code> ，</h4>
+
+<p><code>man utf-8</code> ，以及 <code>man latin1</code> 有助于了解通用的编码信息。</p>
 
 <h3 id="分屏管理">分屏管理</h3>
 
-<ul>
-<li>使用 <code>screen</code> 或 <code>tmux</code> 来使用多份屏幕，当在使用 <code>ssh</code> 时（保存 <code>session</code> 信息）
-将尤为有用。而 <code>ubyobu</code> 可以为它们提供更多的信息和易用的管理工具。另一个轻量级
-的 session 持久化解决方案是 <code>dtach</code> 。</li>
-</ul>
+<h4 id="使用-screen-或-tmux-来使用多份屏幕-当在使用-ssh-时-保存-session-信息">使用 <code>screen</code> 或 <code>tmux</code> 来使用多份屏幕，当在使用 <code>ssh</code> 时（保存 <code>session</code> 信息）</h4>
+
+<p>将尤为有用。而 <code>ubyobu</code> 可以为它们提供更多的信息和易用的管理工具。另一个轻量级
+的 session 持久化解决方案是 <code>dtach</code> 。</p>
 
 <h3 id="远程登录">远程登录</h3>
 
-<ul>
-<li><p><code>ssh</code> 中，了解如何使用 <code>-L</code> 或 <code>-D</code>（偶尔需要用 <code>-R</code> ）开启隧道是非常有用的，
-比如需要从一台远程服务器上访问 web 页面。</p></li>
+<h4 id="ssh-中-了解如何使用-l-或-d-偶尔需要用-r-开启隧道是非常有用的"><code>ssh</code> 中，了解如何使用 <code>-L</code> 或 <code>-D</code>（偶尔需要用 <code>-R</code> ）开启隧道是非常有用的，</h4>
 
-<li><p>对 <code>ssh</code> 设置做一些小优化可能是很有用的，例如这个 <code>~/.ssh/config</code> 文件包含了防
-止特定网络环境下连接断开、压缩数据、多通道等选项：</p>
+<p>比如需要从一台远程服务器上访问 web 页面。</p>
+
+<h4 id="对-ssh-设置做一些小优化可能是很有用的-例如这个-dot-ssh-config-文件包含了防">对 <code>ssh</code> 设置做一些小优化可能是很有用的，例如这个 <code>~/.ssh/config</code> 文件包含了防</h4>
+
+<p>止特定网络环境下连接断开、压缩数据、多通道等选项：</p>
 
 <pre><code class="language-bash">  TCPKeepAlive=yes
   ServerAliveInterval=15
@@ -388,44 +398,46 @@ var=foo.pdf，那么 echo ${var%.pdf}.txt 将输出 foo.txt。</p></li>
   ControlPersist yes
 </code></pre>
 
-<ul>
-<li><p>一些其他的关于 <code>ssh</code> 的选项是与安全相关的，应当小心翼翼的使用。例如应当只能
-在可信任的网络中启用 <code>StrictHostKeyChecking=no，ForwardAgent=yes</code> 。</p></li>
+<h4 id="一些其他的关于-ssh-的选项是与安全相关的-应当小心翼翼的使用-例如应当只能">一些其他的关于 <code>ssh</code> 的选项是与安全相关的，应当小心翼翼的使用。例如应当只能</h4>
 
-<li><p>考虑使用 <code>mosh</code> 作为 ssh 的替代品，它使用 UDP 协议。它可以避免连接被中断并且
-对带宽需求更小，但它需要在服务端做相应的配置。</p></li>
+<p>在可信任的网络中启用 <code>StrictHostKeyChecking=no，ForwardAgent=yes</code> 。</p>
 
-<li><p>获取八进制形式的文件访问权限（修改系统设置时通常需要，但 <code>ls</code> 的功能不那么好用
-并且通常会搞砸），可以使用类似如下的代码：</p></li>
-</ul>
+<h4 id="考虑使用-mosh-作为-ssh-的替代品-它使用-udp-协议-它可以避免连接被中断并且">考虑使用 <code>mosh</code> 作为 ssh 的替代品，它使用 UDP 协议。它可以避免连接被中断并且</h4>
+
+<p>对带宽需求更小，但它需要在服务端做相应的配置。</p>
+
+<h4 id="获取八进制形式的文件访问权限-修改系统设置时通常需要-但-ls-的功能不那么好用">获取八进制形式的文件访问权限（修改系统设置时通常需要，但 <code>ls</code> 的功能不那么好用</h4>
+
+<p>并且通常会搞砸），可以使用类似如下的代码：</p>
 
 <pre><code class="language-bash">  stat -c '%A %a %n' /etc/timezone
-</code></pre></li>
-</ul>
+</code></pre>
 
 <h3 id="杂项">杂项</h3>
 
-<ul>
-<li><p>使用 <code>percol</code> 或者 <code>fzf</code> 可以交互式地从另一个命令输出中选取值。</p></li>
+<h4 id="使用-percol-或者-fzf-可以交互式地从另一个命令输出中选取值">使用 <code>percol</code> 或者 <code>fzf</code> 可以交互式地从另一个命令输出中选取值。</h4>
 
-<li><p>使用 <code>fpp（PathPicker）</code> 可以与基于另一个命令(例如 git）输出的文件交互。</p></li>
+<h4 id="使用-fpp-pathpicker-可以与基于另一个命令例如-git-输出的文件交互">使用 <code>fpp（PathPicker）</code> 可以与基于另一个命令(例如 git）输出的文件交互。</h4>
 
-<li><p>将 web 服务器上当前目录下所有的文件（以及子目录）暴露给所处网络的所有用户，
-使用： <code>python -m SimpleHTTPServer 7777</code> （使用端口 7777 和 Python 2）或
-<code>python -m http.server 7777</code> （使用端口 7777 和 Python 3）。</p></li>
+<h4 id="将-web-服务器上当前目录下所有的文件-以及子目录-暴露给所处网络的所有用户">将 web 服务器上当前目录下所有的文件（以及子目录）暴露给所处网络的所有用户，</h4>
 
-<li><p>以其他用户的身份执行命令，使用 <code>sudo</code> 。默认以 <code>root</code> 用户的身份执行；使用
-<code>-u</code> 来指定其他用户。使用 <code>-i</code> 来以该用户登录（需要输入_自己的_密码）。</p></li>
+<p>使用： <code>python -m SimpleHTTPServer 7777</code> （使用端口 7777 和 Python 2）或
+<code>python -m http.server 7777</code> （使用端口 7777 和 Python 3）。</p>
 
-<li><p>将 shell 切换为其他用户，使用 <code>su username</code> 或者 <code>sudo - username</code> 。加入 <code>-</code>
- 会使得切换后的环境与使用该用户登录后的环境相同。省略用户名则默认为 root。切换
-到哪个用户，就需要输入_哪个用户的_密码。</p></li>
+<h4 id="以其他用户的身份执行命令-使用-sudo-默认以-root-用户的身份执行-使用">以其他用户的身份执行命令，使用 <code>sudo</code> 。默认以 <code>root</code> 用户的身份执行；使用</h4>
 
-<li><p>了解命令行的 <code>128K</code> 限制。使用通配符匹配大量文件名时，常会遇到“Argument list
-too long”的错误信息。 （这种情况下换用 <code>find</code> 或 <code>xargs</code> 通常可以解决。）</p></li>
+<p><code>-u</code> 来指定其他用户。使用 <code>-i</code> 来以该用户登录（需要输入_自己的_密码）。</p>
 
-<li><p>当需要一个基本的计算器时，可以使用 <code>python</code> 解释器（当然要用 python 的时候也是这样）。例如：</p></li>
-</ul>
+<h4 id="将-shell-切换为其他用户-使用-su-username-或者-sudo-username-加入">将 shell 切换为其他用户，使用 <code>su username</code> 或者 <code>sudo - username</code> 。加入 <code>-</code></h4>
+
+<p>会使得切换后的环境与使用该用户登录后的环境相同。省略用户名则默认为 root。切换
+到哪个用户，就需要输入_哪个用户的_密码。</p>
+
+<h4 id="了解命令行的-128k-限制-使用通配符匹配大量文件名时-常会遇到-argument-list">了解命令行的 <code>128K</code> 限制。使用通配符匹配大量文件名时，常会遇到“Argument list</h4>
+
+<p>too long”的错误信息。 （这种情况下换用 <code>find</code> 或 <code>xargs</code> 通常可以解决。）</p>
+
+<h4 id="当需要一个基本的计算器时-可以使用-python-解释器-当然要用-python-的时候也是这样-例如">当需要一个基本的计算器时，可以使用 <code>python</code> 解释器（当然要用 python 的时候也是这样）。例如：</h4>
 
 <pre><code class="language-python">&gt;&gt;&gt; 2+3
 5
