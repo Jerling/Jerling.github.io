@@ -58,11 +58,6 @@
   </url>
   
   <url>
-    <loc>/categories/</loc>
-    <priority>0</priority>
-  </url>
-  
-  <url>
     <loc>/itemized/itemized/</loc>
   </url>
   
@@ -84,6 +79,10 @@
   <url>
     <loc>/itemized/</loc>
     <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/search/</loc>
   </url>
   
   <url>
