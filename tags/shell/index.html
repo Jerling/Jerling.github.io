@@ -49,7 +49,7 @@
               
               
               
-              <li><a href="/blog/">Blog</a></li>
+              <li><a href="/post/">Blog</a></li>
               
               
               
@@ -66,10 +66,6 @@
               
               
               <li><a href="/itemized/">Itemized</a></li>
-              
-              
-              
-              <li><a href="/contact/">Contact</a></li>
               
               
             </ul>
@@ -98,11 +94,32 @@
       <li><article class="li">
   <header>
     <ul class="p-facts">
-      <li><i class="fa fa-calendar" aria-hidden="true"></i><time datetime="2019-03-03T16:50:22JST">Mar 3, 2019</time></li>
-      <li><i class="fa fa-bookmark" aria-hidden="true"></i><a href="/blog/">blog</a></li>
+      <li><i class="fa fa-calendar" aria-hidden="true"></i><time datetime="2019-03-10T09:32:42JST">Mar 10, 2019</time></li>
+      <li><i class="fa fa-bookmark" aria-hidden="true"></i><a href="/post/">post</a></li>
       
     </ul>
-    <h2 class="title"><a href="/blog/the_art_of_command_02/">命令行艺术 (2) ~~ 日常使用篇</a></h2>
+    <h2 class="title"><a href="/post/the_art_of_command_03/">命令行艺术(3) ~~ 文件及数据处理篇</a></h2>
+  </header>
+
+  
+  <div class="summary">查找  文件查找 内容查找  数据处理  文件处理 内容处理 数据统计  文件拷贝 杂项  查找 文件查找  在当前目录下通过文件名查找一个文件，使用类似于这样的命令：find . -iname '*something*'  name : 文件名 type : 文件类型 regex : 正则查找 size : 文件大小 perm : 权限 [a|c|m]time &hellip; 还有很多，只列举了常用的几个选项  在所有路径下通过文件名查找文件，使用 locate something，它是在数据库中搜索，比 find 快；但是可能需要 update 更新数据库。 程序名搜索，使用 whereis  -b : 只搜索二进制文件 -m : 只搜索 man 说明文件 -s : 只搜索源代码文件  在 PATH 路径下，which 搜索系统命令，并返回第一个搜索结果 查看命令是系统自带的，还是外部命令，加上 -p 参数相当于 which 命令  内容查找  使用 ag 在源代码或数据文件里检索（grep -r 同样可以做到，但相比之下 ag 更加先进）。还有其它的替代软件如：rg、pt 等  数据处理 文件处理  将 HTML 转为文本：lynx -dump -stdin 。 Markdown，HTML，以及所有文档格式之间的转换，试试 pandoc。 当要处理棘手的 XML 时候，xmlstarlet 算是上古时代流传下来的神器。 使用 jq 处理 JSON。 使用 shyaml 处理 YAML。 要处理 Excel 或 CSV 文件的话，csvkit 提供了 in2csv，csvcue，csvjoin，csvgrep 等方便易用的工具。 当要处理 Amazon S3 相关的工作的时候，s3cmd 是一个很方便的工具而 s4cmd 的效率更高。Amazon 官方提供的 aws 以及 saws 是其他 AWS 相关工作的基础，值得学习。 拆分文件可以使用 split（按大小拆分）和 csplit（按模式拆分）。 使用 zless、zmore、zcat 和 zgrep 对压缩过的文件进行操作。</div>
+
+  
+  <footer>
+    <a href="/post/the_art_of_command_03/" title="命令行艺术(3) ~~ 文件及数据处理篇">Read More…</a>
+  </footer>
+  
+</article>
+</li>
+      
+      <li><article class="li">
+  <header>
+    <ul class="p-facts">
+      <li><i class="fa fa-calendar" aria-hidden="true"></i><time datetime="2019-03-03T16:50:22JST">Mar 3, 2019</time></li>
+      <li><i class="fa fa-bookmark" aria-hidden="true"></i><a href="/post/">post</a></li>
+      
+    </ul>
+    <h2 class="title"><a href="/post/the_art_of_command_02/">命令行艺术 (2) ~~ 日常使用篇</a></h2>
   </header>
 
   
@@ -112,7 +129,7 @@
 
   
   <footer>
-    <a href="/blog/the_art_of_command_02/" title="命令行艺术 (2) ~~ 日常使用篇">Read More…</a>
+    <a href="/post/the_art_of_command_02/" title="命令行艺术 (2) ~~ 日常使用篇">Read More…</a>
   </footer>
   
 </article>
@@ -122,10 +139,10 @@
   <header>
     <ul class="p-facts">
       <li><i class="fa fa-calendar" aria-hidden="true"></i><time datetime="2019-03-02T09:42:48JST">Mar 2, 2019</time></li>
-      <li><i class="fa fa-bookmark" aria-hidden="true"></i><a href="/blog/">blog</a></li>
+      <li><i class="fa fa-bookmark" aria-hidden="true"></i><a href="/post/">post</a></li>
       
     </ul>
-    <h2 class="title"><a href="/blog/the_art_of_command_01/">命令行艺术 (1) ~~ 基础篇</a></h2>
+    <h2 class="title"><a href="/post/the_art_of_command_01/">命令行艺术 (1) ~~ 基础篇</a></h2>
   </header>
 
   
@@ -136,7 +153,7 @@
 
   
   <footer>
-    <a href="/blog/the_art_of_command_01/" title="命令行艺术 (1) ~~ 基础篇">Read More…</a>
+    <a href="/post/the_art_of_command_01/" title="命令行艺术 (1) ~~ 基础篇">Read More…</a>
   </footer>
   
 </article>
@@ -146,10 +163,10 @@
   <header>
     <ul class="p-facts">
       <li><i class="fa fa-calendar" aria-hidden="true"></i><time datetime="2019-02-02T19:53:21JST">Feb 2, 2019</time></li>
-      <li><i class="fa fa-bookmark" aria-hidden="true"></i><a href="/blog/">blog</a></li>
+      <li><i class="fa fa-bookmark" aria-hidden="true"></i><a href="/post/">post</a></li>
       
     </ul>
-    <h2 class="title"><a href="/blog/writh_shell_with_cpp/">手把手实现一个 Linux shell</a></h2>
+    <h2 class="title"><a href="/post/writh_shell_with_cpp/">手把手实现一个 Linux shell</a></h2>
   </header>
 
   
@@ -157,7 +174,7 @@
 
   
   <footer>
-    <a href="/blog/writh_shell_with_cpp/" title="手把手实现一个 Linux shell">Read More…</a>
+    <a href="/post/writh_shell_with_cpp/" title="手把手实现一个 Linux shell">Read More…</a>
   </footer>
   
 </article>
@@ -179,25 +196,25 @@
     </div>
     <div class="list-group">
       
-      <a href="/blog/the_art_of_command_02/" class="list-group-item">命令行艺术 (2) ~~ 日常使用篇</a>
+      <a href="/post/the_art_of_command_03/" class="list-group-item">命令行艺术(3) ~~ 文件及数据处理篇</a>
       
-      <a href="/blog/the_art_of_command_01/" class="list-group-item">命令行艺术 (1) ~~ 基础篇</a>
+      <a href="/post/the_art_of_command_02/" class="list-group-item">命令行艺术 (2) ~~ 日常使用篇</a>
       
-      <a href="/blog/about_cpp_inherits/" class="list-group-item">关于对象那些事儿 ~~ 继承</a>
+      <a href="/post/the_art_of_command_01/" class="list-group-item">命令行艺术 (1) ~~ 基础篇</a>
       
-      <a href="/blog/write_textor_4/" class="list-group-item">动手写编辑器（四） ~ 文本编辑器</a>
+      <a href="/post/about_cpp_inherits/" class="list-group-item">关于对象那些事儿 ~~ 继承</a>
       
-      <a href="/blog/write_textor_3/" class="list-group-item">动手写编辑器 (三) ~ 文件查看器</a>
+      <a href="/post/write_textor_4/" class="list-group-item">动手写编辑器（四） ~ 文本编辑器</a>
       
-      <a href="/blog/write_textor_2/" class="list-group-item">动手写编辑器（二） ~ 输入和输出</a>
+      <a href="/post/write_textor_3/" class="list-group-item">动手写编辑器 (三) ~ 文件查看器</a>
       
-      <a href="/blog/write_textor_1/" class="list-group-item">动手写编辑器(一) ~ 文本模式</a>
+      <a href="/post/write_textor_2/" class="list-group-item">动手写编辑器（二） ~ 输入和输出</a>
       
-      <a href="/blog/writh_shell_with_cpp/" class="list-group-item">手把手实现一个 Linux shell</a>
+      <a href="/post/write_textor_1/" class="list-group-item">动手写编辑器(一) ~ 文本模式</a>
       
-      <a href="/blog/data_struct_trees_conclusion/" class="list-group-item">树结构及其应用场景总结</a>
+      <a href="/post/writh_shell_with_cpp/" class="list-group-item">手把手实现一个 Linux shell</a>
       
-      <a href="/blog/gentoo_linux_first_try/" class="list-group-item">Gentoo 系统初探</a>
+      <a href="/post/data_struct_trees_conclusion/" class="list-group-item">树结构及其应用场景总结</a>
       
     </div>
   </section>
@@ -230,15 +247,15 @@
       
       <a href="/tags/c&#43;&#43;" class="list-group-item">c&#43;&#43;</a>
       
-      <a href="/tags/linux" class="list-group-item">linux</a>
-      
       <a href="/tags/terminal" class="list-group-item">terminal</a>
+      
+      <a href="/tags/linux" class="list-group-item">linux</a>
       
       <a href="/tags/shell" class="list-group-item">shell</a>
       
-      <a href="/tags/textor" class="list-group-item">textor</a>
-      
       <a href="/tags/command" class="list-group-item">command</a>
+      
+      <a href="/tags/textor" class="list-group-item">textor</a>
       
       <a href="/tags/conclusion" class="list-group-item">conclusion</a>
       

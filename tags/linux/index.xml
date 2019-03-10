@@ -13,10 +13,10 @@
     
     <item>
       <title>命令行艺术 (2) ~~ 日常使用篇</title>
-      <link>/blog/the_art_of_command_02/</link>
+      <link>/post/the_art_of_command_02/</link>
       <pubDate>Sat, 02 Mar 2019 09:43:05 +0800</pubDate>
       
-      <guid>/blog/the_art_of_command_02/</guid>
+      <guid>/post/the_art_of_command_02/</guid>
       <description>Table of Contens  常用快健键  一般快捷键 编辑器相关 历史命令 路径相关  少用但非常有用的命令  管理相关 使用别名 同步配置 脚本相关 善用文档 分屏管理 远程登录 杂项   常用快健键 一般快捷键 通过按 Tab 键实现自动补全参数，使用 ctrl-r 搜索命令行历史 记录（按下按键之后，输入关键字便可以搜索，重复按下 ctrl-r 会向后查找匹配项， 按下 Enter 键会执行当前匹配的命令，而按下右方向键会将匹配项放入当前行中，不 会直接执行，以便做出修改）。
 可以按下 ctrl-w 删除键入的最后一个单词， ctrl-u 可以删除行内光标所在位置 之前的内容， alt-b 和 alt-f 可以以单词为单位移动光标， ctrl-a 可以将光标 移至行首， ctrl-e 可以将光标移至行尾， ctrl-k 可以删除光标至行尾的所有内容， ctrl-l 可以清屏。键入 man readline 可以查看 Bash 中的默认快捷键。内容有很 多，例如 alt-. 循环地移向前一个参数，而 alt-* 可以展开通配符
 编辑器相关 可以执行 set -o vi 来使用 vi 风格的快捷键，而执行 set -o emacs 可以把它改回来。 为了便于编辑长命令，在设置默认编辑器后（例如 export EDITOR=vim）， ctrl-x ctrl-e 会打开一个编辑器来编辑当前输入的命令。在 vi 风格下快捷键则是 escape-v 。</description>
@@ -24,10 +24,10 @@
     
     <item>
       <title>命令行艺术 (1) ~~ 基础篇</title>
-      <link>/blog/the_art_of_command_01/</link>
+      <link>/post/the_art_of_command_01/</link>
       <pubDate>Sun, 24 Feb 2019 09:54:13 +0800</pubDate>
       
-      <guid>/blog/the_art_of_command_01/</guid>
+      <guid>/post/the_art_of_command_01/</guid>
       <description>Table of Contens  什么命令行  让命令行人性化  基础命令  私人神器zsh 熟悉环境 帮助命令 编辑命令 重定向 通配符 任务管理工具 远程登录 文件管理工具 网络管理工具 版本控制 正则表达式 软件包管理工具  总结  什么命令行 每个学习计算机的人都应该知道命令行，因为它是计算机相关从事人员比不可少的一项技能。 通常所说的命令行就是在 linux 下使用 shell 或者 windows 下的 powershell 输入的命令进行工作的过程，这些可以是系统程序或者用户程序，也可以为指向可执行文件 的链接文件。
 让命令行人性化 这里主要说的汉化，可以通过发行版对应的软件包管理工具(apt-get, yum, pacman等)安装对应的汉化包，然后将系统 语言设置为中文即可。
 基础命令 私人神器zsh 在本人之前的 动手写 手把手实现一个 LINUX SHELL 中介绍到常用的 shell . 这一系列 的命令将会在 zsh 下完成，几乎所有的基础教程都用的 bash。但是 zsh 配合 oh-my-zsh 可以让效率提升数倍。这对于私人工作环境是不错的选择，但是如果在 公用服务器工作的还是使用 bash 吧。
@@ -36,19 +36,19 @@
     
     <item>
       <title>手把手实现一个 Linux shell</title>
-      <link>/blog/writh_shell_with_cpp/</link>
+      <link>/post/writh_shell_with_cpp/</link>
       <pubDate>Sat, 19 Jan 2019 20:17:47 +0800</pubDate>
       
-      <guid>/blog/writh_shell_with_cpp/</guid>
+      <guid>/post/writh_shell_with_cpp/</guid>
       <description>Table of Contens  Linux shell 基本知识 shell 工作流程 shell 实现  可执行程序该有的样子 一探循环体究竟 解剖循环体  总结 参考  Linux shell 基本知识 目前市场上主要有三大主流操作系统，除了 windows 系列几乎不需要在终端工作，其它两 大操作系统大部份应该是和终端打交道。当然这和不同系统的定位不一样有很大的关系， W 系主要面向娱乐办公，Linux 系主要是用服务器系统，所以对于程序员来说，或多或少得面 对它。Mac 虽然面向个人用户，但是结合了前两者的优势，娱乐办公和开 发都可以完美应对。在使用 *nix(linux &amp;amp; Mac) 过程中，我们几乎每天都会对着终端一行 行的执行代码，解释我们的名令的程序就是我们所谓的 shell, 也是本文的所讲的对象。 shell 自从诞生以来，也出现各种版本，虽然实现不同，功能都是一样的。本文写个 shell 只是为了学习，没有其它目的。据本人所知，目前流行的 shell 有： bash , zsh , fish , xosh 等，这几种 shell 本人都用过，简单讲奖各自的特点吧， bash 不用说了吧，几乎 所有发行版的默认 shell。 zsh 集装逼与高效于一身的 shell。强烈建议于 oh-my-zsh 一 起使用，省去配置的时间。 fish 小众软件，智能补全，拥有类似 apt 一样的插件管理工 具，但是由于 shell 语法和 bash 不兼容，建议个人使用，不要用于工作中。 xosh 是用 python 实现的，所以终端直接执行 python 语句就可以执行，同时可以执行系统命令。 pythoner 可以尝试一波，随时随地测试 python 语句。</description>
     </item>
     
     <item>
       <title>Gentoo 系统初探</title>
-      <link>/blog/gentoo_linux_first_try/</link>
+      <link>/post/gentoo_linux_first_try/</link>
       <pubDate>Sat, 22 Dec 2018 00:00:00 +0800</pubDate>
       
-      <guid>/blog/gentoo_linux_first_try/</guid>
+      <guid>/post/gentoo_linux_first_try/</guid>
       <description>Table of Contens  安装准备  系统镜像 虚拟软件 启动系统  配置网络 准备磁盘  创建分区 创建文件系统 挂载根分区  安装 stage3  配置编译选项  基本系统  镜像站点 复制 DNS 信息 挂载必要的文件系统 进入新环境 挂载 boot 分区 选择配置文件 更新 @world 集合 设置时区 配置地区  编译内核  安装源码 配置内核 编译和安装内核  配置系统  配置 fstab 文件 网络信息  系统工具  日志工具 文件索引 远程访问 文件系统工具 网络工具  安装引导  重启系统  后记  添加用户 清理垃圾  总结  系统安装 安装软件  参考链接  安装准备 Gentoo 一直是一个特别的存在，号称极客系统。网上对其推(装)崇(逼)备(必)至(备)。作为一个爱装逼的骚年，自然是想一探究尽。关于它的介绍，这里就不说了， 因为想挑战它的 Geeker 肯定都知道，如果没听过，还是选择隔壁 manjaro 。manjaro 是基于另一个优秀的发行版 Arch Linux，就是很贴心的省去了痛苦的 安装过程。想体验 Geeker 的成就感， Gentoo 和 Arch Linux 选择其中一个即可。这两者的区别是前者安装软件默认从源代码编译，而后者人性化一点，使用二进制安装包。 安装速度不知快了多少倍。也不知这些极客怎么忍受的，不过 Gentoo 的滚动更新没有 Arch 哪么快，所以安装完必要的软件之后就不须要频繁的更新，而 Arch 三天两头就可以 滚一滚了。</description>
     </item>
     

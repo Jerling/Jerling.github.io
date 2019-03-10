@@ -1,598 +1,173 @@
-<!DOCTYPE HTML>
-
+<!DOCTYPE html>
 <html>
-    <head>
-        <script type="application/ld+json">
-    {
-        "@context" : "http://schema.org",
-        "@type" : "BlogPosting",
-        "mainEntityOfPage": {
-             "@type": "WebPage",
-             "@id": "/"
-        },
-        "articleSection" : "post",
-        "name" : "树结构及其应用场景总结",
-        "headline" : "树结构及其应用场景总结",
-        "description" : "Table of Contens  数据结构 &ndash; 树  二叉树 二叉查找树 平衡二叉树 B树 B+树 B*树 字典树/Trie树 基数树/radix树  树的应用 参考  数据结构 &ndash; 树 树是学习数据结构必学的一种结构之一，其重要性不言而喻。本文对自己已知的树结构总结，如若有错，请在评论去留言，鄙人及时修改，以免误导别人。本文涉及的树结构包括：二叉树、二叉搜索树、基数树等。
+  <head>
+    <meta charset="utf-8">
+<meta name="pinterest" content="nopin">
+<meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+<meta name="generator" content="Hugo 0.54.0" />
+
+
+
+<link rel="canonical" href="/post/data_struct_trees_conclusion/">
+
+
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/styles/solarized_dark.min.css">
+    <title>树结构及其应用场景总结 - 北极狼徒</title>
+    
+<meta name="description" content="Table of Contens  数据结构 &amp;ndash; 树  二叉树 二叉查找树 平衡二叉树 B树 B&#43;树 B*树 字典树/Trie树 基数树/radix树  树的应用 参考  数据结构 &amp;ndash; 树 树是学习数据结构必学的一种结构之一，其重要性不言而喻。本文对自己已知的树结构总结，如若有错，请在评论去留言，鄙人及时修改，以免误导别人。本文涉及的树结构包括：二叉树、二叉搜索树、基数树等。二叉树 二叉树是树家族结构中最为基础的一种数据结构。定义  每个结点最多两个子结点，即度 &amp;lt;= 2 子结点区分为左右子结点，顺序不能反过来，否则为不同的二叉树 第 i 层最多有 2i-1 个结点 深度为 k 的二叉树最多有 2k - 1个结点，即满二叉树 对任一二叉树，叶结点数n0 和 度为2的结点数 n2 的关系式为：n0 = n2 &#43; 1  示例   特殊二叉树 在二叉树中存在满二叉树和完全二叉树两种特殊树结构。 满二叉树 定义除叶结点外，其它结点都有两个结点，即度为2。此时的二叉树结点数达到最大值：2h - 1。(h 为深度) 性质 叶结点数： 2h 第 k 层的结点数是：2k-1 总结点数是：2h - 1，且一定是奇数(废话)   完全二叉树">
+
+<meta property="og:title" content="树结构及其应用场景总结 - 北极狼徒">
+<meta property="og:type" content="article">
+<meta property="og:url" content="/post/data_struct_trees_conclusion/">
+<meta property="og:image" content="/images/default.png">
+<meta property="og:site_name" content="北极狼徒">
+<meta property="og:description" content="Table of Contens  数据结构 &amp;ndash; 树  二叉树 二叉查找树 平衡二叉树 B树 B&#43;树 B*树 字典树/Trie树 基数树/radix树  树的应用 参考  数据结构 &amp;ndash; 树 树是学习数据结构必学的一种结构之一，其重要性不言而喻。本文对自己已知的树结构总结，如若有错，请在评论去留言，鄙人及时修改，以免误导别人。本文涉及的树结构包括：二叉树、二叉搜索树、基数树等。二叉树 二叉树是树家族结构中最为基础的一种数据结构。定义  每个结点最多两个子结点，即度 &amp;lt;= 2 子结点区分为左右子结点，顺序不能反过来，否则为不同的二叉树 第 i 层最多有 2i-1 个结点 深度为 k 的二叉树最多有 2k - 1个结点，即满二叉树 对任一二叉树，叶结点数n0 和 度为2的结点数 n2 的关系式为：n0 = n2 &#43; 1  示例   特殊二叉树 在二叉树中存在满二叉树和完全二叉树两种特殊树结构。 满二叉树 定义除叶结点外，其它结点都有两个结点，即度为2。此时的二叉树结点数达到最大值：2h - 1。(h 为深度) 性质 叶结点数： 2h 第 k 层的结点数是：2k-1 总结点数是：2h - 1，且一定是奇数(废话)   完全二叉树">
+<meta property="og:locale" content="ja_JP">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="北极狼徒">
+<meta name="twitter:url" content="/post/data_struct_trees_conclusion/">
+<meta name="twitter:title" content="树结构及其应用场景总结 - 北极狼徒">
+<meta name="twitter:description" content="Table of Contens  数据结构 &amp;ndash; 树  二叉树 二叉查找树 平衡二叉树 B树 B&#43;树 B*树 字典树/Trie树 基数树/radix树  树的应用 参考  数据结构 &amp;ndash; 树 树是学习数据结构必学的一种结构之一，其重要性不言而喻。本文对自己已知的树结构总结，如若有错，请在评论去留言，鄙人及时修改，以免误导别人。本文涉及的树结构包括：二叉树、二叉搜索树、基数树等。二叉树 二叉树是树家族结构中最为基础的一种数据结构。定义  每个结点最多两个子结点，即度 &amp;lt;= 2 子结点区分为左右子结点，顺序不能反过来，否则为不同的二叉树 第 i 层最多有 2i-1 个结点 深度为 k 的二叉树最多有 2k - 1个结点，即满二叉树 对任一二叉树，叶结点数n0 和 度为2的结点数 n2 的关系式为：n0 = n2 &#43; 1  示例   特殊二叉树 在二叉树中存在满二叉树和完全二叉树两种特殊树结构。 满二叉树 定义除叶结点外，其它结点都有两个结点，即度为2。此时的二叉树结点数达到最大值：2h - 1。(h 为深度) 性质 叶结点数： 2h 第 k 层的结点数是：2k-1 总结点数是：2h - 1，且一定是奇数(废话)   完全二叉树">
+<meta name="twitter:image" content="/images/default.png">
+
+
+<script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "NewsArticle",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id":"/"
+    },
+    "headline": "树结构及其应用场景总结 - 北极狼徒",
+    "image": {
+      "@type": "ImageObject",
+      "url": "/images/default.png",
+      "height": 800,
+      "width": 800
+    },
+    "datePublished": "2019-01-05T00:00:00JST",
+    "dateModified": "2019-02-02T19:52:45JST",
+    "author": {
+      "@type": "Person",
+      "name": "北极狼徒"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "北极狼徒",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "/images/logo.png",
+        "width": 600,
+        "height": 60
+      }
+    },
+    "description": "Table of Contens  数据结构 &ndash; 树  二叉树 二叉查找树 平衡二叉树 B树 B+树 B*树 字典树/Trie树 基数树/radix树  树的应用 参考  数据结构 &ndash; 树 树是学习数据结构必学的一种结构之一，其重要性不言而喻。本文对自己已知的树结构总结，如若有错，请在评论去留言，鄙人及时修改，以免误导别人。本文涉及的树结构包括：二叉树、二叉搜索树、基数树等。
 二叉树 二叉树是树家族结构中最为基础的一种数据结构。
 定义  每个结点最多两个子结点，即度 &lt;= 2 子结点区分为左右子结点，顺序不能反过来，否则为不同的二叉树 第 i 层最多有 2i-1 个结点 深度为 k 的二叉树最多有 2k - 1个结点，即满二叉树 对任一二叉树，叶结点数n0 和 度为2的结点数 n2 的关系式为：n0 = n2 + 1  示例   特殊二叉树 在二叉树中存在满二叉树和完全二叉树两种特殊树结构。
  满二叉树
  定义
 除叶结点外，其它结点都有两个结点，即度为2。此时的二叉树结点数达到最大值：2h - 1。(h 为深度)
  性质
- 叶结点数： 2h 第 k 层的结点数是：2k-1 总结点数是：2h - 1，且一定是奇数(废话)   完全二叉树",
-        "inLanguage" : "en",
-        "author" : "",
-        "creator" : "",
-        "publisher": "",
-        "accountablePerson" : "",
-        "copyrightHolder" : "",
-        "copyrightYear" : "2019",
-        "datePublished": "2019-01-05 00:00:00 &#43;0800 CST",
-        "dateModified" : "2019-01-05 00:00:00 &#43;0800 CST",
-        "url" : "/post/data_struct_trees_conclusion/",
-        "wordCount" : "383",
-        "keywords" : [ "tree","data_struct","conclusion","Blog" ]
-    }
-    </script>
-        
-            
-                <title>树结构及其应用场景总结</title>
-            
-        
-
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="generator" content="Hugo 0.53" />
-        
+ 叶结点数： 2h 第 k 层的结点数是：2k-1 总结点数是：2h - 1，且一定是奇数(废话)   完全二叉树"
+  }
+</script>
 
 
-        
-            <meta name="author" content="[Jerling]">
-        
-        
-            
-                <meta name="description" content="HTML5 UP theme, Future Imperfect with some extra goodies, ported by Julio Pescador. Powered by Hugo">
-            
-        
-
-        <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="树结构及其应用场景总结"/>
-<meta name="twitter:description" content="Table of Contens  数据结构 &ndash; 树  二叉树 二叉查找树 平衡二叉树 B树 B&#43;树 B*树 字典树/Trie树 基数树/radix树  树的应用 参考  数据结构 &ndash; 树 树是学习数据结构必学的一种结构之一，其重要性不言而喻。本文对自己已知的树结构总结，如若有错，请在评论去留言，鄙人及时修改，以免误导别人。本文涉及的树结构包括：二叉树、二叉搜索树、基数树等。
-二叉树 二叉树是树家族结构中最为基础的一种数据结构。
-定义  每个结点最多两个子结点，即度 &lt;= 2 子结点区分为左右子结点，顺序不能反过来，否则为不同的二叉树 第 i 层最多有 2i-1 个结点 深度为 k 的二叉树最多有 2k - 1个结点，即满二叉树 对任一二叉树，叶结点数n0 和 度为2的结点数 n2 的关系式为：n0 = n2 &#43; 1  示例   特殊二叉树 在二叉树中存在满二叉树和完全二叉树两种特殊树结构。
- 满二叉树
- 定义
-除叶结点外，其它结点都有两个结点，即度为2。此时的二叉树结点数达到最大值：2h - 1。(h 为深度)
- 性质
- 叶结点数： 2h 第 k 层的结点数是：2k-1 总结点数是：2h - 1，且一定是奇数(废话)   完全二叉树"/>
-
-        <meta property="og:title" content="树结构及其应用场景总结" />
-<meta property="og:description" content="Table of Contens  数据结构 &ndash; 树  二叉树 二叉查找树 平衡二叉树 B树 B&#43;树 B*树 字典树/Trie树 基数树/radix树  树的应用 参考  数据结构 &ndash; 树 树是学习数据结构必学的一种结构之一，其重要性不言而喻。本文对自己已知的树结构总结，如若有错，请在评论去留言，鄙人及时修改，以免误导别人。本文涉及的树结构包括：二叉树、二叉搜索树、基数树等。
-二叉树 二叉树是树家族结构中最为基础的一种数据结构。
-定义  每个结点最多两个子结点，即度 &lt;= 2 子结点区分为左右子结点，顺序不能反过来，否则为不同的二叉树 第 i 层最多有 2i-1 个结点 深度为 k 的二叉树最多有 2k - 1个结点，即满二叉树 对任一二叉树，叶结点数n0 和 度为2的结点数 n2 的关系式为：n0 = n2 &#43; 1  示例   特殊二叉树 在二叉树中存在满二叉树和完全二叉树两种特殊树结构。
- 满二叉树
- 定义
-除叶结点外，其它结点都有两个结点，即度为2。此时的二叉树结点数达到最大值：2h - 1。(h 为深度)
- 性质
- 叶结点数： 2h 第 k 层的结点数是：2k-1 总结点数是：2h - 1，且一定是奇数(废话)   完全二叉树" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="/post/data_struct_trees_conclusion/" /><meta property="article:published_time" content="2019-01-05T00:00:00&#43;08:00"/>
-<meta property="article:modified_time" content="2019-01-20T10:47:27&#43;08:00"/>
-
-        <meta property="og:image" content="//images/logo.png">
-        <meta property="og:image:type" content="image/png">
-        <meta property="og:image:width" content="512">
-        <meta property="og:image:height" content="512">
-        
-<meta itemprop="name" content="树结构及其应用场景总结">
-<meta itemprop="description" content="Table of Contens  数据结构 &ndash; 树  二叉树 二叉查找树 平衡二叉树 B树 B&#43;树 B*树 字典树/Trie树 基数树/radix树  树的应用 参考  数据结构 &ndash; 树 树是学习数据结构必学的一种结构之一，其重要性不言而喻。本文对自己已知的树结构总结，如若有错，请在评论去留言，鄙人及时修改，以免误导别人。本文涉及的树结构包括：二叉树、二叉搜索树、基数树等。
-二叉树 二叉树是树家族结构中最为基础的一种数据结构。
-定义  每个结点最多两个子结点，即度 &lt;= 2 子结点区分为左右子结点，顺序不能反过来，否则为不同的二叉树 第 i 层最多有 2i-1 个结点 深度为 k 的二叉树最多有 2k - 1个结点，即满二叉树 对任一二叉树，叶结点数n0 和 度为2的结点数 n2 的关系式为：n0 = n2 &#43; 1  示例   特殊二叉树 在二叉树中存在满二叉树和完全二叉树两种特殊树结构。
- 满二叉树
- 定义
-除叶结点外，其它结点都有两个结点，即度为2。此时的二叉树结点数达到最大值：2h - 1。(h 为深度)
- 性质
- 叶结点数： 2h 第 k 层的结点数是：2k-1 总结点数是：2h - 1，且一定是奇数(废话)   完全二叉树">
-
-
-<meta itemprop="datePublished" content="2019-01-05T00:00:00&#43;08:00" />
-<meta itemprop="dateModified" content="2019-01-20T10:47:27&#43;08:00" />
-<meta itemprop="wordCount" content="383">
-
-
-
-<meta itemprop="keywords" content="tree,data_struct,conclusion," />
-
-        
-
-        
-            
-        
-
-        
-        
-            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-light.min.css">
-            <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway:400,800,900|Source+Sans+Pro:400,700">
-            <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.1.25/jquery.fancybox.min.css">
-            <link rel="stylesheet" href="/css/main.css">
-            <link rel="stylesheet" href="/css/add-on.css">
-            <link rel="stylesheet" href="/css/academicons.min.css">
-        
-
-        
-            
-                
-            
-        
-
-
-  
-    
-    <link href='//cdn.bootcss.com/highlight.js/9.11.0/styles/github.min.css' rel='stylesheet' type='text/css' />
-  
-
-
-      
-    </head>
-    <body>
-
-      
-      <div id="wrapper">
-
-    
-    
-<header id="header">
-    
-      <h1><a href="/">post</a></h1>
+    <link href="/css/styles.css" rel="stylesheet">
     
 
-    <nav class="links">
-        <ul>
-            
-                <li>
-                    <a href="/">
-                            <i class="fa fa-home">&nbsp;</i>Home
-                    </a>
-                </li>
-            
-                <li>
-                    <a href="/post/">
-                            <i class="fa fa-newspaper-o">&nbsp;</i>Blog
-                    </a>
-                </li>
-            
-                <li>
-                    <a href="/categories/">
-                            <i class="fa fa-sitemap-c">&nbsp;</i>Categories
-                    </a>
-                </li>
-            
-                <li>
-                    <a href="/tags/">
-                            <i class="fa fa-sitemap-t">&nbsp;</i>Tags
-                    </a>
-                </li>
-            
-                <li>
-                    <a href="/about/">
-                            <i class="fa fa-id-card-o">&nbsp;</i>About
-                    </a>
-                </li>
-            
-                <li>
-                    <a href="/itemized/">
-                            <i class="fa fa-list">&nbsp;</i>Itemized
-                    </a>
-                </li>
-            
-                <li>
-                    <a href="/contact/">
-                            <i class="fa fa-envelope-o">&nbsp;</i>Contact
-                    </a>
-                </li>
-            
-        </ul>
-    </nav>
-    <nav class="main">
-        <ul>
-            
-            <li id="share-nav" class="share-menu" style="display:none;">
-                <a class="fa-share-alt" href="#share-menu">Share</a>
-            </li>
-            
-            <li class="search">
-                <a class="fa-search" href="#search">Search</a>
-                <form id="search" method="get" action="//google.com/search">
-                    <input type="text" name="q" placeholder="Search" />
-                    <input type="hidden" name="as_sitesearch" value="/">
-                </form>
-            </li>
-            <li class="menu">
-                <a class="fa-bars" href="#menu">Menu</a>
-            </li>
-        </ul>
-    </nav>
-</header>
+  </head>
 
-
-<section id="menu">
-
+  <body>
     
-        <section>
-            <form class="search" method="get" action="//google.com/search">
-                <input type="text" name="q" placeholder="Search" />
-                <input type="hidden" name="as_sitesearch" value="/">
-            </form>
-        </section>
-
     
-        <section>
-            <ul class="links">
-                
-                    <li>
-                        <a href="/">
-                            <h3>
-                                <i class="fa fa-home">&nbsp;</i>Home
-                            </h3>
-                        </a>
-                    </li>
-                
-                    <li>
-                        <a href="/post/">
-                            <h3>
-                                <i class="fa fa-newspaper-o">&nbsp;</i>Blog
-                            </h3>
-                        </a>
-                    </li>
-                
-                    <li>
-                        <a href="/categories/">
-                            <h3>
-                                <i class="fa fa-sitemap-c">&nbsp;</i>Categories
-                            </h3>
-                        </a>
-                    </li>
-                
-                    <li>
-                        <a href="/tags/">
-                            <h3>
-                                <i class="fa fa-sitemap-t">&nbsp;</i>Tags
-                            </h3>
-                        </a>
-                    </li>
-                
-                    <li>
-                        <a href="/about/">
-                            <h3>
-                                <i class="fa fa-id-card-o">&nbsp;</i>About
-                            </h3>
-                        </a>
-                    </li>
-                
-                    <li>
-                        <a href="/itemized/">
-                            <h3>
-                                <i class="fa fa-list">&nbsp;</i>Itemized
-                            </h3>
-                        </a>
-                    </li>
-                
-                    <li>
-                        <a href="/contact/">
-                            <h3>
-                                <i class="fa fa-envelope-o">&nbsp;</i>Contact
-                            </h3>
-                        </a>
-                    </li>
-                
+    
+
+    <header class="l-header">
+      <nav class="navbar navbar-default">
+        <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">北极狼徒</a>
+          </div>
+
+          
+          <div id="navbar" class="collapse navbar-collapse">
+            
+            <ul class="nav navbar-nav navbar-right">
+              
+              
+              <li><a href="/">Home</a></li>
+              
+              
+              
+              <li><a href="/post/">Blog</a></li>
+              
+              
+              
+              <li><a href="/categories/">Categories</a></li>
+              
+              
+              
+              <li><a href="/tags/">Tags</a></li>
+              
+              
+              
+              <li><a href="/about/">About</a></li>
+              
+              
+              
+              <li><a href="/itemized/">Itemized</a></li>
+              
+              
             </ul>
-        </section>
-
-    
-        <section class="recent-posts">
-            <div class="mini-posts">
-                <header>
-                    <h3>Recent Posts</h3>
-                </header>
-                
-
-                
-                    
-                
-
-                
-                        <article class="mini-post">
-                            <header>
-                                <h3><a href="/post/write_textor_3/">动手写编辑器 (三) ~ 文件查看器</a></h3>
-                                
-                                <time class="published" datetime=
-                                    '2019-02-02'>
-                                    February 2, 2019</time>
-                            </header>
-                            
-
-                        </article>
-                
-                        <article class="mini-post">
-                            <header>
-                                <h3><a href="/post/write_textor_2/">动手写编辑器（二） ~ 输入和输出</a></h3>
-                                
-                                <time class="published" datetime=
-                                    '2019-01-30'>
-                                    January 30, 2019</time>
-                            </header>
-                            
-
-                        </article>
-                
-                        <article class="mini-post">
-                            <header>
-                                <h3><a href="/post/write_textor_1/">动手写编辑器(一) ~ 文本模式</a></h3>
-                                
-                                <time class="published" datetime=
-                                    '2019-01-20'>
-                                    January 20, 2019</time>
-                            </header>
-                            
-
-                        </article>
-                
-                        <article class="mini-post">
-                            <header>
-                                <h3><a href="/post/writh_shell_with_cpp/">手把手实现一个 Linux shell</a></h3>
-                                
-                                <time class="published" datetime=
-                                    '2019-01-19'>
-                                    January 19, 2019</time>
-                            </header>
-                            
-
-                        </article>
-                
-                        <article class="mini-post">
-                            <header>
-                                <h3><a href="/post/data_struct_trees_conclusion/">树结构及其应用场景总结</a></h3>
-                                
-                                <time class="published" datetime=
-                                    '2019-01-05'>
-                                    January 5, 2019</time>
-                            </header>
-                            
-
-                        </article>
-                
-
-                
-                    <a href=
-                        
-                            /post/
-                        
-                        class="button">View more posts</a>
-                
-            </div>
-        </section>
-
-    
-        
-</section>
-
-    <section id="share-menu">
-    <section id="social-share-nav">
-        <ul class="links">
-            <header>
-                <h3>Share this post <i class="fa fa-smile-o"></i></h3>
-            </header>
             
+          </div>
+          
 
+        </div>
+      </nav>
+    </header>
 
-
-<li>
-  <a href="//twitter.com/share?url=%2fpost%2fdata_struct_trees_conclusion%2f&amp;text=%e6%a0%91%e7%bb%93%e6%9e%84%e5%8f%8a%e5%85%b6%e5%ba%94%e7%94%a8%e5%9c%ba%e6%99%af%e6%80%bb%e7%bb%93&amp;via=" target="_blank" class="share-btn twitter">
-    <i class="fa fa-twitter"></i>
-    <p>Twitter</p>
-    </a>
-</li>
-
-
-
-
-<li>
-  <a href="//plus.google.com/share?url=%2fpost%2fdata_struct_trees_conclusion%2f" target="_blank" class="share-btn google-plus">
-    <i class="fa fa-google-plus"></i>
-    <p>Google+</p>
-  </a>
-</li>
-
-
-
-
-
-<li>
-  <a href="//www.facebook.com/sharer/sharer.php?u=%2fpost%2fdata_struct_trees_conclusion%2f" target="_blank" class="share-btn facebook">
-    <i class="fa fa-facebook"></i>
-    <p>Facebook</p>
-    </a>
-</li>
-
-
-
-
-<li>
-  <a href="//reddit.com/submit?url=%2fpost%2fdata_struct_trees_conclusion%2f&amp;title=%e6%a0%91%e7%bb%93%e6%9e%84%e5%8f%8a%e5%85%b6%e5%ba%94%e7%94%a8%e5%9c%ba%e6%99%af%e6%80%bb%e7%bb%93" target="_blank" class="share-btn reddit">
-    <i class="fa fa-reddit-alien"></i>
-    <p>Reddit</p>
-  </a>
-</li>
-
-
-
-
-<li>
-  <a href="//www.linkedin.com/shareArticle?url=%2fpost%2fdata_struct_trees_conclusion%2f&amp;title=%e6%a0%91%e7%bb%93%e6%9e%84%e5%8f%8a%e5%85%b6%e5%ba%94%e7%94%a8%e5%9c%ba%e6%99%af%e6%80%bb%e7%bb%93" target="_blank" class="share-btn linkedin">
-      <i class="fa fa-linkedin"></i>
-      <p>LinkedIn</p>
-    </a>
-</li>
-
-
-
-
-<li>
-  <a href="//www.stumbleupon.com/submit?url=%2fpost%2fdata_struct_trees_conclusion%2f&amp;title=%e6%a0%91%e7%bb%93%e6%9e%84%e5%8f%8a%e5%85%b6%e5%ba%94%e7%94%a8%e5%9c%ba%e6%99%af%e6%80%bb%e7%bb%93" target="_blank" class="share-btn stumbleupon">
-    <i class="fa fa-stumbleupon"></i>
-    <p>StumbleUpon</p>
-  </a>
-</li>
-
-
-
-
-<li>
-  <a href="//www.pinterest.com/pin/create/button/?url=%2fpost%2fdata_struct_trees_conclusion%2f&amp;description=%e6%a0%91%e7%bb%93%e6%9e%84%e5%8f%8a%e5%85%b6%e5%ba%94%e7%94%a8%e5%9c%ba%e6%99%af%e6%80%bb%e7%bb%93" target="_blank" class="share-btn pinterest">
-    <i class="fa fa-pinterest-p"></i>
-    <p>Pinterest</p>
-  </a>
-</li>
-
-
-
-
-<li>
-  <a href="mailto:?subject=Check out this post by %5bJerling%5d&amp;body=%2fpost%2fdata_struct_trees_conclusion%2f" target="_blank" class="share-btn email">
-    <i class="fa fa-envelope"></i>
-    <p>Email</p>
-  </a>
-</li>
-
-
-        </ul>
-    </section>
-</section>
-
-    
-    <div id="main">
+    <main>
+      <div class="container">
         
+<div class="row">
+  <div class="col-md-8">
+
+    <nav class="p-crumb">
+      <ol class="breadcrumb">
+        <li><a href="/"><i class="fa fa-home" aria-hidden="true"></i></a></li>
         
-        <article class="post">
+        <li itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb"><a href="/post/" itemprop="url"><span itemprop="title">post</span></a></li>
+        
+        <li class="active">树结构及其应用场景总结</li>
+      </ol>
+    </nav>
+
+    <article class="single">
   <header>
-    <div class="title">
-        
-            <h1><a href="/post/data_struct_trees_conclusion/">树结构及其应用场景总结</a></h1>
-            
-        
-        
-    </div>
-    <div class="meta">
-        
+    <ul class="p-facts">
+      <li><i class="fa fa-calendar" aria-hidden="true"></i><time datetime="2019-02-02T19:52:45JST">Feb 2, 2019</time></li>
+      <li><i class="fa fa-bookmark" aria-hidden="true"></i><a href="/post/">post</a></li>
+      
+    </ul>
 
-        <time class="published"
-            datetime='2019-01-05'>
-            January 5, 2019</time>
-        <span class="author">[Jerling]</span>
-        
-            <p>2 minute read</p>
-        
-        
-    </div>
-</header>
-
-
-  
-    <section id="social-share">
-      <ul class="icons">
-        
-
-
-
-<li>
-  <a href="//twitter.com/share?url=%2fpost%2fdata_struct_trees_conclusion%2f&amp;text=%e6%a0%91%e7%bb%93%e6%9e%84%e5%8f%8a%e5%85%b6%e5%ba%94%e7%94%a8%e5%9c%ba%e6%99%af%e6%80%bb%e7%bb%93&amp;via=" target="_blank" class="share-btn twitter">
-    <i class="fa fa-twitter"></i>
-    <p>Twitter</p>
-    </a>
-</li>
-
-
-
-
-<li>
-  <a href="//plus.google.com/share?url=%2fpost%2fdata_struct_trees_conclusion%2f" target="_blank" class="share-btn google-plus">
-    <i class="fa fa-google-plus"></i>
-    <p>Google+</p>
-  </a>
-</li>
-
-
-
-
-
-<li>
-  <a href="//www.facebook.com/sharer/sharer.php?u=%2fpost%2fdata_struct_trees_conclusion%2f" target="_blank" class="share-btn facebook">
-    <i class="fa fa-facebook"></i>
-    <p>Facebook</p>
-    </a>
-</li>
-
-
-
-
-<li>
-  <a href="//reddit.com/submit?url=%2fpost%2fdata_struct_trees_conclusion%2f&amp;title=%e6%a0%91%e7%bb%93%e6%9e%84%e5%8f%8a%e5%85%b6%e5%ba%94%e7%94%a8%e5%9c%ba%e6%99%af%e6%80%bb%e7%bb%93" target="_blank" class="share-btn reddit">
-    <i class="fa fa-reddit-alien"></i>
-    <p>Reddit</p>
-  </a>
-</li>
-
-
-
-
-<li>
-  <a href="//www.linkedin.com/shareArticle?url=%2fpost%2fdata_struct_trees_conclusion%2f&amp;title=%e6%a0%91%e7%bb%93%e6%9e%84%e5%8f%8a%e5%85%b6%e5%ba%94%e7%94%a8%e5%9c%ba%e6%99%af%e6%80%bb%e7%bb%93" target="_blank" class="share-btn linkedin">
-      <i class="fa fa-linkedin"></i>
-      <p>LinkedIn</p>
-    </a>
-</li>
-
-
-
-
-<li>
-  <a href="//www.stumbleupon.com/submit?url=%2fpost%2fdata_struct_trees_conclusion%2f&amp;title=%e6%a0%91%e7%bb%93%e6%9e%84%e5%8f%8a%e5%85%b6%e5%ba%94%e7%94%a8%e5%9c%ba%e6%99%af%e6%80%bb%e7%bb%93" target="_blank" class="share-btn stumbleupon">
-    <i class="fa fa-stumbleupon"></i>
-    <p>StumbleUpon</p>
-  </a>
-</li>
-
-
-
-
-<li>
-  <a href="//www.pinterest.com/pin/create/button/?url=%2fpost%2fdata_struct_trees_conclusion%2f&amp;description=%e6%a0%91%e7%bb%93%e6%9e%84%e5%8f%8a%e5%85%b6%e5%ba%94%e7%94%a8%e5%9c%ba%e6%99%af%e6%80%bb%e7%bb%93" target="_blank" class="share-btn pinterest">
-    <i class="fa fa-pinterest-p"></i>
-    <p>Pinterest</p>
-  </a>
-</li>
-
-
-
-
-<li>
-  <a href="mailto:?subject=Check out this post by %5bJerling%5d&amp;body=%2fpost%2fdata_struct_trees_conclusion%2f" target="_blank" class="share-btn email">
-    <i class="fa fa-envelope"></i>
-    <p>Email</p>
-  </a>
-</li>
-
-
-      </ul>
-    </section>
-  
+    <h1 class="title">树结构及其应用场景总结</h1>
+  </header>
 
   
 
-  <div id="content">
-    
+  <div class="article-body">
 
 <h2 id="table-of-contens">Table of Contens</h2>
 
@@ -1178,498 +753,159 @@ B+树的分裂只影响原结点和父结点，而不会影响兄弟结点，所
 <p><a href="https://blog.csdn.net/mtt%5Fsky/article/details/51442452">https://blog.csdn.net/mtt%5Fsky/article/details/51442452</a></p>
 
 <p><a href="https://en.wikipedia.org/wiki/Radix%5Ftree">https://en.wikipedia.org/wiki/Radix%5Ftree</a></p>
+</div>
 
-  </div>
-
-  <footer>
-    <ul class="stats">
-  <li class="categories">
-    <ul>
-        
-            
-            
-                <i class="fa fa-folder"></i>
-                
-                
-                <li><a class="article-category-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84">数据结构</a></li>
-                
-            
-        
-    </ul>
-  </li>
-  <li class="tags">
-    <ul>
-        
-            
-            
-                <i class="fa fa-tags"></i>
-                
-                
-                <li><a class="article-category-link" href="/tags/tree">tree</a></li>
-                
-                
-                <li><a class="article-category-link" href="/tags/data_struct">data_struct</a></li>
-                
-                
-                <li><a class="article-category-link" href="/tags/conclusion">conclusion</a></li>
-                
-            
-        
-    </ul>
-  </li>
-</ul>
-
+  <footer class="article-footer">
+    
+    
+    
+    <section class="bordered">
+      <header>
+        <div class="panel-title">CATEGORIES</div>
+      </header>
+      <div>
+        <ul class="p-terms">
+          
+          <li><a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a></li>
+          
+        </ul>
+      </div>
+    </section>
+    
+    
+    
+    <section class="bordered">
+      <header>
+        <div class="panel-title">TAGS</div>
+      </header>
+      <div>
+        <ul class="p-terms">
+          
+          <li><a href="/tags/tree/">tree</a></li>
+          
+          <li><a href="/tags/data_struct/">data_struct</a></li>
+          
+          <li><a href="/tags/conclusion/">conclusion</a></li>
+          
+        </ul>
+      </div>
+    </section>
+    
+    
   </footer>
 
 </article>
 
 
-<ul class="actions pagination">
     
-        <li><a href="/post/gentoo_linux_first_try/"
-                class="button big previous">Gentoo 系统初探</a></li>
-    
+  </div>
 
+  <div class="col-md-4">
     
-        <li><a href="/post/writh_shell_with_cpp/"
-                class="button big next">手把手实现一个 Linux shell</a></li>
-    
-</ul>
+<aside class="l-sidebar">
 
-
+  <section class="panel panel-default">
+    <div class="panel-heading">
+      <div class="panel-title">LATESTS</div>
     </div>
-    
-<section id="sidebar">
-
-  
-  <section id="intro">
-    
-    
+    <div class="list-group">
       
-        <a href='/' class="logo"><img src="https://avatars1.githubusercontent.com/u/18494842?s=400&amp;v=4" alt="北极狼徒" /></a>
+      <a href="/post/the_art_of_command_03/" class="list-group-item">命令行艺术(3) ~~ 文件及数据处理篇</a>
       
-    
-    
-      <header>
-        <h2>北极狼徒</h2>
-        <p>友情链接 <br> <a href="https://www.codywei.com/">三向砖</a>  <a href="http://zilongshanren.com/">子龙山人</a> <br> <a href="https://www.jianshu.com/u/9d07992df72b">程序员sunny </a></p>
-      </header>
-    
-    
-      <ul class="icons">
-        
-          
-    <li><a href="/index.xml" type="application/rss+xml" target="_blank" title="RSS" class="fa fa-rss"></a></li>
-
-
-        
-        
-  <li><a href="//github.com/Jerling" target="_blank" title="GitHub" class="fa fa-github"></a></li>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  <li><a href="mailto:1161676899@qq.com" title="Email" class="fa fa-envelope"></a></li>
-
-
-      </ul>
-    
+      <a href="/post/the_art_of_command_02/" class="list-group-item">命令行艺术 (2) ~~ 日常使用篇</a>
+      
+      <a href="/post/the_art_of_command_01/" class="list-group-item">命令行艺术 (1) ~~ 基础篇</a>
+      
+      <a href="/post/about_cpp_inherits/" class="list-group-item">关于对象那些事儿 ~~ 继承</a>
+      
+      <a href="/post/write_textor_4/" class="list-group-item">动手写编辑器（四） ~ 文本编辑器</a>
+      
+      <a href="/post/write_textor_3/" class="list-group-item">动手写编辑器 (三) ~ 文件查看器</a>
+      
+      <a href="/post/write_textor_2/" class="list-group-item">动手写编辑器（二） ~ 输入和输出</a>
+      
+      <a href="/post/write_textor_1/" class="list-group-item">动手写编辑器(一) ~ 文本模式</a>
+      
+      <a href="/post/writh_shell_with_cpp/" class="list-group-item">手把手实现一个 Linux shell</a>
+      
+      <a href="/post/data_struct_trees_conclusion/" class="list-group-item">树结构及其应用场景总结</a>
+      
+    </div>
   </section>
 
   
-  <section class="recent-posts">
-    <div class="mini-posts">
-      <header>
-        <h3>Recent Posts</h3>
-      </header>
-      <div class="posts-container">
-        
+  <section class="panel panel-default">
+    <div class="panel-heading">
+      <div class="panel-title">CATEGORY</div>
+    </div>
+    <div class="list-group">
+      
+      <a href="/categories/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98" class="list-group-item">项目实战</a>
+      
+      <a href="/categories/%E5%91%BD%E4%BB%A4%E8%A1%8C%E8%89%BA%E6%9C%AF" class="list-group-item">命令行艺术</a>
+      
+      <a href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F" class="list-group-item">操作系统</a>
+      
+      <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84" class="list-group-item">数据结构</a>
+      
+      <a href="/categories/%E6%B8%A9%E6%95%85%E7%9F%A5%E6%96%B0" class="list-group-item">温故知新</a>
+      
+    </div>
+  </section>
+  
+  <section class="panel panel-default">
+    <div class="panel-heading">
+      <div class="panel-title">TAG</div>
+    </div>
+    <div class="list-group">
+      
+      <a href="/tags/c&#43;&#43;" class="list-group-item">c&#43;&#43;</a>
+      
+      <a href="/tags/terminal" class="list-group-item">terminal</a>
+      
+      <a href="/tags/linux" class="list-group-item">linux</a>
+      
+      <a href="/tags/shell" class="list-group-item">shell</a>
+      
+      <a href="/tags/command" class="list-group-item">command</a>
+      
+      <a href="/tags/textor" class="list-group-item">textor</a>
+      
+      <a href="/tags/conclusion" class="list-group-item">conclusion</a>
+      
+      <a href="/tags/data_struct" class="list-group-item">data_struct</a>
+      
+      <a href="/tags/funny" class="list-group-item">funny</a>
+      
+      <a href="/tags/gentoo" class="list-group-item">gentoo</a>
+      
+    </div>
+  </section>
+  
 
-        
-          
-        
+</aside>
 
-        
-          <article class="mini-post">
-            <header>
-              <h3>
-                <a href="/post/write_textor_3/">动手写编辑器 (三) ~ 文件查看器</a>
-              </h3>
-              
-              <time class="published" datetime='2019-02-02'>
-                February 2, 2019
-              </time>
-            </header>
-            
 
-          </article>
-        
-          <article class="mini-post">
-            <header>
-              <h3>
-                <a href="/post/write_textor_2/">动手写编辑器（二） ~ 输入和输出</a>
-              </h3>
-              
-              <time class="published" datetime='2019-01-30'>
-                January 30, 2019
-              </time>
-            </header>
-            
+  </div>
+</div>
 
-          </article>
-        
-          <article class="mini-post">
-            <header>
-              <h3>
-                <a href="/post/write_textor_1/">动手写编辑器(一) ~ 文本模式</a>
-              </h3>
-              
-              <time class="published" datetime='2019-01-20'>
-                January 20, 2019
-              </time>
-            </header>
-            
-
-          </article>
-        
-          <article class="mini-post">
-            <header>
-              <h3>
-                <a href="/post/writh_shell_with_cpp/">手把手实现一个 Linux shell</a>
-              </h3>
-              
-              <time class="published" datetime='2019-01-19'>
-                January 19, 2019
-              </time>
-            </header>
-            
-
-          </article>
-        
-          <article class="mini-post">
-            <header>
-              <h3>
-                <a href="/post/data_struct_trees_conclusion/">树结构及其应用场景总结</a>
-              </h3>
-              
-              <time class="published" datetime='2019-01-05'>
-                January 5, 2019
-              </time>
-            </header>
-            
-
-          </article>
-        
       </div>
-
-      
-        <a href=
-          
-            /post/
-          
-        class="button">View more posts</a>
-      
-    </div>
-  </section>
-
-  
-  
-  
-  
-  
-    <section id="categories">
-      <header>
-        <h3>
-          <a href="/categories/">Categories</a>
-        </h3>
-      </header>
-        
-          
-        
-
-        
-        <p>
-          <article>
-            <header>
-              
-                <a href="/categories/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98/">项目实战</a>
-                <span style="float:right;">4</span>
-              
-            </header>
-          </article>
-        </p>
-        
-        <p>
-          <article>
-            <header>
-              
-                Uncategorized
-                <span style="float:right;">1</span>
-              
-            </header>
-          </article>
-        </p>
-        
-        <p>
-          <article>
-            <header>
-              
-                <a href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">操作系统</a>
-                <span style="float:right;">1</span>
-              
-            </header>
-          </article>
-        </p>
-        
-        <p>
-          <article>
-            <header>
-              
-                <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a>
-                <span style="float:right;">1</span>
-              
-            </header>
-          </article>
-        </p>
-        
-    </section>
-  
-  
-
-  
-  
-    <section id="mini-bio">
-      <h3>About</h3>
-      <p>简历不够丰富，有空再补</p>
-      <a href="/about/" class="button">Learn More</a>
-    </section>
-  
-
-  
-  <section id="footer">
-    
-      <ul class="icons">
-        
-          
-    <li><a href="/index.xml" type="application/rss+xml" target="_blank" title="RSS" class="fa fa-rss"></a></li>
-
-
-        
-        
-  <li><a href="//github.com/Jerling" target="_blank" title="GitHub" class="fa fa-github"></a></li>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  <li><a href="mailto:1161676899@qq.com" title="Email" class="fa fa-envelope"></a></li>
-
-
-      </ul>
-    
-    <p class="copyright">
-      
-        &copy; 2019
-        
-          北极狼徒
-        
-      .
-      Powered by <a href="//gohugo.io" target="_blank">Hugo</a>
-    </p>
-  </section>
-</section>
-
-    </div>
-    <a id="back-to-top" href="#" class="fa fa-arrow-up fa-border fa-2x"></a>
-    
-
-    
-      
-    
-
-    
-      
-      
-      
-        <script src="//cdn.bootcss.com/highlight.js/9.11.0/highlight.min.js"></script>
-        
-        
-        
-        <script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/r.min.js"></script>
-        <script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/yaml.min.js"></script>
-        <script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/css.min.js"></script>
-        <script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
-      
-    
-    
-    
-      <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/skel/3.0.1/skel.min.js"></script>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.1.25/jquery.fancybox.min.js"></script>
-      <script src="/js/util.js"></script>
-      <script src="/js/main.js"></script>
-      <script src="/js/backToTop.js"></script>
-    
-
-    
-      
-        
-      
-    
-
-    
+    </main>
+
+    <footer class="l-footer">
+      <div class="container">
+        <p><span class="h-logo">&copy; 北极狼徒</span></p>
+        <aside>
+          <p>Powered by <a href="https://gohugo.io/">Hugo</a>.</p>
+          <p><a href="https://github.com/dim0627/hugo_theme_beg">Beg</a> designed by <a href="http://yet.unresolved.xyz/">Daisuke Tsuji</a>.</p>
+        </aside>
+      </div>
+    </footer>
+
+    <script src="//code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/highlight.min.js"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-      <script src="//yihui.name/js/math-code.js"></script>
-<script async
-src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
-</script>
-
-
   </body>
 </html>
 
