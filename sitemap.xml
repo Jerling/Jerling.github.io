@@ -59,11 +59,7 @@
   
   <url>
     <loc>/about/</loc>
-    <lastmod>2018-12-09T18:42:06+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/itemized/itemized/</loc>
+    <lastmod>2016-03-20T23:28:02+08:00</lastmod>
   </url>
   
   <url>
@@ -90,10 +86,6 @@
   </url>
   
   <url>
-    <loc>/contact/</loc>
-  </url>
-  
-  <url>
     <loc>/tags/data_struct/</loc>
     <lastmod>2019-02-02T19:52:45+08:00</lastmod>
     <priority>0</priority>
@@ -108,11 +100,6 @@
   <url>
     <loc>/tags/gentoo/</loc>
     <lastmod>2019-02-02T19:53:51+08:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/itemized/</loc>
     <priority>0</priority>
   </url>
   
@@ -165,7 +152,7 @@
   </url>
   
   <url>
-    <loc>/</loc>
+    <loc>/feed.xml</loc>
     <lastmod>2019-03-10T09:32:42+08:00</lastmod>
     <priority>0</priority>
   </url>

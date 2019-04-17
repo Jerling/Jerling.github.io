@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Text_editor on 北极狼徒</title>
+    <link>/tags/text_editor/</link>
+    <description>Recent content in Text_editor on 北极狼徒</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Sun, 20 Jan 2019 18:31:32 +0800</lastBuildDate>
+    
+	<atom:link href="/tags/text_editor/feed.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>动手写编辑器(一) ~ 文本模式</title>
+      <link>/post/write_textor_1/</link>
+      <pubDate>Sun, 20 Jan 2019 18:31:32 +0800</pubDate>
+      
+      <guid>/post/write_textor_1/</guid>
+      <description>Table of Contens 写作动机 规范模式 文本模式 设置属性 本地模式标志 ~~ c_lflag 输入模式标志 ~~ c_iflag 输出模式标志 ~~ c_oflag 杂项标志 开启和关闭文本模式 总结 参考 写作动机 因为是该项目</description>
+    </item>
+    
+  </channel>
+</rss>

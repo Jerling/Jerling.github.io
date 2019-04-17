@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Tags on 北极狼徒</title>
+    <link>/tags/</link>
+    <description>Recent content in Tags on 北极狼徒</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Fri, 22 Feb 2019 20:07:56 +0800</lastBuildDate>
+    
+	<atom:link href="/tags/feed.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>C&#43;&#43;</title>
+      <link>/tags/c&#43;&#43;/</link>
+      <pubDate>Fri, 22 Feb 2019 20:07:56 +0800</pubDate>
+      
+      <guid>/tags/c&#43;&#43;/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Command</title>
+      <link>/tags/command/</link>
+      <pubDate>Sun, 10 Mar 2019 09:32:42 +0800</pubDate>
+      
+      <guid>/tags/command/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Conclusion</title>
+      <link>/tags/conclusion/</link>
+      <pubDate>Sat, 05 Jan 2019 00:00:00 +0800</pubDate>
+      
+      <guid>/tags/conclusion/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Data_struct</title>
+      <link>/tags/data_struct/</link>
+      <pubDate>Sat, 05 Jan 2019 00:00:00 +0800</pubDate>
+      
+      <guid>/tags/data_struct/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Funny</title>
+      <link>/tags/funny/</link>
+      <pubDate>Sat, 22 Dec 2018 00:00:00 +0800</pubDate>
+      
+      <guid>/tags/funny/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Gentoo</title>
+      <link>/tags/gentoo/</link>
+      <pubDate>Sat, 22 Dec 2018 00:00:00 +0800</pubDate>
+      
+      <guid>/tags/gentoo/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Linux</title>
+      <link>/tags/linux/</link>
+      <pubDate>Sat, 02 Mar 2019 09:43:05 +0800</pubDate>
+      
+      <guid>/tags/linux/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Shell</title>
+      <link>/tags/shell/</link>
+      <pubDate>Sun, 10 Mar 2019 09:32:42 +0800</pubDate>
+      
+      <guid>/tags/shell/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Terminal</title>
+      <link>/tags/terminal/</link>
+      <pubDate>Sun, 10 Mar 2019 09:32:42 +0800</pubDate>
+      
+      <guid>/tags/terminal/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Text_editor</title>
+      <link>/tags/text_editor/</link>
+      <pubDate>Sun, 20 Jan 2019 18:31:32 +0800</pubDate>
+      
+      <guid>/tags/text_editor/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Textor</title>
+      <link>/tags/textor/</link>
+      <pubDate>Sun, 17 Feb 2019 16:51:33 +0800</pubDate>
+      
+      <guid>/tags/textor/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Tree</title>
+      <link>/tags/tree/</link>
+      <pubDate>Sat, 05 Jan 2019 00:00:00 +0800</pubDate>
+      
+      <guid>/tags/tree/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>继承</title>
+      <link>/tags/%E7%BB%A7%E6%89%BF/</link>
+      <pubDate>Fri, 22 Feb 2019 20:07:56 +0800</pubDate>
+      
+      <guid>/tags/%E7%BB%A7%E6%89%BF/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>面向对象</title>
+      <link>/tags/%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/</link>
+      <pubDate>Fri, 22 Feb 2019 20:07:56 +0800</pubDate>
+      
+      <guid>/tags/%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Tree on 北极狼徒</title>
+    <link>/tags/tree/</link>
+    <description>Recent content in Tree on 北极狼徒</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Sat, 05 Jan 2019 00:00:00 +0800</lastBuildDate>
+    
+	<atom:link href="/tags/tree/feed.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>树结构及其应用场景总结</title>
+      <link>/post/data_struct_trees_conclusion/</link>
+      <pubDate>Sat, 05 Jan 2019 00:00:00 +0800</pubDate>
+      
+      <guid>/post/data_struct_trees_conclusion/</guid>
+      <description>Table of Contens 数据结构 &amp;ndash; 树 二叉树 二叉查找树 平衡二叉树 B树 B+树 B*树 字典树/Trie树 基数树/radix树 树的应用 参考 数据结构 &amp;ndash; 树 树是学习数据结构必</description>
+    </item>
+    
+  </channel>
+</rss>

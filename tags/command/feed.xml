@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Command on 北极狼徒</title>
+    <link>/tags/command/</link>
+    <description>Recent content in Command on 北极狼徒</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Sun, 10 Mar 2019 09:32:42 +0800</lastBuildDate>
+    
+	<atom:link href="/tags/command/feed.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>命令行艺术(3) ~~ 文件及数据处理篇</title>
+      <link>/post/the_art_of_command_03/</link>
+      <pubDate>Sun, 10 Mar 2019 09:32:42 +0800</pubDate>
+      
+      <guid>/post/the_art_of_command_03/</guid>
+      <description>查找 文件查找 内容查找 数据处理 文件处理 内容处理 数据统计 文件拷贝 杂项 查找 文件查找 在当前目录下通过文件名查找一个文件，使用类似于这样的命令：fin</description>
+    </item>
+    
+    <item>
+      <title>命令行艺术 (2) ~~ 日常使用篇</title>
+      <link>/post/the_art_of_command_02/</link>
+      <pubDate>Sat, 02 Mar 2019 09:43:05 +0800</pubDate>
+      
+      <guid>/post/the_art_of_command_02/</guid>
+      <description>Table of Contens 常用快健键 一般快捷键 编辑器相关 历史命令 路径相关 少用但非常有用的命令 管理相关 使用别名 同步配置 脚本相关 善用文档 分屏管理 远程登录 杂项 常用快健</description>
+    </item>
+    
+    <item>
+      <title>命令行艺术 (1) ~~ 基础篇</title>
+      <link>/post/the_art_of_command_01/</link>
+      <pubDate>Sun, 24 Feb 2019 09:54:13 +0800</pubDate>
+      
+      <guid>/post/the_art_of_command_01/</guid>
+      <description>Table of Contens 什么命令行 让命令行人性化 基础命令 私人神器zsh 熟悉环境 帮助命令 编辑命令 重定向 通配符 任务管理工具 远程登录 文件管理工具 网络管理工具 版本控制</description>
+    </item>
+    
+  </channel>
+</rss>
