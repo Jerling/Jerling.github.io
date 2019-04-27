@@ -3,6 +3,11 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>/post/about_memory_allcates/</loc>
+    <lastmod>2019-04-27T16:33:49+08:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/about/</loc>
     <lastmod>2019-03-20T23:28:02+08:00</lastmod>
   </url>
@@ -104,14 +109,26 @@
   </url>
   
   <url>
+    <loc>/tags/jemalloc/</loc>
+    <lastmod>2019-04-27T16:33:49+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>/tags/linux/</loc>
     <lastmod>2019-03-03T16:50:22+08:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
+    <loc>/tags/pmalloc2/</loc>
+    <lastmod>2019-04-27T16:33:49+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>/post/</loc>
-    <lastmod>2019-03-10T09:32:42+08:00</lastmod>
+    <lastmod>2019-04-27T16:33:49+08:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -124,6 +141,12 @@
   <url>
     <loc>/tags/</loc>
     <lastmod>2019-02-24T12:02:55+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/tags/tcmalloc/</loc>
+    <lastmod>2019-04-27T16:33:49+08:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -152,8 +175,14 @@
   </url>
   
   <url>
+    <loc>/categories/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/</loc>
+    <lastmod>2019-04-27T16:33:49+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>/feed.xml</loc>
-    <lastmod>2019-03-20T23:28:02+08:00</lastmod>
+    <lastmod>2019-04-27T16:33:49+08:00</lastmod>
     <priority>0</priority>
   </url>
   

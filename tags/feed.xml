@@ -66,6 +66,15 @@
     </item>
     
     <item>
+      <title>Jemalloc</title>
+      <link>/tags/jemalloc/</link>
+      <pubDate>Fri, 26 Apr 2019 20:12:02 +0800</pubDate>
+      
+      <guid>/tags/jemalloc/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>Linux</title>
       <link>/tags/linux/</link>
       <pubDate>Sat, 02 Mar 2019 09:43:05 +0800</pubDate>
@@ -75,11 +84,29 @@
     </item>
     
     <item>
+      <title>Pmalloc2</title>
+      <link>/tags/pmalloc2/</link>
+      <pubDate>Fri, 26 Apr 2019 20:12:02 +0800</pubDate>
+      
+      <guid>/tags/pmalloc2/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>Shell</title>
       <link>/tags/shell/</link>
       <pubDate>Sun, 10 Mar 2019 09:32:42 +0800</pubDate>
       
       <guid>/tags/shell/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Tcmalloc</title>
+      <link>/tags/tcmalloc/</link>
+      <pubDate>Fri, 26 Apr 2019 20:12:02 +0800</pubDate>
+      
+      <guid>/tags/tcmalloc/</guid>
       <description></description>
     </item>
     

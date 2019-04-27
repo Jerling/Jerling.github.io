@@ -2,16 +2,16 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <title>手把手实现一个 Linux shell - 北极狼徒</title>
+  <title>关于内存配置器的一些总结 - 北极狼徒</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
   
-  <meta name="description" content="小项目实战">
+  <meta name="description" content="malloc 函数的低层内存配置器">
   
-  <meta itemprop="name" content="手把手实现一个 Linux shell - 北极狼徒">
-  <meta itemprop="description" content="小项目实战">
+  <meta itemprop="name" content="关于内存配置器的一些总结 - 北极狼徒">
+  <meta itemprop="description" content="malloc 函数的低层内存配置器">
   <meta itemprop="image" content="/img/author.jpg">
   
-  <meta name="twitter:description" content="小项目实战" />
+  <meta name="twitter:description" content="malloc 函数的低层内存配置器" />
   
   <link rel="shortcut icon" href="/img/favicon.ico"/>
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
@@ -61,258 +61,285 @@
 	<article itemprop="articleBody">
     <header class="article-info clearfix">
   <h1 itemprop="name">
-      <a href="/post/writh_shell_with_cpp/" title="手把手实现一个 Linux shell" itemprop="url">手把手实现一个 Linux shell</a>
+      <a href="/post/about_memory_allcates/" title="关于内存配置器的一些总结" itemprop="url">关于内存配置器的一些总结</a>
   </h1>
   <p class="article-author">By
     
-      <a href="https://github.com/Jerling" title="[Jerling]">[Jerling]</a>
+      <a href="/" title=""></a>
     
   </p>
   <p class="article-time">
-    <time datetime="2019-01-19 20:17:47 &#43;0800 CST" itemprop="datePublished">2019年01月19日</time>
+    <time datetime="2019-04-26 20:12:02 &#43;0800 CST" itemprop="datePublished">2019年04月26日</time>
   </p>
 </header>
 
 	<div class="article-content">
     
-    
-
-<h2 id="table-of-contens">Table of Contens</h2>
-
+		<div class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+      <nav id="TableOfContents">
 <ul>
-<li><a href="#linux-shell-基本知识">Linux shell 基本知识</a></li>
-<li><a href="#shell-工作流程">shell 工作流程</a></li>
-<li><a href="#shell-实现">shell 实现</a>
-
+<li>
 <ul>
-<li><a href="#可执行程序该有的样子">可执行程序该有的样子</a></li>
-<li><a href="#一探循环体究竟">一探循环体究竟</a></li>
-<li><a href="#解剖循环体">解剖循环体</a></li>
+<li><a href="#概述">概述</a>
+<ul>
+<li><a href="#内存管理">内存管理</a></li>
+<li><a href="#内存配置器">内存配置器</a></li>
+<li><a href="#重要性">重要性</a></li>
+</ul></li>
+<li><a href="#ptmalloc2">ptmalloc2</a>
+<ul>
+<li><a href="#内存管理对象">内存管理对象</a></li>
+<li><a href="#多线程处理">多线程处理</a></li>
+<li><a href="#分配流程">分配流程</a></li>
+<li><a href="#系统回收">系统回收</a></li>
+<li><a href="#缺点">缺点</a></li>
+</ul></li>
+<li><a href="#tcmalloc">tcmalloc</a>
+<ul>
+<li><a href="#threadcache">ThreadCache</a>
+<ul>
+<li><a href="#分配流程-1">分配流程</a></li>
+</ul></li>
+<li><a href="#centralcache">CentralCache</a>
+<ul>
+<li><a href="#分配流程-2">分配流程</a></li>
+</ul></li>
+<li><a href="#回收内存">回收内存</a></li>
+<li><a href="#优点">优点</a></li>
+</ul></li>
+<li><a href="#jemalloc">jemalloc</a>
+<ul>
+<li><a href="#size-class">size-class</a></li>
+<li><a href="#jemalloc-中对象的关系">jemalloc 中对象的关系</a></li>
+<li><a href="#优点-1">优点</a></li>
 </ul></li>
 <li><a href="#总结">总结</a></li>
-<li><a href="#参考">参考</a></li>
+</ul></li>
 </ul>
+</nav>
+		</div>
+    
+    
 
-<h2 id="linux-shell-基本知识">Linux shell 基本知识</h2>
+<h2 id="概述">概述</h2>
 
-<p>目前市场上主要有三大主流操作系统，除了 windows 系列几乎不需要在终端工作，其它两
-大操作系统大部份应该是和终端打交道。当然这和不同系统的定位不一样有很大的关系， W
-系主要面向娱乐办公，Linux 系主要是用服务器系统，所以对于程序员来说，或多或少得面
-对它。Mac 虽然面向个人用户，但是结合了前两者的优势，娱乐办公和开
-发都可以完美应对。在使用 *nix(linux &amp; Mac) 过程中，我们几乎每天都会对着终端一行
-行的执行代码，解释我们的名令的程序就是我们所谓的 shell, 也是本文的所讲的对象。
-shell 自从诞生以来，也出现各种版本，虽然实现不同，功能都是一样的。本文写个 shell
-只是为了学习，没有其它目的。据本人所知，目前流行的 shell 有： <a href="https://www.baidu.com/link?url=VShkngjSIi0Xi38XgPurgAoSYbjVAKwt5klVe67ygRMpZutxezIY1GRJ%5FXGY94ph&amp;wd=&amp;eqid=b6840bc70000de76000000035c431bf0">bash</a> , <a href="https://www.baidu.com/link?url=1nsKjGHAl-3rmCFdOsnThI4GP85TzNEUEIOUHLV9tf%5F&amp;wd=&amp;eqid=9c2480920001045f000000035c431c63">zsh</a> , <a href="https://www.baidu.com/link?url=7xcMSUn2eX%5F0i5fDhdf2749ExX5Tt1fxzEtC4gSgoU5vviiVjTlfuLAcs18eEpQF&amp;wd=&amp;eqid=d3daba310000dbdd000000035c431c80">fish</a>
-, <a href="https://xonsh.org/">xosh</a> 等，这几种 shell 本人都用过，简单讲奖各自的特点吧， bash 不用说了吧，几乎
-所有发行版的默认 shell。 zsh 集装逼与高效于一身的 shell。强烈建议于 <a href="https://www.baidu.com/link?url=HN8GOhj0RoEbjYQNXbH%5FC93cjJUy%5FbwgBqsoJ39l2zW&amp;wd=&amp;eqid=cfc633a40000f12e000000035c431dc1">oh-my-zsh</a> 一
-起使用，省去配置的时间。 fish 小众软件，智能补全，拥有类似 apt 一样的插件管理工
-具，但是由于 shell 语法和 bash 不兼容，建议个人使用，不要用于工作中。 xosh 是用
-python 实现的，所以终端直接执行 python 语句就可以执行，同时可以执行系统命令。
-pythoner 可以尝试一波，随时随地测试 python 语句。</p>
+<h3 id="内存管理">内存管理</h3>
 
-<h2 id="shell-工作流程">shell 工作流程</h2>
-
-<p>介绍完 shell , 下面简单讲讲工作流程：</p>
-
-<p>首先，我们运行一个 shell 程序，它将阻塞等待用户的输入。当用户在标准输入上输入一
-行命令文本，这时程序成功读入一行文本，不再阻塞，可以继续执行。接下来将读入的文本
-进行切分，将其切分为命令和参数两部分。然后就可以 fork 一个子进程调用 exec 系统调
-用运行切分好的命令，父进程 wait 等待子进程的执行结果。最后将执行结果反馈给用户。
-等待下一行执行命名的出现。直到用户退出或者信号中断退出。</p>
-
-<h2 id="shell-实现">shell 实现</h2>
-
-<p>上面的工作流程说的比较简单，实现也是比较简单的。下面我们就一步步的来实现这个
-shell:</p>
-
-<blockquote>
-<p>本文使用 C++ 实现</p>
-</blockquote>
-
-<h3 id="可执行程序该有的样子">可执行程序该有的样子</h3>
-
-<p>我们知道，每个程序都有一个入口函数，在 C++ 中，为 main 函数：</p>
-
-<pre><code class="language-C++">int main() {
-  lsh::lshell lsh;
-  lsh.loop();
-  return 0;
-}
-</code></pre>
-
-<p>本人的代码风格类似 linux 风格――小写加下滑线。其中的意思也是字面意思，先创建一
-个 shell 实例，然后循环执行命令。</p>
-
-<h3 id="一探循环体究竟">一探循环体究竟</h3>
-
-<p>在探索之前，我们先借助点小工具用来表示命令执行返回状态：</p>
-
-<pre><code class="language-C++">/* 命令返回状态 */
-enum status_enum {
-  fork_failed = -1,
-  success = 0,
-  exit_s = 1,  // 和后面的 exit 有冲突，因此在后边加上 _s
-};
-</code></pre>
-
-<p>进入正菜：</p>
-
-<pre><code class="language-C++">inline void lshell::loop() {
-  do {
-    std::cout &lt;&lt; &quot;&gt;&gt;&gt; &quot;;
-    read_line__();
-    split_line__();
-    excute__();
-    clear__();
-  } while (status_ == status_enum::success);
-}
-</code></pre>
-
-<p>em～～～，和我们之前提到的工作流程一致吧。有些细心的读者发现我给的代码中多了
-clear__(), 这个和本人的实现有关了，先留个疑问吧。继续探索。。。</p>
-
-<h3 id="解剖循环体">解剖循环体</h3>
-
-<p>接下来就是将循环体解剖分开实现了。</p>
-
-<h4 id="读文本">读文本</h4>
-
-<p>首当其冲的是 read_line__:</p>
-
-<pre><code class="language-C++">inline void lshell::read_line__() { getline(std::cin, line_); }
-</code></pre>
-
-<p>em~~~~, 就一句话。虽然可以插入到其它代码块中，为了更好理解工作流程，我还是不省这
-句代码了。虽然使用函数实现，不过不用担心性能，因为使用编译器关键字 <code>inline</code> 编译
-的时候，编译器会用代码替换调用的部分，不会增加调用开销。</p>
-
-<h4 id="拆分文本">拆分文本</h4>
-
-<p>C++ 拆分字符串得自己实现，不过实现比较简单。如下：</p>
-
-<pre><code class="language-C++">void lshell::split_line__() {
-  if (line_.empty()) return;
-  std::string arg;
-  int len = line_.length();
-  int i = 0;
-  while (i &lt; len) {
-    if (std::isblank(line_[i])) {
-      args_.push_back(arg);
-      arg.clear();
-    } else {
-      arg += line_[i];
-    }
-    ++i;
-  }
-  args_.push_back(arg);
-}
-</code></pre>
-
-<p>我的代码写得比较 low , 当然还有其它方法实现，比如可以将 string 转换为 char*, 然
-后配合 C 函数 <code>strtok</code> 将字符串分割。仁者见仁。</p>
-
-<h4 id="执行命令">执行命令</h4>
-
-<p>shell 的内核所在，前面的都只是铺垫。</p>
-
-<pre><code class="language-C++">void lshell::excute__() {
-  const int arg_len = args_.size();
-  if (!arg_len) {
-    status_setter(status_enum::success);
-    return;
-  }
-  char **args = new char *[arg_len];
-  for (int i = 0; i &lt; arg_len; ++i) {
-    args[i] = new char[args_[i].size() + 1];
-    strncpy(args[i], args_[i].c_str(), args_[i].size());
-  }
-  auto is_builtin = builtins_.begin();
-  if ((is_builtin = builtins_.find(args_[0])) != builtins_.end()) {
-    status_setter(is_builtin-&gt;second(args));
-  } else {
-    status_setter(__launch(args));
-  }
-  for (auto i = 0; i &lt; arg_len; ++i) delete args[i];
-}
-</code></pre>
-
-<p>这里主要分为两部分，一个是内置命令，令一个是系统命令程序。</p>
+<p>我们通常说的内存管理是操作系统内核提供的功能之一，也就是对于虚拟内存的管理。可以
+分为以下几个不同的层次。</p>
 
 <ul>
-<li><p>内置命令</p>
-
-<p>系统中没有实现如 cd, help, exit 等命令，所以需要我们手动实现这些命令，也即内置命
-令。在本文代码中，我使用哈希表存储内置命令处理函数。</p>
-
-<pre><code class="language-C++">/* 内置命令：如 cd, help, exit... */
-status_enum __cd(char **);
-status_enum __help(char **);
-inline status_enum __exit(char **) { return status_enum::exit_s; };
-/* 内置命令对应的处理函数表，使用哈希表实现 */
-const std::unordered_map&lt;std::string, status_enum (*)(char **)&gt; _builtins{
-    {&quot;cd&quot;, &amp;__cd}, {&quot;help&quot;, &amp;__help}, {&quot;exit&quot;, &amp;__exit}};
-</code></pre>
-
-<p>后续添加内置命令也方便，不用修改 execute__ 中的代码。以 cd 命令为例，看看内置命
-令的实现，其实是调用系统调用：</p>
-
-<pre><code class="language-C++">status_enum __cd(char **args) {
-  if (args[1] &amp;&amp; int(args[1][0])) {
-    if (chdir(args[1])) {
-      std::cout &lt;&lt; &quot;The dir '&quot; &lt;&lt; args[1][0] &lt;&lt; &quot;' cannot be found! &quot;
-                &lt;&lt; std::endl;
-    }
-  } else {
-    std::cout &lt;&lt; &quot;Expected argument to \&quot; cd \&quot; &quot; &lt;&lt; std::endl;
-  }
-  return status_enum::success;
-}
-</code></pre></li>
-
-<li><p>系统命令</p>
-
-<pre><code class="language-C++">status_enum __launch(char **args) {
-  pid_t pid = fork();
-  if (pid &gt; 0) {
-    pid_t wpid;
-    int status;
-    do {
-      wpid = waitpid(pid, &amp;status, WUNTRACED);
-    } while (!WIFEXITED(status) &amp;&amp; !WIFSIGNALED(status));
-    return status_enum::success;
-  } else if (pid == 0) {
-    if (execvp(args[0], args) == -1) {
-      std::cout &lt;&lt; &quot;Connot found '&quot; &lt;&lt; args[0] &lt;&lt; &quot;' command. Please check!&quot;
-                &lt;&lt; std::endl;
-      exit(-1);
-    }
-  } else {
-    std::cout &lt;&lt; &quot;Fork failed &quot; &lt;&lt; std::endl;
-    return status_enum::fork_failed;
-  }
-  return status_enum::success;
-}
-</code></pre>
-
-<p>这个就是一般的创建子进程，然后通过 execvp 系统调用执行环境变量里的程序，当然父进
-程必须等待子进程执行完毕，将结果反馈给用户。</p></li>
+<li>操作系统： 内核对虚拟内存的管理，通过系统调用为库函数或用户程序提供服务</li>
+<li>C库函数： 函数虚拟内存进行管理，避免频繁使用系统调用带来的开销</li>
+<li>用户程序： 用户程序先通过系统调用申请一大块内存，然后自己来管理这块内存</li>
 </ul>
 
-<h4 id="最后是清理">最后是清理</h4>
+<h3 id="内存配置器">内存配置器</h3>
 
-<p>也就是清理上一次执行完的命令文本，本人的实现是将文本存储在私有变量里，避免了传参
-过程产生的临时变量。虽然通过C++的一些高级语法避免这些开销，但是鄙人小菜一枚。所
-以使用比较容易实现的方式，算是抛砖引玉吧，欢迎各位大佬指教。</p>
+<p>我们通常把用来管理内存的对象称为内存配置器，一个设计良好的内存配置器
+应该满足如下要</p>
+
+<ul>
+<li>内存碎片尽可少</li>
+<li>良好的本地缓</li>
+<li>额外的内存碎片尽可能少</li>
+<li>通用性，兼容性，可移植性，易调试</li>
+</ul>
+
+<h3 id="重要性">重要性</h3>
+
+<p>系统的物理能内存是有限的，但是对内存的需求是动态的，动态性越强，内存管理的重要性
+越强。我们设计的程序对内存的申请需求是不一样的，因此选择合适的内存配置，可以更好
+的发挥应用程序的性能。</p>
+
+<p>本文简单地分析目前常用的几个内存配置器，包括 ptmalloc2,tc_malloc,jemalloc。</p>
+
+<h2 id="ptmalloc2">ptmalloc2</h2>
+
+<p>目前 ptmalloc2 是 glibc 这中 malloc 的默认内存配置器，在之前还有一些其它的实现如
+dlmalloc 等。但由于多核的出现，而 dlmalloc 没有针对多线程的实现。因此已经退出历
+史舞台。为了比较当前比较优秀的配置器，选择了 ptmalloc2 。</p>
+
+<h3 id="内存管理对象">内存管理对象</h3>
+
+<p>在 ptmalloc2 中的内存管理对象叫做 arena , 在 arena 中有一个空闲链表数组 bits ，每一个
+链表称为一个 bin 。每个 bin 管理多个固定大小的 chunks。</p>
+
+
+<figure>
+    
+        <img src="/images/ptmalloc2.png" />
+    
+    
+</figure>
+
+
+<p>如上图所示， ptmalloc2 将 bins 划分为三部份， unsorted bin , small bins 以及
+large bins 。其实还有一个 bin , 称为 fast bin 。 ptmalloc2 将不大于 64 B 的
+chunk 先放到 fast bin 中加快分配速度。</p>
+
+<h3 id="多线程处理">多线程处理</h3>
+
+<p>在 ptmalloc2 中，多线程的处理方式是在每一个线程中维护一个 arena 。在主线程中维护
+主分配器 main arena , 在其它线程中维护副分配器 thread arena 。 thread arena 中的
+内存只会通过 mmap 在映射区获取一块 <code>HEAP_MAX_SIZE</code> 大小的内存作为该线程的私有内
+存池进行管理。 main arena 如果内存不够通过调用 <code>sbrk</code> 进行扩容。</p>
+
+<h3 id="分配流程">分配流程</h3>
+
+
+<figure>
+    
+        <img src="/images/ptmalloc2_malloc.png" />
+    
+    
+</figure>
+
+
+<h3 id="系统回收">系统回收</h3>
+
+<p>每一个 arena 都有一个 top chunk ,用来保存堆顶的块，当释放的内存和 top chunk 相邻
+,则将其合并到 top chunk, 当其大小超过阈值时，将其释放给操作系统。</p>
+
+<h3 id="缺点">缺点</h3>
+
+<ul>
+<li>只能从后分配的内存开始释放</li>
+<li>多线程开销大，ptmalloc2 并不是严格的每个线程一个 arena,而是在线程第一次申请内
+存时，判断是否有可用的 arena , 如果有直接加锁使用；没有则分配一个 arena.</li>
+<li>内存不能从一个 arena 转移到另一个 arena. 导致多线程内存使用不均衡</li>
+<li>至少 8 字节的额外开销</li>
+<li>不定期分配长时间的内存容易造成内存碎片</li>
+</ul>
+
+<h2 id="tcmalloc">tcmalloc</h2>
+
+<p>tcmalloc 是 Google 开源的一内存管理库，地址：<a href="https://github.com/gperftools/gperftool">https://github.com/gperftools/gperftool</a></p>
+
+<h3 id="threadcache">ThreadCache</h3>
+
+<p>tcmalloc 为每个线程都分配一个线程本地的内存池 threadCache, 用于分配小内存。这样
+在多线程时，可以减少对内存管理器加锁解锁的开销。当然， threadCache 只用于小对象
+的分配， size &lt;= 32KB . 在 threadCache 中维护一个空闲链表数组，每个对象称为
+size-class. 这个和 ptmalloc2 中的 bin 作用一样。</p>
+
+
+<figure>
+    
+        <img src="/images/tcmalloc_threadcache.png" />
+    
+    
+</figure>
+
+
+<h4 id="分配流程-1">分配流程</h4>
+
+
+<figure>
+    
+        <img src="/images/tcmalloc_threadcache_malloc.png" />
+    
+    
+</figure>
+
+
+<h3 id="centralcache">CentralCache</h3>
+
+<p>tcmalloc 除了在每个线程分配一个本地分配器，整体还分配一个中央配置器，
+CentralCache 用来分配大对象的，管理的内存单元时 4K 对齐的，如果 ThreadCache 中的
+内存不够，需要到 CentralCache 中获取对应 size-class 的内存。</p>
+
+
+<figure>
+    
+        <img src="/images/tcmalloc_centralcache.png" />
+    
+    
+</figure>
+
+
+<p>rest 链表挂接大于 255 个 pages 的页面。</p>
+
+<h4 id="分配流程-2">分配流程</h4>
+
+
+<figure>
+    
+        <img src="/images/tcmalloc_centralcache_malloc.png" />
+    
+    
+</figure>
+
+
+<h3 id="回收内存">回收内存</h3>
+
+
+<figure>
+    
+        <img src="/images/tcmalloc_free.png" />
+    
+    
+</figure>
+
+
+<h3 id="优点">优点</h3>
+
+<ul>
+<li>ThreadCache 会阶段性的回收内存到 CentralCache 中，解决 ptmalloc2 中 arena 不能
+迁移问题</li>
+<li>占用很少的空间，约 1%</li>
+<li>快，小对象几乎无锁</li>
+</ul>
+
+<h2 id="jemalloc">jemalloc</h2>
+
+<p>原理和 tcmalloc 差不多，都是在 &lt; 32KB 时无锁使用本地 cache. 差别主要是在
+size-class 的分类上不一样。地址： <a href="https://github.com/jemalloc/jemalloc">https://github.com/jemalloc/jemalloc</a></p>
+
+<h3 id="size-class">size-class</h3>
+
+<ul>
+<li>Small: [8], [16,32,&hellip;,138], [192,256,&hellip;,512], [768,1024,&hellip;,3840]</li>
+<li>Large: [4K, 8K, &hellip; , 4072K]</li>
+<li>Huge : [4M, 8M, &hellip; , &hellip;]</li>
+<li>small/large 对象查找 metedata 需要常数时间</li>
+<li>Huge 对象通过全局红黑树在对数时间内查找</li>
+</ul>
+
+<h3 id="jemalloc-中对象的关系">jemalloc 中对象的关系</h3>
+
+
+<figure>
+    
+        <img src="/images/jemalloc_objs.png" />
+    
+    
+</figure>
+
+
+<p>分配流程和 tcmalloc 大同小异。</p>
+
+<h3 id="优点-1">优点</h3>
+
+<ul>
+<li>低地址优先策略，降低内存碎片花， tcmalloc 采用 best fit</li>
+<li>额外开销约 2%</li>
+<li>和 tcmalloc 一样的本地缓存，避免竞争</li>
+<li>优先使用脏页，提升缓冲命中</li>
+</ul>
 
 <h2 id="总结">总结</h2>
 
-<p>好了，到目前所有的核心代码几乎展示完毕了，这个是个小项目，主要是学习。 本人的完
-整项目代码就不展示了，毕竟都是超级简单的东西。文末会给出项目的链接地址，作者是用
-C写的，有兴趣可以参考他的实现。</p>
-
-<h2 id="参考">参考</h2>
-
-<p><a href="https://brennan.io/2015/01/16/write-a-shell-in-c/">https://brennan.io/2015/01/16/write-a-shell-in-c/</a></p>
+<p>ptmalloc2, tcmalloc 以及 jemalloc 都是比较出色的内存配置器，据 tcmalloc 官网公布
+数据， tcmalloc 的速度是 ptmalloc2 的数倍，主要还是出色的多线程本地缓存设计。对
+于释放内存方面，ptmalloc2 比后两者要差的多，因为它只能从 top chunk 释放。
+tcmalloc 和 jemalloc 性能差不多，但是 jemalloc 在提升缓存命中中设计的比较巧，可
+能这也是它稍快于 tcmalloc 的原因吧，不过官网的测试数据也可能是使用的 tcmalloc 的
+版本比较低。总之，内存配置器是一个程序优化很重要的一部分，选择合适的内存配置器将
+提升程序的性能，如果自己的程序对内存有特殊要求，可以基于这些配置器实现自己的内存
+管理配置器，甚至直接使用系统调用来自己管理。不过如非特定需要，尽量用现有的轮子，
+内存配置器涉及不好，将事倍工半。</p>
 
     
 	</div>
@@ -322,11 +349,11 @@ C写的，有兴趣可以参考他的实现。</p>
 <div class="article-tags">
   <span></span>
   
-  <a href="/tags/linux">linux</a>
+  <a href="/tags/pmalloc2">pmalloc2</a>
   
-  <a href="/tags/shell">shell</a>
+  <a href="/tags/tcmalloc">tcmalloc</a>
   
-  <a href="/tags/c&#43;&#43;">c&#43;&#43;</a>
+  <a href="/tags/jemalloc">jemalloc</a>
   
 </div>
 
@@ -337,14 +364,14 @@ C写的，有兴趣可以参考他的实现。</p>
 <div class="article-categories">
   <span></span>
   
-  <a class="article-category-link" href="/categories/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98">项目实战</a>
+  <a class="article-category-link" href="/categories/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86">内存管理</a>
   
 </div>
 
 
 
   <div class="article-share" id="share">
-    <div data-url="/post/writh_shell_with_cpp/" data-title="手把手实现一个 Linux shell" data-tsina="123" class="share clearfix">
+    <div data-url="/post/about_memory_allcates/" data-title="关于内存配置器的一些总结" data-tsina="123" class="share clearfix">
     </div>
   </div>
 </footer>
