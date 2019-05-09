@@ -69,7 +69,7 @@
     
   </p>
   <p class="article-time">
-    <time datetime="2019-04-26 20:12:02 &#43;0800 CST" itemprop="datePublished">2019年04月26日</time>
+    <time datetime="2019-04-26 20:12:02 &#43;0800 DST" itemprop="datePublished">2019年04月26日</time>
   </p>
 </header>
 
@@ -166,12 +166,8 @@ dlmalloc 等。但由于多核的出现，而 dlmalloc 没有针对多线程的�
 <p>在 ptmalloc2 中的内存管理对象叫做 arena , 在 arena 中有一个空闲链表数组 bits ，每一个
 链表称为一个 bin 。每个 bin 管理多个固定大小的 chunks。</p>
 
-
 <figure>
-    
-        <img src="/images/ptmalloc2.png" />
-    
-    
+    <img src="/images/ptmalloc2.png"/> 
 </figure>
 
 
@@ -188,12 +184,8 @@ chunk 先放到 fast bin 中加快分配速度。</p>
 
 <h3 id="分配流程">分配流程</h3>
 
-
 <figure>
-    
-        <img src="/images/ptmalloc2_malloc.png" />
-    
-    
+    <img src="/images/ptmalloc2_malloc.png"/> 
 </figure>
 
 
@@ -224,23 +216,15 @@ chunk 先放到 fast bin 中加快分配速度。</p>
 的分配， size &lt;= 32KB . 在 threadCache 中维护一个空闲链表数组，每个对象称为
 size-class. 这个和 ptmalloc2 中的 bin 作用一样。</p>
 
-
 <figure>
-    
-        <img src="/images/tcmalloc_threadcache.png" />
-    
-    
+    <img src="/images/tcmalloc_threadcache.png"/> 
 </figure>
 
 
 <h4 id="分配流程-1">分配流程</h4>
 
-
 <figure>
-    
-        <img src="/images/tcmalloc_threadcache_malloc.png" />
-    
-    
+    <img src="/images/tcmalloc_threadcache_malloc.png"/> 
 </figure>
 
 
@@ -250,12 +234,8 @@ size-class. 这个和 ptmalloc2 中的 bin 作用一样。</p>
 CentralCache 用来分配大对象的，管理的内存单元时 4K 对齐的，如果 ThreadCache 中的
 内存不够，需要到 CentralCache 中获取对应 size-class 的内存。</p>
 
-
 <figure>
-    
-        <img src="/images/tcmalloc_centralcache.png" />
-    
-    
+    <img src="/images/tcmalloc_centralcache.png"/> 
 </figure>
 
 
@@ -263,23 +243,15 @@ CentralCache 用来分配大对象的，管理的内存单元时 4K 对齐的，
 
 <h4 id="分配流程-2">分配流程</h4>
 
-
 <figure>
-    
-        <img src="/images/tcmalloc_centralcache_malloc.png" />
-    
-    
+    <img src="/images/tcmalloc_centralcache_malloc.png"/> 
 </figure>
 
 
 <h3 id="回收内存">回收内存</h3>
 
-
 <figure>
-    
-        <img src="/images/tcmalloc_free.png" />
-    
-    
+    <img src="/images/tcmalloc_free.png"/> 
 </figure>
 
 
@@ -309,12 +281,8 @@ size-class 的分类上不一样。地址： <a href="https://github.com/jemallo
 
 <h3 id="jemalloc-中对象的关系">jemalloc 中对象的关系</h3>
 
-
 <figure>
-    
-        <img src="/images/jemalloc_objs.png" />
-    
-    
+    <img src="/images/jemalloc_objs.png"/> 
 </figure>
 
 
@@ -397,6 +365,8 @@ tcmalloc 和 jemalloc 性能差不多，但是 jemalloc 在提升缓存命中中
     
     <li><a href="/categories/%e5%91%bd%e4%bb%a4%e8%a1%8c%e8%89%ba%e6%9c%af" title="命令行艺术">命令行艺术<sup>3</sup></a></li>
     
+    <li><a href="/categories/%e5%ad%a6%e4%b9%a0%e7%ac%94%e8%ae%b0" title="学习笔记">学习笔记<sup>1</sup></a></li>
+    
     <li><a href="/categories/%e6%93%8d%e4%bd%9c%e7%b3%bb%e7%bb%9f" title="操作系统">操作系统<sup>1</sup></a></li>
     
     <li><a href="/categories/%e6%95%b0%e6%8d%ae%e7%bb%93%e6%9e%84" title="数据结构">数据结构<sup>1</sup></a></li>
@@ -416,7 +386,7 @@ tcmalloc 和 jemalloc 性能差不多，但是 jemalloc 在提升缓存命中中
 	<p class="asidetitle">标签</p>
 		<ul class="clearfix">
       
-			<li><a href="/tags/c&#43;&#43;" title="c&#43;&#43;">c&#43;&#43;<sup>6</sup></a></li>
+			<li><a href="/tags/c&#43;&#43;" title="c&#43;&#43;">c&#43;&#43;<sup>7</sup></a></li>
       
 			<li><a href="/tags/command" title="command">command<sup>3</sup></a></li>
       
@@ -446,7 +416,11 @@ tcmalloc 和 jemalloc 性能差不多，但是 jemalloc 在提升缓存命中中
       
 			<li><a href="/tags/tree" title="tree">tree<sup>1</sup></a></li>
       
+			<li><a href="/tags/%e5%af%b9%e8%b1%a1%e6%a8%a1%e5%9e%8b" title="对象模型">对象模型<sup>1</sup></a></li>
+      
 			<li><a href="/tags/%e7%bb%a7%e6%89%bf" title="继承">继承<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e7%bc%96%e7%a8%8b%e8%af%ad%e8%a8%80" title="编程语言">编程语言<sup>1</sup></a></li>
       
 			<li><a href="/tags/%e9%9d%a2%e5%90%91%e5%af%b9%e8%b1%a1" title="面向对象">面向对象<sup>1</sup></a></li>
       
@@ -459,6 +433,11 @@ tcmalloc 和 jemalloc 性能差不多，但是 jemalloc 在提升缓存命中中
   <div class="archiveslist">
     <p class="asidetitle">归档</p>
     <ul class="archive-list">
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2019-05">2019年05月</a><span class="archive-list-count">1</span>
+      </li>
       
       
       <li class="archive-list-item">
@@ -526,7 +505,11 @@ tcmalloc 和 jemalloc 性能差不多，但是 jemalloc 在提升缓存命中中
     
     <a href="/tags/tree" style="font-size: 12px;">tree</a>
     
+    <a href="/tags/%e5%af%b9%e8%b1%a1%e6%a8%a1%e5%9e%8b" style="font-size: 12px;">对象模型</a>
+    
     <a href="/tags/%e7%bb%a7%e6%89%bf" style="font-size: 12px;">继承</a>
+    
+    <a href="/tags/%e7%bc%96%e7%a8%8b%e8%af%ad%e8%a8%80" style="font-size: 12px;">编程语言</a>
     
     <a href="/tags/%e9%9d%a2%e5%90%91%e5%af%b9%e8%b1%a1" style="font-size: 12px;">面向对象</a>
     

@@ -6,10 +6,19 @@
     <description>Recent content on 北极狼徒</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Fri, 26 Apr 2019 20:12:02 +0800</lastBuildDate>
+    <lastBuildDate>Tue, 07 May 2019 23:36:30 +0800</lastBuildDate>
     
 	<atom:link href="/feed.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>C&#43;&#43; 对象模型 — 关于对象</title>
+      <link>/post/cpp_object_models_ch01/</link>
+      <pubDate>Tue, 07 May 2019 23:36:30 +0800</pubDate>
+      
+      <guid>/post/cpp_object_models_ch01/</guid>
+      <description>关于对象 面向过程 在 C 语言中, 我们通常将 *数据* 和 *处理数据的操作(函数)* 分开声明, 也就是说语言本身没有支持 *数据和函数* 之间的关联性. 这种</description>
+    </item>
     
     <item>
       <title>关于内存配置器的一些总结</title>
