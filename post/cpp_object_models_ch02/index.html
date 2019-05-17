@@ -2,18 +2,17 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <title>Categories - 北极狼徒</title>
+  <title>C&#43;&#43; 对象模型 — 构造语义学 - 北极狼徒</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
   
-  <meta name="description" content="Categories">
+  <meta name="description" content="C&#43;&#43; 对象内存模型">
   
-  <meta itemprop="name" content="Categories - 北极狼徒">
-  <meta itemprop="description" content="Categories">
+  <meta itemprop="name" content="C&#43;&#43; 对象模型 — 构造语义学 - 北极狼徒">
+  <meta itemprop="description" content="C&#43;&#43; 对象内存模型">
   <meta itemprop="image" content="/img/author.jpg">
   
+  <meta name="twitter:description" content="C&#43;&#43; 对象内存模型" />
   
-  <meta name="twitter:description" content="随便写写">
-  <link rel="alternate" href="/feed.xml" title="北极狼徒" type="application/rss+xml"/>
   <link rel="shortcut icon" href="/img/favicon.ico"/>
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
   <link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png" />
@@ -58,90 +57,228 @@
 
   </header>
   <div id="container">
-    <div id="main">
-      
-      <h2 id="2019-05">2019-05</h2>
-      
-      <section class="post" itemscope itemprop="blogPost">
-    <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" title="学习笔记" itemprop="url">
-    <h1 itemprop="name">学习笔记</h1>
-    <p itemprop="description"></p>
+    <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody">
+    <header class="article-info clearfix">
+  <h1 itemprop="name">
+      <a href="/post/cpp_object_models_ch02/" title="C&#43;&#43; 对象模型 — 构造语义学" itemprop="url">C&#43;&#43; 对象模型 — 构造语义学</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="https://github.com/Jerling" title="[Jerling]">[Jerling]</a>
+    
+  </p>
+  <p class="article-time">
     <time datetime="2019-05-17 21:57:43 &#43;0800 DST" itemprop="datePublished">2019年05月17日</time>
-  </a>
-</section>
+  </p>
+</header>
 
-      
-      
-      <h2 id="2019-04">2019-04</h2>
-      
-      <section class="post" itemscope itemprop="blogPost">
-    <a href="/categories/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/" title="内存管理" itemprop="url">
-    <h1 itemprop="name">内存管理</h1>
-    <p itemprop="description"></p>
-    <time datetime="2019-04-26 20:12:02 &#43;0800 DST" itemprop="datePublished">2019年04月26日</time>
-  </a>
-</section>
+	<div class="article-content">
+    
+		<div class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+      <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#默认构造函数">默认构造函数</a>
+<ul>
+<li><a href="#带有默认构造函数的成员类对象">带有默认构造函数的成员类对象</a></li>
+<li><a href="#带有默认构造的基类">带有默认构造的基类</a></li>
+<li><a href="#带有虚函数的类">带有虚函数的类</a></li>
+<li><a href="#带有一个虚基类的类">带有一个虚基类的类</a></li>
+<li><a href="#总结">总结</a></li>
+</ul></li>
+<li><a href="#拷贝构造函数">拷贝构造函数</a>
+<ul>
+<li><a href="#默认成员逐次初始化">默认成员逐次初始化</a></li>
+<li><a href="#非逐位拷贝构造语义">非逐位拷贝构造语义</a></li>
+<li><a href="#重新设置虚表指针">重新设置虚表指针</a></li>
+<li><a href="#处理虚基类子对象">处理虚基类子对象</a></li>
+</ul></li>
+<li><a href="#成员初始化列表">成员初始化列表</a></li>
+</ul></li>
+</ul>
+</nav>
+		</div>
+    
+    
 
-      
-      
-      <h2 id="2019-03">2019-03</h2>
-      
-      <section class="post" itemscope itemprop="blogPost">
-    <a href="/categories/%E5%91%BD%E4%BB%A4%E8%A1%8C%E8%89%BA%E6%9C%AF/" title="命令行艺术" itemprop="url">
-    <h1 itemprop="name">命令行艺术</h1>
-    <p itemprop="description"></p>
-    <time datetime="2019-03-10 09:32:42 &#43;0800 DST" itemprop="datePublished">2019年03月10日</time>
-  </a>
-</section>
+<h2 id="默认构造函数">默认构造函数</h2>
 
-      
-      
-      <h2 id="2019-02">2019-02</h2>
-      
-      <section class="post" itemscope itemprop="blogPost">
-    <a href="/categories/%E6%B8%A9%E6%95%85%E7%9F%A5%E6%96%B0/" title="温故知新" itemprop="url">
-    <h1 itemprop="name">温故知新</h1>
-    <p itemprop="description"></p>
-    <time datetime="2019-02-22 20:07:56 &#43;0800 DST" itemprop="datePublished">2019年02月22日</time>
-  </a>
-</section>
+<ul>
+<li>在ARM(Annotated Reference Manual) 中：默认构造函数在 <strong>需要的</strong> 时候由编译器产生
+产生出来。这里的需要为编译器需要，而不是程序需要，程序需要由程序员指定。</li>
+<li>C++ 标准修改为：对于 class X, 如果没有任何用户声明的构造函数，那么会隐式生成一
+个默认构造函数，隐式生成的构造函数是 trival(没啥用的) constructor.</li>
+<li>存在四种情况的合成构造函数为 &ldquo;notrival&rdquo;, 其它情况为 &ldquo;trival&rdquo;</li>
+</ul>
 
-      
-      <section class="post" itemscope itemprop="blogPost">
-    <a href="/categories/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98/" title="项目实战" itemprop="url">
-    <h1 itemprop="name">项目实战</h1>
-    <p itemprop="description"></p>
-    <time datetime="2019-02-17 16:51:33 &#43;0800 DST" itemprop="datePublished">2019年02月17日</time>
-  </a>
-</section>
+<h3 id="带有默认构造函数的成员类对象">带有默认构造函数的成员类对象</h3>
 
-      
-      
-      <h2 id="2019-01">2019-01</h2>
-      
-      <section class="post" itemscope itemprop="blogPost">
-    <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" title="数据结构" itemprop="url">
-    <h1 itemprop="name">数据结构</h1>
-    <p itemprop="description"></p>
-    <time datetime="2019-01-05 00:00:00 &#43;0800 DST" itemprop="datePublished">2019年01月05日</time>
-  </a>
-</section>
+<p>如果一个类没有任何构造函数，但它有一个拥有默认构造函数的成员对象，那么这个类的隐
+式默认构造函数就是 &ldquo;notrival&rdquo; 的，编译器需要合成一个默认构造函数，这个过程会在构
+造函数真正需要被调用的时候才会发生。</p>
 
-      
-      
-      <h2 id="2018-12">2018-12</h2>
-      
-      <section class="post" itemscope itemprop="blogPost">
-    <a href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" title="操作系统" itemprop="url">
-    <h1 itemprop="name">操作系统</h1>
-    <p itemprop="description"></p>
-    <time datetime="2018-12-22 00:00:00 &#43;0800 DST" itemprop="datePublished">2018年12月22日</time>
-  </a>
-</section>
+<p>为了解决 C++ 在不同编译模块中合成多个默认构造函数，需要将合成的默认构造函数、拷
+贝构造函数、析构函数以及赋值拷贝操作以内联方式完成；如果函数比较复杂，就合成一个
+显示的非内联实体。</p>
 
-      
-      
+<h3 id="带有默认构造的基类">带有默认构造的基类</h3>
+
+<p>如果没有任何用户声明的构造函数的类派生自一个带有默认构造函数的基类，那么这个派生
+类的默认构造为 &ldquo;notrival&rdquo; 并合并出来；它将根据声明次序调用上一层基类的默认构造函
+数，对于后继类而言，合成的构造函数和明确指出的默认构造函数没有什么差异。</p>
+
+<h3 id="带有虚函数的类">带有虚函数的类</h3>
+
+<ol>
+<li>类声明一个虚函数</li>
+<li>类派生自一个继承链，其中一个或更多的虚基类</li>
+</ol>
+
+<p>不管哪一种，编译器会详细记录合成一个默认构造的必要信息。</p>
+
+<ol>
+<li>编译器生成一个虚函数表(vtbl)存放类的虚函数地址</li>
+<li>每个类对象都有一个额外的虚函数指针(vptr)在被编译器合成出来，包含 vtbl 的地址</li>
+</ol>
+
+<h3 id="带有一个虚基类的类">带有一个虚基类的类</h3>
+
+<p>这种实现在不同的编译器的实现有极大的差异。共通点是：必须使虚基类在其每一个派生类
+中的位置能够于执行期准备妥当。</p>
+
+<h3 id="总结">总结</h3>
+
+<p>在合成的默认构造函数中，只有基类子对象和成员会被初始化，其它的非静态数据成员如整
+数、整数指针，整数数组等不会初始化。这些对程序或许需要，但对于编译器并非必须。如
+想将指针初始化为 nullptr, 这是程序员的事而非编译器。</p>
+
+<p>误解：</p>
+
+<ol>
+<li>任何类如果没有定义默认构造函数，就会被合成出来</li>
+<li>合成默认构造函数会明确设定类内的每个数据成员的默认值</li>
+</ol>
+
+<h2 id="拷贝构造函数">拷贝构造函数</h2>
+
+<p>有三种情况会以一个对象的内容作为一个类对象初值：</p>
+
+<ol>
+<li>对一个对象做明确的初始化操作</li>
+<li>当对象被当作参数交给函数时</li>
+<li>当函数传回一个类对象时</li>
+</ol>
+
+<p>当类明确定义了拷贝构造函数，那么在大部份情况下，当以一个同类对象实体作为初值时，
+那么会调用该拷贝构造函数，可能会导致产生临时对象或产生程序代码蜕变（或者都有）。</p>
+
+<h3 id="默认成员逐次初始化">默认成员逐次初始化</h3>
+
+<p>当没有显示的拷贝构造函数时，内部以默认的成员逐次初始化完成的：把每一个内建对象或派
+生的数据成员的值从某个对象拷贝一份到另一个对象身上。不过不会拷贝其中的成员类对象，
+而是以递归的方式施行成员逐次初始化。</p>
+
+<p>概念上，对于一个 class X, 这个操作是有拷贝构造函数实现。但设计良好的编译器可以为
+大部分类对象生成逐位拷贝，因为它们有逐位拷贝语义。</p>
+
+<p>默认构造函数和拷贝构造函数在必要的时候由编译器合成， <strong>必要</strong> 指当类不展现逐位拷贝
+语义时。</p>
+
+<p>一个类对象可以从两种方式复制得到：</p>
+
+<ol>
+<li>初始化</li>
+<li>赋值</li>
+</ol>
+
+<p>C++标准同样把拷贝构造函数区分为 &ldquo;trival&rdquo; 和 &ldquo;notrival&rdquo; 两种，只有 &ldquo;notrival&rdquo; 的
+实体才会被合成到程序中。设定一个拷贝构造函数是否为 &ldquo;trival&rdquo; 的标准在于类是否展现
+出逐位拷贝语义</p>
+
+<h3 id="非逐位拷贝构造语义">非逐位拷贝构造语义</h3>
+
+<ol>
+<li>当类有一个成员对象，这个对象类声明有一个拷贝构造函数（不管是class明确指定或是
+编译器合成）</li>
+<li>当类继承自一个基类，而这个基类存在一个拷贝时</li>
+<li>当类声明了一个或多个虚函数时</li>
+<li>当类声明一个继承串链，其中有一个或多个虚基类</li>
+</ol>
+
+<h3 id="重新设置虚表指针">重新设置虚表指针</h3>
+
+<p>编译器对于每一个新产生的类对象的 vptr 适当的初始化，如使用派生类对象值初始化存在
+虚函数的基类时，要将 vptr 指向基类的虚函数表，而不再派生类的。</p>
+
+<h3 id="处理虚基类子对象">处理虚基类子对象</h3>
+
+<p>如果一个类对象已另一个对象作为初值，而后者有一个虚基类子对象，那么”逐位拷贝“也会
+失效。编译器必须让派生类中的虚基类子对象位置在执行期准备妥当，而 &ldquo;逐位拷贝&rdquo; 可能
+会破坏这个位置。所以编译器必须自己合成拷贝构造函数做出仲裁。</p>
+
+<h2 id="成员初始化列表">成员初始化列表</h2>
+
+<p>必须使用初始化列表的情况：</p>
+
+<ol>
+<li>当初始化一个引用成员</li>
+<li>当初始化一个常量成员</li>
+<li>当调用一个基类的构造函数，而它拥有一组参数</li>
+<li>当调用一个成员类的构造函数，而它拥有一组参数</li>
+</ol>
+
+<p>执行顺序：</p>
+
+<ol>
+<li>在成员参数列表中的初始化按照声明的顺序执行而不是列表中的顺序</li>
+<li>初始化列表在用户定义的代码先执行</li>
+</ol>
+
+    
+	</div>
+  <footer class="article-footer clearfix">
+  
+
+<div class="article-tags">
+  <span></span>
+  
+  <a href="/tags/c&#43;&#43;">c&#43;&#43;</a>
+  
+  <a href="/tags/%E5%AF%B9%E8%B1%A1%E6%A8%A1%E5%9E%8B">对象模型</a>
+  
+  <a href="/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80">编程语言</a>
+  
+</div>
+
+
+
+
+
+<div class="article-categories">
+  <span></span>
+  
+  <a class="article-category-link" href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0">学习笔记</a>
+  
+</div>
+
+
+
+  <div class="article-share" id="share">
+    <div data-url="/post/cpp_object_models_ch02/" data-title="C&#43;&#43; 对象模型 — 构造语义学" data-tsina="123" class="share clearfix">
     </div>
+  </div>
+</footer>
+
+	</article>
+  
+
+
+
+</div>
+
     <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
 <div id="asidepart">
 <div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
@@ -310,10 +447,6 @@
 
 
   
-<div class="rsspart">
-  <a rel="nofollow" href="/feed.xml" type="application/rss+xml" target="_blank">RSS 订阅</a>
-</div>
-
 
 </aside>
 </div>
@@ -404,6 +537,38 @@ $(document).ready(function(){
 
 <script type="text/javascript">
 $(document).ready(function(){
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
   var $this = $('.share'),
       url = $this.attr('data-url'),
       encodedUrl = encodeURIComponent(url),
@@ -430,6 +595,27 @@ $(document).ready(function(){
 });
 </script>
 
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+});
+</script>
 
 
 

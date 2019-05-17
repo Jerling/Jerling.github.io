@@ -6,10 +6,19 @@
     <description>Recent content in 学习笔记 on 北极狼徒</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Tue, 07 May 2019 23:36:30 +0800</lastBuildDate>
+    <lastBuildDate>Fri, 17 May 2019 21:57:43 +0800</lastBuildDate>
     
 	<atom:link href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/feed.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>C&#43;&#43; 对象模型 — 构造语义学</title>
+      <link>/post/cpp_object_models_ch02/</link>
+      <pubDate>Fri, 17 May 2019 21:57:43 +0800</pubDate>
+      
+      <guid>/post/cpp_object_models_ch02/</guid>
+      <description>默认构造函数 在ARM(Annotated Reference Manual) 中：默认构造函数在 需要的 时候由编译器产生 产生出来。这里的需要为编译器需要，而不是程序需要，程序需</description>
+    </item>
     
     <item>
       <title>C&#43;&#43; 对象模型 — 关于对象</title>
