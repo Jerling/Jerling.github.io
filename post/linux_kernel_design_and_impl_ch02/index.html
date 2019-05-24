@@ -2,18 +2,17 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <title>Posts - 北极狼徒</title>
+  <title>linux 设计与实现 — 进程管理 - 北极狼徒</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
   
-  <meta name="description" content="Posts">
+  <meta name="description" content="Short description">
   
-  <meta itemprop="name" content="Posts - 北极狼徒">
-  <meta itemprop="description" content="Posts">
+  <meta itemprop="name" content="linux 设计与实现 — 进程管理 - 北极狼徒">
+  <meta itemprop="description" content="Short description">
   <meta itemprop="image" content="/img/author.jpg">
   
+  <meta name="twitter:description" content="Short description" />
   
-  <meta name="twitter:description" content="随便写写">
-  <link rel="alternate" href="/feed.xml" title="北极狼徒" type="application/rss+xml"/>
   <link rel="shortcut icon" href="/img/favicon.ico"/>
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
   <link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png" />
@@ -58,162 +57,330 @@
 
   </header>
   <div id="container">
-    <div id="main">
-      
-      <h2 id="2019-05">2019-05</h2>
-      
-      <section class="post" itemscope itemprop="blogPost">
-    <a href="/post/linux_kernel_design_and_impl_ch02/" title="linux 设计与实现 — 进程管理" itemprop="url">
-    <h1 itemprop="name">linux 设计与实现 — 进程管理</h1>
-    <p itemprop="description">进程 进程：处于执行期的程序的实时结果 文件描述符 挂起的信号 内核内部数据 处理器状态 一个或多个内存映射地址 一个或多个执行线程 (执行)线程： 进程中的</p>
+    <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody">
+    <header class="article-info clearfix">
+  <h1 itemprop="name">
+      <a href="/post/linux_kernel_design_and_impl_ch02/" title="linux 设计与实现 — 进程管理" itemprop="url">linux 设计与实现 — 进程管理</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="https://github.com/Jerling" title="[Jerling]">[Jerling]</a>
+    
+  </p>
+  <p class="article-time">
     <time datetime="2019-05-19 21:02:15 &#43;0800 DST" itemprop="datePublished">2019年05月19日</time>
-  </a>
-</section>
+  </p>
+</header>
 
-      
-      <section class="post" itemscope itemprop="blogPost">
-    <a href="/post/cpp_object_models_ch02/" title="C&#43;&#43; 对象模型 — 构造语义学" itemprop="url">
-    <h1 itemprop="name">C&#43;&#43; 对象模型 — 构造语义学</h1>
-    <p itemprop="description">默认构造函数 在ARM(Annotated Reference Manual) 中：默认构造函数在 需要的 时候由编译器产生 产生出来。这里的需要为编译器需要，而不是程序需要，程序需</p>
-    <time datetime="2019-05-17 21:57:43 &#43;0800 DST" itemprop="datePublished">2019年05月17日</time>
-  </a>
-</section>
+	<div class="article-content">
+    
+		<div class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+      <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#进程">进程</a></li>
+<li><a href="#进程描述符及任务结构">进程描述符及任务结构</a>
+<ul>
+<li><a href="#分配进程描述符">分配进程描述符</a></li>
+<li><a href="#进程描述符的存放">进程描述符的存放</a></li>
+<li><a href="#进程状态">进程状态</a></li>
+<li><a href="#设置当前进程状态">设置当前进程状态</a></li>
+<li><a href="#进程上下文">进程上下文</a></li>
+<li><a href="#进程家族树">进程家族树</a></li>
+</ul></li>
+<li><a href="#进程创建">进程创建</a>
+<ul>
+<li><a href="#写时拷贝">写时拷贝</a></li>
+<li><a href="#fork">fork</a></li>
+<li><a href="#vfork">vfork</a></li>
+<li><a href="#线程实现">线程实现</a>
+<ul>
+<li><a href="#创建线程">创建线程</a></li>
+<li><a href="#内核线程">内核线程</a></li>
+</ul></li>
+<li><a href="#进程终止">进程终止</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+		</div>
+    
+    
 
-      
-      <section class="post" itemscope itemprop="blogPost">
-    <a href="/post/cpp_object_models_ch01/" title="C&#43;&#43; 对象模型 — 关于对象" itemprop="url">
-    <h1 itemprop="name">C&#43;&#43; 对象模型 — 关于对象</h1>
-    <p itemprop="description">关于对象 面向过程 在 C 语言中, 我们通常将 *数据* 和 *处理数据的操作(函数)* 分开声明, 也就是说语言本身没有支持 *数据和函数* 之间的关联性. 这种</p>
-    <time datetime="2019-05-07 23:36:30 &#43;0800 DST" itemprop="datePublished">2019年05月07日</time>
-  </a>
-</section>
+<h2 id="进程">进程</h2>
 
-      
-      
-      <h2 id="2019-04">2019-04</h2>
-      
-      <section class="post" itemscope itemprop="blogPost">
-    <a href="/post/about_memory_allcates/" title="关于内存配置器的一些总结" itemprop="url">
-    <h1 itemprop="name">关于内存配置器的一些总结</h1>
-    <p itemprop="description">概述 内存管理 我们通常说的内存管理是操作系统内核提供的功能之一，也就是对于虚拟内存的管理。可以 分为以下几个不同的层次。 操作系统： 内核对虚拟内存</p>
-    <time datetime="2019-04-26 20:12:02 &#43;0800 DST" itemprop="datePublished">2019年04月26日</time>
-  </a>
-</section>
+<ul>
+<li>进程：处于执行期的程序的实时结果
 
-      
-      
-      <h2 id="2019-03">2019-03</h2>
-      
-      <section class="post" itemscope itemprop="blogPost">
-    <a href="/post/the_art_of_command_03/" title="命令行艺术(3) ~~ 文件及数据处理篇" itemprop="url">
-    <h1 itemprop="name">命令行艺术(3) ~~ 文件及数据处理篇</h1>
-    <p itemprop="description">查找 文件查找 内容查找 数据处理 文件处理 内容处理 数据统计 文件拷贝 杂项 查找 文件查找 在当前目录下通过文件名查找一个文件，使用类似于这样的命令：fin</p>
-    <time datetime="2019-03-10 09:32:42 &#43;0800 DST" itemprop="datePublished">2019年03月10日</time>
-  </a>
-</section>
+<ul>
+<li>文件描述符</li>
+<li>挂起的信号</li>
+<li>内核内部数据</li>
+<li>处理器状态</li>
+<li>一个或多个内存映射地址
+一个或多个执行线程</li>
+</ul></li>
+<li>(执行)线程： 进程中的活动对象
 
-      
-      <section class="post" itemscope itemprop="blogPost">
-    <a href="/post/the_art_of_command_02/" title="命令行艺术 (2) ~~ 日常使用篇" itemprop="url">
-    <h1 itemprop="name">命令行艺术 (2) ~~ 日常使用篇</h1>
-    <p itemprop="description">Table of Contens 常用快健键 一般快捷键 编辑器相关 历史命令 路径相关 少用但非常有用的命令 管理相关 使用别名 同步配置 脚本相关 善用文档 分屏管理 远程登录 杂项 常用快健</p>
-    <time datetime="2019-03-02 09:43:05 &#43;0800 DST" itemprop="datePublished">2019年03月02日</time>
-  </a>
-</section>
+<ul>
+<li>程序计数器</li>
+<li>线程栈</li>
+<li>寄存器</li>
+<li>私有数据</li>
+</ul></li>
+</ul>
 
-      
-      
-      <h2 id="2019-02">2019-02</h2>
-      
-      <section class="post" itemscope itemprop="blogPost">
-    <a href="/post/the_art_of_command_01/" title="命令行艺术 (1) ~~ 基础篇" itemprop="url">
-    <h1 itemprop="name">命令行艺术 (1) ~~ 基础篇</h1>
-    <p itemprop="description">Table of Contens 什么命令行 让命令行人性化 基础命令 私人神器zsh 熟悉环境 帮助命令 编辑命令 重定向 通配符 任务管理工具 远程登录 文件管理工具 网络管理工具 版本控制</p>
-    <time datetime="2019-02-24 09:54:13 &#43;0800 DST" itemprop="datePublished">2019年02月24日</time>
-  </a>
-</section>
+<h2 id="进程描述符及任务结构">进程描述符及任务结构</h2>
 
-      
-      <section class="post" itemscope itemprop="blogPost">
-    <a href="/post/about_cpp_inherits/" title="关于对象那些事儿 ~~ 继承" itemprop="url">
-    <h1 itemprop="name">关于对象那些事儿 ~~ 继承</h1>
-    <p itemprop="description">Table of Contens 关于继承 何为对象 何为继承 public 继承 public 继承权限 实例 protected 继承 protected 继承权限 实例 private 继承 protected 继承权限 实例 虚继承 实例 虚继承与虚函数 总结 关于继承 随着软件功能的</p>
-    <time datetime="2019-02-22 20:07:56 &#43;0800 DST" itemprop="datePublished">2019年02月22日</time>
-  </a>
-</section>
+<p>内核把进程的列表存放在任务队列中，队列中的条目为 <code>task_struct</code> 类型，称为进程描述
+符，定义在 <code>&lt;linux/sched.h&gt;</code> 中。</p>
 
-      
-      <section class="post" itemscope itemprop="blogPost">
-    <a href="/post/write_textor_4/" title="动手写编辑器（四） ~ 文本编辑器" itemprop="url">
-    <h1 itemprop="name">动手写编辑器（四） ~ 文本编辑器</h1>
-    <p itemprop="description">Table of Contens 文本编辑器 插入字符 重新映射方向键 按键处理 插入字符 删除字符 删除字符 添加行 换行 修改提示 保存文件 退出提示 另存为 效果 总结 参考 文本编辑器 在之前的</p>
-    <time datetime="2019-02-17 16:51:33 &#43;0800 DST" itemprop="datePublished">2019年02月17日</time>
-  </a>
-</section>
+<h3 id="分配进程描述符">分配进程描述符</h3>
 
-      
-      <section class="post" itemscope itemprop="blogPost">
-    <a href="/post/write_textor_3/" title="动手写编辑器 (三) ~ 文件查看器" itemprop="url">
-    <h1 itemprop="name">动手写编辑器 (三) ~ 文件查看器</h1>
-    <p itemprop="description">Table of Contens 状态栏 腾出空间 写入 buffer 消息框 腾出空间 滞留时间 写入消息 写入 buffer 滚动 垂直滚动 水平滚动 修改边界检查 写入 buffer 总结 参考 状态栏 熟悉 vim 的朋友都知道, vim 有一</p>
-    <time datetime="2019-02-02 13:27:35 &#43;0800 DST" itemprop="datePublished">2019年02月02日</time>
-  </a>
-</section>
+<p>Linux通过 <code>slab</code> 分配器分配 <code>task_struct</code> 结构，达到对象复用和缓存着色的目的。在
+2.6 版本之前，各个进程的 <code>task_struct</code> 存放在它们的内核栈的尾部，这样是为了寄存
+器少(如X86)的硬件体系结构只需通过栈指针就可以计算出其地址，避免专门的寄存器记录。
+现在使用 <code>slab</code> 分配器动态生成 <code>task_struct</code> ,所以只需在栈低（向下增长）或栈顶
+（向上增长）创建一个 <code>thread_info</code> 即可，该结构放在 <code>&lt;asm/thread_info.h&gt;</code> 中。</p>
 
-      
-      
-      <h2 id="2019-01">2019-01</h2>
-      
-      <section class="post" itemscope itemprop="blogPost">
-    <a href="/post/write_textor_2/" title="动手写编辑器（二） ~ 输入和输出" itemprop="url">
-    <h1 itemprop="name">动手写编辑器（二） ~ 输入和输出</h1>
-    <p itemprop="description">Table of Contens 窗口 Buffer 窗口 size 波浪线 欢迎界面 输入 Ctrl+q 退出 移动光标 文本内容 输出 显示 buffer 刷新屏幕 总结 参考 窗口 说到终端编辑器， vim 应该是用的最多的吧。在所有有关 Linux 基</p>
-    <time datetime="2019-01-30 11:06:21 &#43;0800 DST" itemprop="datePublished">2019年01月30日</time>
-  </a>
-</section>
+<figure>
+    <img src="/images/Snipaste_2019-05-20_22-03-50.png"/> 
+</figure>
 
-      
-      <section class="post" itemscope itemprop="blogPost">
-    <a href="/post/write_textor_1/" title="动手写编辑器(一) ~ 文本模式" itemprop="url">
-    <h1 itemprop="name">动手写编辑器(一) ~ 文本模式</h1>
-    <p itemprop="description">Table of Contens 写作动机 规范模式 文本模式 设置属性 本地模式标志 ~~ c_lflag 输入模式标志 ~~ c_iflag 输出模式标志 ~~ c_oflag 杂项标志 开启和关闭文本模式 总结 参考 写作动机 因为是该项目</p>
-    <time datetime="2019-01-20 18:31:32 &#43;0800 DST" itemprop="datePublished">2019年01月20日</time>
-  </a>
-</section>
 
-      
-      <section class="post" itemscope itemprop="blogPost">
-    <a href="/post/writh_shell_with_cpp/" title="手把手实现一个 Linux shell" itemprop="url">
-    <h1 itemprop="name">手把手实现一个 Linux shell</h1>
-    <p itemprop="description">Table of Contens Linux shell 基本知识 shell 工作流程 shell 实现 可执行程序该有的样子 一探循环体究竟 解剖循环体 总结 参考 Linux shell 基本知识 目前市场上主要有三大主流操作系统，除了 windows 系</p>
-    <time datetime="2019-01-19 20:17:47 &#43;0800 DST" itemprop="datePublished">2019年01月19日</time>
-  </a>
-</section>
+<h3 id="进程描述符的存放">进程描述符的存放</h3>
 
-      
-      <section class="post" itemscope itemprop="blogPost">
-    <a href="/post/data_struct_trees_conclusion/" title="树结构及其应用场景总结" itemprop="url">
-    <h1 itemprop="name">树结构及其应用场景总结</h1>
-    <p itemprop="description">Table of Contens 数据结构 &ndash; 树 二叉树 二叉查找树 平衡二叉树 B树 B+树 B*树 字典树/Trie树 基数树/radix树 树的应用 参考 数据结构 &ndash; 树 树是学习数据结构必</p>
-    <time datetime="2019-01-05 00:00:00 &#43;0800 DST" itemprop="datePublished">2019年01月05日</time>
-  </a>
-</section>
+<p>内核通过 PID 标识每个进程，在 <code>&lt;linux/threads.h&gt;</code> 中定义 PID 的最大值。</p>
 
-      
-      
-      <h2 id="2018-12">2018-12</h2>
-      
-      <section class="post" itemscope itemprop="blogPost">
-    <a href="/post/gentoo_linux_first_try/" title="Gentoo 系统初探" itemprop="url">
-    <h1 itemprop="name">Gentoo 系统初探</h1>
-    <p itemprop="description">Table of Contens 安装准备 系统镜像 虚拟软件 启动系统 配置网络 准备磁盘 创建分区 创建文件系统 挂载根分区 安装 stage3 配置编译选项 基本系统 镜像站点 复制 DNS 信息 挂载必要的文</p>
-    <time datetime="2018-12-22 00:00:00 &#43;0800 DST" itemprop="datePublished">2018年12月22日</time>
-  </a>
-</section>
+<p>访问任务通常需要访问其 <code>task_struct</code> 指针，为了加快找到当前进程的 <code>task_struct</code>,
+使用 current 宏保存。对于不同的硬件体系结构，实现方式不一样。</p>
 
-      
-      
+<ul>
+<li>寄存器多：使用专门的寄存器存放</li>
+<li>寄存器少：在内核栈尾创建 <code>thread_info</code>,通过计算偏移量查找</li>
+</ul>
+
+<h3 id="进程状态">进程状态</h3>
+
+<p><code>task_struct</code> 中的 <code>state</code> 描述进程当前的状态。</p>
+
+<ul>
+<li>TASK_RUNNING: 可执行的；正在执行或运行队列中等待</li>
+<li>TASK_INTERRUPTIBLE: 可中断睡眠</li>
+<li>TASK_UNINTERRUPTIBLE: 不可中断</li>
+<li>__TASK_TRACED: 被跟踪</li>
+<li>__TASK_STOPPED: 停止，收到 SIGSTOP,SIGSTP,SIGINT,SIGTOU 等信号时</li>
+</ul>
+
+<figure>
+    <img src="/images/Snipaste_2019-05-20_22-24-50.png"/> 
+</figure>
+
+
+<h3 id="设置当前进程状态">设置当前进程状态</h3>
+
+<pre><code class="language-cpp">// 调整状态
+set_task_state(task, state);
+
+// set_current_state(state) = set_task_state(current, state);
+
+// 指定状态
+task-&gt;state = state;
+</code></pre>
+
+<h3 id="进程上下文">进程上下文</h3>
+
+<p>进程切换恢复到某进程所需要的所有信息。</p>
+
+<h3 id="进程家族树">进程家族树</h3>
+
+<p>系统中每个进程都有一个父进程，也可以拥有零个或多个子进程。指向父进程的指针为
+<code>parent</code> 指针。还有一个 <code>children</code> 的子进程列表。</p>
+
+<p>init 进程的进程描述符是作为 <code>init_task</code> 静态分配的。</p>
+
+<pre><code class="language-cpp">// 访问父进程
+struct task_struct *my_parent = current-&gt;parent;
+
+// 依次访问子进程
+struct task_struct *task;
+struct list_head *list;
+list_for_each(list, &amp;current-&gt;children){
+  task = list_entry(list, struct task_struct, sibling);
+  /* task 指向当前的某个子进程 */
+}
+
+// 访问所有进程
+struct task_struct *task;
+for(task=current; task != &amp;init_task; task = task-&gt;parent){
+  list_entry(task-&gt;tasks.next, struct task_struct, tasks);
+  list_entry(task-&gt;tasks.prev, struct task_struct, tasks);
+}
+
+// 访问整个任务队列
+struct task_struct *task;
+for_each_process(task){
+  ...
+}
+</code></pre>
+
+<h2 id="进程创建">进程创建</h2>
+
+<ul>
+<li>其它系统： spawn 机制，在新的地址空间里创建进程，读入可执行文件，最后开始执行</li>
+<li>Unix系统： 分解为两步： <code>fork</code> 和 <code>exec</code>
+
+<ul>
+<li>fork 拷贝当前进程创建子进程</li>
+<li>exec 读取可执行文件并载入地址空间运行</li>
+</ul></li>
+</ul>
+
+<h3 id="写时拷贝">写时拷贝</h3>
+
+<p>一种推迟甚至免拷贝数据的即技术，内核创建紧进程时并不复制整个进程地址空间，而是让
+父子共享同一个拷贝，在需要写入的时候数据在复制，从而各个进程有各自的拷贝。</p>
+
+<h3 id="fork">fork</h3>
+
+<p>Linux通过 clone() 实现 fork(). fork(),vfork() 以及 __clone() 库函数通过各自所需
+的参数标志调用 clone(), 然后由 clone() 调用 do_fork().</p>
+
+<p>do_fork 完成大部分工作，定义在 <code>kernel/fork.c</code> , 完成如下工作：</p>
+
+<ol>
+<li>dup_task_struct: 创建内核栈， thread_info 和 task_struct. 这些和父进程一样。
+描述符也一样。</li>
+<li>检查：用户进程数未超分配的资源限制</li>
+<li>子进程开始与父进程区分开来，进程描述符中许多值设为0或初始值。 task_struct 中的
+大多数据未改。</li>
+<li>状态设为 TASK_UNINTERRUPTIBLE, 确保不运行</li>
+<li>copy_process() 调用 copy_flags() 更新 task_struct 的 flags 成员。包括用户权限
+标志，还没有调用 exec 的标志等</li>
+<li>调用 alloc_pid() 分配有效 PID</li>
+<li>根据 clone() 标志， copy_process 拷贝或共享打开的文件，文件系统信息，信号处
+理函数，进程地址空间以及命名空间等</li>
+<li>copy_process 扫尾并返回指向子进程的指针</li>
+</ol>
+
+<p>回到 do_fork(),如果 copy_process() 函数返回成功，子进程被唤醒并运行。内核有意先
+运行子进程，因为子进程很可能执行 exec, 这样可以避免 COW 开销。</p>
+
+<h3 id="vfork">vfork</h3>
+
+<p>vfork() 现在几乎不用了，因为有了 COW, 它的作用就是将子进程作为一个单独的线程在它
+的地址空间运行，父进程被阻塞，直到子进程推出。主要用于马上调用 exec 的情况，用来
+避免拷贝。</p>
+
+<ol>
+<li>调用 copy_process 时， task_struct 的 vfor_done 置为 NULL</li>
+<li>执行 do_fork 时，如果给定标志， vfork_done 会指向特定地址</li>
+<li>子进程执行，父进程等待</li>
+<li>调用 mm_release() , 子进程退出地址空间</li>
+<li>回到 do_fork, 父进程唤醒</li>
+</ol>
+
+<h3 id="线程实现">线程实现</h3>
+
+<h4 id="创建线程">创建线程</h4>
+
+<p>和创建普通进程一样，只是参数标志不一样。</p>
+
+<pre><code class="language-cpp">clone(CLONE_VM|CLONE_FS|CLONE_FILES|CLONE_SIGHAND, 0);
+</code></pre>
+
+<figure>
+    <img src="/images/Snipaste_2019-05-24_00-01-55.png"/> 
+</figure>
+
+
+<h4 id="内核线程">内核线程</h4>
+
+<p>内核线程通过 kthreadd 内核进程调用 kthread_create 创建。定义在 <code>&lt;linux/kthread.h&gt;</code>
+中。</p>
+
+<pre><code class="language-cpp">struct task_struct *kthread_create(int (*threadfn)(void *data),
+                                   void *data,
+                                   const char namefmt[],
+                                   ...);
+</code></pre>
+
+<p>新创建的线程处于不可运行状态，需调用 <code>wake_up_process()</code> 唤醒。</p>
+
+<p>创建新线程并运行：</p>
+
+<pre><code class="language-cpp">struct task_struct *kthread_run(int (*threadfn)(void *data),
+                                void *data,
+                                const char namefmt[],
+                                ...);
+</code></pre>
+
+<p>该例程通过宏实现的，只是简单的调用 kthread_create 和 wake_up_process 函数.</p>
+
+<p>内核线程启动后会一直运行，直到调用 do_exit() 退出，或者内核其他部分调用 kthread_stop() 退出。</p>
+
+<pre><code class="language-cpp">int kthread_stop(struct task_struct *k);
+</code></pre>
+
+<h3 id="进程终止">进程终止</h3>
+
+<p>进程终结的大部分任务由 do_exit() 完成，定义在 <code>&lt;kernel/exit.c&gt;</code></p>
+
+<ol>
+<li>将 task_struct 中的标志设置为 PF_EXITING.</li>
+<li>del_timer_sync 删除任一内核定时器，确保没有定时器在排队，也没有定时器处理程序正在运行</li>
+<li>acct_update_integrals() 输出统计信息</li>
+<li>exit_mm() 释放占用的 mm_struct. 没有进程占用就释放</li>
+<li>sem_exit() , 如果进程排队等候 IPC 信号则离开队列</li>
+<li>exit_files()、exit_fs() 递减文件描述符和文件系统的引用计数</li>
+<li>将 task_struct 中的 exit_code 设为 exit() 中的退出码</li>
+<li>exit_notify() 向父进程发送信号，給子进程找父进程，一般为线程组其他线程或 init 进程，并设置状态为 EXIT_ZOMBIE</li>
+<li>schedule() 切换到新的进程</li>
+</ol>
+
+    
+	</div>
+  <footer class="article-footer clearfix">
+  
+
+<div class="article-tags">
+  <span></span>
+  
+  <a href="/tags/linux%E5%86%85%E6%A0%B8">linux内核</a>
+  
+  <a href="/tags/%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86">进程管理</a>
+  
+</div>
+
+
+
+
+
+<div class="article-categories">
+  <span></span>
+  
+  <a class="article-category-link" href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0">学习笔记</a>
+  
+</div>
+
+
+
+  <div class="article-share" id="share">
+    <div data-url="/post/linux_kernel_design_and_impl_ch02/" data-title="linux 设计与实现 — 进程管理" data-tsina="123" class="share clearfix">
     </div>
+  </div>
+</footer>
+
+	</article>
+  
+
+
+
+</div>
+
     <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
 <div id="asidepart">
 <div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
@@ -390,10 +557,6 @@
 
 
   
-<div class="rsspart">
-  <a rel="nofollow" href="/feed.xml" type="application/rss+xml" target="_blank">RSS 订阅</a>
-</div>
-
 
 </aside>
 </div>

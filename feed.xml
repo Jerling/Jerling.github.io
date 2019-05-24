@@ -6,10 +6,19 @@
     <description>Recent content on 北极狼徒</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Fri, 17 May 2019 21:57:43 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 19 May 2019 21:02:15 +0800</lastBuildDate>
     
 	<atom:link href="/feed.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>linux 设计与实现 — 进程管理</title>
+      <link>/post/linux_kernel_design_and_impl_ch02/</link>
+      <pubDate>Sun, 19 May 2019 21:02:15 +0800</pubDate>
+      
+      <guid>/post/linux_kernel_design_and_impl_ch02/</guid>
+      <description>进程 进程：处于执行期的程序的实时结果 文件描述符 挂起的信号 内核内部数据 处理器状态 一个或多个内存映射地址 一个或多个执行线程 (执行)线程： 进程中的</description>
+    </item>
     
     <item>
       <title>C&#43;&#43; 对象模型 — 构造语义学</title>

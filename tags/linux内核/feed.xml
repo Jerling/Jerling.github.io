@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>linux内核 on 北极狼徒</title>
+    <link>/tags/linux%E5%86%85%E6%A0%B8/</link>
+    <description>Recent content in linux内核 on 北极狼徒</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Sun, 19 May 2019 21:02:15 +0800</lastBuildDate>
+    
+	<atom:link href="/tags/linux%E5%86%85%E6%A0%B8/feed.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>linux 设计与实现 — 进程管理</title>
+      <link>/post/linux_kernel_design_and_impl_ch02/</link>
+      <pubDate>Sun, 19 May 2019 21:02:15 +0800</pubDate>
+      
+      <guid>/post/linux_kernel_design_and_impl_ch02/</guid>
+      <description>进程 进程：处于执行期的程序的实时结果 文件描述符 挂起的信号 内核内部数据 处理器状态 一个或多个内存映射地址 一个或多个执行线程 (执行)线程： 进程中的</description>
+    </item>
+    
+  </channel>
+</rss>
