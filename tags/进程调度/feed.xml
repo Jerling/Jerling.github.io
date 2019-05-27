@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>进程调度 on 北极狼徒</title>
+    <link>/tags/%E8%BF%9B%E7%A8%8B%E8%B0%83%E5%BA%A6/</link>
+    <description>Recent content in 进程调度 on 北极狼徒</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Sat, 25 May 2019 23:05:31 +0800</lastBuildDate>
+    
+	<atom:link href="/tags/%E8%BF%9B%E7%A8%8B%E8%B0%83%E5%BA%A6/feed.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Linux 内核设计与实现 — 进程调度</title>
+      <link>/post/linux_kernel_design_and_impl_ch04/</link>
+      <pubDate>Sat, 25 May 2019 23:05:31 +0800</pubDate>
+      
+      <guid>/post/linux_kernel_design_and_impl_ch04/</guid>
+      <description>进程调度 进程是程序的运行态的表现形式 进程调用是确保程序有效工作的内核子系统 多任务 并发交互的执行多个进程的操作系统 抢占式 : 由调度程序决定什么时</description>
+    </item>
+    
+  </channel>
+</rss>
