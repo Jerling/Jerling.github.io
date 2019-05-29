@@ -6,10 +6,19 @@
     <description>Recent content in 学习笔记 on 北极狼徒</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Sat, 25 May 2019 23:05:31 +0800</lastBuildDate>
+    <lastBuildDate>Tue, 28 May 2019 23:18:19 +0800</lastBuildDate>
     
 	<atom:link href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/feed.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>C&#43;&#43; 对象模型 — Data 语义学</title>
+      <link>/post/cpp_object_models_ch03/</link>
+      <pubDate>Tue, 28 May 2019 23:18:19 +0800</pubDate>
+      
+      <guid>/post/cpp_object_models_ch03/</guid>
+      <description>对象大小 语言本身所造成的额外负担，如虚基类 编译器对于特殊情况的优化处理，如某些编译器对空虚基类的特殊支持，一般放在头部 就省去 1 byte 大小的空间 字</description>
+    </item>
     
     <item>
       <title>Linux 内核设计与实现 — 进程调度</title>

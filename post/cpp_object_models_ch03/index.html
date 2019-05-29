@@ -2,18 +2,17 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <title>内存管理 - 北极狼徒</title>
+  <title>C&#43;&#43; 对象模型 — Data 语义学 - 北极狼徒</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
   
-  <meta name="description" content="内存管理">
+  <meta name="description" content="学习对象的数据成员">
   
-  <meta itemprop="name" content="内存管理 - 北极狼徒">
-  <meta itemprop="description" content="内存管理">
+  <meta itemprop="name" content="C&#43;&#43; 对象模型 — Data 语义学 - 北极狼徒">
+  <meta itemprop="description" content="学习对象的数据成员">
   <meta itemprop="image" content="/img/author.jpg">
   
+  <meta name="twitter:description" content="学习对象的数据成员" />
   
-  <meta name="twitter:description" content="随便写写">
-  <link rel="alternate" href="/feed.xml" title="北极狼徒" type="application/rss+xml"/>
   <link rel="shortcut icon" href="/img/favicon.ico"/>
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
   <link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png" />
@@ -58,21 +57,194 @@
 
   </header>
   <div id="container">
-    <div id="main">
-      
-      <h2 id="2019-04">2019-04</h2>
-      
-      <section class="post" itemscope itemprop="blogPost">
-    <a href="/post/about_memory_allcates/" title="关于内存配置器的一些总结" itemprop="url">
-    <h1 itemprop="name">关于内存配置器的一些总结</h1>
-    <p itemprop="description">概述 内存管理 我们通常说的内存管理是操作系统内核提供的功能之一，也就是对于虚拟内存的管理。可以 分为以下几个不同的层次。 操作系统： 内核对虚拟内存</p>
-    <time datetime="2019-04-26 20:12:02 &#43;0800 DST" itemprop="datePublished">2019年04月26日</time>
-  </a>
-</section>
+    <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody">
+    <header class="article-info clearfix">
+  <h1 itemprop="name">
+      <a href="/post/cpp_object_models_ch03/" title="C&#43;&#43; 对象模型 — Data 语义学" itemprop="url">C&#43;&#43; 对象模型 — Data 语义学</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="https://github.com/Jerling" title="[Jerling]">[Jerling]</a>
+    
+  </p>
+  <p class="article-time">
+    <time datetime="2019-05-28 23:18:19 &#43;0800 DST" itemprop="datePublished">2019年05月28日</time>
+  </p>
+</header>
 
-      
-      
+	<div class="article-content">
+    
+		<div class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+      <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#对象大小">对象大小</a></li>
+<li><a href="#数据成员的绑定">数据成员的绑定</a></li>
+<li><a href="#数据成员的布局">数据成员的布局</a></li>
+<li><a href="#数据成员的存取">数据成员的存取</a>
+<ul>
+<li><a href="#静态数据成员">静态数据成员</a></li>
+<li><a href="#非静态数据成员">非静态数据成员</a></li>
+</ul></li>
+<li><a href="#继承与数据成员">继承与数据成员</a>
+<ul>
+<li><a href="#只要继承不要多态">只要继承不要多态</a></li>
+<li><a href="#加上多态">加上多态</a></li>
+<li><a href="#多重继承">多重继承</a></li>
+<li><a href="#虚继承">虚继承</a></li>
+</ul></li>
+<li><a href="#指向数据成员的指针">指向数据成员的指针</a></li>
+</ul></li>
+</ul>
+</nav>
+		</div>
+    
+    
+
+<h2 id="对象大小">对象大小</h2>
+
+<ol>
+<li>语言本身所造成的额外负担，如虚基类</li>
+<li>编译器对于特殊情况的优化处理，如某些编译器对空虚基类的特殊支持，一般放在头部
+就省去 1 byte 大小的空间</li>
+<li>字节对齐</li>
+</ol>
+
+<h2 id="数据成员的绑定">数据成员的绑定</h2>
+
+<p>早期的两种防御性编程：</p>
+
+<ol>
+<li>把所有的 data members 放在 class 声明头处确保正确的绑定</li>
+<li>把所有的 inline functions, 不管大小定义都放在 class 声明之外</li>
+</ol>
+
+<p>C++ 2.0 之后这种风格消失了，因为对其成员函数的分析会到整个 class 的声明都出现才
+开始。</p>
+
+<h2 id="数据成员的布局">数据成员的布局</h2>
+
+<p>C++ 标准要求同一个 access section 中， members 的排列顺序只需符合 <strong>较晚出现的
+members 在 class object 中有较高的地址</strong>, 也就是说不一定连续。 members 之间可能会
+存在一些 padding 或着合成的 data members, 如 vptr.</p>
+
+<p>当前编译器都是把多个 access sections 按照声明的顺序连锁在一起成为连续区。</p>
+
+<h2 id="数据成员的存取">数据成员的存取</h2>
+
+<h3 id="静态数据成员">静态数据成员</h3>
+
+<p>只有一个实体，存放在数据段。存取时会内部转化为唯一的 extern 实体。</p>
+
+<h3 id="非静态数据成员">非静态数据成员</h3>
+
+<p>存在类对象中，只能通过显式或隐式（如this）的类对象进行存取。</p>
+
+<p>存取非静态数据，编译器需要把类对象起始地址加上数据成员的偏移。</p>
+
+<h2 id="继承与数据成员">继承与数据成员</h2>
+
+<p>派生类的数据表现出的东西是自己和继承的成员的总和，但是排列次序，C++标准并未规定；
+大部分编译器中，基类先出现。但 <strong>虚基类</strong> 除外。</p>
+
+<h3 id="只要继承不要多态">只要继承不要多态</h3>
+
+<p>容易犯的错误：</p>
+
+<ol>
+<li>重复设计一些相同操作的函数</li>
+<li>把 class 分解多蹭导致所需空间膨胀</li>
+</ol>
+
+<h3 id="加上多态">加上多态</h3>
+
+<p>空间和存取时间的额外负担：</p>
+
+<ol>
+<li>类的虚函数表 virtual table</li>
+<li>类对象的虚函数指针 vptr</li>
+<li>加强构造函数，能够设置 vptr 初始值指向类的虚函数表</li>
+<li>加强析构函数，抹消 vptr</li>
+</ol>
+
+<p>vptr 应放在什么位置，因不同的编译器而不同：</p>
+
+<ol>
+<li>前端：多重继承时，通过指向类成员的指针调用虚函数会有优势；但丧失可 C 语言的兼
+容性</li>
+<li>后端：保留 C struct 的对象布局</li>
+</ol>
+
+<h3 id="多重继承">多重继承</h3>
+
+<p>派生类对象将其地址指定最左边（第一个）基类的指针，情况和单一继承一样，因为有相同
+的起始地址。</p>
+
+<p>第二个及后继基类的地址指定操作则需要将地址修改，加上或减去介于中间的基类的大小。</p>
+
+<h3 id="虚继承">虚继承</h3>
+
+<p>副作用：必须支持某种形式的 <strong>shared suobject 继承</strong> 语意。所表现的是基类子对象的数
+据的位置会因每次的派生操作而变化；所以只能间接存取，存取策略因不同的编译器而不同。</p>
+
+<h2 id="指向数据成员的指针">指向数据成员的指针</h2>
+
+<p>需要详细调查成员低层布局时比较有用，可以决定 vptr 是在起始处还是尾端。</p>
+
+<ol>
+<li>静态数据成员取地址获得内存地址</li>
+<li>非静态数据成员取地址获得的是相对于对象起始地址的偏移。</li>
+</ol>
+
+<blockquote>
+<p>要输出成员的地址要用 %p 格式化输出，不能用 std::cout 。</p>
+</blockquote>
+
+    
+	</div>
+  <footer class="article-footer clearfix">
+  
+
+<div class="article-tags">
+  <span></span>
+  
+  <a href="/tags/c&#43;&#43;">C&#43;&#43;</a>
+  
+  <a href="/tags/%E5%AF%B9%E8%B1%A1%E6%A8%A1%E5%9E%8B">对象模型</a>
+  
+  <a href="/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80">编程语言</a>
+  
+</div>
+
+
+
+
+
+<div class="article-categories">
+  <span></span>
+  
+  <a class="article-category-link" href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0">学习笔记</a>
+  
+</div>
+
+
+
+  <div class="article-share" id="share">
+    <div data-url="/post/cpp_object_models_ch03/" data-title="C&#43;&#43; 对象模型 — Data 语义学" data-tsina="123" class="share clearfix">
     </div>
+  </div>
+</footer>
+
+	</article>
+  
+
+
+
+</div>
+
     <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
 <div id="asidepart">
 <div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
@@ -257,10 +429,6 @@
 
 
   
-<div class="rsspart">
-  <a rel="nofollow" href="/feed.xml" type="application/rss+xml" target="_blank">RSS 订阅</a>
-</div>
-
 
 </aside>
 </div>
@@ -351,6 +519,38 @@ $(document).ready(function(){
 
 <script type="text/javascript">
 $(document).ready(function(){
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
   var $this = $('.share'),
       url = $this.attr('data-url'),
       encodedUrl = encodeURIComponent(url),
@@ -377,6 +577,27 @@ $(document).ready(function(){
 });
 </script>
 
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+});
+</script>
 
 
 
