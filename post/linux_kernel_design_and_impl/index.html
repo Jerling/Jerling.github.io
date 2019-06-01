@@ -2,18 +2,17 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <title>学习笔记 - 北极狼徒</title>
+  <title>Linux 内核设计与实现 — 系统调用 - 北极狼徒</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
   
-  <meta name="description" content="学习笔记">
+  <meta name="description" content="Short description">
   
-  <meta itemprop="name" content="学习笔记 - 北极狼徒">
-  <meta itemprop="description" content="学习笔记">
+  <meta itemprop="name" content="Linux 内核设计与实现 — 系统调用 - 北极狼徒">
+  <meta itemprop="description" content="Short description">
   <meta itemprop="image" content="/img/author.jpg">
   
+  <meta name="twitter:description" content="Short description" />
   
-  <meta name="twitter:description" content="随便写写">
-  <link rel="alternate" href="/feed.xml" title="北极狼徒" type="application/rss+xml"/>
   <link rel="shortcut icon" href="/img/favicon.ico"/>
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
   <link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png" />
@@ -58,69 +57,258 @@
 
   </header>
   <div id="container">
-    <div id="main">
-      
-      <h2 id="2019-06">2019-06</h2>
-      
-      <section class="post" itemscope itemprop="blogPost">
-    <a href="/post/linux_kernel_design_and_impl/" title="Linux 内核设计与实现 — 系统调用" itemprop="url">
-    <h1 itemprop="name">Linux 内核设计与实现 — 系统调用</h1>
-    <p itemprop="description">三个作用 为用户空间提供硬件抽象接口 保证系统稳定和安全 使每个用户程序运行在虚拟系统中 系统调用 定义一个系统调用(以 getpid() 为例)： SYSCALL_DEFINE0(getpid) { return task_tgid_vnr(current); // return current-&gt;tgid } SYSCALL_DEFINE0 是</p>
+    <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody">
+    <header class="article-info clearfix">
+  <h1 itemprop="name">
+      <a href="/post/linux_kernel_design_and_impl/" title="Linux 内核设计与实现 — 系统调用" itemprop="url">Linux 内核设计与实现 — 系统调用</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="https://github.com/Jerling" title="[Jerling]">[Jerling]</a>
+    
+  </p>
+  <p class="article-time">
     <time datetime="2019-06-01 22:21:06 &#43;0800 DST" itemprop="datePublished">2019年06月01日</time>
-  </a>
-</section>
+  </p>
+</header>
 
-      
-      
-      <h2 id="2019-05">2019-05</h2>
-      
-      <section class="post" itemscope itemprop="blogPost">
-    <a href="/post/cpp_object_models_ch03/" title="C&#43;&#43; 对象模型 — Data 语义学" itemprop="url">
-    <h1 itemprop="name">C&#43;&#43; 对象模型 — Data 语义学</h1>
-    <p itemprop="description">对象大小 语言本身所造成的额外负担，如虚基类 编译器对于特殊情况的优化处理，如某些编译器对空虚基类的特殊支持，一般放在头部 就省去 1 byte 大小的空间 字</p>
-    <time datetime="2019-05-28 23:18:19 &#43;0800 DST" itemprop="datePublished">2019年05月28日</time>
-  </a>
-</section>
+	<div class="article-content">
+    
+		<div class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+      <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#三个作用">三个作用</a></li>
+<li><a href="#系统调用">系统调用</a>
+<ul>
+<li><a href="#系统调用号">系统调用号</a></li>
+</ul></li>
+<li><a href="#系统调用处理程序">系统调用处理程序</a>
+<ul>
+<li><a href="#指定恰当的系统调用">指定恰当的系统调用</a></li>
+<li><a href="#参数传递">参数传递</a></li>
+</ul></li>
+<li><a href="#实现">实现</a>
+<ul>
+<li><a href="#实现系统调用">实现系统调用</a></li>
+<li><a href="#参数验证">参数验证</a></li>
+</ul></li>
+<li><a href="#上下文">上下文</a>
+<ul>
+<li><a href="#绑定系统调用的最后步骤">绑定系统调用的最后步骤</a></li>
+<li><a href="#从用户空间访问系统调用">从用户空间访问系统调用</a></li>
+<li><a href="#为什么不通过系统调用的方式实现">为什么不通过系统调用的方式实现</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+		</div>
+    
+    
 
-      
-      <section class="post" itemscope itemprop="blogPost">
-    <a href="/post/linux_kernel_design_and_impl_ch04/" title="Linux 内核设计与实现 — 进程调度" itemprop="url">
-    <h1 itemprop="name">Linux 内核设计与实现 — 进程调度</h1>
-    <p itemprop="description">进程调度 进程是程序的运行态的表现形式 进程调用是确保程序有效工作的内核子系统 多任务 并发交互的执行多个进程的操作系统 抢占式 : 由调度程序决定什么时</p>
-    <time datetime="2019-05-25 23:05:31 &#43;0800 DST" itemprop="datePublished">2019年05月25日</time>
-  </a>
-</section>
+<h2 id="三个作用">三个作用</h2>
 
-      
-      <section class="post" itemscope itemprop="blogPost">
-    <a href="/post/linux_kernel_design_and_impl_ch02/" title="linux 设计与实现 — 进程管理" itemprop="url">
-    <h1 itemprop="name">linux 设计与实现 — 进程管理</h1>
-    <p itemprop="description">进程 进程：处于执行期的程序的实时结果 文件描述符 挂起的信号 内核内部数据 处理器状态 一个或多个内存映射地址 一个或多个执行线程 (执行)线程： 进程中的</p>
-    <time datetime="2019-05-19 21:02:15 &#43;0800 DST" itemprop="datePublished">2019年05月19日</time>
-  </a>
-</section>
+<ol>
+<li>为用户空间提供硬件抽象接口</li>
+<li>保证系统稳定和安全</li>
+<li>使每个用户程序运行在虚拟系统中</li>
+</ol>
 
-      
-      <section class="post" itemscope itemprop="blogPost">
-    <a href="/post/cpp_object_models_ch02/" title="C&#43;&#43; 对象模型 — 构造语义学" itemprop="url">
-    <h1 itemprop="name">C&#43;&#43; 对象模型 — 构造语义学</h1>
-    <p itemprop="description">默认构造函数 在ARM(Annotated Reference Manual) 中：默认构造函数在 需要的 时候由编译器产生 产生出来。这里的需要为编译器需要，而不是程序需要，程序需</p>
-    <time datetime="2019-05-17 21:57:43 &#43;0800 DST" itemprop="datePublished">2019年05月17日</time>
-  </a>
-</section>
+<h2 id="系统调用">系统调用</h2>
 
-      
-      <section class="post" itemscope itemprop="blogPost">
-    <a href="/post/cpp_object_models_ch01/" title="C&#43;&#43; 对象模型 — 关于对象" itemprop="url">
-    <h1 itemprop="name">C&#43;&#43; 对象模型 — 关于对象</h1>
-    <p itemprop="description">关于对象 面向过程 在 C 语言中, 我们通常将 *数据* 和 *处理数据的操作(函数)* 分开声明, 也就是说语言本身没有支持 *数据和函数* 之间的关联性. 这种</p>
-    <time datetime="2019-05-07 23:36:30 &#43;0800 DST" itemprop="datePublished">2019年05月07日</time>
-  </a>
-</section>
+<p>定义一个系统调用(以 <code>getpid()</code> 为例)：</p>
 
-      
-      
+<pre><code class="language-c">SYSCALL_DEFINE0(getpid)
+{
+  return task_tgid_vnr(current); // return current-&gt;tgid
+}
+</code></pre>
+
+<p><code>SYSCALL_DEFINE0</code> 是一个宏， <code>0</code> 表示参数个数。展开为：</p>
+
+<pre><code class="language-c">asmlinkage long sys_getpid(void)
+</code></pre>
+
+<ol>
+<li><code>asmlinkage</code> 是编译器指令。通知编译器仅从栈中提取参数，所有的系统调用都需要这个限定词</li>
+<li>为了保证 32 位和 64 位的兼容，用户空间返回为 <code>int</code>, 内核返回 <code>long</code></li>
+<li>系统调用 <code>get_pid()</code> 在内核中定义为 <code>sys_getpid</code>,这是所有系统调用的命名规则</li>
+</ol>
+
+<h3 id="系统调用号">系统调用号</h3>
+
+<p>每个系统调用都有一个系统调用号，用户空间的进程执行系统调用时通过系统调用号而不是
+名称。</p>
+
+<p>系统调用一旦分配不能改变，也不能复用。系统调用删除需用 &ldquo;未实现&rdquo; 系统调用
+<code>sys_ni_syscall()</code> 进行 &ldquo;填补&rdquo;.</p>
+
+<p>内核在 <code>sys_call_table</code> 记录所有注册过的系统调用，它为每个有效系统调用指定唯一的系统
+调用号；这个表是跟体系结构相关的。</p>
+
+<h2 id="系统调用处理程序">系统调用处理程序</h2>
+
+<p>通过软中断实现：引发一个异常促使系统切换到内核态执行系统调用处理程序 <code>system_call()</code>。</p>
+
+<h3 id="指定恰当的系统调用">指定恰当的系统调用</h3>
+
+<p>在 x86 上，系统调用号通过 <code>eax</code> 传递到内核。 <code>system_call()</code> 通过将系统调用号与
+<code>NR_syscalls</code> 比较，如果低于或超出该范围，返回 <code>-ENOSYS</code> 。否则执行相应的系统调
+用：</p>
+
+<pre><code class="language-c">call *sys_call_table(, %rax, 8)
+</code></pre>
+
+<p>表项是 <code>64</code> 位，所以内核将系统调用号乘 <code>8</code>, 32 位系统乘 <code>4</code> 。</p>
+
+<h3 id="参数传递">参数传递</h3>
+
+<p>参数少于五个时，通过寄存器传递；否则用 <code>eax</code> 传递一个指向用户空间的指针。</p>
+
+<h2 id="实现">实现</h2>
+
+<p>添加系统调用比较容易，难在设计和实现。</p>
+
+<h3 id="实现系统调用">实现系统调用</h3>
+
+<ol>
+<li>用途：不提倡多用途的系统调用（通过传递不同的参数）</li>
+<li>参数、返回值和错误码：接口力求简洁，参数尽可能少；力求稳定，不做改动。</li>
+<li>设计接口时尽量考虑未来：通用性，移植性，健壮性，考虑字节长度和字节序</li>
+</ol>
+
+<h3 id="参数验证">参数验证</h3>
+
+<ol>
+<li>指针是否有效
+
+<ul>
+<li>指向的内存区域为用户空间，不能指向内核空间</li>
+<li>在该进程的地址空间，不能是其它进程</li>
+<li>是读标记为可读，是写标记为可写，是执行标记为可执行，不能饶过内存访问限制</li>
+</ul></li>
+<li>内核不能轻率接受用户空间的指针，必须进行拷贝
+
+<ol>
+<li><code>copy_to_user()</code> : 向用户空间写入数据</li>
+<li><code>copy_from_user</code> : 从用户空间读如数据</li>
+</ol></li>
+<li>检查权限
+
+<ul>
+<li>老版本使用 <code>suser</code> 检查是否为超级用户</li>
+<li>现在用细粒度的 &ldquo;权能&rdquo; 机制替代， <code>capable()</code></li>
+</ul></li>
+</ol>
+
+<h2 id="上下文">上下文</h2>
+
+<p>系统调用为可重入的，当系统调用返回时，控制权在 <code>system_call()</code> 中，它负责切换到
+用户空间继续运行用户进程</p>
+
+<h3 id="绑定系统调用的最后步骤">绑定系统调用的最后步骤</h3>
+
+<p>注册过程：</p>
+
+<ol>
+<li>在系统调用表 <code>sys_call_table</code> 最后加入一个表项</li>
+<li>对于所支持的各种体系结构，系统调用号都必须定义于 <code>&lt;asm/unistd.h&gt;</code> 中</li>
+<li>必须编译进内核映像（不能是模块）</li>
+</ol>
+
+<h3 id="从用户空间访问系统调用">从用户空间访问系统调用</h3>
+
+<ol>
+<li>通过库函数（如 <code>glibc</code>）</li>
+
+<li><p><code>_syscaln()</code> 宏： n 为参数个数，以 <code>open()</code> 为例：</p>
+
+<pre><code class="language-c">    // 系统调用定义
+    long open(const char *filename, int flags, int mode)
+
+    // 系统调用的宏
+    #define NR_open 5
+    _syscall3(long, open, const char*, filename, int, flags, int, mode)
+</code></pre>
+
+<p>每个宏的参数个数为 <code>2 + 2 * n</code> 个</p>
+
+<p>该宏会被扩展为内嵌汇编的 C 函数。</p>
+
+<h3 id="为什么不通过系统调用的方式实现">为什么不通过系统调用的方式实现</h3>
+
+<p>好处：</p>
+
+<ol>
+<li>创建容易，使用方便</li>
+<li>高性能</li>
+</ol>
+
+<p>问题：</p>
+
+<ol>
+<li>需要一个系统调用号</li>
+<li>加入稳定内核后就固化了</li>
+<li>需分别注册到需支持的体系结构中</li>
+<li>脚本不易使用，也不能从文件系统直接访问</li>
+<li>因为需要系统调用号，在主内核之外很难维护和使用</li>
+<li>简单的信息交换，大材小用</li>
+</ol>
+
+<p>替代方法：实现一个设备节点，对此实现 <code>read()</code> 和 <code>write()</code> 。使用 <code>ioctl()</code> 对特
+定的设置进行操作或者特定信息进行检索。</p>
+
+<ol>
+<li>像信号量这样的接口，可用文件描述符表示，因此可用上述方式操作</li>
+<li>把增加的信息作为文件放在 <code>sysfs</code> 的合适文件</li>
+</ol></li>
+</ol>
+
+    
+	</div>
+  <footer class="article-footer clearfix">
+  
+
+<div class="article-tags">
+  <span></span>
+  
+  <a href="/tags/linux">linux</a>
+  
+  <a href="/tags/kernel">kernel</a>
+  
+  <a href="/tags/%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8">系统调用</a>
+  
+</div>
+
+
+
+
+
+<div class="article-categories">
+  <span></span>
+  
+  <a class="article-category-link" href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0">学习笔记</a>
+  
+</div>
+
+
+
+  <div class="article-share" id="share">
+    <div data-url="/post/linux_kernel_design_and_impl/" data-title="Linux 内核设计与实现 — 系统调用" data-tsina="123" class="share clearfix">
     </div>
+  </div>
+</footer>
+
+	</article>
+  
+
+
+
+</div>
+
     <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
 <div id="asidepart">
 <div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
@@ -314,10 +502,6 @@
 
 
   
-<div class="rsspart">
-  <a rel="nofollow" href="/feed.xml" type="application/rss+xml" target="_blank">RSS 订阅</a>
-</div>
-
 
 </aside>
 </div>
@@ -408,6 +592,38 @@ $(document).ready(function(){
 
 <script type="text/javascript">
 $(document).ready(function(){
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
   var $this = $('.share'),
       url = $this.attr('data-url'),
       encodedUrl = encodeURIComponent(url),
@@ -434,6 +650,27 @@ $(document).ready(function(){
 });
 </script>
 
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+});
+</script>
 
 
 
