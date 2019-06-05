@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>成员函数 on 北极狼徒</title>
+    <link>/tags/%E6%88%90%E5%91%98%E5%87%BD%E6%95%B0/</link>
+    <description>Recent content in 成员函数 on 北极狼徒</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Mon, 03 Jun 2019 22:26:04 +0800</lastBuildDate>
+    
+	<atom:link href="/tags/%E6%88%90%E5%91%98%E5%87%BD%E6%95%B0/feed.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>C&#43;&#43; 对象模型 — Function 语意学</title>
+      <link>/post/cpp_object_models_ch04/</link>
+      <pubDate>Mon, 03 Jun 2019 22:26:04 +0800</pubDate>
+      
+      <guid>/post/cpp_object_models_ch04/</guid>
+      <description>调用方式 普通函数 虚函数 静态函数 非静态成员函数 C++ 设计准则之一：非静态成员函数至少和非成员函数效率一样。 成员函数内化为非成员函数的过程： 改写函数</description>
+    </item>
+    
+  </channel>
+</rss>

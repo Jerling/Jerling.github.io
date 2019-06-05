@@ -6,10 +6,19 @@
     <description>Recent content in 面向对象 on 北极狼徒</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Fri, 22 Feb 2019 20:07:56 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 03 Jun 2019 22:26:04 +0800</lastBuildDate>
     
 	<atom:link href="/tags/%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/feed.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>C&#43;&#43; 对象模型 — Function 语意学</title>
+      <link>/post/cpp_object_models_ch04/</link>
+      <pubDate>Mon, 03 Jun 2019 22:26:04 +0800</pubDate>
+      
+      <guid>/post/cpp_object_models_ch04/</guid>
+      <description>调用方式 普通函数 虚函数 静态函数 非静态成员函数 C++ 设计准则之一：非静态成员函数至少和非成员函数效率一样。 成员函数内化为非成员函数的过程： 改写函数</description>
+    </item>
     
     <item>
       <title>关于对象那些事儿 ~~ 继承</title>
