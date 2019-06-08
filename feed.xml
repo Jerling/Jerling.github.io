@@ -6,10 +6,19 @@
     <description>Recent content on 北极狼徒</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Mon, 03 Jun 2019 22:26:04 +0800</lastBuildDate>
+    <lastBuildDate>Fri, 07 Jun 2019 22:09:18 +0800</lastBuildDate>
     
 	<atom:link href="/feed.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Linux 内核设计与实现 — 内核数据结构</title>
+      <link>/post/linux_kernel_design_and_impl_ch06/</link>
+      <pubDate>Fri, 07 Jun 2019 22:09:18 +0800</pubDate>
+      
+      <guid>/post/linux_kernel_design_and_impl_ch06/</guid>
+      <description>本章节的内容是一些数据结构，没甚么可说的。随便记记笔记吧。内容包括链表、队列、映 射、二叉树。 链表 这是 linux 中最简单的数据结构，是一种存放客可变数</description>
+    </item>
     
     <item>
       <title>C&#43;&#43; 对象模型 — Function 语意学</title>
