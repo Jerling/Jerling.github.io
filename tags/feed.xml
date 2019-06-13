@@ -6,7 +6,7 @@
     <description>Recent content in Tags on 北极狼徒</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Sun, 09 Jun 2019 15:11:35 +0800</lastBuildDate>
+    <lastBuildDate>Wed, 12 Jun 2019 20:40:09 +0800</lastBuildDate>
     
 	<atom:link href="/tags/feed.xml" rel="self" type="application/rss+xml" />
     
@@ -14,7 +14,7 @@
     <item>
       <title>kernel</title>
       <link>/tags/kernel/</link>
-      <pubDate>Sun, 09 Jun 2019 15:11:35 +0800</pubDate>
+      <pubDate>Wed, 12 Jun 2019 20:40:09 +0800</pubDate>
       
       <guid>/tags/kernel/</guid>
       <description></description>
@@ -23,9 +23,18 @@
     <item>
       <title>linux</title>
       <link>/tags/linux/</link>
-      <pubDate>Sun, 09 Jun 2019 15:11:35 +0800</pubDate>
+      <pubDate>Wed, 12 Jun 2019 20:40:09 +0800</pubDate>
       
       <guid>/tags/linux/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>内核同步</title>
+      <link>/tags/%E5%86%85%E6%A0%B8%E5%90%8C%E6%AD%A5/</link>
+      <pubDate>Wed, 12 Jun 2019 20:40:09 +0800</pubDate>
+      
+      <guid>/tags/%E5%86%85%E6%A0%B8%E5%90%8C%E6%AD%A5/</guid>
       <description></description>
     </item>
     
@@ -48,7 +57,7 @@
     </item>
     
     <item>
-      <title>C&#43;&#43;</title>
+      <title>c&#43;&#43;</title>
       <link>/tags/c&#43;&#43;/</link>
       <pubDate>Mon, 03 Jun 2019 22:26:04 +0800</pubDate>
       

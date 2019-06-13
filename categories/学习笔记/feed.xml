@@ -6,10 +6,19 @@
     <description>Recent content in 学习笔记 on 北极狼徒</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Sun, 09 Jun 2019 15:11:35 +0800</lastBuildDate>
+    <lastBuildDate>Wed, 12 Jun 2019 20:40:09 +0800</lastBuildDate>
     
 	<atom:link href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/feed.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Linux 内核设计与实现 — 内核同步</title>
+      <link>/post/linux_design_and_impl_ch09/</link>
+      <pubDate>Wed, 12 Jun 2019 20:40:09 +0800</pubDate>
+      
+      <guid>/post/linux_design_and_impl_ch09/</guid>
+      <description>在进行多线程编程时，我们要特意留意共享数据的保护，防止并发访问时多个线程同时操作 导致的结果不一致性。 Linux 2.0 开始内核开始支持 SMP. 所以内核可以在同一</description>
+    </item>
     
     <item>
       <title>Linux 内核设计与实现 — 下半部</title>
