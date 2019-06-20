@@ -6,10 +6,19 @@
     <description>Recent content on 北极狼徒</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Wed, 12 Jun 2019 20:40:09 +0800</lastBuildDate>
+    <lastBuildDate>Thu, 20 Jun 2019 20:52:58 +0800</lastBuildDate>
     
 	<atom:link href="/feed.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Linux 内核设计与实现 — 时间管理</title>
+      <link>/post/linux_kernel_design_and_impl_ch11/</link>
+      <pubDate>Thu, 20 Jun 2019 20:52:58 +0800</pubDate>
+      
+      <guid>/post/linux_kernel_design_and_impl_ch11/</guid>
+      <description>内核中有很多基于时间驱动的函数，如调度程序中运行队列进行平衡调整或对屏幕进行刷新等。时间管理中需注意相对时间和绝对时间的差别以及周期性事件和</description>
+    </item>
     
     <item>
       <title>Linux 内核设计与实现 — 内核同步</title>
