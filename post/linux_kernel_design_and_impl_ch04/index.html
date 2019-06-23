@@ -393,11 +393,9 @@ __update_curr(struct cfs_rq *cfs_rq, struct sched_entity *curr,
 <blockquote>
 <p>__pick_next_entity 不会遍历最左子节点，它存在 <code>rb_leftmost</code> 中。如果返回 NULL,
 则没有可执行进程， CFS 选择 idle 任务。</p>
-</blockquote>
+</blockquote></li>
 
-<ul>
-<li>加入进程</li>
-</ul>
+<li><p>加入进程</p>
 
 <p>发生在进程变为可运行或 <code>fork</code> 创建进程时。</p>
 
@@ -473,11 +471,9 @@ enqueue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
     rb_link_node(&amp;se-&gt;run_node, parent, link);
     rb_insert_color(&amp;se-&gt;run_node, &amp;cfs_rq-&gt;tasks_timeline);
 }
-</code></pre>
+</code></pre></li>
 
-<ul>
-<li>删除进程</li>
-</ul>
+<li><p>删除进程</p>
 
 <p>发生在进程阻塞或终止时。</p>
 
@@ -536,7 +532,8 @@ dequeue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
 
     rb_erase(&amp;se-&gt;run_node, &amp;cfs_rq-&gt;tasks_timeline);
 }
-</code></pre>
+</code></pre></li>
+</ul>
 
 <h4 id="调度器入口">调度器入口</h4>
 
@@ -545,8 +542,8 @@ dequeue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
 <code>pick_next_task()</code>,定义在 <code>kernel/sched.h</code> 中。</p>
 
 <pre><code class="language-c">/*
-* Pick up the highest-prio task:
-*/
+ * Pick up the highest-prio task:
+ */
 static inline struct task_struct *
 pick_next_task(struct rq *rq)
 {
@@ -571,8 +568,7 @@ pick_next_task(struct rq *rq)
 
 	BUG(); /* the idle class will always have a runnable task */
 }
-</code></pre></li>
-</ul>
+</code></pre>
 
 <p>CFS 中的 <code>pick_next_task()</code> 会调用 <code>pick_next_entity()</code></p>
 
@@ -724,8 +720,12 @@ while(!condition){
 
 <h2 id="与调度相关的系统调用">与调度相关的系统调用</h2>
 
+
 <figure>
-    <img src="/images/Snipaste_2019-05-27_21-34-19.png"/> 
+    
+        <img src="/images/Snipaste_2019-05-27_21-34-19.png" />
+    
+    
 </figure>
 
 
@@ -785,7 +785,7 @@ while(!condition){
     
     <li><a href="/categories/%e5%91%bd%e4%bb%a4%e8%a1%8c%e8%89%ba%e6%9c%af" title="命令行艺术">命令行艺术<sup>3</sup></a></li>
     
-    <li><a href="/categories/%e5%ad%a6%e4%b9%a0%e7%ac%94%e8%ae%b0" title="学习笔记">学习笔记<sup>11</sup></a></li>
+    <li><a href="/categories/%e5%ad%a6%e4%b9%a0%e7%ac%94%e8%ae%b0" title="学习笔记">学习笔记<sup>12</sup></a></li>
     
     <li><a href="/categories/%e6%93%8d%e4%bd%9c%e7%b3%bb%e7%bb%9f" title="操作系统">操作系统<sup>1</sup></a></li>
     
@@ -820,9 +820,9 @@ while(!condition){
       
 			<li><a href="/tags/jemalloc" title="jemalloc">jemalloc<sup>1</sup></a></li>
       
-			<li><a href="/tags/kernel" title="kernel">kernel<sup>5</sup></a></li>
+			<li><a href="/tags/kernel" title="kernel">kernel<sup>6</sup></a></li>
       
-			<li><a href="/tags/linux" title="linux">linux<sup>10</sup></a></li>
+			<li><a href="/tags/linux" title="linux">linux<sup>11</sup></a></li>
       
 			<li><a href="/tags/linux%e5%86%85%e6%a0%b8" title="linux内核">linux内核<sup>1</sup></a></li>
       
@@ -841,6 +841,8 @@ while(!condition){
 			<li><a href="/tags/tree" title="tree">tree<sup>1</sup></a></li>
       
 			<li><a href="/tags/%e4%b8%ad%e6%96%ad" title="中断">中断<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e5%86%85%e5%ad%98%e7%ae%a1%e7%90%86" title="内存管理">内存管理<sup>1</sup></a></li>
       
 			<li><a href="/tags/%e5%86%85%e6%a0%b8%e5%90%8c%e6%ad%a5" title="内核同步">内核同步<sup>1</sup></a></li>
       
@@ -876,7 +878,7 @@ while(!condition){
       
       
       <li class="archive-list-item">
-        <a class="archive-list-link" href="/post/#2019-06">2019年06月</a><span class="archive-list-count">6</span>
+        <a class="archive-list-link" href="/post/#2019-06">2019年06月</a><span class="archive-list-count">7</span>
       </li>
       
       
@@ -955,6 +957,8 @@ while(!condition){
     <a href="/tags/tree" style="font-size: 12px;">tree</a>
     
     <a href="/tags/%e4%b8%ad%e6%96%ad" style="font-size: 12px;">中断</a>
+    
+    <a href="/tags/%e5%86%85%e5%ad%98%e7%ae%a1%e7%90%86" style="font-size: 12px;">内存管理</a>
     
     <a href="/tags/%e5%86%85%e6%a0%b8%e5%90%8c%e6%ad%a5" style="font-size: 12px;">内核同步</a>
     

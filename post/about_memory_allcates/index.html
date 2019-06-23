@@ -166,8 +166,12 @@ dlmalloc 等。但由于多核的出现，而 dlmalloc 没有针对多线程的�
 <p>在 ptmalloc2 中的内存管理对象叫做 arena , 在 arena 中有一个空闲链表数组 bits ，每一个
 链表称为一个 bin 。每个 bin 管理多个固定大小的 chunks。</p>
 
+
 <figure>
-    <img src="/images/ptmalloc2.png"/> 
+    
+        <img src="/images/ptmalloc2.png" />
+    
+    
 </figure>
 
 
@@ -184,8 +188,12 @@ chunk 先放到 fast bin 中加快分配速度。</p>
 
 <h3 id="分配流程">分配流程</h3>
 
+
 <figure>
-    <img src="/images/ptmalloc2_malloc.png"/> 
+    
+        <img src="/images/ptmalloc2_malloc.png" />
+    
+    
 </figure>
 
 
@@ -216,15 +224,23 @@ chunk 先放到 fast bin 中加快分配速度。</p>
 的分配， size &lt;= 32KB . 在 threadCache 中维护一个空闲链表数组，每个对象称为
 size-class. 这个和 ptmalloc2 中的 bin 作用一样。</p>
 
+
 <figure>
-    <img src="/images/tcmalloc_threadcache.png"/> 
+    
+        <img src="/images/tcmalloc_threadcache.png" />
+    
+    
 </figure>
 
 
 <h4 id="分配流程-1">分配流程</h4>
 
+
 <figure>
-    <img src="/images/tcmalloc_threadcache_malloc.png"/> 
+    
+        <img src="/images/tcmalloc_threadcache_malloc.png" />
+    
+    
 </figure>
 
 
@@ -234,8 +250,12 @@ size-class. 这个和 ptmalloc2 中的 bin 作用一样。</p>
 CentralCache 用来分配大对象的，管理的内存单元时 4K 对齐的，如果 ThreadCache 中的
 内存不够，需要到 CentralCache 中获取对应 size-class 的内存。</p>
 
+
 <figure>
-    <img src="/images/tcmalloc_centralcache.png"/> 
+    
+        <img src="/images/tcmalloc_centralcache.png" />
+    
+    
 </figure>
 
 
@@ -243,15 +263,23 @@ CentralCache 用来分配大对象的，管理的内存单元时 4K 对齐的，
 
 <h4 id="分配流程-2">分配流程</h4>
 
+
 <figure>
-    <img src="/images/tcmalloc_centralcache_malloc.png"/> 
+    
+        <img src="/images/tcmalloc_centralcache_malloc.png" />
+    
+    
 </figure>
 
 
 <h3 id="回收内存">回收内存</h3>
 
+
 <figure>
-    <img src="/images/tcmalloc_free.png"/> 
+    
+        <img src="/images/tcmalloc_free.png" />
+    
+    
 </figure>
 
 
@@ -281,8 +309,12 @@ size-class 的分类上不一样。地址： <a href="https://github.com/jemallo
 
 <h3 id="jemalloc-中对象的关系">jemalloc 中对象的关系</h3>
 
+
 <figure>
-    <img src="/images/jemalloc_objs.png"/> 
+    
+        <img src="/images/jemalloc_objs.png" />
+    
+    
 </figure>
 
 
@@ -365,7 +397,7 @@ tcmalloc 和 jemalloc 性能差不多，但是 jemalloc 在提升缓存命中中
     
     <li><a href="/categories/%e5%91%bd%e4%bb%a4%e8%a1%8c%e8%89%ba%e6%9c%af" title="命令行艺术">命令行艺术<sup>3</sup></a></li>
     
-    <li><a href="/categories/%e5%ad%a6%e4%b9%a0%e7%ac%94%e8%ae%b0" title="学习笔记">学习笔记<sup>11</sup></a></li>
+    <li><a href="/categories/%e5%ad%a6%e4%b9%a0%e7%ac%94%e8%ae%b0" title="学习笔记">学习笔记<sup>12</sup></a></li>
     
     <li><a href="/categories/%e6%93%8d%e4%bd%9c%e7%b3%bb%e7%bb%9f" title="操作系统">操作系统<sup>1</sup></a></li>
     
@@ -400,9 +432,9 @@ tcmalloc 和 jemalloc 性能差不多，但是 jemalloc 在提升缓存命中中
       
 			<li><a href="/tags/jemalloc" title="jemalloc">jemalloc<sup>1</sup></a></li>
       
-			<li><a href="/tags/kernel" title="kernel">kernel<sup>5</sup></a></li>
+			<li><a href="/tags/kernel" title="kernel">kernel<sup>6</sup></a></li>
       
-			<li><a href="/tags/linux" title="linux">linux<sup>10</sup></a></li>
+			<li><a href="/tags/linux" title="linux">linux<sup>11</sup></a></li>
       
 			<li><a href="/tags/linux%e5%86%85%e6%a0%b8" title="linux内核">linux内核<sup>1</sup></a></li>
       
@@ -421,6 +453,8 @@ tcmalloc 和 jemalloc 性能差不多，但是 jemalloc 在提升缓存命中中
 			<li><a href="/tags/tree" title="tree">tree<sup>1</sup></a></li>
       
 			<li><a href="/tags/%e4%b8%ad%e6%96%ad" title="中断">中断<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e5%86%85%e5%ad%98%e7%ae%a1%e7%90%86" title="内存管理">内存管理<sup>1</sup></a></li>
       
 			<li><a href="/tags/%e5%86%85%e6%a0%b8%e5%90%8c%e6%ad%a5" title="内核同步">内核同步<sup>1</sup></a></li>
       
@@ -456,7 +490,7 @@ tcmalloc 和 jemalloc 性能差不多，但是 jemalloc 在提升缓存命中中
       
       
       <li class="archive-list-item">
-        <a class="archive-list-link" href="/post/#2019-06">2019年06月</a><span class="archive-list-count">6</span>
+        <a class="archive-list-link" href="/post/#2019-06">2019年06月</a><span class="archive-list-count">7</span>
       </li>
       
       
@@ -535,6 +569,8 @@ tcmalloc 和 jemalloc 性能差不多，但是 jemalloc 在提升缓存命中中
     <a href="/tags/tree" style="font-size: 12px;">tree</a>
     
     <a href="/tags/%e4%b8%ad%e6%96%ad" style="font-size: 12px;">中断</a>
+    
+    <a href="/tags/%e5%86%85%e5%ad%98%e7%ae%a1%e7%90%86" style="font-size: 12px;">内存管理</a>
     
     <a href="/tags/%e5%86%85%e6%a0%b8%e5%90%8c%e6%ad%a5" style="font-size: 12px;">内核同步</a>
     

@@ -194,15 +194,23 @@ spin_unlock(&amp;mr_lock);
 占用的自旋锁，这样中断处理程序就会自旋等待该锁重新可用；但锁的持有者在这个中断程
 序处理完之前不可能运行。</p>
 
+
 <figure>
-    <img src="/images/%e6%88%aa%e5%9b%be_2019-06-12_21-53-11.png"/> 
+    
+        <img src="/images/%e6%88%aa%e5%9b%be_2019-06-12_21-53-11.png" />
+    
+    
 </figure>
 
 
 <h3 id="读写自旋锁">读写自旋锁</h3>
 
+
 <figure>
-    <img src="/images/%e6%88%aa%e5%9b%be_2019-06-12_22-20-37.png"/> 
+    
+        <img src="/images/%e6%88%aa%e5%9b%be_2019-06-12_22-20-37.png" />
+    
+    
 </figure>
 
 
@@ -227,8 +235,12 @@ spin_unlock(&amp;mr_lock);
 
 <p>二值信号量又称互斥信号量，表示同一时刻只能有一个线程持有该锁。</p>
 
+
 <figure>
-    <img src="/images/%e6%88%aa%e5%9b%be_2019-06-12_22-37-14.png"/> 
+    
+        <img src="/images/%e6%88%aa%e5%9b%be_2019-06-12_22-37-14.png" />
+    
+    
 </figure>
 
 
@@ -269,8 +281,12 @@ spin_unlock(&amp;mr_lock);
 内核代码将调用 <code>wait_for_completion()</code> 进行等待。初始化完成后，初始化函数调用
 <code>completion()</code> 唤醒等待的内核任务。</p>
 
+
 <figure>
-    <img src="/images/%e6%88%aa%e5%9b%be_2019-06-13_20-50-43.png"/> 
+    
+        <img src="/images/%e6%88%aa%e5%9b%be_2019-06-13_20-50-43.png" />
+    
+    
 </figure>
 
 
@@ -287,8 +303,12 @@ BKL 多数情况下像是在保护代码而不是数据。这也是使用自旋�
 <li>新的用户不允许使用 BKL, 现在已经很少有驱动和子系统依赖与 BKL 了</li>
 </ul>
 
+
 <figure>
-    <img src="/images/%e6%88%aa%e5%9b%be_2019-06-13_21-01-13.png"/> 
+    
+        <img src="/images/%e6%88%aa%e5%9b%be_2019-06-13_21-01-13.png" />
+    
+    
 </figure>
 
 
@@ -314,8 +334,12 @@ BKL 多数情况下像是在保护代码而不是数据。这也是使用自旋�
 <p>使用一个自旋锁可以避免内核抢占，但是这会使全部的处理器均不可抢占该临界区。但有时
 候我们只想保护某个处理器上的数据，那么我们可以使用在某个处理上禁止内核抢占即可。</p>
 
+
 <figure>
-    <img src="/images/%e6%88%aa%e5%9b%be_2019-06-13_21-27-26.png"/> 
+    
+        <img src="/images/%e6%88%aa%e5%9b%be_2019-06-13_21-27-26.png" />
+    
+    
 </figure>
 
 
@@ -334,8 +358,12 @@ put_cpu(); /* 开启内核抢占 */
 
 <h3 id="顺序和屏障">顺序和屏障</h3>
 
+
 <figure>
-    <img src="/images/%e6%88%aa%e5%9b%be_2019-06-13_21-36-09.png"/> 
+    
+        <img src="/images/%e6%88%aa%e5%9b%be_2019-06-13_21-36-09.png" />
+    
+    
 </figure>
 
 
@@ -395,7 +423,7 @@ put_cpu(); /* 开启内核抢占 */
     
     <li><a href="/categories/%e5%91%bd%e4%bb%a4%e8%a1%8c%e8%89%ba%e6%9c%af" title="命令行艺术">命令行艺术<sup>3</sup></a></li>
     
-    <li><a href="/categories/%e5%ad%a6%e4%b9%a0%e7%ac%94%e8%ae%b0" title="学习笔记">学习笔记<sup>11</sup></a></li>
+    <li><a href="/categories/%e5%ad%a6%e4%b9%a0%e7%ac%94%e8%ae%b0" title="学习笔记">学习笔记<sup>12</sup></a></li>
     
     <li><a href="/categories/%e6%93%8d%e4%bd%9c%e7%b3%bb%e7%bb%9f" title="操作系统">操作系统<sup>1</sup></a></li>
     
@@ -430,9 +458,9 @@ put_cpu(); /* 开启内核抢占 */
       
 			<li><a href="/tags/jemalloc" title="jemalloc">jemalloc<sup>1</sup></a></li>
       
-			<li><a href="/tags/kernel" title="kernel">kernel<sup>5</sup></a></li>
+			<li><a href="/tags/kernel" title="kernel">kernel<sup>6</sup></a></li>
       
-			<li><a href="/tags/linux" title="linux">linux<sup>10</sup></a></li>
+			<li><a href="/tags/linux" title="linux">linux<sup>11</sup></a></li>
       
 			<li><a href="/tags/linux%e5%86%85%e6%a0%b8" title="linux内核">linux内核<sup>1</sup></a></li>
       
@@ -451,6 +479,8 @@ put_cpu(); /* 开启内核抢占 */
 			<li><a href="/tags/tree" title="tree">tree<sup>1</sup></a></li>
       
 			<li><a href="/tags/%e4%b8%ad%e6%96%ad" title="中断">中断<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e5%86%85%e5%ad%98%e7%ae%a1%e7%90%86" title="内存管理">内存管理<sup>1</sup></a></li>
       
 			<li><a href="/tags/%e5%86%85%e6%a0%b8%e5%90%8c%e6%ad%a5" title="内核同步">内核同步<sup>1</sup></a></li>
       
@@ -486,7 +516,7 @@ put_cpu(); /* 开启内核抢占 */
       
       
       <li class="archive-list-item">
-        <a class="archive-list-link" href="/post/#2019-06">2019年06月</a><span class="archive-list-count">6</span>
+        <a class="archive-list-link" href="/post/#2019-06">2019年06月</a><span class="archive-list-count">7</span>
       </li>
       
       
@@ -565,6 +595,8 @@ put_cpu(); /* 开启内核抢占 */
     <a href="/tags/tree" style="font-size: 12px;">tree</a>
     
     <a href="/tags/%e4%b8%ad%e6%96%ad" style="font-size: 12px;">中断</a>
+    
+    <a href="/tags/%e5%86%85%e5%ad%98%e7%ae%a1%e7%90%86" style="font-size: 12px;">内存管理</a>
     
     <a href="/tags/%e5%86%85%e6%a0%b8%e5%90%8c%e6%ad%a5" style="font-size: 12px;">内核同步</a>
     

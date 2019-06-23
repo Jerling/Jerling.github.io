@@ -1,15 +1,24 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>kernel on 北极狼徒</title>
+    <title>Kernel on 北极狼徒</title>
     <link>/tags/kernel/</link>
-    <description>Recent content in kernel on 北极狼徒</description>
+    <description>Recent content in Kernel on 北极狼徒</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Thu, 20 Jun 2019 20:52:58 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 23 Jun 2019 13:23:07 +0800</lastBuildDate>
     
 	<atom:link href="/tags/kernel/feed.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Linux 内核设计与实现 — 内存管理</title>
+      <link>/post/linux_kernel_design_and_impl_ch12/</link>
+      <pubDate>Sun, 23 Jun 2019 13:23:07 +0800</pubDate>
+      
+      <guid>/post/linux_kernel_design_and_impl_ch12/</guid>
+      <description>内核的内存分配相比用户空间来说相对较为困难，主要是因为内核本身不能奢侈的使用内存，而且一般不能睡眠，处理内存分配错误也比较棘手。 页 内核将物理</description>
+    </item>
     
     <item>
       <title>Linux 内核设计与实现 — 时间管理</title>
