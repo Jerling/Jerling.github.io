@@ -6,10 +6,19 @@
     <description>Recent content in Linux on 北极狼徒</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Sun, 23 Jun 2019 13:23:07 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 07 Jul 2019 12:48:54 +0800</lastBuildDate>
     
 	<atom:link href="/tags/linux/feed.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Linux 内核设计与实现 — 虚拟文件系统</title>
+      <link>/post/linux_kernel_design_and_impl_ch13/</link>
+      <pubDate>Sun, 07 Jul 2019 12:48:54 +0800</pubDate>
+      
+      <guid>/post/linux_kernel_design_and_impl_ch13/</guid>
+      <description>虚拟文件系统作为内核子系统，为用户空间程序提供文件和文件系统相关操作的接口。系统中各文件系统依赖虚拟文件系统共存并协同工作。通过 vfs , 用户空间</description>
+    </item>
     
     <item>
       <title>Linux 内核设计与实现 — 内存管理</title>

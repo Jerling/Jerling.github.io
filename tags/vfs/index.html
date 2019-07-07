@@ -2,17 +2,18 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <title>C&#43;&#43; 对象模型 — Function 语意学 - 北极狼徒</title>
+  <title>Vfs - 北极狼徒</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
   
-  <meta name="description" content="Short description">
+  <meta name="description" content="Vfs">
   
-  <meta itemprop="name" content="C&#43;&#43; 对象模型 — Function 语意学 - 北极狼徒">
-  <meta itemprop="description" content="Short description">
+  <meta itemprop="name" content="Vfs - 北极狼徒">
+  <meta itemprop="description" content="Vfs">
   <meta itemprop="image" content="/img/author.jpg">
   
-  <meta name="twitter:description" content="Short description" />
   
+  <meta name="twitter:description" content="随便写写">
+  <link rel="alternate" href="/feed.xml" title="北极狼徒" type="application/rss+xml"/>
   <link rel="shortcut icon" href="/img/favicon.ico"/>
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
   <link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png" />
@@ -57,162 +58,21 @@
 
   </header>
   <div id="container">
-    <div id="main" class="post" itemscope itemprop="blogPost">
-	<article itemprop="articleBody">
-    <header class="article-info clearfix">
-  <h1 itemprop="name">
-      <a href="/post/cpp_object_models_ch04/" title="C&#43;&#43; 对象模型 — Function 语意学" itemprop="url">C&#43;&#43; 对象模型 — Function 语意学</a>
-  </h1>
-  <p class="article-author">By
-    
-      <a href="https://github.com/Jerling" title="[Jerling]">[Jerling]</a>
-    
-  </p>
-  <p class="article-time">
-    <time datetime="2019-06-03 22:26:04 &#43;0800 CST" itemprop="datePublished">2019年06月03日</time>
-  </p>
-</header>
+    <div id="main">
+      
+      <h2 id="2019-07">2019-07</h2>
+      
+      <section class="post" itemscope itemprop="blogPost">
+    <a href="/post/linux_kernel_design_and_impl_ch13/" title="Linux 内核设计与实现 — 虚拟文件系统" itemprop="url">
+    <h1 itemprop="name">Linux 内核设计与实现 — 虚拟文件系统</h1>
+    <p itemprop="description">虚拟文件系统作为内核子系统，为用户空间程序提供文件和文件系统相关操作的接口。系统中各文件系统依赖虚拟文件系统共存并协同工作。通过 vfs , 用户空间</p>
+    <time datetime="2019-07-07 12:48:54 &#43;0800 CST" itemprop="datePublished">2019年07月07日</time>
+  </a>
+</section>
 
-	<div class="article-content">
-    
-		<div class="toc-article">
-			<strong class="toc-title">文章目录</strong>
-      <nav id="TableOfContents">
-<ul>
-<li>
-<ul>
-<li><a href="#调用方式">调用方式</a>
-<ul>
-<li><a href="#非静态成员函数">非静态成员函数</a></li>
-<li><a href="#特殊处理">特殊处理</a></li>
-<li><a href="#虚拟成员函数">虚拟成员函数</a></li>
-<li><a href="#静态成员函数">静态成员函数</a></li>
-</ul></li>
-<li><a href="#虚拟成员函数-1">虚拟成员函数</a>
-<ul>
-<li><a href="#多重继承的虚函数">多重继承的虚函数</a></li>
-<li><a href="#虚继承的虚函数">虚继承的虚函数</a></li>
-</ul></li>
-<li><a href="#函数的效能">函数的效能</a></li>
-</ul></li>
-</ul>
-</nav>
-		</div>
-    
-    
-
-<h2 id="调用方式">调用方式</h2>
-
-<ol>
-<li>普通函数</li>
-<li>虚函数</li>
-<li>静态函数</li>
-</ol>
-
-<h3 id="非静态成员函数">非静态成员函数</h3>
-
-<p>C++ 设计准则之一：非静态成员函数至少和非成员函数效率一样。</p>
-
-<p>成员函数内化为非成员函数的过程：</p>
-
-<ol>
-<li>改写函数签名：安插 <strong>this</strong> 指针</li>
-<li>对非静态成员的存取经由 <strong>this</strong> 指针处理</li>
-<li>将成员函数重新写成一个外部函数，对函数名称进行特殊处理，使它在程序中独一无二</li>
-</ol>
-
-<h3 id="特殊处理">特殊处理</h3>
-
-<p>成员前面一般加上 <code>class</code> 的名称形成独一无二的符号，否则无法决议(unsolve)</p>
-
-<h3 id="虚拟成员函数">虚拟成员函数</h3>
-
-<ul>
-<li><code>vptr</code> 也可能会被特殊处理，因为在复杂的派生体系中可能存在多个 <code>vptrs</code></li>
-<li>每次调用都会通过虚函数的索引进行调用</li>
-</ul>
-
-<h3 id="静态成员函数">静态成员函数</h3>
-
-<ul>
-<li>不能直接存取非静态成员</li>
-<li>不能被声明为 <code>const</code>, <code>volatile</code> 或 <code>virtual</code>,因为实际上这些都是修饰 <code>this</code> 的，
-而静态成员函数没有 <code>this</code>.</li>
-<li>不需要经由类对象调用</li>
-</ul>
-
-<h2 id="虚拟成员函数-1">虚拟成员函数</h2>
-
-<ol>
-<li>继承基类所声明的虚函数的实体，准确地说，是该函数的实体的地址拷贝到派生类的虚
-表相对应的 slot 中</li>
-<li>可以是自己的函数实体，表示自己的函数实体地址放在对应的 slot 中</li>
-<li>可以是加入一个新的虚函数，这时虚表的尺寸会增大一个 slot,新函数的实体地址会被
-放在 slot 之中</li>
-</ol>
-
-<h3 id="多重继承的虚函数">多重继承的虚函数</h3>
-
-<p>复杂度主要在第二个以及后继的基类的类上，必须在执行期调整 <code>this</code> 指针。</p>
-
-<ol>
-<li><code>base1</code> 不需要调整 <code>this</code> 指针，因为它已经指向派生类的起始处。其虚表 <code>slot</code>
-需放置正确的析构函数地址</li>
-<li><code>base2</code> 及以后需要调整，虚表的 <code>slot</code> 要保存正确的地址</li>
-</ol>
-
-<p>在多重继承下，派生类中内含 <code>n-1</code> 个额外的虚表， <code>n</code> 表示其上一层基类的数目。</p>
-
-<h3 id="虚继承的虚函数">虚继承的虚函数</h3>
-
-<p>建议：不要在一个虚基类中声明非静态数据成员</p>
-
-<h2 id="函数的效能">函数的效能</h2>
-
-<p>内联 &gt; 友元 = 静态 = 非静态 &gt; 虚函数 &gt; 多重虚函数 &gt; 虚继承虚函数</p>
-
-    
-	</div>
-  <footer class="article-footer clearfix">
-  
-
-<div class="article-tags">
-  <span></span>
-  
-  <a href="/tags/c&#43;&#43;">C&#43;&#43;</a>
-  
-  <a href="/tags/%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1">面向对象</a>
-  
-  <a href="/tags/%E6%88%90%E5%91%98%E5%87%BD%E6%95%B0">成员函数</a>
-  
-</div>
-
-
-
-
-
-<div class="article-categories">
-  <span></span>
-  
-  <a class="article-category-link" href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0">学习笔记</a>
-  
-</div>
-
-
-
-  <div class="article-share" id="share">
-    <div data-url="/post/cpp_object_models_ch04/" data-title="C&#43;&#43; 对象模型 — Function 语意学" data-tsina="123" class="share clearfix">
+      
+      
     </div>
-  </div>
-</footer>
-
-	</article>
-  
-
-
-
-</div>
-
     <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
 <div id="asidepart">
 <div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
@@ -439,6 +299,10 @@
 
 
   
+<div class="rsspart">
+  <a rel="nofollow" href="/feed.xml" type="application/rss+xml" target="_blank">RSS 订阅</a>
+</div>
+
 
 </aside>
 </div>
@@ -529,38 +393,6 @@ $(document).ready(function(){
 
 <script type="text/javascript">
 $(document).ready(function(){
-  var ai = $('.article-content>iframe'),
-      ae = $('.article-content>embed'),
-      t  = $('#toc'),
-      h  = $('article h2')
-      ah = $('article h2'),
-      ta = $('#toc.toc-aside'),
-      o  = $('.openaside'),
-      c  = $('.closeaside');
-  if(ai.length>0){
-    ai.wrap('<div class="video-container" />');
-  };
-  if(ae.length>0){
-   ae.wrap('<div class="video-container" />');
-  };
-  if(ah.length==0){
-    t.css('display','none');
-  }else{
-    c.click(function(){
-      ta.css('display', 'block').addClass('fadeIn');
-    });
-    o.click(function(){
-      ta.css('display', 'none');
-    });
-    $(window).scroll(function(){
-      ta.css("top",Math.max(140,320-$(this).scrollTop()));
-    });
-  };
-});
-</script>
-
-<script type="text/javascript">
-$(document).ready(function(){
   var $this = $('.share'),
       url = $this.attr('data-url'),
       encodedUrl = encodeURIComponent(url),
@@ -587,27 +419,6 @@ $(document).ready(function(){
 });
 </script>
 
-
-<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
-<script src="/fancybox/jquery.fancybox.pack.js"></script>
-<script type="text/javascript">
-$(document).ready(function(){
-  $('.article-content').each(function(i){
-    $(this).find('img').each(function(){
-      if ($(this).parent().hasClass('fancybox')) return;
-      var alt = this.alt;
-      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
-      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
-    });
-    $(this).find('.fancybox').each(function(){
-      $(this).attr('rel', 'article' + i);
-    });
-  });
-  if($.fancybox){
-    $('.fancybox').fancybox();
-  }
-});
-</script>
 
 
 
