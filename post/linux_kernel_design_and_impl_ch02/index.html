@@ -146,12 +146,8 @@
 现在使用 <code>slab</code> 分配器动态生成 <code>task_struct</code> ,所以只需在栈低（向下增长）或栈顶
 （向上增长）创建一个 <code>thread_info</code> 即可，该结构放在 <code>&lt;asm/thread_info.h&gt;</code> 中。</p>
 
-
 <figure>
-    
-        <img src="/images/Snipaste_2019-05-20_22-03-50.png" />
-    
-    
+    <img src="/images/Snipaste_2019-05-20_22-03-50.png"/> 
 </figure>
 
 
@@ -179,12 +175,8 @@
 <li>__TASK_STOPPED: 停止，收到 SIGSTOP,SIGSTP,SIGINT,SIGTOU 等信号时</li>
 </ul>
 
-
 <figure>
-    
-        <img src="/images/Snipaste_2019-05-20_22-24-50.png" />
-    
-    
+    <img src="/images/Snipaste_2019-05-20_22-24-50.png"/> 
 </figure>
 
 
@@ -300,12 +292,8 @@ for_each_process(task){
 <pre><code class="language-cpp">clone(CLONE_VM|CLONE_FS|CLONE_FILES|CLONE_SIGHAND, 0);
 </code></pre>
 
-
 <figure>
-    
-        <img src="/images/Snipaste_2019-05-24_00-01-55.png" />
-    
-    
+    <img src="/images/Snipaste_2019-05-24_00-01-55.png"/> 
 </figure>
 
 
@@ -415,6 +403,8 @@ for_each_process(task){
     
     <li><a href="/categories/%e6%b8%a9%e6%95%85%e7%9f%a5%e6%96%b0" title="温故知新">温故知新<sup>1</sup></a></li>
     
+    <li><a href="/categories/%e7%bd%91%e7%bb%9c%e7%bc%96%e7%a8%8b" title="网络编程">网络编程<sup>1</sup></a></li>
+    
     <li><a href="/categories/%e9%a1%b9%e7%9b%ae%e5%ae%9e%e6%88%98" title="项目实战">项目实战<sup>5</sup></a></li>
     
   </ul>
@@ -470,11 +460,15 @@ for_each_process(task){
       
 			<li><a href="/tags/%e5%86%85%e6%a0%b8%e5%90%8c%e6%ad%a5" title="内核同步">内核同步<sup>1</sup></a></li>
       
+			<li><a href="/tags/%e5%a5%97%e6%8e%a5%e5%ad%97" title="套接字">套接字<sup>1</sup></a></li>
+      
 			<li><a href="/tags/%e5%af%b9%e8%b1%a1%e6%a8%a1%e5%9e%8b" title="对象模型">对象模型<sup>3</sup></a></li>
       
 			<li><a href="/tags/%e6%88%90%e5%91%98%e5%87%bd%e6%95%b0" title="成员函数">成员函数<sup>1</sup></a></li>
       
 			<li><a href="/tags/%e6%95%b0%e6%8d%ae%e7%bb%93%e6%9e%84" title="数据结构">数据结构<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e6%96%87%e4%bb%b6%e6%8f%8f%e8%bf%b0%e7%ac%a6" title="文件描述符">文件描述符<sup>1</sup></a></li>
       
 			<li><a href="/tags/%e6%97%b6%e9%97%b4%e7%ae%a1%e7%90%86" title="时间管理">时间管理<sup>1</sup></a></li>
       
@@ -499,6 +493,11 @@ for_each_process(task){
   <div class="archiveslist">
     <p class="asidetitle">归档</p>
     <ul class="archive-list">
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2019-09">2019年09月</a><span class="archive-list-count">1</span>
+      </li>
       
       
       <li class="archive-list-item">
@@ -593,11 +592,15 @@ for_each_process(task){
     
     <a href="/tags/%e5%86%85%e6%a0%b8%e5%90%8c%e6%ad%a5" style="font-size: 12px;">内核同步</a>
     
+    <a href="/tags/%e5%a5%97%e6%8e%a5%e5%ad%97" style="font-size: 12px;">套接字</a>
+    
     <a href="/tags/%e5%af%b9%e8%b1%a1%e6%a8%a1%e5%9e%8b" style="font-size: 12px;">对象模型</a>
     
     <a href="/tags/%e6%88%90%e5%91%98%e5%87%bd%e6%95%b0" style="font-size: 12px;">成员函数</a>
     
     <a href="/tags/%e6%95%b0%e6%8d%ae%e7%bb%93%e6%9e%84" style="font-size: 12px;">数据结构</a>
+    
+    <a href="/tags/%e6%96%87%e4%bb%b6%e6%8f%8f%e8%bf%b0%e7%ac%a6" style="font-size: 12px;">文件描述符</a>
     
     <a href="/tags/%e6%97%b6%e9%97%b4%e7%ae%a1%e7%90%86" style="font-size: 12px;">时间管理</a>
     

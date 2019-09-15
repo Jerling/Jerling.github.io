@@ -6,10 +6,19 @@
     <description>Recent content in Posts on 北极狼徒</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Sun, 07 Jul 2019 12:48:54 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 15 Sep 2019 18:50:19 +0800</lastBuildDate>
     
 	<atom:link href="/post/feed.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Too many open files 解决办法</title>
+      <link>/post/how_to_open_over_1024_files/</link>
+      <pubDate>Sun, 15 Sep 2019 18:50:19 +0800</pubDate>
+      
+      <guid>/post/how_to_open_over_1024_files/</guid>
+      <description>问题来源 Linux 系统默认能打开的文件个数上限是 1024 个，可通过 limits -n 查看，但实际上系统可打开的文件个数远超过这个限制，通过 cat /proc/sys/fs/file-max 可以看到，在我的 64 位机器上</description>
+    </item>
     
     <item>
       <title>Linux 内核设计与实现 — 虚拟文件系统</title>

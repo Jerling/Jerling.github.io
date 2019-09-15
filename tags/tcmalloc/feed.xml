@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Tcmalloc on 北极狼徒</title>
+    <title>tcmalloc on 北极狼徒</title>
     <link>/tags/tcmalloc/</link>
-    <description>Recent content in Tcmalloc on 北极狼徒</description>
+    <description>Recent content in tcmalloc on 北极狼徒</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
     <lastBuildDate>Fri, 26 Apr 2019 20:12:02 +0800</lastBuildDate>

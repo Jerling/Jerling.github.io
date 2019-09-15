@@ -166,12 +166,8 @@ dlmalloc 等。但由于多核的出现，而 dlmalloc 没有针对多线程的�
 <p>在 ptmalloc2 中的内存管理对象叫做 arena , 在 arena 中有一个空闲链表数组 bits ，每一个
 链表称为一个 bin 。每个 bin 管理多个固定大小的 chunks。</p>
 
-
 <figure>
-    
-        <img src="/images/ptmalloc2.png" />
-    
-    
+    <img src="/images/ptmalloc2.png"/> 
 </figure>
 
 
@@ -188,12 +184,8 @@ chunk 先放到 fast bin 中加快分配速度。</p>
 
 <h3 id="分配流程">分配流程</h3>
 
-
 <figure>
-    
-        <img src="/images/ptmalloc2_malloc.png" />
-    
-    
+    <img src="/images/ptmalloc2_malloc.png"/> 
 </figure>
 
 
@@ -224,23 +216,15 @@ chunk 先放到 fast bin 中加快分配速度。</p>
 的分配， size &lt;= 32KB . 在 threadCache 中维护一个空闲链表数组，每个对象称为
 size-class. 这个和 ptmalloc2 中的 bin 作用一样。</p>
 
-
 <figure>
-    
-        <img src="/images/tcmalloc_threadcache.png" />
-    
-    
+    <img src="/images/tcmalloc_threadcache.png"/> 
 </figure>
 
 
 <h4 id="分配流程-1">分配流程</h4>
 
-
 <figure>
-    
-        <img src="/images/tcmalloc_threadcache_malloc.png" />
-    
-    
+    <img src="/images/tcmalloc_threadcache_malloc.png"/> 
 </figure>
 
 
@@ -250,12 +234,8 @@ size-class. 这个和 ptmalloc2 中的 bin 作用一样。</p>
 CentralCache 用来分配大对象的，管理的内存单元时 4K 对齐的，如果 ThreadCache 中的
 内存不够，需要到 CentralCache 中获取对应 size-class 的内存。</p>
 
-
 <figure>
-    
-        <img src="/images/tcmalloc_centralcache.png" />
-    
-    
+    <img src="/images/tcmalloc_centralcache.png"/> 
 </figure>
 
 
@@ -263,23 +243,15 @@ CentralCache 用来分配大对象的，管理的内存单元时 4K 对齐的，
 
 <h4 id="分配流程-2">分配流程</h4>
 
-
 <figure>
-    
-        <img src="/images/tcmalloc_centralcache_malloc.png" />
-    
-    
+    <img src="/images/tcmalloc_centralcache_malloc.png"/> 
 </figure>
 
 
 <h3 id="回收内存">回收内存</h3>
 
-
 <figure>
-    
-        <img src="/images/tcmalloc_free.png" />
-    
-    
+    <img src="/images/tcmalloc_free.png"/> 
 </figure>
 
 
@@ -309,12 +281,8 @@ size-class 的分类上不一样。地址： <a href="https://github.com/jemallo
 
 <h3 id="jemalloc-中对象的关系">jemalloc 中对象的关系</h3>
 
-
 <figure>
-    
-        <img src="/images/jemalloc_objs.png" />
-    
-    
+    <img src="/images/jemalloc_objs.png"/> 
 </figure>
 
 
@@ -405,6 +373,8 @@ tcmalloc 和 jemalloc 性能差不多，但是 jemalloc 在提升缓存命中中
     
     <li><a href="/categories/%e6%b8%a9%e6%95%85%e7%9f%a5%e6%96%b0" title="温故知新">温故知新<sup>1</sup></a></li>
     
+    <li><a href="/categories/%e7%bd%91%e7%bb%9c%e7%bc%96%e7%a8%8b" title="网络编程">网络编程<sup>1</sup></a></li>
+    
     <li><a href="/categories/%e9%a1%b9%e7%9b%ae%e5%ae%9e%e6%88%98" title="项目实战">项目实战<sup>5</sup></a></li>
     
   </ul>
@@ -460,11 +430,15 @@ tcmalloc 和 jemalloc 性能差不多，但是 jemalloc 在提升缓存命中中
       
 			<li><a href="/tags/%e5%86%85%e6%a0%b8%e5%90%8c%e6%ad%a5" title="内核同步">内核同步<sup>1</sup></a></li>
       
+			<li><a href="/tags/%e5%a5%97%e6%8e%a5%e5%ad%97" title="套接字">套接字<sup>1</sup></a></li>
+      
 			<li><a href="/tags/%e5%af%b9%e8%b1%a1%e6%a8%a1%e5%9e%8b" title="对象模型">对象模型<sup>3</sup></a></li>
       
 			<li><a href="/tags/%e6%88%90%e5%91%98%e5%87%bd%e6%95%b0" title="成员函数">成员函数<sup>1</sup></a></li>
       
 			<li><a href="/tags/%e6%95%b0%e6%8d%ae%e7%bb%93%e6%9e%84" title="数据结构">数据结构<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e6%96%87%e4%bb%b6%e6%8f%8f%e8%bf%b0%e7%ac%a6" title="文件描述符">文件描述符<sup>1</sup></a></li>
       
 			<li><a href="/tags/%e6%97%b6%e9%97%b4%e7%ae%a1%e7%90%86" title="时间管理">时间管理<sup>1</sup></a></li>
       
@@ -489,6 +463,11 @@ tcmalloc 和 jemalloc 性能差不多，但是 jemalloc 在提升缓存命中中
   <div class="archiveslist">
     <p class="asidetitle">归档</p>
     <ul class="archive-list">
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2019-09">2019年09月</a><span class="archive-list-count">1</span>
+      </li>
       
       
       <li class="archive-list-item">
@@ -583,11 +562,15 @@ tcmalloc 和 jemalloc 性能差不多，但是 jemalloc 在提升缓存命中中
     
     <a href="/tags/%e5%86%85%e6%a0%b8%e5%90%8c%e6%ad%a5" style="font-size: 12px;">内核同步</a>
     
+    <a href="/tags/%e5%a5%97%e6%8e%a5%e5%ad%97" style="font-size: 12px;">套接字</a>
+    
     <a href="/tags/%e5%af%b9%e8%b1%a1%e6%a8%a1%e5%9e%8b" style="font-size: 12px;">对象模型</a>
     
     <a href="/tags/%e6%88%90%e5%91%98%e5%87%bd%e6%95%b0" style="font-size: 12px;">成员函数</a>
     
     <a href="/tags/%e6%95%b0%e6%8d%ae%e7%bb%93%e6%9e%84" style="font-size: 12px;">数据结构</a>
+    
+    <a href="/tags/%e6%96%87%e4%bb%b6%e6%8f%8f%e8%bf%b0%e7%ac%a6" style="font-size: 12px;">文件描述符</a>
     
     <a href="/tags/%e6%97%b6%e9%97%b4%e7%ae%a1%e7%90%86" style="font-size: 12px;">时间管理</a>
     

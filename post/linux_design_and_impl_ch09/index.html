@@ -138,13 +138,14 @@
 子函数</li>
 <li>确保编译器不对相应的值进行访问优化，这使得原子操作最终接收到正确的内存地址，
 而不是一个别名。</li>
-<li>在不同体系结构下实现原子操作时可以屏蔽其间的差异</li>
-</ol>
+
+<li><p>在不同体系结构下实现原子操作时可以屏蔽其间的差异</p>
 
 <pre><code class="language-c">typedef struct {
-  volatile int counter;
+volatile int counter;
 } atomic_t;
-</code></pre>
+</code></pre></li>
+</ol>
 
 <p>内核提供的接口在 <code>&lt;asm/atomic.h&gt;</code> 中：
 <img src="/images/截图_2019-06-12_21-08-15.png" alt="" /></p>
@@ -194,23 +195,15 @@ spin_unlock(&amp;mr_lock);
 占用的自旋锁，这样中断处理程序就会自旋等待该锁重新可用；但锁的持有者在这个中断程
 序处理完之前不可能运行。</p>
 
-
 <figure>
-    
-        <img src="/images/%e6%88%aa%e5%9b%be_2019-06-12_21-53-11.png" />
-    
-    
+    <img src="/images/%e6%88%aa%e5%9b%be_2019-06-12_21-53-11.png"/> 
 </figure>
 
 
 <h3 id="读写自旋锁">读写自旋锁</h3>
 
-
 <figure>
-    
-        <img src="/images/%e6%88%aa%e5%9b%be_2019-06-12_22-20-37.png" />
-    
-    
+    <img src="/images/%e6%88%aa%e5%9b%be_2019-06-12_22-20-37.png"/> 
 </figure>
 
 
@@ -235,12 +228,8 @@ spin_unlock(&amp;mr_lock);
 
 <p>二值信号量又称互斥信号量，表示同一时刻只能有一个线程持有该锁。</p>
 
-
 <figure>
-    
-        <img src="/images/%e6%88%aa%e5%9b%be_2019-06-12_22-37-14.png" />
-    
-    
+    <img src="/images/%e6%88%aa%e5%9b%be_2019-06-12_22-37-14.png"/> 
 </figure>
 
 
@@ -281,12 +270,8 @@ spin_unlock(&amp;mr_lock);
 内核代码将调用 <code>wait_for_completion()</code> 进行等待。初始化完成后，初始化函数调用
 <code>completion()</code> 唤醒等待的内核任务。</p>
 
-
 <figure>
-    
-        <img src="/images/%e6%88%aa%e5%9b%be_2019-06-13_20-50-43.png" />
-    
-    
+    <img src="/images/%e6%88%aa%e5%9b%be_2019-06-13_20-50-43.png"/> 
 </figure>
 
 
@@ -303,12 +288,8 @@ BKL 多数情况下像是在保护代码而不是数据。这也是使用自旋�
 <li>新的用户不允许使用 BKL, 现在已经很少有驱动和子系统依赖与 BKL 了</li>
 </ul>
 
-
 <figure>
-    
-        <img src="/images/%e6%88%aa%e5%9b%be_2019-06-13_21-01-13.png" />
-    
-    
+    <img src="/images/%e6%88%aa%e5%9b%be_2019-06-13_21-01-13.png"/> 
 </figure>
 
 
@@ -334,12 +315,8 @@ BKL 多数情况下像是在保护代码而不是数据。这也是使用自旋�
 <p>使用一个自旋锁可以避免内核抢占，但是这会使全部的处理器均不可抢占该临界区。但有时
 候我们只想保护某个处理器上的数据，那么我们可以使用在某个处理上禁止内核抢占即可。</p>
 
-
 <figure>
-    
-        <img src="/images/%e6%88%aa%e5%9b%be_2019-06-13_21-27-26.png" />
-    
-    
+    <img src="/images/%e6%88%aa%e5%9b%be_2019-06-13_21-27-26.png"/> 
 </figure>
 
 
@@ -358,12 +335,8 @@ put_cpu(); /* 开启内核抢占 */
 
 <h3 id="顺序和屏障">顺序和屏障</h3>
 
-
 <figure>
-    
-        <img src="/images/%e6%88%aa%e5%9b%be_2019-06-13_21-36-09.png" />
-    
-    
+    <img src="/images/%e6%88%aa%e5%9b%be_2019-06-13_21-36-09.png"/> 
 </figure>
 
 
@@ -431,6 +404,8 @@ put_cpu(); /* 开启内核抢占 */
     
     <li><a href="/categories/%e6%b8%a9%e6%95%85%e7%9f%a5%e6%96%b0" title="温故知新">温故知新<sup>1</sup></a></li>
     
+    <li><a href="/categories/%e7%bd%91%e7%bb%9c%e7%bc%96%e7%a8%8b" title="网络编程">网络编程<sup>1</sup></a></li>
+    
     <li><a href="/categories/%e9%a1%b9%e7%9b%ae%e5%ae%9e%e6%88%98" title="项目实战">项目实战<sup>5</sup></a></li>
     
   </ul>
@@ -486,11 +461,15 @@ put_cpu(); /* 开启内核抢占 */
       
 			<li><a href="/tags/%e5%86%85%e6%a0%b8%e5%90%8c%e6%ad%a5" title="内核同步">内核同步<sup>1</sup></a></li>
       
+			<li><a href="/tags/%e5%a5%97%e6%8e%a5%e5%ad%97" title="套接字">套接字<sup>1</sup></a></li>
+      
 			<li><a href="/tags/%e5%af%b9%e8%b1%a1%e6%a8%a1%e5%9e%8b" title="对象模型">对象模型<sup>3</sup></a></li>
       
 			<li><a href="/tags/%e6%88%90%e5%91%98%e5%87%bd%e6%95%b0" title="成员函数">成员函数<sup>1</sup></a></li>
       
 			<li><a href="/tags/%e6%95%b0%e6%8d%ae%e7%bb%93%e6%9e%84" title="数据结构">数据结构<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e6%96%87%e4%bb%b6%e6%8f%8f%e8%bf%b0%e7%ac%a6" title="文件描述符">文件描述符<sup>1</sup></a></li>
       
 			<li><a href="/tags/%e6%97%b6%e9%97%b4%e7%ae%a1%e7%90%86" title="时间管理">时间管理<sup>1</sup></a></li>
       
@@ -515,6 +494,11 @@ put_cpu(); /* 开启内核抢占 */
   <div class="archiveslist">
     <p class="asidetitle">归档</p>
     <ul class="archive-list">
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2019-09">2019年09月</a><span class="archive-list-count">1</span>
+      </li>
       
       
       <li class="archive-list-item">
@@ -609,11 +593,15 @@ put_cpu(); /* 开启内核抢占 */
     
     <a href="/tags/%e5%86%85%e6%a0%b8%e5%90%8c%e6%ad%a5" style="font-size: 12px;">内核同步</a>
     
+    <a href="/tags/%e5%a5%97%e6%8e%a5%e5%ad%97" style="font-size: 12px;">套接字</a>
+    
     <a href="/tags/%e5%af%b9%e8%b1%a1%e6%a8%a1%e5%9e%8b" style="font-size: 12px;">对象模型</a>
     
     <a href="/tags/%e6%88%90%e5%91%98%e5%87%bd%e6%95%b0" style="font-size: 12px;">成员函数</a>
     
     <a href="/tags/%e6%95%b0%e6%8d%ae%e7%bb%93%e6%9e%84" style="font-size: 12px;">数据结构</a>
+    
+    <a href="/tags/%e6%96%87%e4%bb%b6%e6%8f%8f%e8%bf%b0%e7%ac%a6" style="font-size: 12px;">文件描述符</a>
     
     <a href="/tags/%e6%97%b6%e9%97%b4%e7%ae%a1%e7%90%86" style="font-size: 12px;">时间管理</a>
     

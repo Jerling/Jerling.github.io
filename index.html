@@ -1,14 +1,14 @@
 <!DOCTYPE HTML>
 <html lang="zh-CN">
 <head>
-	<meta name="generator" content="Hugo 0.40.1" />
+	<meta name="generator" content="Hugo 0.57.2" />
   <meta charset="UTF-8">
-  <title>北极狼徒 - 北极狼徒</title>
+  <title>北极狼徒</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
-  
+  <meta name="keywords" content="">
   <meta name="description" content="北极狼徒">
   
-  <meta itemprop="name" content="北极狼徒 - 北极狼徒">
+  <meta itemprop="name" content="北极狼徒">
   <meta itemprop="description" content="北极狼徒">
   <meta itemprop="image" content="/img/author.jpg">
   
@@ -60,6 +60,15 @@
   </header>
   <div id="container">
     <div id="main">
+      
+      <section class="post" itemscope itemprop="blogPost">
+    <a href="/post/how_to_open_over_1024_files/" title="Too many open files 解决办法" itemprop="url">
+    <h1 itemprop="name">Too many open files 解决办法</h1>
+    <p itemprop="description">问题来源 Linux 系统默认能打开的文件个数上限是 1024 个，可通过 limits -n 查看，但实际上系统可打开的文件个数远超过这个限制，通过 cat /proc/sys/fs/file-max 可以看到，在我的 64 位机器上</p>
+    <time datetime="2019-09-15 18:50:19 &#43;0800 CST" itemprop="datePublished">2019年09月15日</time>
+  </a>
+</section>
+
       
       <section class="post" itemscope itemprop="blogPost">
     <a href="/post/linux_kernel_design_and_impl_ch13/" title="Linux 内核设计与实现 — 虚拟文件系统" itemprop="url">
@@ -142,15 +151,6 @@
 </section>
 
       
-      <section class="post" itemscope itemprop="blogPost">
-    <a href="/post/linux_kernel_design_and_impl_ch04/" title="Linux 内核设计与实现 — 进程调度" itemprop="url">
-    <h1 itemprop="name">Linux 内核设计与实现 — 进程调度</h1>
-    <p itemprop="description">进程调度 进程是程序的运行态的表现形式 进程调用是确保程序有效工作的内核子系统 多任务 并发交互的执行多个进程的操作系统 抢占式 : 由调度程序决定什么时</p>
-    <time datetime="2019-05-25 23:05:31 &#43;0800 CST" itemprop="datePublished">2019年05月25日</time>
-  </a>
-</section>
-
-      
       <nav id="page-nav" class="clearfix">
         <a class="page-number" href="/post/">More...</a>
       </nav>
@@ -176,6 +176,8 @@
     <li><a href="/categories/%e6%95%b0%e6%8d%ae%e7%bb%93%e6%9e%84" title="数据结构">数据结构<sup>1</sup></a></li>
     
     <li><a href="/categories/%e6%b8%a9%e6%95%85%e7%9f%a5%e6%96%b0" title="温故知新">温故知新<sup>1</sup></a></li>
+    
+    <li><a href="/categories/%e7%bd%91%e7%bb%9c%e7%bc%96%e7%a8%8b" title="网络编程">网络编程<sup>1</sup></a></li>
     
     <li><a href="/categories/%e9%a1%b9%e7%9b%ae%e5%ae%9e%e6%88%98" title="项目实战">项目实战<sup>5</sup></a></li>
     
@@ -232,11 +234,15 @@
       
 			<li><a href="/tags/%e5%86%85%e6%a0%b8%e5%90%8c%e6%ad%a5" title="内核同步">内核同步<sup>1</sup></a></li>
       
+			<li><a href="/tags/%e5%a5%97%e6%8e%a5%e5%ad%97" title="套接字">套接字<sup>1</sup></a></li>
+      
 			<li><a href="/tags/%e5%af%b9%e8%b1%a1%e6%a8%a1%e5%9e%8b" title="对象模型">对象模型<sup>3</sup></a></li>
       
 			<li><a href="/tags/%e6%88%90%e5%91%98%e5%87%bd%e6%95%b0" title="成员函数">成员函数<sup>1</sup></a></li>
       
 			<li><a href="/tags/%e6%95%b0%e6%8d%ae%e7%bb%93%e6%9e%84" title="数据结构">数据结构<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e6%96%87%e4%bb%b6%e6%8f%8f%e8%bf%b0%e7%ac%a6" title="文件描述符">文件描述符<sup>1</sup></a></li>
       
 			<li><a href="/tags/%e6%97%b6%e9%97%b4%e7%ae%a1%e7%90%86" title="时间管理">时间管理<sup>1</sup></a></li>
       
@@ -261,6 +267,11 @@
   <div class="archiveslist">
     <p class="asidetitle">归档</p>
     <ul class="archive-list">
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2019-09">2019年09月</a><span class="archive-list-count">1</span>
+      </li>
       
       
       <li class="archive-list-item">
@@ -355,11 +366,15 @@
     
     <a href="/tags/%e5%86%85%e6%a0%b8%e5%90%8c%e6%ad%a5" style="font-size: 12px;">内核同步</a>
     
+    <a href="/tags/%e5%a5%97%e6%8e%a5%e5%ad%97" style="font-size: 12px;">套接字</a>
+    
     <a href="/tags/%e5%af%b9%e8%b1%a1%e6%a8%a1%e5%9e%8b" style="font-size: 12px;">对象模型</a>
     
     <a href="/tags/%e6%88%90%e5%91%98%e5%87%bd%e6%95%b0" style="font-size: 12px;">成员函数</a>
     
     <a href="/tags/%e6%95%b0%e6%8d%ae%e7%bb%93%e6%9e%84" style="font-size: 12px;">数据结构</a>
+    
+    <a href="/tags/%e6%96%87%e4%bb%b6%e6%8f%8f%e8%bf%b0%e7%ac%a6" style="font-size: 12px;">文件描述符</a>
     
     <a href="/tags/%e6%97%b6%e9%97%b4%e7%ae%a1%e7%90%86" style="font-size: 12px;">时间管理</a>
     

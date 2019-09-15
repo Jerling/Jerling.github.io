@@ -148,36 +148,37 @@
 
 <li><p>文件属性可以通过 <code>chattr</code> 进行设置，它比文件权限更加底层。例如，为了保护文件不被意外删除，可以使用不可修改标记：<code>sudo chattr +i /critical/directory/or/file</code></p></li>
 
-<li><p>使用 <code>getfacl</code> 和 <code>setfacl</code> 以保存和恢复文件权限。例如：</p></li>
-</ul>
+<li><p>使用 <code>getfacl</code> 和 <code>setfacl</code> 以保存和恢复文件权限。例如：</p>
 
 <pre><code class="language-bash">getfacl -R /some/path &gt; permissions.txt
 setfacl --restore=permissions.txt
-</code></pre>
+</code></pre></li>
 
-<ul>
-<li>为了高效地创建空文件，请使用 <code>truncate</code>（创建稀疏文件），<code>fallocate</code>（用于 ext4，xfs，btrf 和 ocfs2 文件系统），<code>xfs_mkfile</code>（适用于几乎所有的文件系统，包含在 xfsprogs 包中），<code>mkfile</code>（用于类 Unix 操作系统，比如 Solaris 和 Mac OS）。</li>
-<li>标准的源代码对比及合并工具是 <code>diff</code> 和 <code>patch</code>。使用 <code>diffstat</code> 查看变更总览数据。注意到 <code>diff -r</code> 对整个文件夹有效。使用 <code>diff -r tree1 tree2 | diffstat</code> 查看变更的统计数据。<code>vimdiff</code> 用于比对并编辑文件。</li>
-<li>对于二进制文件，使用 <code>hd</code>，<code>hexdump</code> 或者 <code>xxd</code> 使其以十六进制显示，使用 <code>bvi</code>，<code>hexedit</code> 或者 <code>biew</code> 来进行二进制编辑。</li>
-<li>同样对于二进制文件，<code>strings</code>（包括 grep 等工具）可以帮助在二进制文件中查找特定比特。</li>
-<li>制作二进制差分文件（Delta 压缩），使用 <code>xdelta3</code>。</li>
-<li>使用 <code>iconv</code> 更改文本编码。需要更高级的功能，可以使用 <code>uconv</code>，它支持一些高级的 Unicode 功能。例如，这条命令移除了所有重音符号：</li>
-</ul>
+<li><p>为了高效地创建空文件，请使用 <code>truncate</code>（创建稀疏文件），<code>fallocate</code>（用于 ext4，xfs，btrf 和 ocfs2 文件系统），<code>xfs_mkfile</code>（适用于几乎所有的文件系统，包含在 xfsprogs 包中），<code>mkfile</code>（用于类 Unix 操作系统，比如 Solaris 和 Mac OS）。</p></li>
+
+<li><p>标准的源代码对比及合并工具是 <code>diff</code> 和 <code>patch</code>。使用 <code>diffstat</code> 查看变更总览数据。注意到 <code>diff -r</code> 对整个文件夹有效。使用 <code>diff -r tree1 tree2 | diffstat</code> 查看变更的统计数据。<code>vimdiff</code> 用于比对并编辑文件。</p></li>
+
+<li><p>对于二进制文件，使用 <code>hd</code>，<code>hexdump</code> 或者 <code>xxd</code> 使其以十六进制显示，使用 <code>bvi</code>，<code>hexedit</code> 或者 <code>biew</code> 来进行二进制编辑。</p></li>
+
+<li><p>同样对于二进制文件，<code>strings</code>（包括 grep 等工具）可以帮助在二进制文件中查找特定比特。</p></li>
+
+<li><p>制作二进制差分文件（Delta 压缩），使用 <code>xdelta3</code>。</p></li>
+
+<li><p>使用 <code>iconv</code> 更改文本编码。需要更高级的功能，可以使用 <code>uconv</code>，它支持一些高级的 Unicode 功能。例如，这条命令移除了所有重音符号：</p>
 
 <pre><code class="language-bash">uconv -f utf-8 -t utf-8 -x '::Any-Lower; ::Any-NFD; [:Nonspacing Mark:] &gt;; ::Any-NFC; ' &lt; input.txt &gt; output.txt
-</code></pre>
+</code></pre></li>
 
-<ul>
-<li>使用 <code>repren</code> 来批量重命名文件，或是在多个文件中搜索替换内容。（有些时候 rename 命令也可以批量重命名，但要注意，它在不同 Linux 发行版中的功能并不完全一样。）</li>
+<li><p>使用 <code>repren</code> 来批量重命名文件，或是在多个文件中搜索替换内容。（有些时候 rename 命令也可以批量重命名，但要注意，它在不同 Linux 发行版中的功能并不完全一样。）</p>
+
+<pre><code class="language-bash">  # 将文件、目录和内容全部重命名 foo -&gt; bar:
+  repren --full --preserve-case --from foo --to bar .
+  # 还原所有备份文件 whatever.bak -&gt; whatever:
+  repren --renames --from '(.*)\.bak' --to '\1' *.bak
+  # 用 rename 实现上述功能（若可用）:
+  rename 's/\.bak$//' *.bak
+</code></pre></li>
 </ul>
-
-<pre><code class="language-bash">      # 将文件、目录和内容全部重命名 foo -&gt; bar:
-      repren --full --preserve-case --from foo --to bar .
-      # 还原所有备份文件 whatever.bak -&gt; whatever:
-      repren --renames --from '(.*)\.bak' --to '\1' *.bak
-      # 用 rename 实现上述功能（若可用）:
-      rename 's/\.bak$//' *.bak
-</code></pre>
 
 <h2 id="内容处理">内容处理</h2>
 
@@ -194,11 +195,12 @@ setfacl --restore=permissions.txt
 </ul></li>
 <li>了解如何使用 <a href="http://www.runoob.com/linux/linux-comm-cut.html">cut</a>, <a href="http://www.runoob.com/linux/linux-comm-paste.html">paste</a> 和 <a href="http://www.runoob.com/linux/linux-comm-join.html">join</a> 来更改文件。很多人都会使用 cut，但遗忘了 join。</li>
 <li>了解如何使用 <code>awk</code> 和 <code>sed</code> 来进行简单的数据处理。</li>
-<li>替换一个或多个文件中出现的字符串：</li>
-</ul>
+
+<li><p>替换一个或多个文件中出现的字符串：</p>
 
 <pre><code class="language-bash">perl -pi.bak -e 's/old-string/new-string/g' my-files-*.txt
-</code></pre>
+</code></pre></li>
+</ul>
 
 <h2 id="数据统计">数据统计</h2>
 
@@ -214,14 +216,12 @@ setfacl --restore=permissions.txt
 <h1 id="文件拷贝">文件拷贝</h1>
 
 <ul>
-<li>根据 man 页面的描述，<code>rsync</code> 是一个快速且非常灵活的文件复制工具。它闻名于设备之间的文件同步，但其实它在本地情况下也同样有用。在安全设置允许下，用 <code>rsync</code> 代替 <code>scp</code> 可以实现文件续传，而不用重新从头开始。它同时也是删除大量文件的最快方法之一：</li>
-</ul>
+<li><p>根据 man 页面的描述，<code>rsync</code> 是一个快速且非常灵活的文件复制工具。它闻名于设备之间的文件同步，但其实它在本地情况下也同样有用。在安全设置允许下，用 <code>rsync</code> 代替 <code>scp</code> 可以实现文件续传，而不用重新从头开始。它同时也是删除大量文件的最快方法之一：</p>
 
 <pre><code class="language-bash">mkdir empty &amp;&amp; rsync -r --delete empty/ some-dir &amp;&amp; rmdir some-dir
-</code></pre>
+</code></pre></li>
 
-<ul>
-<li>若要在复制文件时获取当前进度，可使用 <code>pv</code>，<code>pycp</code>，<code>progress</code>，<code>rsync --progress</code>。若所执行的复制为 block 块拷贝，可以使用 <code>dd status=progress</code>。</li>
+<li><p>若要在复制文件时获取当前进度，可使用 <code>pv</code>，<code>pycp</code>，<code>progress</code>，<code>rsync --progress</code>。若所执行的复制为 block 块拷贝，可以使用 <code>dd status=progress</code>。</p></li>
 </ul>
 
 <h1 id="杂项">杂项</h1>
@@ -296,6 +296,8 @@ setfacl --restore=permissions.txt
     
     <li><a href="/categories/%e6%b8%a9%e6%95%85%e7%9f%a5%e6%96%b0" title="温故知新">温故知新<sup>1</sup></a></li>
     
+    <li><a href="/categories/%e7%bd%91%e7%bb%9c%e7%bc%96%e7%a8%8b" title="网络编程">网络编程<sup>1</sup></a></li>
+    
     <li><a href="/categories/%e9%a1%b9%e7%9b%ae%e5%ae%9e%e6%88%98" title="项目实战">项目实战<sup>5</sup></a></li>
     
   </ul>
@@ -351,11 +353,15 @@ setfacl --restore=permissions.txt
       
 			<li><a href="/tags/%e5%86%85%e6%a0%b8%e5%90%8c%e6%ad%a5" title="内核同步">内核同步<sup>1</sup></a></li>
       
+			<li><a href="/tags/%e5%a5%97%e6%8e%a5%e5%ad%97" title="套接字">套接字<sup>1</sup></a></li>
+      
 			<li><a href="/tags/%e5%af%b9%e8%b1%a1%e6%a8%a1%e5%9e%8b" title="对象模型">对象模型<sup>3</sup></a></li>
       
 			<li><a href="/tags/%e6%88%90%e5%91%98%e5%87%bd%e6%95%b0" title="成员函数">成员函数<sup>1</sup></a></li>
       
 			<li><a href="/tags/%e6%95%b0%e6%8d%ae%e7%bb%93%e6%9e%84" title="数据结构">数据结构<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e6%96%87%e4%bb%b6%e6%8f%8f%e8%bf%b0%e7%ac%a6" title="文件描述符">文件描述符<sup>1</sup></a></li>
       
 			<li><a href="/tags/%e6%97%b6%e9%97%b4%e7%ae%a1%e7%90%86" title="时间管理">时间管理<sup>1</sup></a></li>
       
@@ -380,6 +386,11 @@ setfacl --restore=permissions.txt
   <div class="archiveslist">
     <p class="asidetitle">归档</p>
     <ul class="archive-list">
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2019-09">2019年09月</a><span class="archive-list-count">1</span>
+      </li>
       
       
       <li class="archive-list-item">
@@ -474,11 +485,15 @@ setfacl --restore=permissions.txt
     
     <a href="/tags/%e5%86%85%e6%a0%b8%e5%90%8c%e6%ad%a5" style="font-size: 12px;">内核同步</a>
     
+    <a href="/tags/%e5%a5%97%e6%8e%a5%e5%ad%97" style="font-size: 12px;">套接字</a>
+    
     <a href="/tags/%e5%af%b9%e8%b1%a1%e6%a8%a1%e5%9e%8b" style="font-size: 12px;">对象模型</a>
     
     <a href="/tags/%e6%88%90%e5%91%98%e5%87%bd%e6%95%b0" style="font-size: 12px;">成员函数</a>
     
     <a href="/tags/%e6%95%b0%e6%8d%ae%e7%bb%93%e6%9e%84" style="font-size: 12px;">数据结构</a>
+    
+    <a href="/tags/%e6%96%87%e4%bb%b6%e6%8f%8f%e8%bf%b0%e7%ac%a6" style="font-size: 12px;">文件描述符</a>
     
     <a href="/tags/%e6%97%b6%e9%97%b4%e7%ae%a1%e7%90%86" style="font-size: 12px;">时间管理</a>
     
