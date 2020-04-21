@@ -1,11 +1,8 @@
 +++
-title: "oslab 实验环境"
-toc: true
-draft: false
-tags:
-  - oslab
-  - gdb
-  - bochs
+title =  "oslab 实验环境"
+toc = true
+draft = false
+tags = ["oslab", "gdb", "bochs"]
 +++
 
 ## 编译环境
