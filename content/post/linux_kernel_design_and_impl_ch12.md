@@ -333,8 +333,8 @@ void free_page(unsigned long addr);
 
 -    行为修饰符
 
-    ![](/images/截图_2019-06-23_16-15-28.png)
-    ![](/images/截图_2019-06-23_16-16-34.png)
+    {{< figure src="/images/截图_2019-06-23_16-15-28.png" >}}
+    {{< figure src="/images/截图_2019-06-23_16-16-34.png" >}}
 
 -    区修饰符
 
@@ -342,7 +342,8 @@ void free_page(unsigned long addr);
 
 -    类型修饰符
 
-    </images/截图_2019-06-23_16-19-02.png >![](/images/截图_2019-06-23_16-19-30.png)
+    {{< figure src="/images/截图_2019-06-23_16-19-02.png" >}}
+    {{< figure src="/images/截图_2019-06-23_16-19-30.png" >}}
 
     {{< figure src="/images/截图_2019-06-23_16-20-49.png" >}}
 

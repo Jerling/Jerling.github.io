@@ -46,7 +46,7 @@ make
 cd ~/oslab && ./run
 ```
 结果如图：
-![](/imgaes/Snipaste_2020-04-19_23-54-08.png)
+{{< figure src="/imgaes/Snipaste_2020-04-19_23-54-08.png" >}}
 
 ### gdb调试
 联调分两个部分：
@@ -72,7 +72,7 @@ sudo apt install libexpat1-dev:i386
 ```
 
 调试成功截图：
-![](/images/Snipaste_2020-04-20_00-06-25.png)
+{{< figure src="/images/Snipaste_2020-04-20_00-06-25.png" >}}
 
 ## 参考
 [https://www.cnblogs.com/tradoff/p/5693710.html](https://www.cnblogs.com/tradoff/p/5693710.html)
