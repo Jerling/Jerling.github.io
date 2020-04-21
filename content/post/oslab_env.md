@@ -3,9 +3,9 @@ tags = ["oslab", "gdb", "bochs"]
 title = "oslab 实验环境"
 author = ["Jerling"]
 description = "linux-0.11实验环境"
-categories = ["内核研习"]
 date = 2020-04-21T22:21:06+08:00
 lastmod = 2020-04-22T00:11:54+08:00
+categories = ["内核研习"]
 type = "post"
 draft = false
 author_homepage = "https://github.com/Jerling"
@@ -47,7 +47,7 @@ make
 cd ~/oslab && ./run
 ```
 结果如图：
-![](./图片/Snipaste_2020-04-19_23-54-08.png)
+![](/imgaes/Snipaste_2020-04-19_23-54-08.png)
 
 ### gdb调试
 联调分两个部分：
@@ -73,4 +73,7 @@ sudo apt install libexpat1-dev:i386
 ```
 
 调试成功截图：
-![](./图片/Snipaste_2020-04-20_00-06-25.png)
+![](./images/Snipaste_2020-04-20_00-06-25.png)
+
+## 参考
+[https://www.cnblogs.com/tradoff/p/5693710.html](https://www.cnblogs.com/tradoff/p/5693710.html)
