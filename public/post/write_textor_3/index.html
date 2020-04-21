@@ -1,0 +1,788 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>动手写编辑器 (三) ~ 文件查看器 - 北极狼徒</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+  
+  <meta name="description" content="Linux 下实现的文本编辑器">
+  
+  <meta itemprop="name" content="动手写编辑器 (三) ~ 文件查看器 - 北极狼徒">
+  <meta itemprop="description" content="Linux 下实现的文本编辑器">
+  <meta itemprop="image" content="/img/author.jpg">
+  
+  <meta name="twitter:description" content="Linux 下实现的文本编辑器" />
+  
+  <link rel="shortcut icon" href="/img/favicon.ico"/>
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png" />
+  <link rel="stylesheet" href="/highlight/styles/github.css">
+  <script src="/highlight/highlight.pack.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  
+  <link rel="stylesheet" href="/font/hack/css/hack.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <header>
+    <div>
+  
+  <div id="imglogo">
+    <a href="/"><img src="/img/logo.svg" alt="北极狼徒" title="北极狼徒"/></a>
+  </div>
+  
+  <div id="textlogo">
+    <h1 class="site-name"><a href="/" title="北极狼徒">北极狼徒</a></h1>
+    <h2 class="blog-motto">个人博客</h2>
+  </div>
+  <div class="navbar"><a class="navbutton navmobile" href="#" title="menu"></a></div>
+  <nav class="animated">
+    <ul>
+      
+      <li><a href="/">首页</a></li>
+      
+      <li><a href="/about">关于</a></li>
+      
+      <li>
+        <form class="search" method="get" action="https://www.google.com/search">
+          <div>
+            <input type="text" id="search" name="q" placeholder="搜索">
+          </div>
+        </form>
+      </li>
+    </ul>
+  </nav>
+</div>
+
+  </header>
+  <div id="container">
+    <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody">
+    <header class="article-info clearfix">
+  <h1 itemprop="name">
+      <a href="/post/write_textor_3/" title="动手写编辑器 (三) ~ 文件查看器" itemprop="url">动手写编辑器 (三) ~ 文件查看器</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="https://github.com/Jerling" title="[Jerling]">[Jerling]</a>
+    
+  </p>
+  <p class="article-time">
+    <time datetime="2019-02-02 13:27:35 &#43;0800 CST" itemprop="datePublished">2019年02月02日</time>
+  </p>
+</header>
+
+	<div class="article-content">
+    
+		<div class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#table-of-contens">Table of Contens</a></li>
+    <li><a href="#状态栏">状态栏</a>
+      <ul>
+        <li><a href="#腾出空间">腾出空间</a></li>
+        <li><a href="#写入-buffer">写入 buffer</a></li>
+      </ul>
+    </li>
+    <li><a href="#消息框">消息框</a>
+      <ul>
+        <li><a href="#腾出空间">腾出空间</a></li>
+        <li><a href="#滞留时间">滞留时间</a></li>
+        <li><a href="#写入消息">写入消息</a></li>
+        <li><a href="#写入-buffer">写入 buffer</a></li>
+      </ul>
+    </li>
+    <li><a href="#滚动">滚动</a>
+      <ul>
+        <li><a href="#垂直滚动">垂直滚动</a></li>
+        <li><a href="#水平滚动">水平滚动</a></li>
+        <li><a href="#修改边界检查">修改边界检查</a></li>
+        <li><a href="#写入-buffer">写入 buffer</a></li>
+      </ul>
+    </li>
+    <li><a href="#总结">总结</a></li>
+    <li><a href="#参考">参考</a></li>
+  </ul>
+</nav>
+		</div>
+    
+    <h2 id="table-of-contens">Table of Contens</h2>
+<ul>
+<li><a href="#%E7%8A%B6%E6%80%81%E6%A0%8F">状态栏</a>
+<ul>
+<li><a href="#%E8%85%BE%E5%87%BA%E7%A9%BA%E9%97%B4">腾出空间</a></li>
+<li><a href="#%E5%86%99%E5%85%A5-buffer">写入 buffer</a></li>
+</ul>
+</li>
+<li><a href="#%E6%B6%88%E6%81%AF%E6%A1%86">消息框</a>
+<ul>
+<li><a href="#%E8%85%BE%E5%87%BA%E7%A9%BA%E9%97%B4">腾出空间</a></li>
+<li><a href="#%E6%BB%9E%E7%95%99%E6%97%B6%E9%97%B4">滞留时间</a></li>
+<li><a href="#%E5%86%99%E5%85%A5%E6%B6%88%E6%81%AF">写入消息</a></li>
+<li><a href="#%E5%86%99%E5%85%A5-buffer">写入 buffer</a></li>
+</ul>
+</li>
+<li><a href="#%E6%BB%9A%E5%8A%A8">滚动</a>
+<ul>
+<li><a href="#%E5%9E%82%E7%9B%B4%E6%BB%9A%E5%8A%A8">垂直滚动</a></li>
+<li><a href="#%E6%B0%B4%E5%B9%B3%E6%BB%9A%E5%8A%A8">水平滚动</a></li>
+<li><a href="#%E4%BF%AE%E6%94%B9%E8%BE%B9%E7%95%8C%E6%A3%80%E6%9F%A5">修改边界检查</a></li>
+<li><a href="#%E5%86%99%E5%85%A5-buffer">写入 buffer</a></li>
+</ul>
+</li>
+<li><a href="#%E6%80%BB%E7%BB%93">总结</a></li>
+<li><a href="#%E5%8F%82%E8%80%83">参考</a></li>
+</ul>
+<h2 id="状态栏">状态栏</h2>
+<p>熟悉 vim 的朋友都知道, vim 有一个状态栏，位于下边。状态栏的功能主要时显示一些基
+本的信息，如文件名、光标位置等。</p>
+<h3 id="腾出空间">腾出空间</h3>
+<p>在之前的操作中，我们把整个窗口都用来显示文件内容了。所以我们必须将 <code>rows_</code> 减去
+一行用来显示状态信息。</p>
+<div class="highlight"><pre class="chroma"><code class="language-C++" data-lang="C++"><span class="kr">inline</span> <span class="kt">int</span> <span class="n">editor</span><span class="o">::</span><span class="n">get_window_size__</span><span class="p">()</span> <span class="p">{</span>
+  <span class="p">...</span>
+    <span class="n">rows_</span> <span class="o">=</span> <span class="n">ws</span><span class="p">.</span><span class="n">ws_row</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span> <span class="cm">/* 腾出状态栏 */</span>
+  <span class="p">...</span>
+<span class="p">}</span>
+</code></pre></div><h3 id="写入-buffer">写入 buffer</h3>
+<p>现在将我们要显示的信息写入 buffer 的最后一行，也就是状态栏。为了区分状态栏和文本
+区的不同，因此将颜色反转。</p>
+<div class="highlight"><pre class="chroma"><code class="language-C++" data-lang="C++"><span class="kt">void</span> <span class="n">editor</span><span class="o">::</span><span class="n">status_bar__</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">append_buf__</span><span class="p">(</span><span class="s">&#34;</span><span class="se">\x1b</span><span class="s">[7m&#34;</span><span class="p">);</span> <span class="cm">/* 颜色反转 */</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">stats</span><span class="p">((</span><span class="n">filename_</span><span class="p">.</span><span class="n">empty</span><span class="p">()</span> <span class="o">?</span> <span class="s">&#34;[New File]&#34;</span> <span class="o">:</span> <span class="n">filename_</span><span class="p">)</span> <span class="o">+</span>
+                    <span class="s">&#34; - total: &#34;</span> <span class="o">+</span> <span class="n">std</span><span class="o">::</span><span class="n">to_string</span><span class="p">(</span><span class="n">numrows_</span><span class="p">)</span> <span class="o">+</span>
+                    <span class="s">&#34; lines current: (&#34;</span> <span class="o">+</span> <span class="n">std</span><span class="o">::</span><span class="n">to_string</span><span class="p">(</span><span class="n">cx_</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#34;, &#34;</span> <span class="o">+</span>
+                    <span class="n">std</span><span class="o">::</span><span class="n">to_string</span><span class="p">(</span><span class="n">cy_</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#34;)&#34;</span><span class="p">);</span>
+  <span class="n">append_buf__</span><span class="p">(</span><span class="n">stats</span><span class="p">);</span>
+  <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">cols_</span> <span class="o">-</span> <span class="n">stats</span><span class="p">.</span><span class="n">size</span><span class="p">();</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="n">append_buf__</span><span class="p">(</span><span class="s">&#34; &#34;</span><span class="p">);</span>
+  <span class="n">append_buf__</span><span class="p">(</span><span class="s">&#34;</span><span class="se">\x1b</span><span class="s">[m&#34;</span><span class="p">);</span> <span class="cm">/* 恢复颜色 */</span>
+  <span class="n">append_buf__</span><span class="p">(</span><span class="s">&#34;</span><span class="se">\r\n</span><span class="s">&#34;</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div><h2 id="消息框">消息框</h2>
+<p>消息栏也是必须的，在和编辑的交互过程中，有个消息栏是比较方便的，如命令运行结果反
+馈等。信息框的处理和状态栏一样。先空出空间，然后将消息写入 buffer 。</p>
+<h3 id="腾出空间">腾出空间</h3>
+<div class="highlight"><pre class="chroma"><code class="language-C++" data-lang="C++"><span class="kr">inline</span> <span class="kt">int</span> <span class="n">editor</span><span class="o">::</span><span class="n">get_window_size__</span><span class="p">()</span> <span class="p">{</span>
+  <span class="p">...</span>
+    <span class="n">rows_</span> <span class="o">=</span> <span class="n">ws</span><span class="p">.</span><span class="n">ws_row</span> <span class="o">-</span> <span class="mi">2</span><span class="p">;</span> <span class="cm">/* 腾出状态栏和消息框 */</span>
+  <span class="p">...</span>
+<span class="p">}</span>
+</code></pre></div><h3 id="滞留时间">滞留时间</h3>
+<p>一般来说，消息最好不要一直显示，因为没什么用，还可能会影响视觉焦点。因此以时间戳为准，超过一段时
+间（如5s）就不再显示消息即可。实现起来也比较简单，因为每次显示一个消息，所以每次有消息时
+只需要记住消息出现的当前时间点，然后和当前的时间点比较即可。</p>
+<div class="highlight"><pre class="chroma"><code class="language-C++" data-lang="C++"><span class="k">struct</span> <span class="nc">textor</span><span class="p">{</span>
+  <span class="cm">/* 消息 */</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">status_msg_</span><span class="p">;</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">time_t</span> <span class="n">msg_time_</span><span class="p">;</span>
+<span class="p">...</span>
+<span class="p">}</span>
+</code></pre></div><h3 id="写入消息">写入消息</h3>
+<p>将消息存入 <code>status_msg_</code> 变量中，同时更新最新消息的时间。</p>
+<div class="highlight"><pre class="chroma"><code class="language-C++" data-lang="C++"><span class="kt">void</span> <span class="n">editor</span><span class="o">::</span><span class="n">status_msg__</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">fmt</span><span class="p">,</span> <span class="p">...)</span> <span class="p">{</span>
+  <span class="n">va_list</span> <span class="n">ap</span><span class="p">;</span>
+  <span class="n">va_start</span><span class="p">(</span><span class="n">ap</span><span class="p">,</span> <span class="n">fmt</span><span class="p">);</span>
+  <span class="kt">char</span> <span class="n">msg</span><span class="p">[</span><span class="mi">80</span><span class="p">];</span>
+  <span class="n">vsnprintf</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="k">sizeof</span> <span class="n">msg</span><span class="p">,</span> <span class="n">fmt</span><span class="p">,</span> <span class="n">ap</span><span class="p">);</span>
+  <span class="n">va_end</span><span class="p">(</span><span class="n">ap</span><span class="p">);</span>
+  <span class="n">status_msg_</span> <span class="o">=</span> <span class="n">msg</span><span class="p">;</span>
+  <span class="n">msg_time_</span> <span class="o">=</span> <span class="n">time</span><span class="p">(</span><span class="k">nullptr</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div><h3 id="写入-buffer">写入 buffer</h3>
+<p>将消息写入 buffer 中便于显示。 <code>K</code> 命令是清除内容，因为每次刷新的时候先清空，然
+后如果时间在规定时间内，则重新写入。</p>
+<div class="highlight"><pre class="chroma"><code class="language-C++" data-lang="C++"><span class="kt">void</span> <span class="n">editor</span><span class="o">::</span><span class="n">draw_msg__</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">append_buf__</span><span class="p">(</span><span class="s">&#34;</span><span class="se">\x1b</span><span class="s">[K&#34;</span><span class="p">);</span> <span class="cm">/* 清除消息框 */</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">status_msg_</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">&gt;</span> <span class="n">cols_</span><span class="p">)</span> <span class="n">status_msg_</span><span class="p">.</span><span class="n">resize</span><span class="p">(</span><span class="n">cols_</span><span class="p">);</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">status_msg_</span><span class="p">.</span><span class="n">empty</span><span class="p">()</span> <span class="o">&amp;&amp;</span> <span class="n">time</span><span class="p">(</span><span class="k">nullptr</span><span class="p">)</span> <span class="o">-</span> <span class="n">msg_time_</span> <span class="o">&lt;</span> <span class="mi">5</span><span class="p">)</span>  <span class="cm">/* 5s 后不再显示 */</span>
+    <span class="n">append_buf__</span><span class="p">(</span><span class="n">status_msg_</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div><h2 id="滚动">滚动</h2>
+<p>在上一篇博客中，虽然实现了基本的查看文件内容的功能。但这明显是不够的，当我们打开的
+文件比较大的时候，那么一个窗口是无法把所有的内容显示在上面。因此我们必须将文件存
+入 buffer 中，然后根据相对文件中的坐标来显示窗口大小的内容。因此上一篇中的坐标
+(cx_, cy_) 不再是相对窗口的坐标，而是相对文件的坐标。</p>
+<h3 id="垂直滚动">垂直滚动</h3>
+<p>要实现垂直滚动，首先在全局配置中记录当前的窗口起始位置在文件中的偏移 <code>rowoff_</code> 。</p>
+<div class="highlight"><pre class="chroma"><code class="language-C++" data-lang="C++"><span class="k">struct</span> <span class="nc">textor</span><span class="p">{</span>
+  <span class="kt">int</span> <span class="n">rowoff</span><span class="p">;</span>
+  <span class="p">...</span>
+<span class="p">}</span>
+</code></pre></div><p>在初始化时值为 0, 也就是文件的第一行。</p>
+<p>在窗口最上面和最下面的时候，我们继续向上或向下移动光标的时，需要更新文件的相对偏移位置。</p>
+<div class="highlight"><pre class="chroma"><code class="language-C++" data-lang="C++"><span class="kt">void</span> <span class="n">editor</span><span class="o">::</span><span class="n">scroll__</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">cx_</span> <span class="o">&lt;</span> <span class="n">rowoff_</span><span class="p">)</span>
+    <span class="n">rowoff_</span> <span class="o">=</span> <span class="n">cx_</span><span class="p">;</span>
+  <span class="k">else</span> <span class="nf">if</span> <span class="p">(</span><span class="n">cx_</span> <span class="o">&gt;=</span> <span class="n">rowoff_</span> <span class="o">+</span> <span class="n">rows_</span><span class="p">)</span>
+    <span class="n">rowoff_</span> <span class="o">=</span> <span class="n">cx_</span> <span class="o">-</span> <span class="n">rows_</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+<span class="p">...</span>
+<span class="p">}</span>
+</code></pre></div><h3 id="水平滚动">水平滚动</h3>
+<p>说了垂直滚动，那么水平滚动相对来说也会比较统一了，和垂直一样，定义一个水平的相对
+起始位置 <code>coloff_</code> ，同样初始化为第一列。</p>
+<div class="highlight"><pre class="chroma"><code class="language-C++" data-lang="C++"><span class="k">struct</span> <span class="nc">textor</span><span class="p">{</span>
+  <span class="kt">int</span> <span class="n">coloff_</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div><p>当光标位于第一列并向左移动和最后一列向右移动时，光标就会移到屏幕之外。因此就需要
+更新相关的列号。</p>
+<div class="highlight"><pre class="chroma"><code class="language-C++" data-lang="C++"><span class="kt">void</span> <span class="n">editor</span><span class="o">::</span><span class="n">scroll__</span><span class="p">()</span> <span class="p">{</span>
+<span class="p">...</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">cy_</span> <span class="o">&lt;</span> <span class="n">coloff_</span><span class="p">)</span>
+    <span class="n">coloff_</span> <span class="o">=</span> <span class="n">cy_</span><span class="p">;</span>
+  <span class="k">else</span> <span class="nf">if</span> <span class="p">(</span><span class="n">cy_</span> <span class="o">&gt;=</span> <span class="n">coloff_</span> <span class="o">+</span> <span class="n">cols_</span><span class="p">)</span>
+    <span class="n">coloff_</span> <span class="o">=</span> <span class="n">cy_</span> <span class="o">-</span> <span class="n">cols_</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div><p>然后将这些更新放在 <code>flush__</code> 即可，每次刷新屏幕就会更新文件内容。</p>
+<h3 id="修改边界检查">修改边界检查</h3>
+<p>在之前的实现中，我们都是以窗口为单位。所以判断是否越界也是以窗口的 <code>size</code> 为基准。
+但是现在以文件作为基准，因此需要做点修改。</p>
+<div class="highlight"><pre class="chroma"><code class="language-C++" data-lang="C++"><span class="kt">void</span> <span class="n">editor</span><span class="o">::</span><span class="n">move_cursor__</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">switch</span> <span class="p">(</span><span class="n">key_</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">case</span> <span class="nl">ARROW_UP</span><span class="p">:</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">cx_</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="n">cx_</span><span class="o">--</span><span class="p">;</span>
+      <span class="k">break</span><span class="p">;</span>
+    <span class="k">case</span> <span class="nl">ARROW_DOWN</span><span class="p">:</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">cx_</span> <span class="o">&lt;</span> <span class="n">numrows_</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="n">cx_</span><span class="o">++</span><span class="p">;</span>
+      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">text_</span><span class="p">.</span><span class="n">empty</span><span class="p">()</span> <span class="o">&amp;&amp;</span> <span class="n">cy_</span> <span class="o">&gt;</span> <span class="n">text_</span><span class="p">[</span><span class="n">cx_</span><span class="p">].</span><span class="n">size</span><span class="p">())</span> <span class="n">cy_</span> <span class="o">=</span> <span class="n">text_</span><span class="p">[</span><span class="n">cx_</span><span class="p">].</span><span class="n">size</span><span class="p">();</span>
+      <span class="k">break</span><span class="p">;</span>
+    <span class="k">case</span> <span class="nl">ARROW_LEFT</span><span class="p">:</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">cy_</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">cy_</span><span class="o">--</span><span class="p">;</span>
+      <span class="k">else</span> <span class="nf">if</span> <span class="p">(</span><span class="n">cx_</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">cx_</span><span class="o">--</span><span class="p">;</span>
+        <span class="n">cy_</span> <span class="o">=</span> <span class="n">text_</span><span class="p">[</span><span class="n">cx_</span><span class="p">].</span><span class="n">size</span><span class="p">();</span>
+      <span class="p">}</span>
+      <span class="k">break</span><span class="p">;</span>
+    <span class="k">case</span> <span class="nl">ARROW_RIGHT</span><span class="p">:</span>
+      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">text_</span><span class="p">.</span><span class="n">empty</span><span class="p">()</span> <span class="o">&amp;&amp;</span> <span class="n">cy_</span> <span class="o">&lt;</span> <span class="n">text_</span><span class="p">[</span><span class="n">cx_</span><span class="p">].</span><span class="n">size</span><span class="p">())</span>
+        <span class="n">cy_</span><span class="o">++</span><span class="p">;</span>
+      <span class="k">else</span> <span class="nf">if</span> <span class="p">(</span><span class="n">cx_</span> <span class="o">&lt;</span> <span class="n">numrows_</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">cy_</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="n">cx_</span><span class="o">++</span><span class="p">;</span>
+      <span class="p">}</span>
+      <span class="k">break</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><h3 id="写入-buffer">写入 buffer</h3>
+<p>我们目前已经知道如何实现滚动和更新滚动的相对起始位置，但是我们还没有将其应用到
+buffer 中，所以必须修改 buffer 要显示的内容，才能实现滚动的效果。</p>
+<p>下面我们就要修改 <code>draw_rows__</code> 函数，使其显示文件中的某个窗口大小的内容。</p>
+<div class="highlight"><pre class="chroma"><code class="language-C++" data-lang="C++"><span class="kt">void</span> <span class="n">editor</span><span class="o">::</span><span class="n">draw_rows__</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">rows_</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">filerow</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="n">rowoff_</span><span class="p">;</span>      <span class="cm">/* 修改显示为相对文件的行 */</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">filerow</span> <span class="o">&gt;=</span> <span class="n">numrows_</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="o">==</span> <span class="n">rows_</span> <span class="o">/</span> <span class="mi">3</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">numrows_</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">welcome</span><span class="p">(</span><span class="s">&#34;Textor editor -- version &#34;</span><span class="p">);</span>
+        <span class="n">welcome</span> <span class="o">+=</span> <span class="n">TEXTOR_VERSION</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">welcome</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">&gt;</span> <span class="n">cols_</span><span class="p">)</span> <span class="n">welcome</span><span class="p">.</span><span class="n">resize</span><span class="p">(</span><span class="n">cols_</span><span class="p">);</span>
+        <span class="kt">int</span> <span class="n">padding</span> <span class="o">=</span> <span class="p">(</span><span class="n">cols_</span> <span class="o">-</span> <span class="n">welcome</span><span class="p">.</span><span class="n">size</span><span class="p">())</span> <span class="o">/</span> <span class="mi">2</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">padding</span><span class="p">)</span> <span class="p">{</span>
+          <span class="n">append_buf__</span><span class="p">(</span><span class="s">&#34;~&#34;</span><span class="p">);</span>
+          <span class="n">padding</span><span class="o">--</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">while</span> <span class="p">(</span><span class="n">padding</span><span class="o">--</span><span class="p">)</span> <span class="n">append_buf__</span><span class="p">(</span><span class="s">&#34; &#34;</span><span class="p">);</span>
+        <span class="n">append_buf__</span><span class="p">(</span><span class="n">welcome</span><span class="p">);</span>
+      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="n">append_buf__</span><span class="p">(</span><span class="s">&#34;~&#34;</span><span class="p">);</span>
+      <span class="p">}</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+      <span class="kt">int</span> <span class="n">len</span> <span class="o">=</span> <span class="n">text_</span><span class="p">[</span><span class="n">filerow</span><span class="p">].</span><span class="n">size</span><span class="p">()</span> <span class="o">-</span> <span class="n">coloff_</span><span class="p">;</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">len</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">len</span> <span class="o">+=</span> <span class="n">coloff_</span><span class="p">;</span>    <span class="cm">/* 更新文件中的列 */</span>
+        <span class="cm">/* 更新文件中的行 */</span>
+        <span class="n">append_buf__</span><span class="p">(</span><span class="n">text_</span><span class="p">[</span><span class="n">filerow</span><span class="p">].</span><span class="n">substr</span><span class="p">(</span><span class="n">len</span><span class="p">,</span> <span class="mi">0</span><span class="p">));</span>
+        <span class="k">return</span><span class="p">;</span>
+      <span class="p">}</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">len</span> <span class="o">&gt;</span> <span class="n">cols_</span><span class="p">)</span> <span class="n">len</span> <span class="o">=</span> <span class="n">cols_</span><span class="p">;</span>
+      <span class="n">append_buf__</span><span class="p">(</span><span class="n">text_</span><span class="p">[</span><span class="n">filerow</span><span class="p">].</span><span class="n">substr</span><span class="p">(</span><span class="n">coloff_</span><span class="p">,</span> <span class="n">len</span><span class="p">));</span>
+    <span class="p">}</span>
+    <span class="n">append_buf__</span><span class="p">(</span><span class="s">&#34;</span><span class="se">\x1b</span><span class="s">[K&#34;</span><span class="p">);</span>
+    <span class="n">append_buf__</span><span class="p">(</span><span class="s">&#34;</span><span class="se">\r\n</span><span class="s">&#34;</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><p>这里实现也相对比较简单，将之前的相对窗口的坐标改为文件的坐标即可，后面的字符串也
+将随着修改。</p>
+<h2 id="总结">总结</h2>
+<p>好了，今天的内容就到这结束了，工作不多，只是基本的编辑器的功能。目前仅实现了文件查看
+器的功能，和 vim 的正常模式一样，只能查阅，不能修改或写入。后续继续更新。</p>
+<p>看看今天的效果吧 :)</p>
+<figure>
+    <img src="https://jerling.github.io/images/write%5Ftextor%5F3%5F20190202%5F145141.png"/> 
+</figure>
+
+<h2 id="参考">参考</h2>
+<p><a href="https://viewsourcecode.org/snaptoken/kilo/04.aTextViewer.html">https://viewsourcecode.org/snaptoken/kilo/04.aTextViewer.html</a></p>
+
+    
+	</div>
+  <footer class="article-footer clearfix">
+  
+
+<div class="article-tags">
+  <span></span>
+  
+  <a href="/tags/textor">textor</a>
+  
+  <a href="/tags/terminal">terminal</a>
+  
+  <a href="/tags/c&#43;&#43;">c&#43;&#43;</a>
+  
+</div>
+
+
+
+
+
+<div class="article-categories">
+  <span></span>
+  
+  <a class="article-category-link" href="/categories/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98">项目实战</a>
+  
+</div>
+
+
+
+  <div class="article-share" id="share">
+    <div data-url="/post/write_textor_3/" data-title="动手写编辑器 (三) ~ 文件查看器" data-tsina="123" class="share clearfix">
+    </div>
+  </div>
+</footer>
+
+	</article>
+  
+
+
+
+</div>
+
+    <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+  
+
+<div class="categorieslist">
+  <p class="asidetitle">分类</p>
+  <ul>
+    
+    <li><a href="/categories/%e5%86%85%e5%ad%98%e7%ae%a1%e7%90%86" title="内存管理">内存管理<sup>1</sup></a></li>
+    
+    <li><a href="/categories/%e5%91%bd%e4%bb%a4%e8%a1%8c%e8%89%ba%e6%9c%af" title="命令行艺术">命令行艺术<sup>3</sup></a></li>
+    
+    <li><a href="/categories/%e5%ad%a6%e4%b9%a0%e7%ac%94%e8%ae%b0" title="学习笔记">学习笔记<sup>13</sup></a></li>
+    
+    <li><a href="/categories/%e6%93%8d%e4%bd%9c%e7%b3%bb%e7%bb%9f" title="操作系统">操作系统<sup>1</sup></a></li>
+    
+    <li><a href="/categories/%e6%95%b0%e6%8d%ae%e7%bb%93%e6%9e%84" title="数据结构">数据结构<sup>1</sup></a></li>
+    
+    <li><a href="/categories/%e6%b8%a9%e6%95%85%e7%9f%a5%e6%96%b0" title="温故知新">温故知新<sup>1</sup></a></li>
+    
+    <li><a href="/categories/%e7%bd%91%e7%bb%9c%e7%bc%96%e7%a8%8b" title="网络编程">网络编程<sup>1</sup></a></li>
+    
+    <li><a href="/categories/%e9%a1%b9%e7%9b%ae%e5%ae%9e%e6%88%98" title="项目实战">项目实战<sup>5</sup></a></li>
+    
+  </ul>
+</div>
+
+
+
+  
+
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+      
+			<li><a href="/tags/c&#43;&#43;" title="c&#43;&#43;">c&#43;&#43;<sup>10</sup></a></li>
+      
+			<li><a href="/tags/command" title="command">command<sup>3</sup></a></li>
+      
+			<li><a href="/tags/conclusion" title="conclusion">conclusion<sup>1</sup></a></li>
+      
+			<li><a href="/tags/data_struct" title="data_struct">data_struct<sup>1</sup></a></li>
+      
+			<li><a href="/tags/funny" title="funny">funny<sup>1</sup></a></li>
+      
+			<li><a href="/tags/gentoo" title="gentoo">gentoo<sup>1</sup></a></li>
+      
+			<li><a href="/tags/jemalloc" title="jemalloc">jemalloc<sup>1</sup></a></li>
+      
+			<li><a href="/tags/kernel" title="kernel">kernel<sup>8</sup></a></li>
+      
+			<li><a href="/tags/linux" title="linux">linux<sup>12</sup></a></li>
+      
+			<li><a href="/tags/linux0.11" title="linux0.11">linux0.11<sup>1</sup></a></li>
+      
+			<li><a href="/tags/linux%e5%86%85%e6%a0%b8" title="linux内核">linux内核<sup>1</sup></a></li>
+      
+			<li><a href="/tags/oslab" title="oslab">oslab<sup>1</sup></a></li>
+      
+			<li><a href="/tags/pmalloc2" title="pmalloc2">pmalloc2<sup>1</sup></a></li>
+      
+			<li><a href="/tags/shell" title="shell">shell<sup>4</sup></a></li>
+      
+			<li><a href="/tags/tcmalloc" title="tcmalloc">tcmalloc<sup>1</sup></a></li>
+      
+			<li><a href="/tags/terminal" title="terminal">terminal<sup>5</sup></a></li>
+      
+			<li><a href="/tags/text_editor" title="text_editor">text_editor<sup>1</sup></a></li>
+      
+			<li><a href="/tags/textor" title="textor">textor<sup>3</sup></a></li>
+      
+			<li><a href="/tags/tree" title="tree">tree<sup>1</sup></a></li>
+      
+			<li><a href="/tags/vfs" title="vfs">vfs<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e4%b8%ad%e6%96%ad" title="中断">中断<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e5%86%85%e5%ad%98%e7%ae%a1%e7%90%86" title="内存管理">内存管理<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e5%86%85%e6%a0%b8%e5%90%8c%e6%ad%a5" title="内核同步">内核同步<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e5%a5%97%e6%8e%a5%e5%ad%97" title="套接字">套接字<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e5%af%b9%e8%b1%a1%e6%a8%a1%e5%9e%8b" title="对象模型">对象模型<sup>3</sup></a></li>
+      
+			<li><a href="/tags/%e6%88%90%e5%91%98%e5%87%bd%e6%95%b0" title="成员函数">成员函数<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e6%95%b0%e6%8d%ae%e7%bb%93%e6%9e%84" title="数据结构">数据结构<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e6%96%87%e4%bb%b6%e6%8f%8f%e8%bf%b0%e7%ac%a6" title="文件描述符">文件描述符<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e6%97%b6%e9%97%b4%e7%ae%a1%e7%90%86" title="时间管理">时间管理<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e7%b3%bb%e7%bb%9f%e8%b0%83%e7%94%a8" title="系统调用">系统调用<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e7%bb%a7%e6%89%bf" title="继承">继承<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e7%bc%96%e7%a8%8b%e8%af%ad%e8%a8%80" title="编程语言">编程语言<sup>3</sup></a></li>
+      
+			<li><a href="/tags/%e8%bf%9b%e7%a8%8b%e7%ae%a1%e7%90%86" title="进程管理">进程管理<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e8%bf%9b%e7%a8%8b%e8%b0%83%e5%ba%a6" title="进程调度">进程调度<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e9%9d%a2%e5%90%91%e5%af%b9%e8%b1%a1" title="面向对象">面向对象<sup>2</sup></a></li>
+      
+		</ul>
+</div>
+
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle">归档</p>
+    <ul class="archive-list">
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2019-09">2019年09月</a><span class="archive-list-count">1</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2019-07">2019年07月</a><span class="archive-list-count">1</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2019-06">2019年06月</a><span class="archive-list-count">7</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2019-05">2019年05月</a><span class="archive-list-count">5</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2019-04">2019年04月</a><span class="archive-list-count">1</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2019-03">2019年03月</a><span class="archive-list-count">2</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2019-02">2019年02月</a><span class="archive-list-count">4</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2019-01">2019年01月</a><span class="archive-list-count">4</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2018-12">2018年12月</a><span class="archive-list-count">1</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#0001-01">0001年01月</a><span class="archive-list-count">1</span>
+      </li>
+      
+    </ul>
+
+  </div>
+
+
+  
+
+<div class="tagcloudlist">
+  <p class="asidetitle">标签云</p>
+  <div class="tagcloudlist clearfix">
+    
+    <a href="/tags/c&#43;&#43;" style="font-size: 12px;">c&#43;&#43;</a>
+    
+    <a href="/tags/command" style="font-size: 12px;">command</a>
+    
+    <a href="/tags/conclusion" style="font-size: 12px;">conclusion</a>
+    
+    <a href="/tags/data_struct" style="font-size: 12px;">data_struct</a>
+    
+    <a href="/tags/funny" style="font-size: 12px;">funny</a>
+    
+    <a href="/tags/gentoo" style="font-size: 12px;">gentoo</a>
+    
+    <a href="/tags/jemalloc" style="font-size: 12px;">jemalloc</a>
+    
+    <a href="/tags/kernel" style="font-size: 12px;">kernel</a>
+    
+    <a href="/tags/linux" style="font-size: 12px;">linux</a>
+    
+    <a href="/tags/linux0.11" style="font-size: 12px;">linux0.11</a>
+    
+    <a href="/tags/linux%e5%86%85%e6%a0%b8" style="font-size: 12px;">linux内核</a>
+    
+    <a href="/tags/oslab" style="font-size: 12px;">oslab</a>
+    
+    <a href="/tags/pmalloc2" style="font-size: 12px;">pmalloc2</a>
+    
+    <a href="/tags/shell" style="font-size: 12px;">shell</a>
+    
+    <a href="/tags/tcmalloc" style="font-size: 12px;">tcmalloc</a>
+    
+    <a href="/tags/terminal" style="font-size: 12px;">terminal</a>
+    
+    <a href="/tags/text_editor" style="font-size: 12px;">text_editor</a>
+    
+    <a href="/tags/textor" style="font-size: 12px;">textor</a>
+    
+    <a href="/tags/tree" style="font-size: 12px;">tree</a>
+    
+    <a href="/tags/vfs" style="font-size: 12px;">vfs</a>
+    
+    <a href="/tags/%e4%b8%ad%e6%96%ad" style="font-size: 12px;">中断</a>
+    
+    <a href="/tags/%e5%86%85%e5%ad%98%e7%ae%a1%e7%90%86" style="font-size: 12px;">内存管理</a>
+    
+    <a href="/tags/%e5%86%85%e6%a0%b8%e5%90%8c%e6%ad%a5" style="font-size: 12px;">内核同步</a>
+    
+    <a href="/tags/%e5%a5%97%e6%8e%a5%e5%ad%97" style="font-size: 12px;">套接字</a>
+    
+    <a href="/tags/%e5%af%b9%e8%b1%a1%e6%a8%a1%e5%9e%8b" style="font-size: 12px;">对象模型</a>
+    
+    <a href="/tags/%e6%88%90%e5%91%98%e5%87%bd%e6%95%b0" style="font-size: 12px;">成员函数</a>
+    
+    <a href="/tags/%e6%95%b0%e6%8d%ae%e7%bb%93%e6%9e%84" style="font-size: 12px;">数据结构</a>
+    
+    <a href="/tags/%e6%96%87%e4%bb%b6%e6%8f%8f%e8%bf%b0%e7%ac%a6" style="font-size: 12px;">文件描述符</a>
+    
+    <a href="/tags/%e6%97%b6%e9%97%b4%e7%ae%a1%e7%90%86" style="font-size: 12px;">时间管理</a>
+    
+    <a href="/tags/%e7%b3%bb%e7%bb%9f%e8%b0%83%e7%94%a8" style="font-size: 12px;">系统调用</a>
+    
+    <a href="/tags/%e7%bb%a7%e6%89%bf" style="font-size: 12px;">继承</a>
+    
+    <a href="/tags/%e7%bc%96%e7%a8%8b%e8%af%ad%e8%a8%80" style="font-size: 12px;">编程语言</a>
+    
+    <a href="/tags/%e8%bf%9b%e7%a8%8b%e7%ae%a1%e7%90%86" style="font-size: 12px;">进程管理</a>
+    
+    <a href="/tags/%e8%bf%9b%e7%a8%8b%e8%b0%83%e5%ba%a6" style="font-size: 12px;">进程调度</a>
+    
+    <a href="/tags/%e9%9d%a2%e5%90%91%e5%af%b9%e8%b1%a1" style="font-size: 12px;">面向对象</a>
+    
+  </div>
+</div>
+
+
+
+  
+
+</aside>
+</div>
+
+  </div>
+  <footer><div id="footer" >
+  
+  <div class="line">
+    <span></span>
+    <div style='background:no-repeat url("/img/author.jpg") left top;-webkit-background-size:6.875em 6.875em;-moz-background-size:6.875em 6.875em;background-size:6.875em 6.875em;' class="author" ></div>
+  </div>
+  
+  
+  <section class="info">
+    <p>码农一枚 <br/> 混口饭吃</p>
+  </section>
+  
+  <div class="social-font clearfix">
+    
+    
+    
+    <a href="https://github.com/Jerling" target="_blank" title="github"></a>
+    
+    
+    
+  </div>
+  <p class="copyright">Powered by <a href="http://gohugo.io" target="_blank" title="hugo">hugo</a> and Theme by <a href="https://github.com/coderzh/hugo-pacman-theme" target="_blank" title="hugo-pacman-theme">hugo-pacman-theme</a> © 2020
+    
+    <a href="/" title="北极狼徒">北极狼徒</a>
+    
+  </p>
+</div>
+</footer>
+  <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+done = false;
+$(document).ready(function(){
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize();
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  $('form.search').on('submit', function (event) {
+    if (false === done) {
+      event.preventDefault();
+      var orgVal = $(this).find('#search').val();
+      $(this).find('#search').val('site:\/ ' + orgVal);
+      done = true;
+      $(this).submit();
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://b.bshare.cn/barCode?site=weixin&url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});
+</script>
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+});
+</script>
+
+
+
+
+</body>
+</html>

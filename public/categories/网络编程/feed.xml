@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>网络编程 on 北极狼徒</title>
+    <link>/categories/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/</link>
+    <description>Recent content in 网络编程 on 北极狼徒</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Sun, 15 Sep 2019 18:50:19 +0800</lastBuildDate>
+    
+	<atom:link href="/categories/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/feed.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Too many open files 解决办法</title>
+      <link>/post/how_to_open_over_1024_files/</link>
+      <pubDate>Sun, 15 Sep 2019 18:50:19 +0800</pubDate>
+      
+      <guid>/post/how_to_open_over_1024_files/</guid>
+      <description>问题来源 Linux 系统默认能打开的文件个数上限是 1024 个，可通过 limits -n 查看，但实际上系统可打开的文件个数远超过这个限制，通过 cat /proc/sys/fs/file-max 可以看到，在我的 64 位机器上</description>
+    </item>
+    
+  </channel>
+</rss>

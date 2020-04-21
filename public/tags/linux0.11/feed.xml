@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>linux0.11 on 北极狼徒</title>
+    <link>/tags/linux0.11/</link>
+    <description>Recent content in linux0.11 on 北极狼徒</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    
+	<atom:link href="/tags/linux0.11/feed.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Linux-0.11内核学习---实验环境</title>
+      <link>/post/oslab_experiment_env/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/post/oslab_experiment_env/</guid>
+      <description>编译环境 这里选择轻量级的 Lubuntu，版本为19.10。 oslab环境搭建 感谢 Wangzhike提供开源的一键配置环境。 安装包下载 git clone https://github.com/Wangzhike/HIT-Linux-0.11.git 环</description>
+    </item>
+    
+  </channel>
+</rss>

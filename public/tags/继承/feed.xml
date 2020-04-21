@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>继承 on 北极狼徒</title>
+    <link>/tags/%E7%BB%A7%E6%89%BF/</link>
+    <description>Recent content in 继承 on 北极狼徒</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Fri, 22 Feb 2019 20:07:56 +0800</lastBuildDate>
+    
+	<atom:link href="/tags/%E7%BB%A7%E6%89%BF/feed.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>关于对象那些事儿 ~~ 继承</title>
+      <link>/post/about_cpp_inherits/</link>
+      <pubDate>Fri, 22 Feb 2019 20:07:56 +0800</pubDate>
+      
+      <guid>/post/about_cpp_inherits/</guid>
+      <description>Table of Contens 关于继承 何为对象 何为继承 public 继承 public 继承权限 实例 protected 继承 protected 继承权限 实例 private 继承 protected 继承权限 实例 虚继承 实例 虚继承与虚函数 总结 关于继承 随着软件功能的</description>
+    </item>
+    
+  </channel>
+</rss>
