@@ -46,7 +46,7 @@ make
 cd ~/oslab && ./run
 ```
 结果如图：
-{{< figure src="/imgaes/Snipaste_2020-04-19_23-54-08.png" >}}
+{{< figure src="/images/Snipaste_2020-04-19_23-54-08.png" >}}
 
 ### gdb调试
 联调分两个部分：
