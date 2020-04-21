@@ -1,11 +1,10 @@
-+++
-tags = ["oslab", "gdb", "bochs"]
-title = "oslab 实验环境"
++++title = "Linux 内核学习 — 实验环境"
 author = ["Jerling"]
-description = "linux-0.11实验环境"
-date = 2020-04-21T22:21:06+08:00
-lastmod = 2020-04-22T00:11:54+08:00
-categories = ["内核研习"]
+description = "Short description"
+date = 2020-04-20T22:21:06+08:00
+lastmod = 2020-04-21T00:11:54+08:00
+tags = ["linux", "kernel", "bochs"]
+categories = ["内核实验"]
 type = "post"
 draft = false
 author_homepage = "https://github.com/Jerling"
@@ -73,7 +72,7 @@ sudo apt install libexpat1-dev:i386
 ```
 
 调试成功截图：
-![](./images/Snipaste_2020-04-20_00-06-25.png)
+![](/images/Snipaste_2020-04-20_00-06-25.png)
 
 ## 参考
 [https://www.cnblogs.com/tradoff/p/5693710.html](https://www.cnblogs.com/tradoff/p/5693710.html)
