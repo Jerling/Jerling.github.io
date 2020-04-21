@@ -1,8 +1,15 @@
 +++
-title =  "oslab 实验环境"
-toc = true
-draft = false
 tags = ["oslab", "gdb", "bochs"]
+title = "oslab 实验环境"
+author = ["Jerling"]
+description = "linux-0.11实验环境"
+categories = ["内核研习"]
+date = 2020-04-21T22:21:06+08:00
+lastmod = 2020-04-22T00:11:54+08:00
+type = "post"
+draft = false
+author_homepage = "https://github.com/Jerling"
+toc = true
 +++
 
 ## 编译环境
