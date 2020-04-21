@@ -78,141 +78,106 @@
 		<div class="toc-article">
 			<strong class="toc-title">文章目录</strong>
       <nav id="TableOfContents">
-<ul>
-<li>
-<ul>
-<li><a href="#进程调度">进程调度</a></li>
-<li><a href="#多任务">多任务</a></li>
-<li><a href="#linux-的进程调度">Linux 的进程调度</a></li>
-<li><a href="#策略">策略</a>
-<ul>
-<li><a href="#i-o-消耗型和处理器消耗型">I/O 消耗型和处理器消耗型</a></li>
-<li><a href="#优先级">优先级</a></li>
-<li><a href="#时间片">时间片</a></li>
-</ul></li>
-<li><a href="#linux-调度算法">Linux 调度算法</a>
-<ul>
-<li><a href="#调度器类">调度器类</a></li>
-<li><a href="#unix-中的进程调度">Unix 中的进程调度</a></li>
-<li><a href="#公平调度">公平调度</a></li>
-</ul></li>
-<li><a href="#linux-调度器实现">Linux 调度器实现</a>
-<ul>
-<li><a href="#时间统计">时间统计</a>
-<ul>
-<li><a href="#调度实体">调度实体</a></li>
-<li><a href="#虚拟实时">虚拟实时</a></li>
-<li><a href="#进程选择">进程选择</a></li>
-<li><a href="#调度器入口">调度器入口</a></li>
-<li><a href="#睡眠和唤醒">睡眠和唤醒</a></li>
-</ul></li>
-</ul></li>
-<li><a href="#抢占和上下文切换">抢占和上下文切换</a>
-<ul>
-<li><a href="#用户抢占">用户抢占</a></li>
-<li><a href="#内核抢占">内核抢占</a></li>
-</ul></li>
-<li><a href="#实时调度策略">实时调度策略</a></li>
-<li><a href="#与调度相关的系统调用">与调度相关的系统调用</a></li>
-</ul></li>
-</ul>
+  <ul>
+    <li><a href="#进程调度">进程调度</a></li>
+    <li><a href="#多任务">多任务</a></li>
+    <li><a href="#linux-的进程调度">Linux 的进程调度</a></li>
+    <li><a href="#策略">策略</a>
+      <ul>
+        <li><a href="#i-o-消耗型和处理器消耗型">I/O 消耗型和处理器消耗型</a></li>
+        <li><a href="#优先级">优先级</a></li>
+        <li><a href="#时间片">时间片</a></li>
+      </ul>
+    </li>
+    <li><a href="#linux-调度算法">Linux 调度算法</a>
+      <ul>
+        <li><a href="#调度器类">调度器类</a></li>
+        <li><a href="#unix-中的进程调度">Unix 中的进程调度</a></li>
+        <li><a href="#公平调度">公平调度</a></li>
+      </ul>
+    </li>
+    <li><a href="#linux-调度器实现">Linux 调度器实现</a>
+      <ul>
+        <li><a href="#时间统计">时间统计</a></li>
+      </ul>
+    </li>
+    <li><a href="#抢占和上下文切换">抢占和上下文切换</a>
+      <ul>
+        <li><a href="#用户抢占">用户抢占</a></li>
+        <li><a href="#内核抢占">内核抢占</a></li>
+      </ul>
+    </li>
+    <li><a href="#实时调度策略">实时调度策略</a></li>
+    <li><a href="#与调度相关的系统调用">与调度相关的系统调用</a></li>
+  </ul>
 </nav>
 		</div>
     
-    
-
-<h2 id="进程调度">进程调度</h2>
-
+    <h2 id="进程调度">进程调度</h2>
 <ul>
 <li>进程是程序的运行态的表现形式</li>
 <li>进程调用是确保程序有效工作的内核子系统</li>
 </ul>
-
 <h2 id="多任务">多任务</h2>
-
 <ul>
 <li>并发交互的执行多个进程的操作系统
-
 <ol>
 <li>抢占式 : 由调度程序决定什么时候停止一个程序，以便其它进程能够得到执行的机
 会。强制挂起的动作称为抢占。</li>
 <li>非抢占式 : 除非进程自己主动停止运行，否则一直运行下去。进程主动挂起的操作称
 为让步(yielding)
-
 <ul>
 <li>调度程序无法对每个进程该执行多长时间做出统一规定</li>
 <li>决不做出让步的进程可能使系统崩溃</li>
-</ul></li>
-</ol></li>
 </ul>
-
+</li>
+</ol>
+</li>
+</ul>
 <h2 id="linux-的进程调度">Linux 的进程调度</h2>
-
 <ol>
 <li>2.5 版本之前使用近乎原始的调度器</li>
 <li>O(1) 调度器</li>
 <li>CFS 完全公平调度器</li>
 </ol>
-
 <h2 id="策略">策略</h2>
-
 <p>决定程序何时运行，决定系统整体印像，负责优化使用处理器的时间。</p>
-
 <h3 id="i-o-消耗型和处理器消耗型">I/O 消耗型和处理器消耗型</h3>
-
 <ul>
 <li>I/O 消耗 : 大部份时间用来提交 I/O 请求或等待 I/O 请求</li>
 <li>CPU 消耗 : 大部份时间用在代码执行上</li>
 </ul>
-
 <p>调度策略需要在进程响应和系统吞吐之间找到平衡，选择最值得运行的程序投入运行，但并
 保证低优先级进程被公平对待。</p>
-
 <p>Linux 对进程的响应做了优化，更倾向于优先调度 I/O 消耗型进程。</p>
-
 <h3 id="优先级">优先级</h3>
-
 <ul>
 <li>优先级范围
-
 <ol>
 <li>nice 值 : [-20, 19], 默认为 0; 越大优先级越低</li>
 <li>实时优先级 : [0, 99], 越大优先级越高，且都高于普通进程</li>
-</ol></li>
+</ol>
+</li>
 </ul>
-
 <h3 id="时间片">时间片</h3>
-
 <p>进程被抢占前所能持续运行的时间。</p>
-
 <ul>
 <li>过长 : 导致系统对交互式响应表现欠佳</li>
 <li>过短 : 增大进程切换的开销</li>
 </ul>
-
 <p>Linux CFS 调度器将 CPU 的使用划分给了进程，从而和系统负载密切相关。比例进一步受
 nice 至的影响， nice 值作为调整 CPU 时间比的权重。</p>
-
 <p>多数操作系统抢占时机由进程的优先级和是否有时间片决定的，而 Linux CFS 调度器取决
 于新的可运行进程消耗的处理器使用比，比当前进程小，则立刻投入运行。</p>
-
 <h2 id="linux-调度算法">Linux 调度算法</h2>
-
 <h3 id="调度器类">调度器类</h3>
-
 <p>Linux 调度器以 <strong>模块</strong> 方式提供，目的是便于不同类型的进程可以选择不同的调度器。</p>
-
 <p>模块化结构叫调度器类，允许多种不同的可动态添加的调度算法并存，调度属于自己范畴的进程。</p>
-
 <p>每个调度器有一个优先级，定义在 <code>&lt;kernel/sched.h&gt;</code> . 按照优先级遍历调度类，拥有一
 个可执行的最高优先级的调度器胜出，选择要执行的程序。</p>
-
 <p>CFS 是普通进程的调度类，称为 SCHED_NORMAL(POSIX中称为 SCHED_OTHER) 定义在 <code>&lt;kernel/sched_fair.c&gt;</code></p>
-
 <h3 id="unix-中的进程调度">Unix 中的进程调度</h3>
-
 <p>优先级以 nice 值形式输出到用户空间。存在的问题</p>
-
 <ol>
 <li>将 nice 值映射到时间片，必需将 nice 单位值对应到处理器的绝对时间，这样将导致
 进程切换无法最优化进行。</li>
@@ -221,22 +186,16 @@ nice 至的影响， nice 值作为调整 CPU 时间比的权重。</p>
 的测试范围内</li>
 <li>基于优先级的调度器为了优化交互任务而唤醒相关进程的问题</li>
 </ol>
-
 <h3 id="公平调度">公平调度</h3>
-
 <p>理念：进程调度的效果应如同系统具备一个理想中的完美多任务处理器。每个进程将能获得
 1/n 的处理器时间 &mdash; n 为可执行进程的数量。调度器给它们无限小的时间周期，因此在
 任何可测量周期内，给于 n 个进程中每个进程同样多的运行时间。</p>
-
 <p>CFS 允许每一个进程运行一段时间、循环轮转、选择运行最少的进程作为下一个运行进程，
 而不再分配给每个进程时间片了；在所有可运行进程总数基础上计算出一个进程应该运行多
 久，而不是依靠 nice 值计算时间片。nice 值用于运行比的权重，越高的 nice 值权重越
 低。</p>
-
 <p>CFS 为进程设置获得的时间片底线，称为最小粒度(1ms)。</p>
-
 <p>总结：</p>
-
 <ul>
 <li>任何进程获得的处理器时间是由它自己和其它所有可运行进程 nice 值的相对差值决定。</li>
 <li>nice 值对时间片的作用是几何加权，而不是算术加权</li>
@@ -244,142 +203,123 @@ nice 至的影响， nice 值作为调整 CPU 时间比的权重。</p>
 <li>CFS 并不一定总是完全公平的，当可运行进程数量过打时就不是了，因为要考虑进程时间
 片最小粒度</li>
 </ul>
-
 <h2 id="linux-调度器实现">Linux 调度器实现</h2>
-
 <h3 id="时间统计">时间统计</h3>
-
 <p>当一个进程的时间片减少到 0 时，就会被另一个减到 0 的进程抢占。</p>
-
 <h4 id="调度实体">调度实体</h4>
-
 <p>CFS 必须确保每个进程只在公平分配给它的处理器时间内运行。定义在 <code>&lt;linux/sched.h&gt;</code></p>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="k">struct</span> <span class="n">sched_entity</span> <span class="p">{</span>
+	<span class="k">struct</span> <span class="n">load_weight</span>	<span class="n">load</span><span class="p">;</span>		<span class="cm">/* for load-balancing */</span>
+	<span class="k">struct</span> <span class="n">rb_node</span>		<span class="n">run_node</span><span class="p">;</span>
+	<span class="k">struct</span> <span class="n">list_head</span>	<span class="n">group_node</span><span class="p">;</span>
+	<span class="kt">unsigned</span> <span class="kt">int</span>		<span class="n">on_rq</span><span class="p">;</span>
 
-<pre><code class="language-c">struct sched_entity {
-	struct load_weight	load;		/* for load-balancing */
-	struct rb_node		run_node;
-	struct list_head	group_node;
-	unsigned int		on_rq;
+	<span class="n">u64</span>			<span class="n">exec_start</span><span class="p">;</span>
+	<span class="n">u64</span>			<span class="n">sum_exec_runtime</span><span class="p">;</span>
+	<span class="n">u64</span>			<span class="n">vruntime</span><span class="p">;</span>
+	<span class="n">u64</span>			<span class="n">prev_sum_exec_runtime</span><span class="p">;</span>
 
-	u64			exec_start;
-	u64			sum_exec_runtime;
-	u64			vruntime;
-	u64			prev_sum_exec_runtime;
+	<span class="n">u64</span>			<span class="n">nr_migrations</span><span class="p">;</span>
 
-	u64			nr_migrations;
+<span class="cp">#ifdef CONFIG_SCHEDSTATS
+</span><span class="cp"></span>	<span class="k">struct</span> <span class="n">sched_statistics</span> <span class="n">statistics</span><span class="p">;</span>
+<span class="cp">#endif
+</span><span class="cp"></span>
+<span class="cp">#ifdef CONFIG_FAIR_GROUP_SCHED
+</span><span class="cp"></span>	<span class="k">struct</span> <span class="n">sched_entity</span>	<span class="o">*</span><span class="n">parent</span><span class="p">;</span>
+	<span class="cm">/* rq on which this entity is (to be) queued: */</span>
+	<span class="k">struct</span> <span class="n">cfs_rq</span>		<span class="o">*</span><span class="n">cfs_rq</span><span class="p">;</span>
+	<span class="cm">/* rq &#34;owned&#34; by this entity/group: */</span>
+	<span class="k">struct</span> <span class="n">cfs_rq</span>		<span class="o">*</span><span class="n">my_q</span><span class="p">;</span>
+<span class="cp">#endif
+</span><span class="cp"></span><span class="p">};</span>
 
-#ifdef CONFIG_SCHEDSTATS
-	struct sched_statistics statistics;
-#endif
+<span class="k">struct</span> <span class="n">sched_rt_entity</span> <span class="p">{</span>
+	<span class="k">struct</span> <span class="n">list_head</span> <span class="n">run_list</span><span class="p">;</span>
+	<span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">timeout</span><span class="p">;</span>
+	<span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">time_slice</span><span class="p">;</span>
+	<span class="kt">int</span> <span class="n">nr_cpus_allowed</span><span class="p">;</span>
 
-#ifdef CONFIG_FAIR_GROUP_SCHED
-	struct sched_entity	*parent;
-	/* rq on which this entity is (to be) queued: */
-	struct cfs_rq		*cfs_rq;
-	/* rq &quot;owned&quot; by this entity/group: */
-	struct cfs_rq		*my_q;
-#endif
-};
-
-struct sched_rt_entity {
-	struct list_head run_list;
-	unsigned long timeout;
-	unsigned int time_slice;
-	int nr_cpus_allowed;
-
-	struct sched_rt_entity *back;
-#ifdef CONFIG_RT_GROUP_SCHED
-	struct sched_rt_entity	*parent;
-	/* rq on which this entity is (to be) queued: */
-	struct rt_rq		*rt_rq;
-	/* rq &quot;owned&quot; by this entity/group: */
-	struct rt_rq		*my_q;
-#endif
-};
-</code></pre>
-
-<p>它作为 se 成员变量定义在 <code>task_struct</code> 中。</p>
-
+	<span class="k">struct</span> <span class="n">sched_rt_entity</span> <span class="o">*</span><span class="n">back</span><span class="p">;</span>
+<span class="cp">#ifdef CONFIG_RT_GROUP_SCHED
+</span><span class="cp"></span>	<span class="k">struct</span> <span class="n">sched_rt_entity</span>	<span class="o">*</span><span class="n">parent</span><span class="p">;</span>
+	<span class="cm">/* rq on which this entity is (to be) queued: */</span>
+	<span class="k">struct</span> <span class="n">rt_rq</span>		<span class="o">*</span><span class="n">rt_rq</span><span class="p">;</span>
+	<span class="cm">/* rq &#34;owned&#34; by this entity/group: */</span>
+	<span class="k">struct</span> <span class="n">rt_rq</span>		<span class="o">*</span><span class="n">my_q</span><span class="p">;</span>
+<span class="cp">#endif
+</span><span class="cp"></span><span class="p">};</span>
+</code></pre></div><p>它作为 se 成员变量定义在 <code>task_struct</code> 中。</p>
 <h4 id="虚拟实时">虚拟实时</h4>
-
 <p><code>vruntime</code> 存放进程的虚拟运行时间，经过标准化的。以 ns 为单位，所以和定时器节拍
 无关。作用是有助于逼近 CFS 模型的 <strong>理想多处理器</strong>。</p>
-
 <p><code>update_curr()</code> 实现，定义于 <code>kernel/sched_fair.c</code>.</p>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="k">static</span> <span class="kt">void</span> <span class="nf">update_curr</span><span class="p">(</span><span class="k">struct</span> <span class="n">cfs_rq</span> <span class="o">*</span><span class="n">cfs_rq</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="k">struct</span> <span class="n">sched_entity</span> <span class="o">*</span><span class="n">curr</span> <span class="o">=</span> <span class="n">cfs_rq</span><span class="o">-&gt;</span><span class="n">curr</span><span class="p">;</span>
+	<span class="n">u64</span> <span class="n">now</span> <span class="o">=</span> <span class="n">rq_of</span><span class="p">(</span><span class="n">cfs_rq</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">clock_task</span><span class="p">;</span>
+	<span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">delta_exec</span><span class="p">;</span>
 
-<pre><code class="language-c">static void update_curr(struct cfs_rq *cfs_rq)
-{
-	struct sched_entity *curr = cfs_rq-&gt;curr;
-	u64 now = rq_of(cfs_rq)-&gt;clock_task;
-	unsigned long delta_exec;
+	<span class="k">if</span> <span class="p">(</span><span class="n">unlikely</span><span class="p">(</span><span class="o">!</span><span class="n">curr</span><span class="p">))</span>
+		<span class="k">return</span><span class="p">;</span>
 
-	if (unlikely(!curr))
-		return;
+	<span class="cm">/*
+</span><span class="cm">	 * Get the amount of time the current task was running
+</span><span class="cm">	 * since the last time we changed load (this cannot
+</span><span class="cm">	 * overflow on 32 bits):
+</span><span class="cm">	 */</span>
+	<span class="n">delta_exec</span> <span class="o">=</span> <span class="p">(</span><span class="kt">unsigned</span> <span class="kt">long</span><span class="p">)(</span><span class="n">now</span> <span class="o">-</span> <span class="n">curr</span><span class="o">-&gt;</span><span class="n">exec_start</span><span class="p">);</span>
+	<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">delta_exec</span><span class="p">)</span>
+		<span class="k">return</span><span class="p">;</span>
 
-	/*
-	 * Get the amount of time the current task was running
-	 * since the last time we changed load (this cannot
-	 * overflow on 32 bits):
-	 */
-	delta_exec = (unsigned long)(now - curr-&gt;exec_start);
-	if (!delta_exec)
-		return;
+	<span class="n">__update_curr</span><span class="p">(</span><span class="n">cfs_rq</span><span class="p">,</span> <span class="n">curr</span><span class="p">,</span> <span class="n">delta_exec</span><span class="p">);</span>
+	<span class="n">curr</span><span class="o">-&gt;</span><span class="n">exec_start</span> <span class="o">=</span> <span class="n">now</span><span class="p">;</span>
 
-	__update_curr(cfs_rq, curr, delta_exec);
-	curr-&gt;exec_start = now;
+	<span class="k">if</span> <span class="p">(</span><span class="n">entity_is_task</span><span class="p">(</span><span class="n">curr</span><span class="p">))</span> <span class="p">{</span>
+		<span class="k">struct</span> <span class="n">task_struct</span> <span class="o">*</span><span class="n">curtask</span> <span class="o">=</span> <span class="n">task_of</span><span class="p">(</span><span class="n">curr</span><span class="p">);</span>
 
-	if (entity_is_task(curr)) {
-		struct task_struct *curtask = task_of(curr);
-
-		trace_sched_stat_runtime(curtask, delta_exec, curr-&gt;vruntime);
-		cpuacct_charge(curtask, delta_exec);
-		account_group_exec_runtime(curtask, delta_exec);
-	}
-}
-</code></pre>
-
-<p>计算当前进程的执行时间并放在 <code>delta_exec</code> 中，然后将运行时间传递给
+		<span class="n">trace_sched_stat_runtime</span><span class="p">(</span><span class="n">curtask</span><span class="p">,</span> <span class="n">delta_exec</span><span class="p">,</span> <span class="n">curr</span><span class="o">-&gt;</span><span class="n">vruntime</span><span class="p">);</span>
+		<span class="n">cpuacct_charge</span><span class="p">(</span><span class="n">curtask</span><span class="p">,</span> <span class="n">delta_exec</span><span class="p">);</span>
+		<span class="n">account_group_exec_runtime</span><span class="p">(</span><span class="n">curtask</span><span class="p">,</span> <span class="n">delta_exec</span><span class="p">);</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><p>计算当前进程的执行时间并放在 <code>delta_exec</code> 中，然后将运行时间传递给
 <code>__update_curr()</code>, 它根据可运行数量对运行时间进行加权计算；最后将权重值与当前进
 程的 <code>vruntime</code> 相加。</p>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="cm">/*
+</span><span class="cm"> * Update the current task&#39;s runtime statistics. Skip current tasks that
+</span><span class="cm"> * are not in our scheduling class.
+</span><span class="cm"> */</span>
+<span class="k">static</span> <span class="kr">inline</span> <span class="kt">void</span>
+<span class="nf">__update_curr</span><span class="p">(</span><span class="k">struct</span> <span class="n">cfs_rq</span> <span class="o">*</span><span class="n">cfs_rq</span><span class="p">,</span> <span class="k">struct</span> <span class="n">sched_entity</span> <span class="o">*</span><span class="n">curr</span><span class="p">,</span>
+	      <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">delta_exec</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">delta_exec_weighted</span><span class="p">;</span>
 
-<pre><code class="language-c">/*
- * Update the current task's runtime statistics. Skip current tasks that
- * are not in our scheduling class.
- */
-static inline void
-__update_curr(struct cfs_rq *cfs_rq, struct sched_entity *curr,
-	      unsigned long delta_exec)
-{
-	unsigned long delta_exec_weighted;
+	<span class="n">schedstat_set</span><span class="p">(</span><span class="n">curr</span><span class="o">-&gt;</span><span class="n">statistics</span><span class="p">.</span><span class="n">exec_max</span><span class="p">,</span>
+		      <span class="n">max</span><span class="p">((</span><span class="n">u64</span><span class="p">)</span><span class="n">delta_exec</span><span class="p">,</span> <span class="n">curr</span><span class="o">-&gt;</span><span class="n">statistics</span><span class="p">.</span><span class="n">exec_max</span><span class="p">));</span>
 
-	schedstat_set(curr-&gt;statistics.exec_max,
-		      max((u64)delta_exec, curr-&gt;statistics.exec_max));
+	<span class="n">curr</span><span class="o">-&gt;</span><span class="n">sum_exec_runtime</span> <span class="o">+=</span> <span class="n">delta_exec</span><span class="p">;</span>
+	<span class="n">schedstat_add</span><span class="p">(</span><span class="n">cfs_rq</span><span class="p">,</span> <span class="n">exec_clock</span><span class="p">,</span> <span class="n">delta_exec</span><span class="p">);</span>
+	<span class="n">delta_exec_weighted</span> <span class="o">=</span> <span class="n">calc_delta_fair</span><span class="p">(</span><span class="n">delta_exec</span><span class="p">,</span> <span class="n">curr</span><span class="p">);</span>
 
-	curr-&gt;sum_exec_runtime += delta_exec;
-	schedstat_add(cfs_rq, exec_clock, delta_exec);
-	delta_exec_weighted = calc_delta_fair(delta_exec, curr);
+	<span class="n">curr</span><span class="o">-&gt;</span><span class="n">vruntime</span> <span class="o">+=</span> <span class="n">delta_exec_weighted</span><span class="p">;</span>
+	<span class="n">update_min_vruntime</span><span class="p">(</span><span class="n">cfs_rq</span><span class="p">);</span>
 
-	curr-&gt;vruntime += delta_exec_weighted;
-	update_min_vruntime(cfs_rq);
-
-#if defined CONFIG_SMP &amp;&amp; defined CONFIG_FAIR_GROUP_SCHED
-	cfs_rq-&gt;load_unacc_exec_time += delta_exec;
-#endif
-}
-</code></pre>
-
-<p><code>update_curr</code> 由系统定时器周期性调用。</p>
-
+<span class="cp">#if defined CONFIG_SMP &amp;&amp; defined CONFIG_FAIR_GROUP_SCHED
+</span><span class="cp"></span>	<span class="n">cfs_rq</span><span class="o">-&gt;</span><span class="n">load_unacc_exec_time</span> <span class="o">+=</span> <span class="n">delta_exec</span><span class="p">;</span>
+<span class="cp">#endif
+</span><span class="cp"></span><span class="p">}</span>
+</code></pre></div><p><code>update_curr</code> 由系统定时器周期性调用。</p>
 <h4 id="进程选择">进程选择</h4>
-
 <p>选择具有最小 <code>vruntime</code> 的进程；CFS 使用红黑树组织可运行进程队列，可快速找到最小的 <code>vruntime</code> 的进程。</p>
-
 <ul>
-<li><p>挑选任务</p>
+<li>挑选任务</li>
+</ul>
+<pre><code>`__pick_next_entity()`, 定义在 `kernel/sched_fair.c` 中。
 
-<p><code>__pick_next_entity()</code>, 定义在 <code>kernel/sched_fair.c</code> 中。</p>
-
-<pre><code class="language-c">static struct sched_entity *__pick_next_entity(struct sched_entity *se)
+```c
+static struct sched_entity *__pick_next_entity(struct sched_entity *se)
 {
     struct rb_node *next = rb_next(&amp;se-&gt;run_node);
 
@@ -388,18 +328,18 @@ __update_curr(struct cfs_rq *cfs_rq, struct sched_entity *curr,
 
     return rb_entry(next, struct sched_entity, run_node);
 }
+```
+
+&gt; \_\_pick\_next\_entity 不会遍历最左子节点，它存在 `rb_leftmost` 中。如果返回 NULL,
+&gt; 则没有可执行进程， CFS 选择 idle 任务。
 </code></pre>
+<ul>
+<li>加入进程</li>
+</ul>
+<pre><code>发生在进程变为可运行或 `fork` 创建进程时。
 
-<blockquote>
-<p>__pick_next_entity 不会遍历最左子节点，它存在 <code>rb_leftmost</code> 中。如果返回 NULL,
-则没有可执行进程， CFS 选择 idle 任务。</p>
-</blockquote></li>
-
-<li><p>加入进程</p>
-
-<p>发生在进程变为可运行或 <code>fork</code> 创建进程时。</p>
-
-<pre><code class="language-c">static void
+```c
+static void
 enqueue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
 {
     /*
@@ -431,11 +371,12 @@ enqueue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
     if (cfs_rq-&gt;nr_running == 1)
         list_add_leaf_cfs_rq(cfs_rq);
 }
-</code></pre>
+```
 
-<p>更新运行时间和其它统计书据后调用 <code>__enqueue_entity</code> 进行繁重的插入操作：</p>
+更新运行时间和其它统计书据后调用 `__enqueue_entity` 进行繁重的插入操作：
 
-<pre><code class="language-c">static void __enqueue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se)
+```c
+static void __enqueue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se)
 {
     struct rb_node **link = &amp;cfs_rq-&gt;tasks_timeline.rb_node;
     struct rb_node *parent = NULL;
@@ -471,13 +412,15 @@ enqueue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
     rb_link_node(&amp;se-&gt;run_node, parent, link);
     rb_insert_color(&amp;se-&gt;run_node, &amp;cfs_rq-&gt;tasks_timeline);
 }
-</code></pre></li>
+```
+</code></pre>
+<ul>
+<li>删除进程</li>
+</ul>
+<pre><code>发生在进程阻塞或终止时。
 
-<li><p>删除进程</p>
-
-<p>发生在进程阻塞或终止时。</p>
-
-<pre><code class="language-c">static void
+```c
+static void
 dequeue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
 {
     /*
@@ -517,11 +460,12 @@ dequeue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
     if (!(flags &amp; DEQUEUE_SLEEP))
         se-&gt;vruntime -= cfs_rq-&gt;min_vruntime;
 }
-</code></pre>
+```
 
-<p>实际工作交给 <code>__dequeue_entity</code> :</p>
+实际工作交给 `__dequeue_entity` :
 
-<pre><code class="language-c">static void __dequeue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se)
+```c
+static void __dequeue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se)
 {
     if (cfs_rq-&gt;rb_leftmost == &amp;se-&gt;run_node) {
         struct rb_node *next_node;
@@ -532,63 +476,54 @@ dequeue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
 
     rb_erase(&amp;se-&gt;run_node, &amp;cfs_rq-&gt;tasks_timeline);
 }
-</code></pre></li>
-</ul>
-
+```
+</code></pre>
 <h4 id="调度器入口">调度器入口</h4>
-
 <p><code>schedule()</code> , 定义在 <code>kernel/sched.h</code> 中。作用：选择进程运行，何时将其投入运行。
 先选择一个有可运行队列的最高优先级调度类，然后选择运行进程。它会调用
 <code>pick_next_task()</code>,定义在 <code>kernel/sched.h</code> 中。</p>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="cm">/*
+</span><span class="cm"> * Pick up the highest-prio task:
+</span><span class="cm"> */</span>
+<span class="k">static</span> <span class="kr">inline</span> <span class="k">struct</span> <span class="n">task_struct</span> <span class="o">*</span>
+<span class="nf">pick_next_task</span><span class="p">(</span><span class="k">struct</span> <span class="n">rq</span> <span class="o">*</span><span class="n">rq</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="k">const</span> <span class="k">struct</span> <span class="n">sched_class</span> <span class="o">*</span><span class="n">class</span><span class="p">;</span>
+	<span class="k">struct</span> <span class="n">task_struct</span> <span class="o">*</span><span class="n">p</span><span class="p">;</span>
 
-<pre><code class="language-c">/*
- * Pick up the highest-prio task:
- */
-static inline struct task_struct *
-pick_next_task(struct rq *rq)
-{
-	const struct sched_class *class;
-	struct task_struct *p;
+	<span class="cm">/*
+</span><span class="cm">	 * Optimization: we know that if all tasks are in
+</span><span class="cm">	 * the fair class we can call that function directly:
+</span><span class="cm">	 */</span>
+	<span class="k">if</span> <span class="p">(</span><span class="n">likely</span><span class="p">(</span><span class="n">rq</span><span class="o">-&gt;</span><span class="n">nr_running</span> <span class="o">==</span> <span class="n">rq</span><span class="o">-&gt;</span><span class="n">cfs</span><span class="p">.</span><span class="n">nr_running</span><span class="p">))</span> <span class="p">{</span>
+		<span class="n">p</span> <span class="o">=</span> <span class="n">fair_sched_class</span><span class="p">.</span><span class="n">pick_next_task</span><span class="p">(</span><span class="n">rq</span><span class="p">);</span>
+		<span class="k">if</span> <span class="p">(</span><span class="n">likely</span><span class="p">(</span><span class="n">p</span><span class="p">))</span>
+			<span class="k">return</span> <span class="n">p</span><span class="p">;</span>
+	<span class="p">}</span>
 
-	/*
-	 * Optimization: we know that if all tasks are in
-	 * the fair class we can call that function directly:
-	 */
-	if (likely(rq-&gt;nr_running == rq-&gt;cfs.nr_running)) {
-		p = fair_sched_class.pick_next_task(rq);
-		if (likely(p))
-			return p;
-	}
+	<span class="n">for_each_class</span><span class="p">(</span><span class="n">class</span><span class="p">)</span> <span class="p">{</span>
+		<span class="n">p</span> <span class="o">=</span> <span class="n">class</span><span class="o">-&gt;</span><span class="n">pick_next_task</span><span class="p">(</span><span class="n">rq</span><span class="p">);</span>
+		<span class="k">if</span> <span class="p">(</span><span class="n">p</span><span class="p">)</span>
+			<span class="k">return</span> <span class="n">p</span><span class="p">;</span>
+	<span class="p">}</span>
 
-	for_each_class(class) {
-		p = class-&gt;pick_next_task(rq);
-		if (p)
-			return p;
-	}
-
-	BUG(); /* the idle class will always have a runnable task */
-}
-</code></pre>
-
-<p>CFS 中的 <code>pick_next_task()</code> 会调用 <code>pick_next_entity()</code></p>
-
+	<span class="n">BUG</span><span class="p">();</span> <span class="cm">/* the idle class will always have a runnable task */</span>
+<span class="p">}</span>
+</code></pre></div><p>CFS 中的 <code>pick_next_task()</code> 会调用 <code>pick_next_entity()</code></p>
 <h4 id="睡眠和唤醒">睡眠和唤醒</h4>
-
 <p>休眠必须以轮询的方式实现。</p>
-
 <ul>
-<li><p>等待队列</p>
+<li>等待队列</li>
+</ul>
+<pre><code>由等待某些事件组成的简单链表。内核用 `wake_queue_head_t` 代表等待队列。创建方式：
 
-<p>由等待某些事件组成的简单链表。内核用 <code>wake_queue_head_t</code> 代表等待队列。创建方式：</p>
+1.  静态创建 : DECLARE\_WAITQUEUE()
+2.  动态创建 : init\_waitqueue\_head()
 
-<ol>
-<li>静态创建 : DECLARE_WAITQUEUE()</li>
-<li>动态创建 : init_waitqueue_head()</li>
-</ol>
+休眠推荐操作：
 
-<p>休眠推荐操作：</p>
-
-<pre><code class="language-c">DEFINE_WAIT(wait);
+```c
+DEFINE_WAIT(wait);
 
 add_wait_queue(q, &amp;wait);
 while(!condition){
@@ -598,11 +533,12 @@ while(!condition){
   }
   schedule();
 }
-</code></pre>
+```
 
-<p>一个实例： <code>inotify_read()</code>, 负责从通知文件描述符中读取信息。定义在 <code>/fs/notify/inotify/inotify_user.c</code></p>
+一个实例： `inotify_read()`, 负责从通知文件描述符中读取信息。定义在 `/fs/notify/inotify/inotify_user.c`
 
-<pre><code class="language-c">static ssize_t inotify_read(struct file *file, char __user *buf,
+```c
+static ssize_t inotify_read(struct file *file, char __user *buf,
                 size_t count, loff_t *pos)
 {
     struct fsnotify_group *group;
@@ -654,72 +590,54 @@ while(!condition){
         ret = buf - start;
     return ret;
 }
-</code></pre></li>
-
-<li><p>唤醒</p>
-
-<p>通过 <code>wake_up()</code> 进行，唤醒指定等待队列上的所有进程。</p>
-
+```
+</code></pre>
 <ul>
-<li>调用 <code>try_to_wake_up()</code> : 设置进程状态为 <code>TASK_RUNNING</code></li>
-<li>调用 <code>enqueue_task()</code> : 将进程放入红黑树</li>
-<li>如果优先级高于当前进程，需设置 <code>need_resched</code></li>
-</ul></li>
+<li>唤醒</li>
 </ul>
+<pre><code>通过 `wake_up()` 进行，唤醒指定等待队列上的所有进程。
 
+-   调用 `try_to_wake_up()` : 设置进程状态为 `TASK_RUNNING`
+-   调用 `enqueue_task()` : 将进程放入红黑树
+-   如果优先级高于当前进程，需设置 `need_resched`
+</code></pre>
 <h2 id="抢占和上下文切换">抢占和上下文切换</h2>
-
 <p>上下文切换是从一个进程切换到另一个可执行进程，由定义在 <code>&lt;kernel/sched.h&gt;</code> 中的
 <code>context_switch()</code> 负责，由 <code>schedule()</code> 调用。</p>
-
 <ul>
 <li>调用 <code>switch_mm()</code> : 切换虚拟内存</li>
 <li>调用 <code>switch_to</code> : 切换到新进程的处理器状态，包括保存、恢复栈和寄存器以及任何
 与体系结构相关的状态信息</li>
 </ul>
-
 <h3 id="用户抢占">用户抢占</h3>
-
 <ul>
 <li>从系统调用返回用户空间时</li>
 <li>从中断处理程序返回用户空间时</li>
 </ul>
-
 <h3 id="内核抢占">内核抢占</h3>
-
 <p>Linux 支持完整的内核抢占，否则内核代码会一直执行，直到完成为止。2.6 版本后引入内
 核抢占，内核可以在任何时间抢占正在执行的任务。</p>
-
 <p>为了支持内核抢占，在 <code>thread_info</code> 中加入了 <code>preempt_count</code> 计数器，使用锁时加
 1, 释放锁时减 1. 数值为 0 可抢占。</p>
-
 <ul>
 <li>中断处理程序正在执行，且返回内核空间</li>
 <li>内核代码再一次具有可抢占性的时候</li>
 <li>内核中的任务显式的调用 <code>schedule()</code></li>
 <li>内核的任务阻塞</li>
 </ul>
-
 <h2 id="实时调度策略">实时调度策略</h2>
-
 <p>两种策略：</p>
-
 <ol>
 <li><code>SCHED_FIFO</code> : 同一优先级实行简单的先入先出的调度算法，高优先级直接抢占。</li>
 <li><code>SCHED_RR</code> : 带有时间片的 <code>SCHED_FIFO</code>,为实时轮流调度算法，但是是在同一优先级
 的轮流。</li>
 </ol>
-
 <p>普通进程为 <code>SCHED_NORMAL</code> 策略，这个由 CFS 管理，而实时策略由特殊的实时调度器管
 理，定义在 <code>&lt;kernel/sched_rt.c</code> 中。</p>
-
 <p>使用静态优先级，保证给定优先级的实时进程总能抢占低优先级的进程。</p>
-
 <p>软实时：内核调度进程，尽力使进程在限定时间到来前运行，但内核不保证总能满足这些进
 程的要求。</p>
-
 <h2 id="与调度相关的系统调用">与调度相关的系统调用</h2>
-
 <figure>
     <img src="/images/Snipaste_2019-05-27_21-34-19.png"/> 
 </figure>
@@ -779,6 +697,8 @@ while(!condition){
     
     <li><a href="/categories/%e5%86%85%e5%ad%98%e7%ae%a1%e7%90%86" title="内存管理">内存管理<sup>1</sup></a></li>
     
+    <li><a href="/categories/%e5%86%85%e6%a0%b8%e5%ae%9e%e9%aa%8c" title="内核实验">内核实验<sup>1</sup></a></li>
+    
     <li><a href="/categories/%e5%91%bd%e4%bb%a4%e8%a1%8c%e8%89%ba%e6%9c%af" title="命令行艺术">命令行艺术<sup>3</sup></a></li>
     
     <li><a href="/categories/%e5%ad%a6%e4%b9%a0%e7%ac%94%e8%ae%b0" title="学习笔记">学习笔记<sup>13</sup></a></li>
@@ -804,6 +724,8 @@ while(!condition){
 	<p class="asidetitle">标签</p>
 		<ul class="clearfix">
       
+			<li><a href="/tags/bochs" title="bochs">bochs<sup>1</sup></a></li>
+      
 			<li><a href="/tags/c&#43;&#43;" title="c&#43;&#43;">c&#43;&#43;<sup>10</sup></a></li>
       
 			<li><a href="/tags/command" title="command">command<sup>3</sup></a></li>
@@ -818,9 +740,9 @@ while(!condition){
       
 			<li><a href="/tags/jemalloc" title="jemalloc">jemalloc<sup>1</sup></a></li>
       
-			<li><a href="/tags/kernel" title="kernel">kernel<sup>7</sup></a></li>
+			<li><a href="/tags/kernel" title="kernel">kernel<sup>8</sup></a></li>
       
-			<li><a href="/tags/linux" title="linux">linux<sup>12</sup></a></li>
+			<li><a href="/tags/linux" title="linux">linux<sup>13</sup></a></li>
       
 			<li><a href="/tags/linux%e5%86%85%e6%a0%b8" title="linux内核">linux内核<sup>1</sup></a></li>
       
@@ -882,6 +804,11 @@ while(!condition){
       
       
       <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2020-04">2020年04月</a><span class="archive-list-count">1</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
         <a class="archive-list-link" href="/post/#2019-09">2019年09月</a><span class="archive-list-count">1</span>
       </li>
       
@@ -935,6 +862,8 @@ while(!condition){
 <div class="tagcloudlist">
   <p class="asidetitle">标签云</p>
   <div class="tagcloudlist clearfix">
+    
+    <a href="/tags/bochs" style="font-size: 12px;">bochs</a>
     
     <a href="/tags/c&#43;&#43;" style="font-size: 12px;">c&#43;&#43;</a>
     
@@ -1034,7 +963,7 @@ while(!condition){
     
     
   </div>
-  <p class="copyright">Powered by <a href="http://gohugo.io" target="_blank" title="hugo">hugo</a> and Theme by <a href="https://github.com/coderzh/hugo-pacman-theme" target="_blank" title="hugo-pacman-theme">hugo-pacman-theme</a> © 2019
+  <p class="copyright">Powered by <a href="http://gohugo.io" target="_blank" title="hugo">hugo</a> and Theme by <a href="https://github.com/coderzh/hugo-pacman-theme" target="_blank" title="hugo-pacman-theme">hugo-pacman-theme</a> © 2020
     
     <a href="/" title="北极狼徒">北极狼徒</a>
     

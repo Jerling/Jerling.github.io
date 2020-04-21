@@ -78,225 +78,163 @@
 		<div class="toc-article">
 			<strong class="toc-title">文章目录</strong>
       <nav id="TableOfContents">
-<ul>
-<li>
-<ul>
-<li><a href="#关于对象">关于对象</a>
-<ul>
-<li><a href="#面向过程">面向过程</a></li>
-<li><a href="#抽象数据类型">抽象数据类型</a></li>
-<li><a href="#封装成本">封装成本</a></li>
-</ul></li>
-<li><a href="#c-plus-plus-对象模型">C++ 对象模型</a>
-<ul>
-<li><a href="#简单对象模型">简单对象模型</a></li>
-<li><a href="#c-plus-plus-对象模型-1">C++对象模型</a></li>
-<li><a href="#继承">继承</a>
-<ul>
-<li><a href="#单一继承">单一继承</a></li>
-<li><a href="#多继承">多继承</a></li>
-<li><a href="#虚继承">虚继承</a></li>
-</ul></li>
-<li><a href="#对象模型对程序的影响">对象模型对程序的影响</a></li>
-<li><a href="#关键字带来的差异">关键字带来的差异</a></li>
-</ul></li>
-<li><a href="#对象的差异">对象的差异</a>
-<ul>
-<li><a href="#程序模型">程序模型</a></li>
-<li><a href="#抽象数据类型模型">抽象数据类型模型</a></li>
-<li><a href="#面向对象模型">面向对象模型</a></li>
-</ul></li>
-</ul></li>
-</ul>
+  <ul>
+    <li><a href="#关于对象">关于对象</a>
+      <ul>
+        <li><a href="#面向过程">面向过程</a></li>
+        <li><a href="#抽象数据类型">抽象数据类型</a></li>
+        <li><a href="#封装成本">封装成本</a></li>
+      </ul>
+    </li>
+    <li><a href="#c-plus-plus-对象模型">C++ 对象模型</a>
+      <ul>
+        <li><a href="#简单对象模型">简单对象模型</a></li>
+        <li><a href="#c-plus-plus-对象模型">C++对象模型</a></li>
+        <li><a href="#继承">继承</a></li>
+        <li><a href="#对象模型对程序的影响">对象模型对程序的影响</a></li>
+        <li><a href="#关键字带来的差异">关键字带来的差异</a></li>
+      </ul>
+    </li>
+    <li><a href="#对象的差异">对象的差异</a>
+      <ul>
+        <li><a href="#程序模型">程序模型</a></li>
+        <li><a href="#抽象数据类型模型">抽象数据类型模型</a></li>
+        <li><a href="#面向对象模型">面向对象模型</a></li>
+      </ul>
+    </li>
+  </ul>
 </nav>
 		</div>
     
-    
-
-<h2 id="关于对象">关于对象</h2>
-
+    <h2 id="关于对象">关于对象</h2>
 <h3 id="面向过程">面向过程</h3>
-
-<p>在 C 语言中, 我们通常将 *<strong><em>数据</em></strong>* 和 *<strong><em>处理数据的操作(函数)</em></strong>* 分开声明, 也就是说语言本身没有支持 *<strong><em>数据和函数</em></strong>* 之间的关联性.
+<p>在 C 语言中, 我们通常将 <strong><strong>数据</strong></strong> 和 <strong><strong>处理数据的操作(函数)</strong></strong> 分开声明, 也就是说语言本身没有支持 <strong><strong>数据和函数</strong></strong> 之间的关联性.
 这种程序为典型的面向过程的程序.</p>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="c1">// data declare
+</span><span class="c1"></span><span class="k">typedef</span> <span class="k">struct</span> <span class="n">point3d</span>
+<span class="p">{</span>
+    <span class="kt">float</span> <span class="n">x</span><span class="p">;</span>
+    <span class="kt">float</span> <span class="n">y</span><span class="p">;</span>
+    <span class="kt">float</span> <span class="n">z</span><span class="p">;</span>
+<span class="p">}</span> <span class="n">Point3d</span><span class="p">;</span>
 
-<pre><code class="language-c">// data declare
-typedef struct point3d
-{
-    float x;
-    float y;
-    float z;
-} Point3d;
+<span class="c1">// print a pint, function declare
+</span><span class="c1"></span><span class="kt">void</span> <span class="nf">Point3dPrint</span><span class="p">(</span><span class="k">const</span> <span class="n">Point3d</span> <span class="o">*</span><span class="n">pd</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;(%g, %g, %g)&#34;</span><span class="p">,</span> <span class="n">pd</span><span class="o">-&gt;</span><span class="n">x</span><span class="p">,</span> <span class="n">pd</span><span class="o">-&gt;</span><span class="n">y</span><span class="p">,</span> <span class="n">pd</span><span class="o">-&gt;</span><span class="n">z</span><span class="p">);</span>
+<span class="p">}</span>
 
-// print a pint, function declare
-void Point3dPrint(const Point3d *pd)
-{
-    printf(&quot;(%g, %g, %g)&quot;, pd-&gt;x, pd-&gt;y, pd-&gt;z);
-}
+<span class="c1">// or define a macro
+</span><span class="c1"></span><span class="cp">#define Point3dPrint(pd)  printf(&#34;(%g, %g, %g)&#34;, pd-&gt;x, pd-&gt;y, pd-&gt;z);
+</span></code></pre></div><h3 id="抽象数据类型">抽象数据类型</h3>
+<p>在 C++ 语言中, 可以用独立的 <strong><strong>抽象数据类型</strong></strong> 实现.</p>
+<div class="highlight"><pre class="chroma"><code class="language-cpp" data-lang="cpp"><span class="k">class</span> <span class="nc">Point3d</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="n">Point3d</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
+    <span class="n">Point3d</span><span class="p">(</span><span class="kt">float</span> <span class="n">x</span><span class="p">,</span> <span class="kt">float</span> <span class="n">y</span><span class="p">,</span> <span class="kt">float</span> <span class="n">z</span><span class="p">)</span><span class="o">:</span><span class="n">_x</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">_y</span><span class="p">(</span><span class="n">y</span><span class="p">),</span> <span class="n">_z</span><span class="p">(</span><span class="n">z</span><span class="p">)</span> <span class="p">{}</span>
+    <span class="n">Point3d</span><span class="p">(</span><span class="n">Point3d</span> <span class="o">&amp;&amp;</span><span class="p">)</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
+    <span class="n">Point3d</span><span class="p">(</span><span class="k">const</span> <span class="n">Point3d</span> <span class="o">&amp;</span><span class="p">)</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
+    <span class="n">Point3d</span> <span class="o">&amp;</span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="n">Point3d</span> <span class="o">&amp;&amp;</span><span class="p">)</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
+    <span class="n">Point3d</span> <span class="o">&amp;</span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span> <span class="n">Point3d</span> <span class="o">&amp;</span><span class="p">)</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
+    <span class="o">~</span><span class="n">Point3d</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
+    <span class="kt">float</span> <span class="nf">x</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span><span class="k">return</span> <span class="n">_x</span><span class="p">;}</span>
+    <span class="kt">float</span> <span class="nf">y</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span><span class="k">return</span> <span class="n">_y</span><span class="p">;}</span>
+    <span class="kt">float</span> <span class="nf">z</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span><span class="k">return</span> <span class="n">_z</span><span class="p">;}</span>
+    <span class="kt">void</span> <span class="nf">Point3dPrint</span><span class="p">()</span><span class="k">const</span><span class="p">{</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&#34;(%g, %g, %g)&#34;</span><span class="p">,</span> <span class="n">_x</span><span class="p">,</span> <span class="n">_y</span><span class="p">,</span> <span class="n">_z</span><span class="p">);</span>
+    <span class="p">}</span>
 
-// or define a macro
-#define Point3dPrint(pd)  printf(&quot;(%g, %g, %g)&quot;, pd-&gt;x, pd-&gt;y, pd-&gt;z);
-</code></pre>
-
-<h3 id="抽象数据类型">抽象数据类型</h3>
-
-<p>在 C++ 语言中, 可以用独立的 *<strong><em>抽象数据类型</em></strong>* 实现.</p>
-
-<pre><code class="language-cpp">class Point3d
-{
-public:
-    Point3d() = default;
-    Point3d(float x, float y, float z):_x(x), _y(y), _z(z) {}
-    Point3d(Point3d &amp;&amp;) = default;
-    Point3d(const Point3d &amp;) = default;
-    Point3d &amp;operator=(Point3d &amp;&amp;) = default;
-    Point3d &amp;operator=(const Point3d &amp;) = default;
-    ~Point3d() = default;
-    float x() const {return _x;}
-    float y() const {return _y;}
-    float z() const {return _z;}
-    void Point3dPrint()const{
-        printf(&quot;(%g, %g, %g)&quot;, _x, _y, _z);
-    }
-
-private:
-    float _x;
-    float _y;
-    float _z;
-};
-</code></pre>
-
-<p>从上面的例子可以看出, 相对于面向过程而言, ADT 将数据和对数据的操作封装在一起了. 这样比面向过程的全局数据要好.</p>
-
+<span class="k">private</span><span class="o">:</span>
+    <span class="kt">float</span> <span class="n">_x</span><span class="p">;</span>
+    <span class="kt">float</span> <span class="n">_y</span><span class="p">;</span>
+    <span class="kt">float</span> <span class="n">_z</span><span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div><p>从上面的例子可以看出, 相对于面向过程而言, ADT 将数据和对数据的操作封装在一起了. 这样比面向过程的全局数据要好.</p>
 <h3 id="封装成本">封装成本</h3>
-
 <p>直观上看,感觉 C++ 的会占用更多的内存成本. 但事实上并没有增加成本. 在上例中, Point3d 对象的大小只和数据成员大小相关,
 成员函数虽然在类内声明,但是不出现在对象中, 每一个飞内联成员函数只会产生一个函数体.</p>
-
 <p>当然如果说 C++ 的类对象和 C 中的结构体大小总是相同, 也是不对的. 这里主要是用于实现运行时多态的 virtual 技术带来的
 额外开销:</p>
-
 <ul>
 <li>虚函数机制: 用来支持有效的执行期绑定</li>
 <li>虚基类: 菱形继承体系中被多次继承的基类只保存一个共享实体</li>
 </ul>
-
 <h2 id="c-plus-plus-对象模型">C++ 对象模型</h2>
-
 <p>在 C++ 中, 有两种数据成员: 静态和非静态, 以及三种成员函数: 静态, 非静态和虚函数. 如下例子:</p>
+<div class="highlight"><pre class="chroma"><code class="language-cpp" data-lang="cpp"><span class="k">class</span> <span class="nc">Point</span><span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="n">Point</span><span class="p">(</span><span class="kt">float</span> <span class="n">x</span><span class="p">);</span>
+    <span class="k">virtual</span> <span class="o">~</span><span class="n">Point</span><span class="p">();</span>
+    <span class="kt">float</span> <span class="nf">x</span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
+    <span class="k">static</span> <span class="kt">int</span> <span class="nf">PointCount</span><span class="p">();</span>
 
-<pre><code class="language-cpp">class Point{
-public:
-    Point(float x);
-    virtual ~Point();
-    float x() const;
-    static int PointCount();
+<span class="k">protected</span><span class="o">:</span>
+    <span class="k">virtual</span> <span class="n">ostream</span><span class="o">&amp;</span>
+    <span class="n">print</span><span class="p">(</span><span class="n">ostream</span> <span class="o">&amp;</span><span class="n">os</span><span class="p">)</span><span class="k">const</span><span class="p">;</span>
 
-protected:
-    virtual ostream&amp;
-    print(ostream &amp;os)const;
-
-protected:
-    float _x;
-    static int _point_count
-};
-</code></pre>
-
-<p>```</p>
-
+<span class="k">protected</span><span class="o">:</span>
+    <span class="kt">float</span> <span class="n">_x</span><span class="p">;</span>
+    <span class="k">static</span> <span class="kt">int</span> <span class="n">_point_count</span>
+<span class="p">};</span>
+</code></pre></div><p>```</p>
 <h3 id="简单对象模型">简单对象模型</h3>
-
 <p>对象由一系列 slots 组成, 每一个 slot 指向一个成员, 成员按其声明次序被制定一个 slot.</p>
-
 <figure>
     <img src="/images/simple_model.png"/> 
 </figure>
 
-
 <p>成员本身并不防止对象中, 而是将指向成员的指针防止 slots 中, 这样可以避免成员有不同的类型需要不同
 的内存空间带来的问题.</p>
-
 <p>### 表格驱动模型</p>
-
 <p>为了对所有的对象都有一致的表达方式,将成员相关的信息抽取出来, 放在数据成员表和成员方法表中. 类对象
 本身则汗指向这两个表格的指针.</p>
-
 <figure>
     <img src="/images/tables_model.png"/> 
 </figure>
 
-
 <p>成员函数表的观念为 C++ 对象模型支持虚函数提供有效的方案</p>
-
-<h3 id="c-plus-plus-对象模型-1">C++对象模型</h3>
-
+<h3 id="c-plus-plus-对象模型">C++对象模型</h3>
 <ol>
 <li>每个 class 产生出指向虚函数的指针, 放在表格之中. 称为虚函数表 vbtl</li>
 <li>每个类对象添加一个指针指向相关的虚函数表, 这个指针称为 vptr. vptr 的设定和重置由构造函数,析构函数和赋值函数自动完成; 每个 class 所关联的 type_info 也由虚函数表指出, 通常为第一个 slot</li>
 </ol>
-
 <figure>
     <img src="/images/c&#43;&#43;_model.png"/> 
 </figure>
-
 
 <ul>
 <li>优点: 空间和时间存取的效率</li>
 <li>缺点: 非静态数据成员的修改需重新编译</li>
 </ul>
-
 <h3 id="继承">继承</h3>
-
 <h4 id="单一继承">单一继承</h4>
-
-<pre><code class="language-cpp">class Library_materials {};
-class Book : public Library_materials {};
-class Rental_book : public Book {};
-</code></pre>
-
-<h4 id="多继承">多继承</h4>
-
-<pre><code class="language-cpp">class iostream : public istream, public ostream{};
-</code></pre>
-
-<h4 id="虚继承">虚继承</h4>
-
-<pre><code class="language-cpp">class istream : virtual public ios {};
-class ostream : virtual public ios {};
-</code></pre>
-
-<p>在虚继承中,不管基类在继承链中被派生多少次,都只会保存一个实体.</p>
-
+<div class="highlight"><pre class="chroma"><code class="language-cpp" data-lang="cpp"><span class="k">class</span> <span class="nc">Library_materials</span> <span class="p">{};</span>
+<span class="k">class</span> <span class="nc">Book</span> <span class="o">:</span> <span class="k">public</span> <span class="n">Library_materials</span> <span class="p">{};</span>
+<span class="k">class</span> <span class="nc">Rental_book</span> <span class="o">:</span> <span class="k">public</span> <span class="n">Book</span> <span class="p">{};</span>
+</code></pre></div><h4 id="多继承">多继承</h4>
+<div class="highlight"><pre class="chroma"><code class="language-cpp" data-lang="cpp"><span class="k">class</span> <span class="nc">iostream</span> <span class="o">:</span> <span class="k">public</span> <span class="n">istream</span><span class="p">,</span> <span class="k">public</span> <span class="n">ostream</span><span class="p">{};</span>
+</code></pre></div><h4 id="虚继承">虚继承</h4>
+<div class="highlight"><pre class="chroma"><code class="language-cpp" data-lang="cpp"><span class="k">class</span> <span class="nc">istream</span> <span class="o">:</span> <span class="k">virtual</span> <span class="k">public</span> <span class="n">ios</span> <span class="p">{};</span>
+<span class="k">class</span> <span class="nc">ostream</span> <span class="o">:</span> <span class="k">virtual</span> <span class="k">public</span> <span class="n">ios</span> <span class="p">{};</span>
+</code></pre></div><p>在虚继承中,不管基类在继承链中被派生多少次,都只会保存一个实体.</p>
 <h3 id="对象模型对程序的影响">对象模型对程序的影响</h3>
-
 <ol>
 <li>现有程序代码必须修改</li>
 <li>必须加入新的程序代码</li>
 </ol>
-
 <h3 id="关键字带来的差异">关键字带来的差异</h3>
-
 <p>主要原因还是为了维护与 C 之间的兼容性。如 c++ 中本可以不用 struct, 但为了兼容 C
 还是保留了 struct 关键字。</p>
-
 <h2 id="对象的差异">对象的差异</h2>
-
 <p>C++ 支持三种编程范式。</p>
-
 <h3 id="程序模型">程序模型</h3>
-
 <p>主要是为了兼容 C.</p>
-
 <h3 id="抽象数据类型模型">抽象数据类型模型</h3>
-
 <p>抽象是和一组比表达一起提供，而其运算定义仍然不知道。</p>
-
 <h3 id="面向对象模型">面向对象模型</h3>
-
 <p>一些彼此相关的类型通过一个抽象的基类被封装起来。</p>
-
 <p>多态方法：</p>
-
 <ol>
 <li>隐式转换</li>
 <li>虚函数机制</li>
@@ -358,6 +296,8 @@ class ostream : virtual public ios {};
     
     <li><a href="/categories/%e5%86%85%e5%ad%98%e7%ae%a1%e7%90%86" title="内存管理">内存管理<sup>1</sup></a></li>
     
+    <li><a href="/categories/%e5%86%85%e6%a0%b8%e5%ae%9e%e9%aa%8c" title="内核实验">内核实验<sup>1</sup></a></li>
+    
     <li><a href="/categories/%e5%91%bd%e4%bb%a4%e8%a1%8c%e8%89%ba%e6%9c%af" title="命令行艺术">命令行艺术<sup>3</sup></a></li>
     
     <li><a href="/categories/%e5%ad%a6%e4%b9%a0%e7%ac%94%e8%ae%b0" title="学习笔记">学习笔记<sup>13</sup></a></li>
@@ -383,6 +323,8 @@ class ostream : virtual public ios {};
 	<p class="asidetitle">标签</p>
 		<ul class="clearfix">
       
+			<li><a href="/tags/bochs" title="bochs">bochs<sup>1</sup></a></li>
+      
 			<li><a href="/tags/c&#43;&#43;" title="c&#43;&#43;">c&#43;&#43;<sup>10</sup></a></li>
       
 			<li><a href="/tags/command" title="command">command<sup>3</sup></a></li>
@@ -397,9 +339,9 @@ class ostream : virtual public ios {};
       
 			<li><a href="/tags/jemalloc" title="jemalloc">jemalloc<sup>1</sup></a></li>
       
-			<li><a href="/tags/kernel" title="kernel">kernel<sup>7</sup></a></li>
+			<li><a href="/tags/kernel" title="kernel">kernel<sup>8</sup></a></li>
       
-			<li><a href="/tags/linux" title="linux">linux<sup>12</sup></a></li>
+			<li><a href="/tags/linux" title="linux">linux<sup>13</sup></a></li>
       
 			<li><a href="/tags/linux%e5%86%85%e6%a0%b8" title="linux内核">linux内核<sup>1</sup></a></li>
       
@@ -461,6 +403,11 @@ class ostream : virtual public ios {};
       
       
       <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2020-04">2020年04月</a><span class="archive-list-count">1</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
         <a class="archive-list-link" href="/post/#2019-09">2019年09月</a><span class="archive-list-count">1</span>
       </li>
       
@@ -514,6 +461,8 @@ class ostream : virtual public ios {};
 <div class="tagcloudlist">
   <p class="asidetitle">标签云</p>
   <div class="tagcloudlist clearfix">
+    
+    <a href="/tags/bochs" style="font-size: 12px;">bochs</a>
     
     <a href="/tags/c&#43;&#43;" style="font-size: 12px;">c&#43;&#43;</a>
     
@@ -613,7 +562,7 @@ class ostream : virtual public ios {};
     
     
   </div>
-  <p class="copyright">Powered by <a href="http://gohugo.io" target="_blank" title="hugo">hugo</a> and Theme by <a href="https://github.com/coderzh/hugo-pacman-theme" target="_blank" title="hugo-pacman-theme">hugo-pacman-theme</a> © 2019
+  <p class="copyright">Powered by <a href="http://gohugo.io" target="_blank" title="hugo">hugo</a> and Theme by <a href="https://github.com/coderzh/hugo-pacman-theme" target="_blank" title="hugo-pacman-theme">hugo-pacman-theme</a> © 2020
     
     <a href="/" title="北极狼徒">北极狼徒</a>
     

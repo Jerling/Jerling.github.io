@@ -78,34 +78,30 @@
 		<div class="toc-article">
 			<strong class="toc-title">文章目录</strong>
       <nav id="TableOfContents">
-<ul>
-<li>
-<ul>
-<li><a href="#默认构造函数">默认构造函数</a>
-<ul>
-<li><a href="#带有默认构造函数的成员类对象">带有默认构造函数的成员类对象</a></li>
-<li><a href="#带有默认构造的基类">带有默认构造的基类</a></li>
-<li><a href="#带有虚函数的类">带有虚函数的类</a></li>
-<li><a href="#带有一个虚基类的类">带有一个虚基类的类</a></li>
-<li><a href="#总结">总结</a></li>
-</ul></li>
-<li><a href="#拷贝构造函数">拷贝构造函数</a>
-<ul>
-<li><a href="#默认成员逐次初始化">默认成员逐次初始化</a></li>
-<li><a href="#非逐位拷贝构造语义">非逐位拷贝构造语义</a></li>
-<li><a href="#重新设置虚表指针">重新设置虚表指针</a></li>
-<li><a href="#处理虚基类子对象">处理虚基类子对象</a></li>
-</ul></li>
-<li><a href="#成员初始化列表">成员初始化列表</a></li>
-</ul></li>
-</ul>
+  <ul>
+    <li><a href="#默认构造函数">默认构造函数</a>
+      <ul>
+        <li><a href="#带有默认构造函数的成员类对象">带有默认构造函数的成员类对象</a></li>
+        <li><a href="#带有默认构造的基类">带有默认构造的基类</a></li>
+        <li><a href="#带有虚函数的类">带有虚函数的类</a></li>
+        <li><a href="#带有一个虚基类的类">带有一个虚基类的类</a></li>
+        <li><a href="#总结">总结</a></li>
+      </ul>
+    </li>
+    <li><a href="#拷贝构造函数">拷贝构造函数</a>
+      <ul>
+        <li><a href="#默认成员逐次初始化">默认成员逐次初始化</a></li>
+        <li><a href="#非逐位拷贝构造语义">非逐位拷贝构造语义</a></li>
+        <li><a href="#重新设置虚表指针">重新设置虚表指针</a></li>
+        <li><a href="#处理虚基类子对象">处理虚基类子对象</a></li>
+      </ul>
+    </li>
+    <li><a href="#成员初始化列表">成员初始化列表</a></li>
+  </ul>
 </nav>
 		</div>
     
-    
-
-<h2 id="默认构造函数">默认构造函数</h2>
-
+    <h2 id="默认构造函数">默认构造函数</h2>
 <ul>
 <li>在ARM(Annotated Reference Manual) 中：默认构造函数在 <strong>需要的</strong> 时候由编译器产生
 产生出来。这里的需要为编译器需要，而不是程序需要，程序需要由程序员指定。</li>
@@ -113,93 +109,65 @@
 个默认构造函数，隐式生成的构造函数是 trival(没啥用的) constructor.</li>
 <li>存在四种情况的合成构造函数为 &ldquo;notrival&rdquo;, 其它情况为 &ldquo;trival&rdquo;</li>
 </ul>
-
 <h3 id="带有默认构造函数的成员类对象">带有默认构造函数的成员类对象</h3>
-
 <p>如果一个类没有任何构造函数，但它有一个拥有默认构造函数的成员对象，那么这个类的隐
 式默认构造函数就是 &ldquo;notrival&rdquo; 的，编译器需要合成一个默认构造函数，这个过程会在构
 造函数真正需要被调用的时候才会发生。</p>
-
 <p>为了解决 C++ 在不同编译模块中合成多个默认构造函数，需要将合成的默认构造函数、拷
 贝构造函数、析构函数以及赋值拷贝操作以内联方式完成；如果函数比较复杂，就合成一个
 显示的非内联实体。</p>
-
 <h3 id="带有默认构造的基类">带有默认构造的基类</h3>
-
 <p>如果没有任何用户声明的构造函数的类派生自一个带有默认构造函数的基类，那么这个派生
 类的默认构造为 &ldquo;notrival&rdquo; 并合并出来；它将根据声明次序调用上一层基类的默认构造函
 数，对于后继类而言，合成的构造函数和明确指出的默认构造函数没有什么差异。</p>
-
 <h3 id="带有虚函数的类">带有虚函数的类</h3>
-
 <ol>
 <li>类声明一个虚函数</li>
 <li>类派生自一个继承链，其中一个或更多的虚基类</li>
 </ol>
-
 <p>不管哪一种，编译器会详细记录合成一个默认构造的必要信息。</p>
-
 <ol>
 <li>编译器生成一个虚函数表(vtbl)存放类的虚函数地址</li>
 <li>每个类对象都有一个额外的虚函数指针(vptr)在被编译器合成出来，包含 vtbl 的地址</li>
 </ol>
-
 <h3 id="带有一个虚基类的类">带有一个虚基类的类</h3>
-
 <p>这种实现在不同的编译器的实现有极大的差异。共通点是：必须使虚基类在其每一个派生类
 中的位置能够于执行期准备妥当。</p>
-
 <h3 id="总结">总结</h3>
-
 <p>在合成的默认构造函数中，只有基类子对象和成员会被初始化，其它的非静态数据成员如整
 数、整数指针，整数数组等不会初始化。这些对程序或许需要，但对于编译器并非必须。如
 想将指针初始化为 nullptr, 这是程序员的事而非编译器。</p>
-
 <p>误解：</p>
-
 <ol>
 <li>任何类如果没有定义默认构造函数，就会被合成出来</li>
 <li>合成默认构造函数会明确设定类内的每个数据成员的默认值</li>
 </ol>
-
 <h2 id="拷贝构造函数">拷贝构造函数</h2>
-
 <p>有三种情况会以一个对象的内容作为一个类对象初值：</p>
-
 <ol>
 <li>对一个对象做明确的初始化操作</li>
 <li>当对象被当作参数交给函数时</li>
 <li>当函数传回一个类对象时</li>
 </ol>
-
 <p>当类明确定义了拷贝构造函数，那么在大部份情况下，当以一个同类对象实体作为初值时，
 那么会调用该拷贝构造函数，可能会导致产生临时对象或产生程序代码蜕变（或者都有）。</p>
-
 <h3 id="默认成员逐次初始化">默认成员逐次初始化</h3>
-
 <p>当没有显示的拷贝构造函数时，内部以默认的成员逐次初始化完成的：把每一个内建对象或派
 生的数据成员的值从某个对象拷贝一份到另一个对象身上。不过不会拷贝其中的成员类对象，
 而是以递归的方式施行成员逐次初始化。</p>
-
 <p>概念上，对于一个 class X, 这个操作是有拷贝构造函数实现。但设计良好的编译器可以为
 大部分类对象生成逐位拷贝，因为它们有逐位拷贝语义。</p>
-
 <p>默认构造函数和拷贝构造函数在必要的时候由编译器合成， <strong>必要</strong> 指当类不展现逐位拷贝
 语义时。</p>
-
 <p>一个类对象可以从两种方式复制得到：</p>
-
 <ol>
 <li>初始化</li>
 <li>赋值</li>
 </ol>
-
 <p>C++标准同样把拷贝构造函数区分为 &ldquo;trival&rdquo; 和 &ldquo;notrival&rdquo; 两种，只有 &ldquo;notrival&rdquo; 的
 实体才会被合成到程序中。设定一个拷贝构造函数是否为 &ldquo;trival&rdquo; 的标准在于类是否展现
 出逐位拷贝语义</p>
-
 <h3 id="非逐位拷贝构造语义">非逐位拷贝构造语义</h3>
-
 <ol>
 <li>当类有一个成员对象，这个对象类声明有一个拷贝构造函数（不管是class明确指定或是
 编译器合成）</li>
@@ -207,31 +175,22 @@
 <li>当类声明了一个或多个虚函数时</li>
 <li>当类声明一个继承串链，其中有一个或多个虚基类</li>
 </ol>
-
 <h3 id="重新设置虚表指针">重新设置虚表指针</h3>
-
 <p>编译器对于每一个新产生的类对象的 vptr 适当的初始化，如使用派生类对象值初始化存在
 虚函数的基类时，要将 vptr 指向基类的虚函数表，而不再派生类的。</p>
-
 <h3 id="处理虚基类子对象">处理虚基类子对象</h3>
-
 <p>如果一个类对象已另一个对象作为初值，而后者有一个虚基类子对象，那么”逐位拷贝“也会
 失效。编译器必须让派生类中的虚基类子对象位置在执行期准备妥当，而 &ldquo;逐位拷贝&rdquo; 可能
 会破坏这个位置。所以编译器必须自己合成拷贝构造函数做出仲裁。</p>
-
 <h2 id="成员初始化列表">成员初始化列表</h2>
-
 <p>必须使用初始化列表的情况：</p>
-
 <ol>
 <li>当初始化一个引用成员</li>
 <li>当初始化一个常量成员</li>
 <li>当调用一个基类的构造函数，而它拥有一组参数</li>
 <li>当调用一个成员类的构造函数，而它拥有一组参数</li>
 </ol>
-
 <p>执行顺序：</p>
-
 <ol>
 <li>在成员参数列表中的初始化按照声明的顺序执行而不是列表中的顺序</li>
 <li>初始化列表在用户定义的代码先执行</li>
@@ -291,6 +250,8 @@
     
     <li><a href="/categories/%e5%86%85%e5%ad%98%e7%ae%a1%e7%90%86" title="内存管理">内存管理<sup>1</sup></a></li>
     
+    <li><a href="/categories/%e5%86%85%e6%a0%b8%e5%ae%9e%e9%aa%8c" title="内核实验">内核实验<sup>1</sup></a></li>
+    
     <li><a href="/categories/%e5%91%bd%e4%bb%a4%e8%a1%8c%e8%89%ba%e6%9c%af" title="命令行艺术">命令行艺术<sup>3</sup></a></li>
     
     <li><a href="/categories/%e5%ad%a6%e4%b9%a0%e7%ac%94%e8%ae%b0" title="学习笔记">学习笔记<sup>13</sup></a></li>
@@ -316,6 +277,8 @@
 	<p class="asidetitle">标签</p>
 		<ul class="clearfix">
       
+			<li><a href="/tags/bochs" title="bochs">bochs<sup>1</sup></a></li>
+      
 			<li><a href="/tags/c&#43;&#43;" title="c&#43;&#43;">c&#43;&#43;<sup>10</sup></a></li>
       
 			<li><a href="/tags/command" title="command">command<sup>3</sup></a></li>
@@ -330,9 +293,9 @@
       
 			<li><a href="/tags/jemalloc" title="jemalloc">jemalloc<sup>1</sup></a></li>
       
-			<li><a href="/tags/kernel" title="kernel">kernel<sup>7</sup></a></li>
+			<li><a href="/tags/kernel" title="kernel">kernel<sup>8</sup></a></li>
       
-			<li><a href="/tags/linux" title="linux">linux<sup>12</sup></a></li>
+			<li><a href="/tags/linux" title="linux">linux<sup>13</sup></a></li>
       
 			<li><a href="/tags/linux%e5%86%85%e6%a0%b8" title="linux内核">linux内核<sup>1</sup></a></li>
       
@@ -394,6 +357,11 @@
       
       
       <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2020-04">2020年04月</a><span class="archive-list-count">1</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
         <a class="archive-list-link" href="/post/#2019-09">2019年09月</a><span class="archive-list-count">1</span>
       </li>
       
@@ -447,6 +415,8 @@
 <div class="tagcloudlist">
   <p class="asidetitle">标签云</p>
   <div class="tagcloudlist clearfix">
+    
+    <a href="/tags/bochs" style="font-size: 12px;">bochs</a>
     
     <a href="/tags/c&#43;&#43;" style="font-size: 12px;">c&#43;&#43;</a>
     
@@ -546,7 +516,7 @@
     
     
   </div>
-  <p class="copyright">Powered by <a href="http://gohugo.io" target="_blank" title="hugo">hugo</a> and Theme by <a href="https://github.com/coderzh/hugo-pacman-theme" target="_blank" title="hugo-pacman-theme">hugo-pacman-theme</a> © 2019
+  <p class="copyright">Powered by <a href="http://gohugo.io" target="_blank" title="hugo">hugo</a> and Theme by <a href="https://github.com/coderzh/hugo-pacman-theme" target="_blank" title="hugo-pacman-theme">hugo-pacman-theme</a> © 2020
     
     <a href="/" title="北极狼徒">北极狼徒</a>
     

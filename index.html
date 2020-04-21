@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html lang="zh-CN">
 <head>
-	<meta name="generator" content="Hugo 0.57.2" />
+	<meta name="generator" content="Hugo 0.69.0" />
   <meta charset="UTF-8">
   <title>北极狼徒</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
@@ -62,91 +62,10 @@
     <div id="main">
       
       <section class="post" itemscope itemprop="blogPost">
-    <a href="/post/how_to_open_over_1024_files/" title="Too many open files 解决办法" itemprop="url">
-    <h1 itemprop="name">Too many open files 解决办法</h1>
-    <p itemprop="description">问题来源 Linux 系统默认能打开的文件个数上限是 1024 个，可通过 limits -n 查看，但实际上系统可打开的文件个数远超过这个限制，通过 cat /proc/sys/fs/file-max 可以看到，在我的 64 位机器上</p>
-    <time datetime="2019-09-15 18:50:19 &#43;0800 CST" itemprop="datePublished">2019年09月15日</time>
-  </a>
-</section>
-
-      
-      <section class="post" itemscope itemprop="blogPost">
-    <a href="/post/linux_kernel_design_and_impl_ch13/" title="Linux 内核设计与实现 — 虚拟文件系统" itemprop="url">
-    <h1 itemprop="name">Linux 内核设计与实现 — 虚拟文件系统</h1>
-    <p itemprop="description">虚拟文件系统作为内核子系统，为用户空间程序提供文件和文件系统相关操作的接口。系统中各文件系统依赖虚拟文件系统共存并协同工作。通过 vfs , 用户空间</p>
-    <time datetime="2019-07-07 12:48:54 &#43;0800 CST" itemprop="datePublished">2019年07月07日</time>
-  </a>
-</section>
-
-      
-      <section class="post" itemscope itemprop="blogPost">
-    <a href="/post/linux_kernel_design_and_impl_ch12/" title="Linux 内核设计与实现 — 内存管理" itemprop="url">
-    <h1 itemprop="name">Linux 内核设计与实现 — 内存管理</h1>
-    <p itemprop="description">内核的内存分配相比用户空间来说相对较为困难，主要是因为内核本身不能奢侈的使用内存，而且一般不能睡眠，处理内存分配错误也比较棘手。 页 内核将物理</p>
-    <time datetime="2019-06-23 13:23:07 &#43;0800 CST" itemprop="datePublished">2019年06月23日</time>
-  </a>
-</section>
-
-      
-      <section class="post" itemscope itemprop="blogPost">
-    <a href="/post/linux_kernel_design_and_impl_ch11/" title="Linux 内核设计与实现 — 时间管理" itemprop="url">
-    <h1 itemprop="name">Linux 内核设计与实现 — 时间管理</h1>
-    <p itemprop="description">内核中有很多基于时间驱动的函数，如调度程序中运行队列进行平衡调整或对屏幕进行刷新等。时间管理中需注意相对时间和绝对时间的差别以及周期性事件和</p>
-    <time datetime="2019-06-20 20:52:58 &#43;0800 CST" itemprop="datePublished">2019年06月20日</time>
-  </a>
-</section>
-
-      
-      <section class="post" itemscope itemprop="blogPost">
-    <a href="/post/linux_design_and_impl_ch09/" title="Linux 内核设计与实现 — 内核同步" itemprop="url">
-    <h1 itemprop="name">Linux 内核设计与实现 — 内核同步</h1>
-    <p itemprop="description">在进行多线程编程时，我们要特意留意共享数据的保护，防止并发访问时多个线程同时操作 导致的结果不一致性。 Linux 2.0 开始内核开始支持 SMP. 所以内核可以在同一</p>
-    <time datetime="2019-06-12 20:40:09 &#43;0800 CST" itemprop="datePublished">2019年06月12日</time>
-  </a>
-</section>
-
-      
-      <section class="post" itemscope itemprop="blogPost">
-    <a href="/post/linux_kernel_design_and_impl_ch08/" title="Linux 内核设计与实现 — 下半部" itemprop="url">
-    <h1 itemprop="name">Linux 内核设计与实现 — 下半部</h1>
-    <p itemprop="description">内核为处理中断提供了中断处理程序机制，这是内核必不可少的一部分。但仍然存在一些局 限： 中断程序异步执行，可能打断其它重要代码的执行；因此中断处</p>
-    <time datetime="2019-06-09 15:11:35 &#43;0800 CST" itemprop="datePublished">2019年06月09日</time>
-  </a>
-</section>
-
-      
-      <section class="post" itemscope itemprop="blogPost">
-    <a href="/post/linux_kernel_design_and_impl_ch06/" title="Linux 内核设计与实现 — 内核数据结构" itemprop="url">
-    <h1 itemprop="name">Linux 内核设计与实现 — 内核数据结构</h1>
-    <p itemprop="description">本章节的内容是一些数据结构，没甚么可说的。随便记记笔记吧。内容包括链表、队列、映 射、二叉树。 链表 这是 linux 中最简单的数据结构，是一种存放客可变数</p>
-    <time datetime="2019-06-07 22:09:18 &#43;0800 CST" itemprop="datePublished">2019年06月07日</time>
-  </a>
-</section>
-
-      
-      <section class="post" itemscope itemprop="blogPost">
-    <a href="/post/cpp_object_models_ch04/" title="C&#43;&#43; 对象模型 — Function 语意学" itemprop="url">
-    <h1 itemprop="name">C&#43;&#43; 对象模型 — Function 语意学</h1>
-    <p itemprop="description">调用方式 普通函数 虚函数 静态函数 非静态成员函数 C++ 设计准则之一：非静态成员函数至少和非成员函数效率一样。 成员函数内化为非成员函数的过程： 改写函数</p>
-    <time datetime="2019-06-03 22:26:04 &#43;0800 CST" itemprop="datePublished">2019年06月03日</time>
-  </a>
-</section>
-
-      
-      <section class="post" itemscope itemprop="blogPost">
-    <a href="/post/linux_kernel_design_and_impl/" title="Linux 内核设计与实现 — 系统调用" itemprop="url">
-    <h1 itemprop="name">Linux 内核设计与实现 — 系统调用</h1>
-    <p itemprop="description">三个作用 为用户空间提供硬件抽象接口 保证系统稳定和安全 使每个用户程序运行在虚拟系统中 系统调用 定义一个系统调用(以 getpid() 为例)： SYSCALL_DEFINE0(getpid) { return task_tgid_vnr(current); // return current-&gt;tgid } SYSCALL_DEFINE0 是</p>
-    <time datetime="2019-06-01 22:21:06 &#43;0800 CST" itemprop="datePublished">2019年06月01日</time>
-  </a>
-</section>
-
-      
-      <section class="post" itemscope itemprop="blogPost">
-    <a href="/post/cpp_object_models_ch03/" title="C&#43;&#43; 对象模型 — Data 语义学" itemprop="url">
-    <h1 itemprop="name">C&#43;&#43; 对象模型 — Data 语义学</h1>
-    <p itemprop="description">对象大小 语言本身所造成的额外负担，如虚基类 编译器对于特殊情况的优化处理，如某些编译器对空虚基类的特殊支持，一般放在头部 就省去 1 byte 大小的空间 字</p>
-    <time datetime="2019-05-28 23:18:19 &#43;0800 CST" itemprop="datePublished">2019年05月28日</time>
+    <a href="/post/" title="Posts" itemprop="url">
+    <h1 itemprop="name">Posts</h1>
+    <p itemprop="description"></p>
+    <time datetime="2020-04-20 22:21:06 &#43;0800 CST" itemprop="datePublished">2020年04月20日</time>
   </a>
 </section>
 
@@ -166,6 +85,8 @@
   <ul>
     
     <li><a href="/categories/%e5%86%85%e5%ad%98%e7%ae%a1%e7%90%86" title="内存管理">内存管理<sup>1</sup></a></li>
+    
+    <li><a href="/categories/%e5%86%85%e6%a0%b8%e5%ae%9e%e9%aa%8c" title="内核实验">内核实验<sup>1</sup></a></li>
     
     <li><a href="/categories/%e5%91%bd%e4%bb%a4%e8%a1%8c%e8%89%ba%e6%9c%af" title="命令行艺术">命令行艺术<sup>3</sup></a></li>
     
@@ -192,6 +113,8 @@
 	<p class="asidetitle">标签</p>
 		<ul class="clearfix">
       
+			<li><a href="/tags/bochs" title="bochs">bochs<sup>1</sup></a></li>
+      
 			<li><a href="/tags/c&#43;&#43;" title="c&#43;&#43;">c&#43;&#43;<sup>10</sup></a></li>
       
 			<li><a href="/tags/command" title="command">command<sup>3</sup></a></li>
@@ -206,9 +129,9 @@
       
 			<li><a href="/tags/jemalloc" title="jemalloc">jemalloc<sup>1</sup></a></li>
       
-			<li><a href="/tags/kernel" title="kernel">kernel<sup>7</sup></a></li>
+			<li><a href="/tags/kernel" title="kernel">kernel<sup>8</sup></a></li>
       
-			<li><a href="/tags/linux" title="linux">linux<sup>12</sup></a></li>
+			<li><a href="/tags/linux" title="linux">linux<sup>13</sup></a></li>
       
 			<li><a href="/tags/linux%e5%86%85%e6%a0%b8" title="linux内核">linux内核<sup>1</sup></a></li>
       
@@ -270,6 +193,11 @@
       
       
       <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2020-04">2020年04月</a><span class="archive-list-count">1</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
         <a class="archive-list-link" href="/post/#2019-09">2019年09月</a><span class="archive-list-count">1</span>
       </li>
       
@@ -323,6 +251,8 @@
 <div class="tagcloudlist">
   <p class="asidetitle">标签云</p>
   <div class="tagcloudlist clearfix">
+    
+    <a href="/tags/bochs" style="font-size: 12px;">bochs</a>
     
     <a href="/tags/c&#43;&#43;" style="font-size: 12px;">c&#43;&#43;</a>
     
@@ -426,7 +356,7 @@
     
     
   </div>
-  <p class="copyright">Powered by <a href="http://gohugo.io" target="_blank" title="hugo">hugo</a> and Theme by <a href="https://github.com/coderzh/hugo-pacman-theme" target="_blank" title="hugo-pacman-theme">hugo-pacman-theme</a> © 2019
+  <p class="copyright">Powered by <a href="http://gohugo.io" target="_blank" title="hugo">hugo</a> and Theme by <a href="https://github.com/coderzh/hugo-pacman-theme" target="_blank" title="hugo-pacman-theme">hugo-pacman-theme</a> © 2020
     
     <a href="/" title="北极狼徒">北极狼徒</a>
     

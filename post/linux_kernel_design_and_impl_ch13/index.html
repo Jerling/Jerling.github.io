@@ -78,543 +78,480 @@
 		<div class="toc-article">
 			<strong class="toc-title">文章目录</strong>
       <nav id="TableOfContents">
-<ul>
-<li>
-<ul>
-<li><a href="#vfs-对象及数据结构">VFS 对象及数据结构</a></li>
-<li><a href="#超级块对象">超级块对象</a>
-<ul>
-<li><a href="#超级块操作">超级块操作</a></li>
-</ul></li>
-<li><a href="#索引节点对象">索引节点对象</a>
-<ul>
-<li><a href="#索引节点操作">索引节点操作</a></li>
-</ul></li>
-<li><a href="#目录项对象">目录项对象</a>
-<ul>
-<li><a href="#状态">状态</a></li>
-<li><a href="#缓存">缓存</a></li>
-<li><a href="#目录项操作">目录项操作</a></li>
-<li><a href="#文件对象">文件对象</a></li>
-<li><a href="#文件操作">文件操作</a></li>
-</ul></li>
-<li><a href="#和文件系统相关的数据结构">和文件系统相关的数据结构</a></li>
-<li><a href="#与进程相关的数据结构">与进程相关的数据结构</a></li>
-</ul></li>
-</ul>
+  <ul>
+    <li><a href="#vfs-对象及数据结构">VFS 对象及数据结构</a></li>
+    <li><a href="#超级块对象">超级块对象</a>
+      <ul>
+        <li><a href="#超级块操作">超级块操作</a></li>
+      </ul>
+    </li>
+    <li><a href="#索引节点对象">索引节点对象</a>
+      <ul>
+        <li><a href="#索引节点操作">索引节点操作</a></li>
+      </ul>
+    </li>
+    <li><a href="#目录项对象">目录项对象</a>
+      <ul>
+        <li><a href="#状态">状态</a></li>
+        <li><a href="#缓存">缓存</a></li>
+        <li><a href="#目录项操作">目录项操作</a></li>
+        <li><a href="#文件对象">文件对象</a></li>
+        <li><a href="#文件操作">文件操作</a></li>
+      </ul>
+    </li>
+    <li><a href="#和文件系统相关的数据结构">和文件系统相关的数据结构</a></li>
+    <li><a href="#与进程相关的数据结构">与进程相关的数据结构</a></li>
+  </ul>
 </nav>
 		</div>
     
-    
-
-<p>虚拟文件系统作为内核子系统，为用户空间程序提供文件和文件系统相关操作的接口。系统中各文件系统依赖虚拟文件系统共存并协同工作。通过 <code>vfs</code> , 用户空间程序就可以使用
+    <p>虚拟文件系统作为内核子系统，为用户空间程序提供文件和文件系统相关操作的接口。系统中各文件系统依赖虚拟文件系统共存并协同工作。通过 <code>vfs</code> , 用户空间程序就可以使用
 <code>unix</code> 统一系统调用对不同的文件系统甚至不同介质进行文件操作了。</p>
-
 <h2 id="vfs-对象及数据结构">VFS 对象及数据结构</h2>
-
 <p>VFS 主要有四种对象类型：</p>
-
 <ol>
 <li>超级块：具体的安装的文件系统</li>
 <li>inode: 一个具体的文件</li>
 <li>目录项：文件路径的一部分</li>
 <li>文件：由进程打开的文件</li>
 </ol>
-
 <h2 id="超级块对象">超级块对象</h2>
-
 <p>每个文件系统必须都实现该对象，用于存储特定的文件信息，通常对应于磁盘特定区域文件系统超级块或控制块。对于内存文件系统，则直接创建并保存在内存中。</p>
-
 <p>在 linux 中使用 <code>super_block</code> 数据结构表示。</p>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="k">struct</span> <span class="n">super_block</span> <span class="p">{</span>
+	<span class="k">struct</span> <span class="n">list_head</span>	<span class="n">s_list</span><span class="p">;</span>		<span class="cm">/* Keep this first */</span>
+	<span class="n">dev_t</span>			<span class="n">s_dev</span><span class="p">;</span>		<span class="cm">/* search index; _not_ kdev_t */</span>
+	<span class="kt">unsigned</span> <span class="kt">char</span>		<span class="n">s_dirt</span><span class="p">;</span>
+	<span class="kt">unsigned</span> <span class="kt">char</span>		<span class="n">s_blocksize_bits</span><span class="p">;</span>
+	<span class="kt">unsigned</span> <span class="kt">long</span>		<span class="n">s_blocksize</span><span class="p">;</span>
+	<span class="n">loff_t</span>			<span class="n">s_maxbytes</span><span class="p">;</span>	<span class="cm">/* Max file size */</span>
+	<span class="k">struct</span> <span class="n">file_system_type</span>	<span class="o">*</span><span class="n">s_type</span><span class="p">;</span>
+	<span class="k">const</span> <span class="k">struct</span> <span class="n">super_operations</span>	<span class="o">*</span><span class="n">s_op</span><span class="p">;</span>
+	<span class="k">const</span> <span class="k">struct</span> <span class="n">dquot_operations</span>	<span class="o">*</span><span class="n">dq_op</span><span class="p">;</span>
+	<span class="k">const</span> <span class="k">struct</span> <span class="n">quotactl_ops</span>	<span class="o">*</span><span class="n">s_qcop</span><span class="p">;</span>
+	<span class="k">const</span> <span class="k">struct</span> <span class="n">export_operations</span> <span class="o">*</span><span class="n">s_export_op</span><span class="p">;</span>
+	<span class="kt">unsigned</span> <span class="kt">long</span>		<span class="n">s_flags</span><span class="p">;</span>
+	<span class="kt">unsigned</span> <span class="kt">long</span>		<span class="n">s_magic</span><span class="p">;</span>
+	<span class="k">struct</span> <span class="n">dentry</span>		<span class="o">*</span><span class="n">s_root</span><span class="p">;</span>
+	<span class="k">struct</span> <span class="n">rw_semaphore</span>	<span class="n">s_umount</span><span class="p">;</span>
+	<span class="k">struct</span> <span class="n">mutex</span>		<span class="n">s_lock</span><span class="p">;</span>
+	<span class="kt">int</span>			<span class="n">s_count</span><span class="p">;</span>
+	<span class="n">atomic_t</span>		<span class="n">s_active</span><span class="p">;</span>
+<span class="cp">#ifdef CONFIG_SECURITY
+</span><span class="cp"></span>	<span class="kt">void</span>                    <span class="o">*</span><span class="n">s_security</span><span class="p">;</span>
+<span class="cp">#endif
+</span><span class="cp"></span>	<span class="k">const</span> <span class="k">struct</span> <span class="n">xattr_handler</span> <span class="o">**</span><span class="n">s_xattr</span><span class="p">;</span>
 
-<pre><code class="language-c">struct super_block {
-	struct list_head	s_list;		/* Keep this first */
-	dev_t			s_dev;		/* search index; _not_ kdev_t */
-	unsigned char		s_dirt;
-	unsigned char		s_blocksize_bits;
-	unsigned long		s_blocksize;
-	loff_t			s_maxbytes;	/* Max file size */
-	struct file_system_type	*s_type;
-	const struct super_operations	*s_op;
-	const struct dquot_operations	*dq_op;
-	const struct quotactl_ops	*s_qcop;
-	const struct export_operations *s_export_op;
-	unsigned long		s_flags;
-	unsigned long		s_magic;
-	struct dentry		*s_root;
-	struct rw_semaphore	s_umount;
-	struct mutex		s_lock;
-	int			s_count;
-	atomic_t		s_active;
-#ifdef CONFIG_SECURITY
-	void                    *s_security;
-#endif
-	const struct xattr_handler **s_xattr;
+	<span class="k">struct</span> <span class="n">list_head</span>	<span class="n">s_inodes</span><span class="p">;</span>	<span class="cm">/* all inodes */</span>
+	<span class="k">struct</span> <span class="n">hlist_bl_head</span>	<span class="n">s_anon</span><span class="p">;</span>		<span class="cm">/* anonymous dentries for (nfs) exporting */</span>
+<span class="cp">#ifdef CONFIG_SMP
+</span><span class="cp"></span>	<span class="k">struct</span> <span class="n">list_head</span> <span class="n">__percpu</span> <span class="o">*</span><span class="n">s_files</span><span class="p">;</span>
+<span class="cp">#else
+</span><span class="cp"></span>	<span class="k">struct</span> <span class="n">list_head</span>	<span class="n">s_files</span><span class="p">;</span>
+<span class="cp">#endif
+</span><span class="cp"></span>	<span class="cm">/* s_dentry_lru, s_nr_dentry_unused protected by dcache.c lru locks */</span>
+	<span class="k">struct</span> <span class="n">list_head</span>	<span class="n">s_dentry_lru</span><span class="p">;</span>	<span class="cm">/* unused dentry lru */</span>
+	<span class="kt">int</span>			<span class="n">s_nr_dentry_unused</span><span class="p">;</span>	<span class="cm">/* # of dentry on lru */</span>
 
-	struct list_head	s_inodes;	/* all inodes */
-	struct hlist_bl_head	s_anon;		/* anonymous dentries for (nfs) exporting */
-#ifdef CONFIG_SMP
-	struct list_head __percpu *s_files;
-#else
-	struct list_head	s_files;
-#endif
-	/* s_dentry_lru, s_nr_dentry_unused protected by dcache.c lru locks */
-	struct list_head	s_dentry_lru;	/* unused dentry lru */
-	int			s_nr_dentry_unused;	/* # of dentry on lru */
+	<span class="k">struct</span> <span class="n">block_device</span>	<span class="o">*</span><span class="n">s_bdev</span><span class="p">;</span>
+	<span class="k">struct</span> <span class="n">backing_dev_info</span> <span class="o">*</span><span class="n">s_bdi</span><span class="p">;</span>
+	<span class="k">struct</span> <span class="n">mtd_info</span>		<span class="o">*</span><span class="n">s_mtd</span><span class="p">;</span>
+	<span class="k">struct</span> <span class="n">list_head</span>	<span class="n">s_instances</span><span class="p">;</span>
+	<span class="k">struct</span> <span class="n">quota_info</span>	<span class="n">s_dquot</span><span class="p">;</span>	<span class="cm">/* Diskquota specific options */</span>
 
-	struct block_device	*s_bdev;
-	struct backing_dev_info *s_bdi;
-	struct mtd_info		*s_mtd;
-	struct list_head	s_instances;
-	struct quota_info	s_dquot;	/* Diskquota specific options */
+	<span class="kt">int</span>			<span class="n">s_frozen</span><span class="p">;</span>
+	<span class="n">wait_queue_head_t</span>	<span class="n">s_wait_unfrozen</span><span class="p">;</span>
 
-	int			s_frozen;
-	wait_queue_head_t	s_wait_unfrozen;
+	<span class="kt">char</span> <span class="n">s_id</span><span class="p">[</span><span class="mi">32</span><span class="p">];</span>				<span class="cm">/* Informational name */</span>
+	<span class="n">u8</span> <span class="n">s_uuid</span><span class="p">[</span><span class="mi">16</span><span class="p">];</span>				<span class="cm">/* UUID */</span>
 
-	char s_id[32];				/* Informational name */
-	u8 s_uuid[16];				/* UUID */
+	<span class="kt">void</span> 			<span class="o">*</span><span class="n">s_fs_info</span><span class="p">;</span>	<span class="cm">/* Filesystem private info */</span>
+	<span class="n">fmode_t</span>			<span class="n">s_mode</span><span class="p">;</span>
 
-	void 			*s_fs_info;	/* Filesystem private info */
-	fmode_t			s_mode;
+	<span class="cm">/* Granularity of c/m/atime in ns.
+</span><span class="cm">	   Cannot be worse than a second */</span>
+	<span class="n">u32</span>		   <span class="n">s_time_gran</span><span class="p">;</span>
 
-	/* Granularity of c/m/atime in ns.
-	   Cannot be worse than a second */
-	u32		   s_time_gran;
+	<span class="cm">/*
+</span><span class="cm">	 * The next field is for VFS *only*. No filesystems have any business
+</span><span class="cm">	 * even looking at it. You had been warned.
+</span><span class="cm">	 */</span>
+	<span class="k">struct</span> <span class="n">mutex</span> <span class="n">s_vfs_rename_mutex</span><span class="p">;</span>	<span class="cm">/* Kludge */</span>
 
-	/*
-	 * The next field is for VFS *only*. No filesystems have any business
-	 * even looking at it. You had been warned.
-	 */
-	struct mutex s_vfs_rename_mutex;	/* Kludge */
+	<span class="cm">/*
+</span><span class="cm">	 * Filesystem subtype.  If non-empty the filesystem type field
+</span><span class="cm">	 * in /proc/mounts will be &#34;type.subtype&#34;
+</span><span class="cm">	 */</span>
+	<span class="kt">char</span> <span class="o">*</span><span class="n">s_subtype</span><span class="p">;</span>
 
-	/*
-	 * Filesystem subtype.  If non-empty the filesystem type field
-	 * in /proc/mounts will be &quot;type.subtype&quot;
-	 */
-	char *s_subtype;
-
-	/*
-	 * Saved mount options for lazy filesystems using
-	 * generic_show_options()
-	 */
-	char __rcu *s_options;
-	const struct dentry_operations *s_d_op; /* default d_op for dentries */
-};
-</code></pre>
-
-<h3 id="超级块操作">超级块操作</h3>
-
+	<span class="cm">/*
+</span><span class="cm">	 * Saved mount options for lazy filesystems using
+</span><span class="cm">	 * generic_show_options()
+</span><span class="cm">	 */</span>
+	<span class="kt">char</span> <span class="n">__rcu</span> <span class="o">*</span><span class="n">s_options</span><span class="p">;</span>
+	<span class="k">const</span> <span class="k">struct</span> <span class="n">dentry_operations</span> <span class="o">*</span><span class="n">s_d_op</span><span class="p">;</span> <span class="cm">/* default d_op for dentries */</span>
+<span class="p">};</span>
+</code></pre></div><h3 id="超级块操作">超级块操作</h3>
 <p>在超级块中有一个操作域，用于超级块数据的相关操作，是一个由多个函数指针组成的结构体 <code>super_operations</code> :</p>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="k">struct</span> <span class="n">super_operations</span> <span class="p">{</span>
+   	<span class="k">struct</span> <span class="n">inode</span> <span class="o">*</span><span class="p">(</span><span class="o">*</span><span class="n">alloc_inode</span><span class="p">)(</span><span class="k">struct</span> <span class="n">super_block</span> <span class="o">*</span><span class="n">sb</span><span class="p">);</span>
+	<span class="kt">void</span> <span class="p">(</span><span class="o">*</span><span class="n">destroy_inode</span><span class="p">)(</span><span class="k">struct</span> <span class="n">inode</span> <span class="o">*</span><span class="p">);</span>
 
-<pre><code class="language-c">struct super_operations {
-   	struct inode *(*alloc_inode)(struct super_block *sb);
-	void (*destroy_inode)(struct inode *);
+   	<span class="kt">void</span> <span class="p">(</span><span class="o">*</span><span class="n">dirty_inode</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">inode</span> <span class="o">*</span><span class="p">);</span>
+	<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">write_inode</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">inode</span> <span class="o">*</span><span class="p">,</span> <span class="k">struct</span> <span class="n">writeback_control</span> <span class="o">*</span><span class="n">wbc</span><span class="p">);</span>
+	<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">drop_inode</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">inode</span> <span class="o">*</span><span class="p">);</span>
+	<span class="kt">void</span> <span class="p">(</span><span class="o">*</span><span class="n">evict_inode</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">inode</span> <span class="o">*</span><span class="p">);</span>
+	<span class="kt">void</span> <span class="p">(</span><span class="o">*</span><span class="n">put_super</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">super_block</span> <span class="o">*</span><span class="p">);</span>
+	<span class="kt">void</span> <span class="p">(</span><span class="o">*</span><span class="n">write_super</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">super_block</span> <span class="o">*</span><span class="p">);</span>
+	<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">sync_fs</span><span class="p">)(</span><span class="k">struct</span> <span class="n">super_block</span> <span class="o">*</span><span class="n">sb</span><span class="p">,</span> <span class="kt">int</span> <span class="n">wait</span><span class="p">);</span>
+	<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">freeze_fs</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">super_block</span> <span class="o">*</span><span class="p">);</span>
+	<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">unfreeze_fs</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">super_block</span> <span class="o">*</span><span class="p">);</span>
+	<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">statfs</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">dentry</span> <span class="o">*</span><span class="p">,</span> <span class="k">struct</span> <span class="n">kstatfs</span> <span class="o">*</span><span class="p">);</span>
+	<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">remount_fs</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">super_block</span> <span class="o">*</span><span class="p">,</span> <span class="kt">int</span> <span class="o">*</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="p">);</span>
+	<span class="kt">void</span> <span class="p">(</span><span class="o">*</span><span class="n">umount_begin</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">super_block</span> <span class="o">*</span><span class="p">);</span>
 
-   	void (*dirty_inode) (struct inode *);
-	int (*write_inode) (struct inode *, struct writeback_control *wbc);
-	int (*drop_inode) (struct inode *);
-	void (*evict_inode) (struct inode *);
-	void (*put_super) (struct super_block *);
-	void (*write_super) (struct super_block *);
-	int (*sync_fs)(struct super_block *sb, int wait);
-	int (*freeze_fs) (struct super_block *);
-	int (*unfreeze_fs) (struct super_block *);
-	int (*statfs) (struct dentry *, struct kstatfs *);
-	int (*remount_fs) (struct super_block *, int *, char *);
-	void (*umount_begin) (struct super_block *);
-
-	int (*show_options)(struct seq_file *, struct vfsmount *);
-	int (*show_devname)(struct seq_file *, struct vfsmount *);
-	int (*show_path)(struct seq_file *, struct vfsmount *);
-	int (*show_stats)(struct seq_file *, struct vfsmount *);
-#ifdef CONFIG_QUOTA
-	ssize_t (*quota_read)(struct super_block *, int, char *, size_t, loff_t);
-	ssize_t (*quota_write)(struct super_block *, int, const char *, size_t, loff_t);
-#endif
-	int (*bdev_try_to_free_page)(struct super_block*, struct page*, gfp_t);
-};
-</code></pre>
-
-<p>使用起来也很容易：</p>
-
-<pre><code class="language-c">super_block *sb = alloc_super(); // 会读取磁盘中超级块中的信息
-sb-&gt;s_op-&gt;write(sb);
-</code></pre>
-
-<h2 id="索引节点对象">索引节点对象</h2>
-
+	<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">show_options</span><span class="p">)(</span><span class="k">struct</span> <span class="n">seq_file</span> <span class="o">*</span><span class="p">,</span> <span class="k">struct</span> <span class="n">vfsmount</span> <span class="o">*</span><span class="p">);</span>
+	<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">show_devname</span><span class="p">)(</span><span class="k">struct</span> <span class="n">seq_file</span> <span class="o">*</span><span class="p">,</span> <span class="k">struct</span> <span class="n">vfsmount</span> <span class="o">*</span><span class="p">);</span>
+	<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">show_path</span><span class="p">)(</span><span class="k">struct</span> <span class="n">seq_file</span> <span class="o">*</span><span class="p">,</span> <span class="k">struct</span> <span class="n">vfsmount</span> <span class="o">*</span><span class="p">);</span>
+	<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">show_stats</span><span class="p">)(</span><span class="k">struct</span> <span class="n">seq_file</span> <span class="o">*</span><span class="p">,</span> <span class="k">struct</span> <span class="n">vfsmount</span> <span class="o">*</span><span class="p">);</span>
+<span class="cp">#ifdef CONFIG_QUOTA
+</span><span class="cp"></span>	<span class="n">ssize_t</span> <span class="p">(</span><span class="o">*</span><span class="n">quota_read</span><span class="p">)(</span><span class="k">struct</span> <span class="n">super_block</span> <span class="o">*</span><span class="p">,</span> <span class="kt">int</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="p">,</span> <span class="n">size_t</span><span class="p">,</span> <span class="n">loff_t</span><span class="p">);</span>
+	<span class="n">ssize_t</span> <span class="p">(</span><span class="o">*</span><span class="n">quota_write</span><span class="p">)(</span><span class="k">struct</span> <span class="n">super_block</span> <span class="o">*</span><span class="p">,</span> <span class="kt">int</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="p">,</span> <span class="n">size_t</span><span class="p">,</span> <span class="n">loff_t</span><span class="p">);</span>
+<span class="cp">#endif
+</span><span class="cp"></span>	<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">bdev_try_to_free_page</span><span class="p">)(</span><span class="k">struct</span> <span class="n">super_block</span><span class="o">*</span><span class="p">,</span> <span class="k">struct</span> <span class="n">page</span><span class="o">*</span><span class="p">,</span> <span class="n">gfp_t</span><span class="p">);</span>
+<span class="p">};</span>
+</code></pre></div><p>使用起来也很容易：</p>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="n">super_block</span> <span class="o">*</span><span class="n">sb</span> <span class="o">=</span> <span class="n">alloc_super</span><span class="p">();</span> <span class="c1">// 会读取磁盘中超级块中的信息
+</span><span class="c1"></span><span class="n">sb</span><span class="o">-&gt;</span><span class="n">s_op</span><span class="o">-&gt;</span><span class="n">write</span><span class="p">(</span><span class="n">sb</span><span class="p">);</span>
+</code></pre></div><h2 id="索引节点对象">索引节点对象</h2>
 <p>inode 包含了内核操作文件或目录需要的所有信息。对于 <code>Unix</code> 文件系统来说，这些信息可以直接从磁盘中读取。如果文件系统不存在索引节点，那么不管这些信息在磁盘上怎么存放的，文件系统必须提取这些信息。</p>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="k">struct</span> <span class="n">inode</span> <span class="p">{</span>
+	<span class="cm">/* RCU path lookup touches following: */</span>
+	<span class="n">umode_t</span>			<span class="n">i_mode</span><span class="p">;</span>
+	<span class="n">uid_t</span>			<span class="n">i_uid</span><span class="p">;</span>
+	<span class="n">gid_t</span>			<span class="n">i_gid</span><span class="p">;</span>
+	<span class="k">const</span> <span class="k">struct</span> <span class="n">inode_operations</span>	<span class="o">*</span><span class="n">i_op</span><span class="p">;</span>
+	<span class="k">struct</span> <span class="n">super_block</span>	<span class="o">*</span><span class="n">i_sb</span><span class="p">;</span>
 
-<pre><code class="language-c">struct inode {
-	/* RCU path lookup touches following: */
-	umode_t			i_mode;
-	uid_t			i_uid;
-	gid_t			i_gid;
-	const struct inode_operations	*i_op;
-	struct super_block	*i_sb;
+	<span class="n">spinlock_t</span>		<span class="n">i_lock</span><span class="p">;</span>	<span class="cm">/* i_blocks, i_bytes, maybe i_size */</span>
+	<span class="kt">unsigned</span> <span class="kt">int</span>		<span class="n">i_flags</span><span class="p">;</span>
+	<span class="k">struct</span> <span class="n">mutex</span>		<span class="n">i_mutex</span><span class="p">;</span>
 
-	spinlock_t		i_lock;	/* i_blocks, i_bytes, maybe i_size */
-	unsigned int		i_flags;
-	struct mutex		i_mutex;
+	<span class="kt">unsigned</span> <span class="kt">long</span>		<span class="n">i_state</span><span class="p">;</span>
+	<span class="kt">unsigned</span> <span class="kt">long</span>		<span class="n">dirtied_when</span><span class="p">;</span>	<span class="cm">/* jiffies of first dirtying */</span>
 
-	unsigned long		i_state;
-	unsigned long		dirtied_when;	/* jiffies of first dirtying */
+	<span class="k">struct</span> <span class="n">hlist_node</span>	<span class="n">i_hash</span><span class="p">;</span>
+	<span class="k">struct</span> <span class="n">list_head</span>	<span class="n">i_wb_list</span><span class="p">;</span>	<span class="cm">/* backing dev IO list */</span>
+	<span class="k">struct</span> <span class="n">list_head</span>	<span class="n">i_lru</span><span class="p">;</span>		<span class="cm">/* inode LRU list */</span>
+	<span class="k">struct</span> <span class="n">list_head</span>	<span class="n">i_sb_list</span><span class="p">;</span>
+	<span class="k">union</span> <span class="p">{</span>
+		<span class="k">struct</span> <span class="n">list_head</span>	<span class="n">i_dentry</span><span class="p">;</span>
+		<span class="k">struct</span> <span class="n">rcu_head</span>		<span class="n">i_rcu</span><span class="p">;</span>
+	<span class="p">};</span>
+	<span class="kt">unsigned</span> <span class="kt">long</span>		<span class="n">i_ino</span><span class="p">;</span>
+	<span class="n">atomic_t</span>		<span class="n">i_count</span><span class="p">;</span>
+	<span class="kt">unsigned</span> <span class="kt">int</span>		<span class="n">i_nlink</span><span class="p">;</span>
+	<span class="n">dev_t</span>			<span class="n">i_rdev</span><span class="p">;</span>
+	<span class="kt">unsigned</span> <span class="kt">int</span>		<span class="n">i_blkbits</span><span class="p">;</span>
+	<span class="n">u64</span>			<span class="n">i_version</span><span class="p">;</span>
+	<span class="n">loff_t</span>			<span class="n">i_size</span><span class="p">;</span>
+<span class="cp">#ifdef __NEED_I_SIZE_ORDERED
+</span><span class="cp"></span>	<span class="n">seqcount_t</span>		<span class="n">i_size_seqcount</span><span class="p">;</span>
+<span class="cp">#endif
+</span><span class="cp"></span>	<span class="k">struct</span> <span class="n">timespec</span>		<span class="n">i_atime</span><span class="p">;</span>
+	<span class="k">struct</span> <span class="n">timespec</span>		<span class="n">i_mtime</span><span class="p">;</span>
+	<span class="k">struct</span> <span class="n">timespec</span>		<span class="n">i_ctime</span><span class="p">;</span>
+	<span class="n">blkcnt_t</span>		<span class="n">i_blocks</span><span class="p">;</span>
+	<span class="kt">unsigned</span> <span class="kt">short</span>          <span class="n">i_bytes</span><span class="p">;</span>
+	<span class="k">struct</span> <span class="n">rw_semaphore</span>	<span class="n">i_alloc_sem</span><span class="p">;</span>
+	<span class="k">const</span> <span class="k">struct</span> <span class="n">file_operations</span>	<span class="o">*</span><span class="n">i_fop</span><span class="p">;</span>	<span class="cm">/* former -&gt;i_op-&gt;default_file_ops */</span>
+	<span class="k">struct</span> <span class="n">file_lock</span>	<span class="o">*</span><span class="n">i_flock</span><span class="p">;</span>
+	<span class="k">struct</span> <span class="n">address_space</span>	<span class="o">*</span><span class="n">i_mapping</span><span class="p">;</span>
+	<span class="k">struct</span> <span class="n">address_space</span>	<span class="n">i_data</span><span class="p">;</span>
+<span class="cp">#ifdef CONFIG_QUOTA
+</span><span class="cp"></span>	<span class="k">struct</span> <span class="n">dquot</span>		<span class="o">*</span><span class="n">i_dquot</span><span class="p">[</span><span class="n">MAXQUOTAS</span><span class="p">];</span>
+<span class="cp">#endif
+</span><span class="cp"></span>	<span class="k">struct</span> <span class="n">list_head</span>	<span class="n">i_devices</span><span class="p">;</span>
+	<span class="k">union</span> <span class="p">{</span>
+		<span class="k">struct</span> <span class="n">pipe_inode_info</span>	<span class="o">*</span><span class="n">i_pipe</span><span class="p">;</span>
+		<span class="k">struct</span> <span class="n">block_device</span>	<span class="o">*</span><span class="n">i_bdev</span><span class="p">;</span>
+		<span class="k">struct</span> <span class="n">cdev</span>		<span class="o">*</span><span class="n">i_cdev</span><span class="p">;</span>
+	<span class="p">};</span>
 
-	struct hlist_node	i_hash;
-	struct list_head	i_wb_list;	/* backing dev IO list */
-	struct list_head	i_lru;		/* inode LRU list */
-	struct list_head	i_sb_list;
-	union {
-		struct list_head	i_dentry;
-		struct rcu_head		i_rcu;
-	};
-	unsigned long		i_ino;
-	atomic_t		i_count;
-	unsigned int		i_nlink;
-	dev_t			i_rdev;
-	unsigned int		i_blkbits;
-	u64			i_version;
-	loff_t			i_size;
-#ifdef __NEED_I_SIZE_ORDERED
-	seqcount_t		i_size_seqcount;
-#endif
-	struct timespec		i_atime;
-	struct timespec		i_mtime;
-	struct timespec		i_ctime;
-	blkcnt_t		i_blocks;
-	unsigned short          i_bytes;
-	struct rw_semaphore	i_alloc_sem;
-	const struct file_operations	*i_fop;	/* former -&gt;i_op-&gt;default_file_ops */
-	struct file_lock	*i_flock;
-	struct address_space	*i_mapping;
-	struct address_space	i_data;
-#ifdef CONFIG_QUOTA
-	struct dquot		*i_dquot[MAXQUOTAS];
-#endif
-	struct list_head	i_devices;
-	union {
-		struct pipe_inode_info	*i_pipe;
-		struct block_device	*i_bdev;
-		struct cdev		*i_cdev;
-	};
+	<span class="n">__u32</span>			<span class="n">i_generation</span><span class="p">;</span>
 
-	__u32			i_generation;
-
-#ifdef CONFIG_FSNOTIFY
-	__u32			i_fsnotify_mask; /* all events this inode cares about */
-	struct hlist_head	i_fsnotify_marks;
-#endif
-
-#ifdef CONFIG_IMA
-	atomic_t		i_readcount; /* struct files open RO */
-#endif
-	atomic_t		i_writecount;
-#ifdef CONFIG_SECURITY
-	void			*i_security;
-#endif
-#ifdef CONFIG_FS_POSIX_ACL
-	struct posix_acl	*i_acl;
-	struct posix_acl	*i_default_acl;
-#endif
-	void			*i_private; /* fs or device private pointer */
-};
-</code></pre>
-
-<h3 id="索引节点操作">索引节点操作</h3>
-
+<span class="cp">#ifdef CONFIG_FSNOTIFY
+</span><span class="cp"></span>	<span class="n">__u32</span>			<span class="n">i_fsnotify_mask</span><span class="p">;</span> <span class="cm">/* all events this inode cares about */</span>
+	<span class="k">struct</span> <span class="n">hlist_head</span>	<span class="n">i_fsnotify_marks</span><span class="p">;</span>
+<span class="cp">#endif
+</span><span class="cp"></span>
+<span class="cp">#ifdef CONFIG_IMA
+</span><span class="cp"></span>	<span class="n">atomic_t</span>		<span class="n">i_readcount</span><span class="p">;</span> <span class="cm">/* struct files open RO */</span>
+<span class="cp">#endif
+</span><span class="cp"></span>	<span class="n">atomic_t</span>		<span class="n">i_writecount</span><span class="p">;</span>
+<span class="cp">#ifdef CONFIG_SECURITY
+</span><span class="cp"></span>	<span class="kt">void</span>			<span class="o">*</span><span class="n">i_security</span><span class="p">;</span>
+<span class="cp">#endif
+</span><span class="cp">#ifdef CONFIG_FS_POSIX_ACL
+</span><span class="cp"></span>	<span class="k">struct</span> <span class="n">posix_acl</span>	<span class="o">*</span><span class="n">i_acl</span><span class="p">;</span>
+	<span class="k">struct</span> <span class="n">posix_acl</span>	<span class="o">*</span><span class="n">i_default_acl</span><span class="p">;</span>
+<span class="cp">#endif
+</span><span class="cp"></span>	<span class="kt">void</span>			<span class="o">*</span><span class="n">i_private</span><span class="p">;</span> <span class="cm">/* fs or device private pointer */</span>
+<span class="p">};</span>
+</code></pre></div><h3 id="索引节点操作">索引节点操作</h3>
 <p>和超级块一样，也是有一个域用来存放操作相关的函数指针结构体。</p>
-
-<pre><code class="language-c">struct file_operations {
-	struct module *owner;
-	loff_t (*llseek) (struct file *, loff_t, int);
-	ssize_t (*read) (struct file *, char __user *, size_t, loff_t *);
-	ssize_t (*write) (struct file *, const char __user *, size_t, loff_t *);
-	ssize_t (*aio_read) (struct kiocb *, const struct iovec *, unsigned long, loff_t);
-	ssize_t (*aio_write) (struct kiocb *, const struct iovec *, unsigned long, loff_t);
-	int (*readdir) (struct file *, void *, filldir_t);
-	unsigned int (*poll) (struct file *, struct poll_table_struct *);
-	long (*unlocked_ioctl) (struct file *, unsigned int, unsigned long);
-	long (*compat_ioctl) (struct file *, unsigned int, unsigned long);
-	int (*mmap) (struct file *, struct vm_area_struct *);
-	int (*open) (struct inode *, struct file *);
-	int (*flush) (struct file *, fl_owner_t id);
-	int (*release) (struct inode *, struct file *);
-	int (*fsync) (struct file *, int datasync);
-	int (*aio_fsync) (struct kiocb *, int datasync);
-	int (*fasync) (int, struct file *, int);
-	int (*lock) (struct file *, int, struct file_lock *);
-	ssize_t (*sendpage) (struct file *, struct page *, int, size_t, loff_t *, int);
-	unsigned long (*get_unmapped_area)(struct file *, unsigned long, unsigned long, unsigned long, unsigned long);
-	int (*check_flags)(int);
-	int (*flock) (struct file *, int, struct file_lock *);
-	ssize_t (*splice_write)(struct pipe_inode_info *, struct file *, loff_t *, size_t, unsigned int);
-	ssize_t (*splice_read)(struct file *, loff_t *, struct pipe_inode_info *, size_t, unsigned int);
-	int (*setlease)(struct file *, long, struct file_lock **);
-	long (*fallocate)(struct file *file, int mode, loff_t offset,
-			  loff_t len);
-};
-</code></pre>
-
-<h2 id="目录项对象">目录项对象</h2>
-
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="k">struct</span> <span class="n">file_operations</span> <span class="p">{</span>
+	<span class="k">struct</span> <span class="n">module</span> <span class="o">*</span><span class="n">owner</span><span class="p">;</span>
+	<span class="n">loff_t</span> <span class="p">(</span><span class="o">*</span><span class="n">llseek</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="p">,</span> <span class="n">loff_t</span><span class="p">,</span> <span class="kt">int</span><span class="p">);</span>
+	<span class="n">ssize_t</span> <span class="p">(</span><span class="o">*</span><span class="n">read</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="p">,</span> <span class="kt">char</span> <span class="n">__user</span> <span class="o">*</span><span class="p">,</span> <span class="n">size_t</span><span class="p">,</span> <span class="n">loff_t</span> <span class="o">*</span><span class="p">);</span>
+	<span class="n">ssize_t</span> <span class="p">(</span><span class="o">*</span><span class="n">write</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="n">__user</span> <span class="o">*</span><span class="p">,</span> <span class="n">size_t</span><span class="p">,</span> <span class="n">loff_t</span> <span class="o">*</span><span class="p">);</span>
+	<span class="n">ssize_t</span> <span class="p">(</span><span class="o">*</span><span class="n">aio_read</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">kiocb</span> <span class="o">*</span><span class="p">,</span> <span class="k">const</span> <span class="k">struct</span> <span class="n">iovec</span> <span class="o">*</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">long</span><span class="p">,</span> <span class="n">loff_t</span><span class="p">);</span>
+	<span class="n">ssize_t</span> <span class="p">(</span><span class="o">*</span><span class="n">aio_write</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">kiocb</span> <span class="o">*</span><span class="p">,</span> <span class="k">const</span> <span class="k">struct</span> <span class="n">iovec</span> <span class="o">*</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">long</span><span class="p">,</span> <span class="n">loff_t</span><span class="p">);</span>
+	<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">readdir</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="p">,</span> <span class="kt">void</span> <span class="o">*</span><span class="p">,</span> <span class="n">filldir_t</span><span class="p">);</span>
+	<span class="kt">unsigned</span> <span class="nf">int</span> <span class="p">(</span><span class="o">*</span><span class="n">poll</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="p">,</span> <span class="k">struct</span> <span class="n">poll_table_struct</span> <span class="o">*</span><span class="p">);</span>
+	<span class="kt">long</span> <span class="p">(</span><span class="o">*</span><span class="n">unlocked_ioctl</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">int</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">long</span><span class="p">);</span>
+	<span class="kt">long</span> <span class="p">(</span><span class="o">*</span><span class="n">compat_ioctl</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">int</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">long</span><span class="p">);</span>
+	<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">mmap</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="p">,</span> <span class="k">struct</span> <span class="n">vm_area_struct</span> <span class="o">*</span><span class="p">);</span>
+	<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">open</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">inode</span> <span class="o">*</span><span class="p">,</span> <span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="p">);</span>
+	<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">flush</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="p">,</span> <span class="n">fl_owner_t</span> <span class="n">id</span><span class="p">);</span>
+	<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">release</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">inode</span> <span class="o">*</span><span class="p">,</span> <span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="p">);</span>
+	<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">fsync</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="p">,</span> <span class="kt">int</span> <span class="n">datasync</span><span class="p">);</span>
+	<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">aio_fsync</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">kiocb</span> <span class="o">*</span><span class="p">,</span> <span class="kt">int</span> <span class="n">datasync</span><span class="p">);</span>
+	<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">fasync</span><span class="p">)</span> <span class="p">(</span><span class="kt">int</span><span class="p">,</span> <span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="p">,</span> <span class="kt">int</span><span class="p">);</span>
+	<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">lock</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="p">,</span> <span class="kt">int</span><span class="p">,</span> <span class="k">struct</span> <span class="n">file_lock</span> <span class="o">*</span><span class="p">);</span>
+	<span class="n">ssize_t</span> <span class="p">(</span><span class="o">*</span><span class="n">sendpage</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="p">,</span> <span class="k">struct</span> <span class="n">page</span> <span class="o">*</span><span class="p">,</span> <span class="kt">int</span><span class="p">,</span> <span class="n">size_t</span><span class="p">,</span> <span class="n">loff_t</span> <span class="o">*</span><span class="p">,</span> <span class="kt">int</span><span class="p">);</span>
+	<span class="kt">unsigned</span> <span class="nf">long</span> <span class="p">(</span><span class="o">*</span><span class="n">get_unmapped_area</span><span class="p">)(</span><span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">long</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">long</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">long</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">long</span><span class="p">);</span>
+	<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">check_flags</span><span class="p">)(</span><span class="kt">int</span><span class="p">);</span>
+	<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">flock</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="p">,</span> <span class="kt">int</span><span class="p">,</span> <span class="k">struct</span> <span class="n">file_lock</span> <span class="o">*</span><span class="p">);</span>
+	<span class="n">ssize_t</span> <span class="p">(</span><span class="o">*</span><span class="n">splice_write</span><span class="p">)(</span><span class="k">struct</span> <span class="n">pipe_inode_info</span> <span class="o">*</span><span class="p">,</span> <span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="p">,</span> <span class="n">loff_t</span> <span class="o">*</span><span class="p">,</span> <span class="n">size_t</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">int</span><span class="p">);</span>
+	<span class="n">ssize_t</span> <span class="p">(</span><span class="o">*</span><span class="n">splice_read</span><span class="p">)(</span><span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="p">,</span> <span class="n">loff_t</span> <span class="o">*</span><span class="p">,</span> <span class="k">struct</span> <span class="n">pipe_inode_info</span> <span class="o">*</span><span class="p">,</span> <span class="n">size_t</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">int</span><span class="p">);</span>
+	<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">setlease</span><span class="p">)(</span><span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="p">,</span> <span class="kt">long</span><span class="p">,</span> <span class="k">struct</span> <span class="n">file_lock</span> <span class="o">**</span><span class="p">);</span>
+	<span class="kt">long</span> <span class="p">(</span><span class="o">*</span><span class="n">fallocate</span><span class="p">)(</span><span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="n">file</span><span class="p">,</span> <span class="kt">int</span> <span class="n">mode</span><span class="p">,</span> <span class="n">loff_t</span> <span class="n">offset</span><span class="p">,</span>
+			  <span class="n">loff_t</span> <span class="n">len</span><span class="p">);</span>
+<span class="p">};</span>
+</code></pre></div><h2 id="目录项对象">目录项对象</h2>
 <p>VFS 把目录当成文件，所以在 <code>/bin/vi</code> 中， <code>bin</code> 是目录， <code>vi</code> 是文件，每一项都由索引节点表示。虽然都可以用索引节点表示，但系统经常会需要进行目录相关的操作，如路径名查找，需要解析路径中的每一部分。因此为了方便查找，内核提出了目录项的对象来解决这个问题。</p>
-
 <p>每个目录项代表路径中的某个部分，如之前的 <code>/, bin, bi</code> 均为目录项。也可以包含挂载点。</p>
-
 <p>目录项在目录操作时根据需要进行创建。</p>
-
 <p>目录项对象由 <code>dentry</code> 结构体表示。</p>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="k">struct</span> <span class="n">dentry</span> <span class="p">{</span>
+	<span class="cm">/* RCU lookup touched fields */</span>
+	<span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">d_flags</span><span class="p">;</span>		<span class="cm">/* protected by d_lock */</span>
+	<span class="n">seqcount_t</span> <span class="n">d_seq</span><span class="p">;</span>		<span class="cm">/* per dentry seqlock */</span>
+	<span class="k">struct</span> <span class="n">hlist_bl_node</span> <span class="n">d_hash</span><span class="p">;</span>	<span class="cm">/* lookup hash list */</span>
+	<span class="k">struct</span> <span class="n">dentry</span> <span class="o">*</span><span class="n">d_parent</span><span class="p">;</span>	<span class="cm">/* parent directory */</span>
+	<span class="k">struct</span> <span class="n">qstr</span> <span class="n">d_name</span><span class="p">;</span>
+	<span class="k">struct</span> <span class="n">inode</span> <span class="o">*</span><span class="n">d_inode</span><span class="p">;</span>		<span class="cm">/* Where the name belongs to - NULL is
+</span><span class="cm">					 * negative */</span>
+	<span class="kt">unsigned</span> <span class="kt">char</span> <span class="n">d_iname</span><span class="p">[</span><span class="n">DNAME_INLINE_LEN</span><span class="p">];</span>	<span class="cm">/* small names */</span>
 
-<pre><code class="language-c">struct dentry {
-	/* RCU lookup touched fields */
-	unsigned int d_flags;		/* protected by d_lock */
-	seqcount_t d_seq;		/* per dentry seqlock */
-	struct hlist_bl_node d_hash;	/* lookup hash list */
-	struct dentry *d_parent;	/* parent directory */
-	struct qstr d_name;
-	struct inode *d_inode;		/* Where the name belongs to - NULL is
-					 * negative */
-	unsigned char d_iname[DNAME_INLINE_LEN];	/* small names */
+	<span class="cm">/* Ref lookup also touches following */</span>
+	<span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">d_count</span><span class="p">;</span>		<span class="cm">/* protected by d_lock */</span>
+	<span class="n">spinlock_t</span> <span class="n">d_lock</span><span class="p">;</span>		<span class="cm">/* per dentry lock */</span>
+	<span class="k">const</span> <span class="k">struct</span> <span class="n">dentry_operations</span> <span class="o">*</span><span class="n">d_op</span><span class="p">;</span>
+	<span class="k">struct</span> <span class="n">super_block</span> <span class="o">*</span><span class="n">d_sb</span><span class="p">;</span>	<span class="cm">/* The root of the dentry tree */</span>
+	<span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">d_time</span><span class="p">;</span>		<span class="cm">/* used by d_revalidate */</span>
+	<span class="kt">void</span> <span class="o">*</span><span class="n">d_fsdata</span><span class="p">;</span>			<span class="cm">/* fs-specific data */</span>
 
-	/* Ref lookup also touches following */
-	unsigned int d_count;		/* protected by d_lock */
-	spinlock_t d_lock;		/* per dentry lock */
-	const struct dentry_operations *d_op;
-	struct super_block *d_sb;	/* The root of the dentry tree */
-	unsigned long d_time;		/* used by d_revalidate */
-	void *d_fsdata;			/* fs-specific data */
-
-	struct list_head d_lru;		/* LRU list */
-	/*
-	 * d_child and d_rcu can share memory
-	 */
-	union {
-		struct list_head d_child;	/* child of parent list */
-	 	struct rcu_head d_rcu;
-	} d_u;
-	struct list_head d_subdirs;	/* our children */
-	struct list_head d_alias;	/* inode alias list */
-};
-</code></pre>
-
-<p>与前两者不同的是，目录项没有对应的磁盘结构。VFS 根据路径字符串现场创建它，因此它也没有脏以及是否写回标志。</p>
-
+	<span class="k">struct</span> <span class="n">list_head</span> <span class="n">d_lru</span><span class="p">;</span>		<span class="cm">/* LRU list */</span>
+	<span class="cm">/*
+</span><span class="cm">	 * d_child and d_rcu can share memory
+</span><span class="cm">	 */</span>
+	<span class="k">union</span> <span class="p">{</span>
+		<span class="k">struct</span> <span class="n">list_head</span> <span class="n">d_child</span><span class="p">;</span>	<span class="cm">/* child of parent list */</span>
+	 	<span class="k">struct</span> <span class="n">rcu_head</span> <span class="n">d_rcu</span><span class="p">;</span>
+	<span class="p">}</span> <span class="n">d_u</span><span class="p">;</span>
+	<span class="k">struct</span> <span class="n">list_head</span> <span class="n">d_subdirs</span><span class="p">;</span>	<span class="cm">/* our children */</span>
+	<span class="k">struct</span> <span class="n">list_head</span> <span class="n">d_alias</span><span class="p">;</span>	<span class="cm">/* inode alias list */</span>
+<span class="p">};</span>
+</code></pre></div><p>与前两者不同的是，目录项没有对应的磁盘结构。VFS 根据路径字符串现场创建它，因此它也没有脏以及是否写回标志。</p>
 <h3 id="状态">状态</h3>
-
 <ul>
 <li>被使用：有一个有效的 <code>inode</code>, 并表明该对象存在一个或多个使用者 (d_count 不为 0)。</li>
 <li>未被使用：有一个有效的 <code>inode</code>, 并表明该对象不存在使用者 (d_count 为 0)。保留在内存中，以便需要的时候使用。</li>
 <li>负状态：没有有效的 <code>inode</code>, 由于 <code>inode</code> 被删除或目录无效了。但目录项依然存存在，以便快速解析以后的路径查询。</li>
 </ul>
-
 <h3 id="缓存">缓存</h3>
-
 <p>目录项缓存包含三个主要部分：</p>
-
 <ul>
 <li><code>被使用</code> 目目录项链表，该链表通过索引节点的 <code>i_dentry</code> 项进行连接。因为一个给定的索引节点有可能有多个链接，索引就有可能有多个目录项。</li>
 <li><code>最近可能使用</code> 双链表，包含未被使用和负状态的目录项对象。总是从头部插入保持最新，删除时从尾部删除。</li>
 <li>散列表和散列函数，用来快速的将路径解析为相关目录项对象。</li>
 </ul>
-
 <h3 id="目录项操作">目录项操作</h3>
-
-<pre><code class="language-c">struct dentry_operations {
-	int (*d_revalidate)(struct dentry *, struct nameidata *);
-	int (*d_hash)(const struct dentry *, const struct inode *,
-			struct qstr *);
-	int (*d_compare)(const struct dentry *, const struct inode *,
-			const struct dentry *, const struct inode *,
-			unsigned int, const char *, const struct qstr *);
-	int (*d_delete)(const struct dentry *);
-	void (*d_release)(struct dentry *);
-	void (*d_iput)(struct dentry *, struct inode *);
-	char *(*d_dname)(struct dentry *, char *, int);
-	struct vfsmount *(*d_automount)(struct path *);
-	int (*d_manage)(struct dentry *, bool);
-} ____cacheline_aligned;
-</code></pre>
-
-<h3 id="文件对象">文件对象</h3>
-
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="k">struct</span> <span class="n">dentry_operations</span> <span class="p">{</span>
+	<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">d_revalidate</span><span class="p">)(</span><span class="k">struct</span> <span class="n">dentry</span> <span class="o">*</span><span class="p">,</span> <span class="k">struct</span> <span class="n">nameidata</span> <span class="o">*</span><span class="p">);</span>
+	<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">d_hash</span><span class="p">)(</span><span class="k">const</span> <span class="k">struct</span> <span class="n">dentry</span> <span class="o">*</span><span class="p">,</span> <span class="k">const</span> <span class="k">struct</span> <span class="n">inode</span> <span class="o">*</span><span class="p">,</span>
+			<span class="k">struct</span> <span class="n">qstr</span> <span class="o">*</span><span class="p">);</span>
+	<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">d_compare</span><span class="p">)(</span><span class="k">const</span> <span class="k">struct</span> <span class="n">dentry</span> <span class="o">*</span><span class="p">,</span> <span class="k">const</span> <span class="k">struct</span> <span class="n">inode</span> <span class="o">*</span><span class="p">,</span>
+			<span class="k">const</span> <span class="k">struct</span> <span class="n">dentry</span> <span class="o">*</span><span class="p">,</span> <span class="k">const</span> <span class="k">struct</span> <span class="n">inode</span> <span class="o">*</span><span class="p">,</span>
+			<span class="kt">unsigned</span> <span class="kt">int</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="p">,</span> <span class="k">const</span> <span class="k">struct</span> <span class="n">qstr</span> <span class="o">*</span><span class="p">);</span>
+	<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">d_delete</span><span class="p">)(</span><span class="k">const</span> <span class="k">struct</span> <span class="n">dentry</span> <span class="o">*</span><span class="p">);</span>
+	<span class="kt">void</span> <span class="p">(</span><span class="o">*</span><span class="n">d_release</span><span class="p">)(</span><span class="k">struct</span> <span class="n">dentry</span> <span class="o">*</span><span class="p">);</span>
+	<span class="kt">void</span> <span class="p">(</span><span class="o">*</span><span class="n">d_iput</span><span class="p">)(</span><span class="k">struct</span> <span class="n">dentry</span> <span class="o">*</span><span class="p">,</span> <span class="k">struct</span> <span class="n">inode</span> <span class="o">*</span><span class="p">);</span>
+	<span class="kt">char</span> <span class="o">*</span><span class="p">(</span><span class="o">*</span><span class="n">d_dname</span><span class="p">)(</span><span class="k">struct</span> <span class="n">dentry</span> <span class="o">*</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="p">,</span> <span class="kt">int</span><span class="p">);</span>
+	<span class="k">struct</span> <span class="n">vfsmount</span> <span class="o">*</span><span class="p">(</span><span class="o">*</span><span class="n">d_automount</span><span class="p">)(</span><span class="k">struct</span> <span class="n">path</span> <span class="o">*</span><span class="p">);</span>
+	<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">d_manage</span><span class="p">)(</span><span class="k">struct</span> <span class="n">dentry</span> <span class="o">*</span><span class="p">,</span> <span class="kt">bool</span><span class="p">);</span>
+<span class="p">}</span> <span class="n">____cacheline_aligned</span><span class="p">;</span>
+</code></pre></div><h3 id="文件对象">文件对象</h3>
 <p>是进程打开的文件在内存中的表示。多个进程打开一个文件会存在对个文件对象，但文件对象又反过来指向目录项，也就是说一个文件在内存中可以村子存在多个文件对象，但只有唯一的索引节点对象和目录项对象。</p>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="k">struct</span> <span class="n">file</span> <span class="p">{</span>
+	<span class="cm">/*
+</span><span class="cm">	 * fu_list becomes invalid after file_free is called and queued via
+</span><span class="cm">	 * fu_rcuhead for RCU freeing
+</span><span class="cm">	 */</span>
+	<span class="k">union</span> <span class="p">{</span>
+		<span class="k">struct</span> <span class="n">list_head</span>	<span class="n">fu_list</span><span class="p">;</span>
+		<span class="k">struct</span> <span class="n">rcu_head</span> 	<span class="n">fu_rcuhead</span><span class="p">;</span>
+	<span class="p">}</span> <span class="n">f_u</span><span class="p">;</span>
+	<span class="k">struct</span> <span class="n">path</span>		<span class="n">f_path</span><span class="p">;</span>
+<span class="cp">#define f_dentry	f_path.dentry
+</span><span class="cp">#define f_vfsmnt	f_path.mnt
+</span><span class="cp"></span>	<span class="k">const</span> <span class="k">struct</span> <span class="n">file_operations</span>	<span class="o">*</span><span class="n">f_op</span><span class="p">;</span>
+	<span class="n">spinlock_t</span>		<span class="n">f_lock</span><span class="p">;</span>  <span class="cm">/* f_ep_links, f_flags, no IRQ */</span>
+<span class="cp">#ifdef CONFIG_SMP
+</span><span class="cp"></span>	<span class="kt">int</span>			<span class="n">f_sb_list_cpu</span><span class="p">;</span>
+<span class="cp">#endif
+</span><span class="cp"></span>	<span class="n">atomic_long_t</span>		<span class="n">f_count</span><span class="p">;</span>
+	<span class="kt">unsigned</span> <span class="kt">int</span> 		<span class="n">f_flags</span><span class="p">;</span>
+	<span class="n">fmode_t</span>			<span class="n">f_mode</span><span class="p">;</span>
+	<span class="n">loff_t</span>			<span class="n">f_pos</span><span class="p">;</span>
+	<span class="k">struct</span> <span class="n">fown_struct</span>	<span class="n">f_owner</span><span class="p">;</span>
+	<span class="k">const</span> <span class="k">struct</span> <span class="n">cred</span>	<span class="o">*</span><span class="n">f_cred</span><span class="p">;</span>
+	<span class="k">struct</span> <span class="n">file_ra_state</span>	<span class="n">f_ra</span><span class="p">;</span>
 
-<pre><code class="language-c">struct file {
-	/*
-	 * fu_list becomes invalid after file_free is called and queued via
-	 * fu_rcuhead for RCU freeing
-	 */
-	union {
-		struct list_head	fu_list;
-		struct rcu_head 	fu_rcuhead;
-	} f_u;
-	struct path		f_path;
-#define f_dentry	f_path.dentry
-#define f_vfsmnt	f_path.mnt
-	const struct file_operations	*f_op;
-	spinlock_t		f_lock;  /* f_ep_links, f_flags, no IRQ */
-#ifdef CONFIG_SMP
-	int			f_sb_list_cpu;
-#endif
-	atomic_long_t		f_count;
-	unsigned int 		f_flags;
-	fmode_t			f_mode;
-	loff_t			f_pos;
-	struct fown_struct	f_owner;
-	const struct cred	*f_cred;
-	struct file_ra_state	f_ra;
+	<span class="n">u64</span>			<span class="n">f_version</span><span class="p">;</span>
+<span class="cp">#ifdef CONFIG_SECURITY
+</span><span class="cp"></span>	<span class="kt">void</span>			<span class="o">*</span><span class="n">f_security</span><span class="p">;</span>
+<span class="cp">#endif
+</span><span class="cp"></span>	<span class="cm">/* needed for tty driver, and maybe others */</span>
+	<span class="kt">void</span>			<span class="o">*</span><span class="n">private_data</span><span class="p">;</span>
 
-	u64			f_version;
-#ifdef CONFIG_SECURITY
-	void			*f_security;
-#endif
-	/* needed for tty driver, and maybe others */
-	void			*private_data;
-
-#ifdef CONFIG_EPOLL
-	/* Used by fs/eventpoll.c to link all the hooks to this file */
-	struct list_head	f_ep_links;
-#endif /* #ifdef CONFIG_EPOLL */
-	struct address_space	*f_mapping;
-#ifdef CONFIG_DEBUG_WRITECOUNT
-	unsigned long f_mnt_write_state;
-#endif
-};
-</code></pre>
-
-<p>和目录项一样，在磁盘中也是不存在的。文件对象经过目录项，最后通过索引节点记录文件是否为脏。</p>
-
+<span class="cp">#ifdef CONFIG_EPOLL
+</span><span class="cp"></span>	<span class="cm">/* Used by fs/eventpoll.c to link all the hooks to this file */</span>
+	<span class="k">struct</span> <span class="n">list_head</span>	<span class="n">f_ep_links</span><span class="p">;</span>
+<span class="cp">#endif </span><span class="cm">/* #ifdef CONFIG_EPOLL */</span><span class="cp">
+</span><span class="cp"></span>	<span class="k">struct</span> <span class="n">address_space</span>	<span class="o">*</span><span class="n">f_mapping</span><span class="p">;</span>
+<span class="cp">#ifdef CONFIG_DEBUG_WRITECOUNT
+</span><span class="cp"></span>	<span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">f_mnt_write_state</span><span class="p">;</span>
+<span class="cp">#endif
+</span><span class="cp"></span><span class="p">};</span>
+</code></pre></div><p>和目录项一样，在磁盘中也是不存在的。文件对象经过目录项，最后通过索引节点记录文件是否为脏。</p>
 <h3 id="文件操作">文件操作</h3>
-
-<pre><code class="language-c">struct file_operations {
-	struct module *owner;
-	loff_t (*llseek) (struct file *, loff_t, int);
-	ssize_t (*read) (struct file *, char __user *, size_t, loff_t *);
-	ssize_t (*write) (struct file *, const char __user *, size_t, loff_t *);
-	ssize_t (*aio_read) (struct kiocb *, const struct iovec *, unsigned long, loff_t);
-	ssize_t (*aio_write) (struct kiocb *, const struct iovec *, unsigned long, loff_t);
-	int (*readdir) (struct file *, void *, filldir_t);
-	unsigned int (*poll) (struct file *, struct poll_table_struct *);
-	long (*unlocked_ioctl) (struct file *, unsigned int, unsigned long);
-	long (*compat_ioctl) (struct file *, unsigned int, unsigned long);
-	int (*mmap) (struct file *, struct vm_area_struct *);
-	int (*open) (struct inode *, struct file *);
-	int (*flush) (struct file *, fl_owner_t id);
-	int (*release) (struct inode *, struct file *);
-	int (*fsync) (struct file *, int datasync);
-	int (*aio_fsync) (struct kiocb *, int datasync);
-	int (*fasync) (int, struct file *, int);
-	int (*lock) (struct file *, int, struct file_lock *);
-	ssize_t (*sendpage) (struct file *, struct page *, int, size_t, loff_t *, int);
-	unsigned long (*get_unmapped_area)(struct file *, unsigned long, unsigned long, unsigned long, unsigned long);
-	int (*check_flags)(int);
-	int (*flock) (struct file *, int, struct file_lock *);
-	ssize_t (*splice_write)(struct pipe_inode_info *, struct file *, loff_t *, size_t, unsigned int);
-	ssize_t (*splice_read)(struct file *, loff_t *, struct pipe_inode_info *, size_t, unsigned int);
-	int (*setlease)(struct file *, long, struct file_lock **);
-	long (*fallocate)(struct file *file, int mode, loff_t offset,
-			  loff_t len);
-};
-</code></pre>
-
-<h2 id="和文件系统相关的数据结构">和文件系统相关的数据结构</h2>
-
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="k">struct</span> <span class="n">file_operations</span> <span class="p">{</span>
+	<span class="k">struct</span> <span class="n">module</span> <span class="o">*</span><span class="n">owner</span><span class="p">;</span>
+	<span class="n">loff_t</span> <span class="p">(</span><span class="o">*</span><span class="n">llseek</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="p">,</span> <span class="n">loff_t</span><span class="p">,</span> <span class="kt">int</span><span class="p">);</span>
+	<span class="n">ssize_t</span> <span class="p">(</span><span class="o">*</span><span class="n">read</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="p">,</span> <span class="kt">char</span> <span class="n">__user</span> <span class="o">*</span><span class="p">,</span> <span class="n">size_t</span><span class="p">,</span> <span class="n">loff_t</span> <span class="o">*</span><span class="p">);</span>
+	<span class="n">ssize_t</span> <span class="p">(</span><span class="o">*</span><span class="n">write</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="n">__user</span> <span class="o">*</span><span class="p">,</span> <span class="n">size_t</span><span class="p">,</span> <span class="n">loff_t</span> <span class="o">*</span><span class="p">);</span>
+	<span class="n">ssize_t</span> <span class="p">(</span><span class="o">*</span><span class="n">aio_read</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">kiocb</span> <span class="o">*</span><span class="p">,</span> <span class="k">const</span> <span class="k">struct</span> <span class="n">iovec</span> <span class="o">*</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">long</span><span class="p">,</span> <span class="n">loff_t</span><span class="p">);</span>
+	<span class="n">ssize_t</span> <span class="p">(</span><span class="o">*</span><span class="n">aio_write</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">kiocb</span> <span class="o">*</span><span class="p">,</span> <span class="k">const</span> <span class="k">struct</span> <span class="n">iovec</span> <span class="o">*</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">long</span><span class="p">,</span> <span class="n">loff_t</span><span class="p">);</span>
+	<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">readdir</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="p">,</span> <span class="kt">void</span> <span class="o">*</span><span class="p">,</span> <span class="n">filldir_t</span><span class="p">);</span>
+	<span class="kt">unsigned</span> <span class="nf">int</span> <span class="p">(</span><span class="o">*</span><span class="n">poll</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="p">,</span> <span class="k">struct</span> <span class="n">poll_table_struct</span> <span class="o">*</span><span class="p">);</span>
+	<span class="kt">long</span> <span class="p">(</span><span class="o">*</span><span class="n">unlocked_ioctl</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">int</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">long</span><span class="p">);</span>
+	<span class="kt">long</span> <span class="p">(</span><span class="o">*</span><span class="n">compat_ioctl</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">int</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">long</span><span class="p">);</span>
+	<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">mmap</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="p">,</span> <span class="k">struct</span> <span class="n">vm_area_struct</span> <span class="o">*</span><span class="p">);</span>
+	<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">open</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">inode</span> <span class="o">*</span><span class="p">,</span> <span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="p">);</span>
+	<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">flush</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="p">,</span> <span class="n">fl_owner_t</span> <span class="n">id</span><span class="p">);</span>
+	<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">release</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">inode</span> <span class="o">*</span><span class="p">,</span> <span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="p">);</span>
+	<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">fsync</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="p">,</span> <span class="kt">int</span> <span class="n">datasync</span><span class="p">);</span>
+	<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">aio_fsync</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">kiocb</span> <span class="o">*</span><span class="p">,</span> <span class="kt">int</span> <span class="n">datasync</span><span class="p">);</span>
+	<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">fasync</span><span class="p">)</span> <span class="p">(</span><span class="kt">int</span><span class="p">,</span> <span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="p">,</span> <span class="kt">int</span><span class="p">);</span>
+	<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">lock</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="p">,</span> <span class="kt">int</span><span class="p">,</span> <span class="k">struct</span> <span class="n">file_lock</span> <span class="o">*</span><span class="p">);</span>
+	<span class="n">ssize_t</span> <span class="p">(</span><span class="o">*</span><span class="n">sendpage</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="p">,</span> <span class="k">struct</span> <span class="n">page</span> <span class="o">*</span><span class="p">,</span> <span class="kt">int</span><span class="p">,</span> <span class="n">size_t</span><span class="p">,</span> <span class="n">loff_t</span> <span class="o">*</span><span class="p">,</span> <span class="kt">int</span><span class="p">);</span>
+	<span class="kt">unsigned</span> <span class="nf">long</span> <span class="p">(</span><span class="o">*</span><span class="n">get_unmapped_area</span><span class="p">)(</span><span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">long</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">long</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">long</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">long</span><span class="p">);</span>
+	<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">check_flags</span><span class="p">)(</span><span class="kt">int</span><span class="p">);</span>
+	<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">flock</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="p">,</span> <span class="kt">int</span><span class="p">,</span> <span class="k">struct</span> <span class="n">file_lock</span> <span class="o">*</span><span class="p">);</span>
+	<span class="n">ssize_t</span> <span class="p">(</span><span class="o">*</span><span class="n">splice_write</span><span class="p">)(</span><span class="k">struct</span> <span class="n">pipe_inode_info</span> <span class="o">*</span><span class="p">,</span> <span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="p">,</span> <span class="n">loff_t</span> <span class="o">*</span><span class="p">,</span> <span class="n">size_t</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">int</span><span class="p">);</span>
+	<span class="n">ssize_t</span> <span class="p">(</span><span class="o">*</span><span class="n">splice_read</span><span class="p">)(</span><span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="p">,</span> <span class="n">loff_t</span> <span class="o">*</span><span class="p">,</span> <span class="k">struct</span> <span class="n">pipe_inode_info</span> <span class="o">*</span><span class="p">,</span> <span class="n">size_t</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">int</span><span class="p">);</span>
+	<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">setlease</span><span class="p">)(</span><span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="p">,</span> <span class="kt">long</span><span class="p">,</span> <span class="k">struct</span> <span class="n">file_lock</span> <span class="o">**</span><span class="p">);</span>
+	<span class="kt">long</span> <span class="p">(</span><span class="o">*</span><span class="n">fallocate</span><span class="p">)(</span><span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="n">file</span><span class="p">,</span> <span class="kt">int</span> <span class="n">mode</span><span class="p">,</span> <span class="n">loff_t</span> <span class="n">offset</span><span class="p">,</span>
+			  <span class="n">loff_t</span> <span class="n">len</span><span class="p">);</span>
+<span class="p">};</span>
+</code></pre></div><h2 id="和文件系统相关的数据结构">和文件系统相关的数据结构</h2>
 <p>file_system_type : 用来描述不同的文件系统类型</p>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="k">struct</span> <span class="n">file_system_type</span> <span class="p">{</span>
+	<span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">name</span><span class="p">;</span>
+	<span class="kt">int</span> <span class="n">fs_flags</span><span class="p">;</span>
+	<span class="k">struct</span> <span class="n">dentry</span> <span class="o">*</span><span class="p">(</span><span class="o">*</span><span class="n">mount</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">file_system_type</span> <span class="o">*</span><span class="p">,</span> <span class="kt">int</span><span class="p">,</span>
+		       <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="p">,</span> <span class="kt">void</span> <span class="o">*</span><span class="p">);</span>
+	<span class="kt">void</span> <span class="p">(</span><span class="o">*</span><span class="n">kill_sb</span><span class="p">)</span> <span class="p">(</span><span class="k">struct</span> <span class="n">super_block</span> <span class="o">*</span><span class="p">);</span>
+	<span class="k">struct</span> <span class="n">module</span> <span class="o">*</span><span class="n">owner</span><span class="p">;</span>
+	<span class="k">struct</span> <span class="n">file_system_type</span> <span class="o">*</span> <span class="n">next</span><span class="p">;</span>
+	<span class="k">struct</span> <span class="n">list_head</span> <span class="n">fs_supers</span><span class="p">;</span>
 
-<pre><code class="language-c">struct file_system_type {
-	const char *name;
-	int fs_flags;
-	struct dentry *(*mount) (struct file_system_type *, int,
-		       const char *, void *);
-	void (*kill_sb) (struct super_block *);
-	struct module *owner;
-	struct file_system_type * next;
-	struct list_head fs_supers;
+	<span class="k">struct</span> <span class="n">lock_class_key</span> <span class="n">s_lock_key</span><span class="p">;</span>
+	<span class="k">struct</span> <span class="n">lock_class_key</span> <span class="n">s_umount_key</span><span class="p">;</span>
+	<span class="k">struct</span> <span class="n">lock_class_key</span> <span class="n">s_vfs_rename_key</span><span class="p">;</span>
 
-	struct lock_class_key s_lock_key;
-	struct lock_class_key s_umount_key;
-	struct lock_class_key s_vfs_rename_key;
-
-	struct lock_class_key i_lock_key;
-	struct lock_class_key i_mutex_key;
-	struct lock_class_key i_mutex_dir_key;
-	struct lock_class_key i_alloc_sem_key;
-};
-</code></pre>
-
-<p>vfsmount : 表示一个装载点</p>
-
-<pre><code class="language-c">struct vfsmount {
-	struct list_head mnt_hash;
-	struct vfsmount *mnt_parent;	/* fs we are mounted on */
-	struct dentry *mnt_mountpoint;	/* dentry of mountpoint */
-	struct dentry *mnt_root;	/* root of the mounted tree */
-	struct super_block *mnt_sb;	/* pointer to superblock */
-#ifdef CONFIG_SMP
-	struct mnt_pcp __percpu *mnt_pcp;
-	atomic_t mnt_longterm;		/* how many of the refs are longterm */
-#else
-	int mnt_count;
-	int mnt_writers;
-#endif
-	struct list_head mnt_mounts;	/* list of children, anchored here */
-	struct list_head mnt_child;	/* and going through their mnt_child */
-	int mnt_flags;
-	/* 4 bytes hole on 64bits arches without fsnotify */
-#ifdef CONFIG_FSNOTIFY
-	__u32 mnt_fsnotify_mask;
-	struct hlist_head mnt_fsnotify_marks;
-#endif
-	const char *mnt_devname;	/* Name of device e.g. /dev/dsk/hda1 */
-	struct list_head mnt_list;
-	struct list_head mnt_expire;	/* link in fs-specific expiry list */
-	struct list_head mnt_share;	/* circular list of shared mounts */
-	struct list_head mnt_slave_list;/* list of slave mounts */
-	struct list_head mnt_slave;	/* slave list entry */
-	struct vfsmount *mnt_master;	/* slave is on master-&gt;mnt_slave_list */
-	struct mnt_namespace *mnt_ns;	/* containing namespace */
-	int mnt_id;			/* mount identifier */
-	int mnt_group_id;		/* peer group identifier */
-	int mnt_expiry_mark;		/* true if marked for expiry */
-	int mnt_pinned;
-	int mnt_ghosts;
-};
-</code></pre>
-
-<h2 id="与进程相关的数据结构">与进程相关的数据结构</h2>
-
+	<span class="k">struct</span> <span class="n">lock_class_key</span> <span class="n">i_lock_key</span><span class="p">;</span>
+	<span class="k">struct</span> <span class="n">lock_class_key</span> <span class="n">i_mutex_key</span><span class="p">;</span>
+	<span class="k">struct</span> <span class="n">lock_class_key</span> <span class="n">i_mutex_dir_key</span><span class="p">;</span>
+	<span class="k">struct</span> <span class="n">lock_class_key</span> <span class="n">i_alloc_sem_key</span><span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div><p>vfsmount : 表示一个装载点</p>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="k">struct</span> <span class="n">vfsmount</span> <span class="p">{</span>
+	<span class="k">struct</span> <span class="n">list_head</span> <span class="n">mnt_hash</span><span class="p">;</span>
+	<span class="k">struct</span> <span class="n">vfsmount</span> <span class="o">*</span><span class="n">mnt_parent</span><span class="p">;</span>	<span class="cm">/* fs we are mounted on */</span>
+	<span class="k">struct</span> <span class="n">dentry</span> <span class="o">*</span><span class="n">mnt_mountpoint</span><span class="p">;</span>	<span class="cm">/* dentry of mountpoint */</span>
+	<span class="k">struct</span> <span class="n">dentry</span> <span class="o">*</span><span class="n">mnt_root</span><span class="p">;</span>	<span class="cm">/* root of the mounted tree */</span>
+	<span class="k">struct</span> <span class="n">super_block</span> <span class="o">*</span><span class="n">mnt_sb</span><span class="p">;</span>	<span class="cm">/* pointer to superblock */</span>
+<span class="cp">#ifdef CONFIG_SMP
+</span><span class="cp"></span>	<span class="k">struct</span> <span class="n">mnt_pcp</span> <span class="n">__percpu</span> <span class="o">*</span><span class="n">mnt_pcp</span><span class="p">;</span>
+	<span class="n">atomic_t</span> <span class="n">mnt_longterm</span><span class="p">;</span>		<span class="cm">/* how many of the refs are longterm */</span>
+<span class="cp">#else
+</span><span class="cp"></span>	<span class="kt">int</span> <span class="n">mnt_count</span><span class="p">;</span>
+	<span class="kt">int</span> <span class="n">mnt_writers</span><span class="p">;</span>
+<span class="cp">#endif
+</span><span class="cp"></span>	<span class="k">struct</span> <span class="n">list_head</span> <span class="n">mnt_mounts</span><span class="p">;</span>	<span class="cm">/* list of children, anchored here */</span>
+	<span class="k">struct</span> <span class="n">list_head</span> <span class="n">mnt_child</span><span class="p">;</span>	<span class="cm">/* and going through their mnt_child */</span>
+	<span class="kt">int</span> <span class="n">mnt_flags</span><span class="p">;</span>
+	<span class="cm">/* 4 bytes hole on 64bits arches without fsnotify */</span>
+<span class="cp">#ifdef CONFIG_FSNOTIFY
+</span><span class="cp"></span>	<span class="n">__u32</span> <span class="n">mnt_fsnotify_mask</span><span class="p">;</span>
+	<span class="k">struct</span> <span class="n">hlist_head</span> <span class="n">mnt_fsnotify_marks</span><span class="p">;</span>
+<span class="cp">#endif
+</span><span class="cp"></span>	<span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">mnt_devname</span><span class="p">;</span>	<span class="cm">/* Name of device e.g. /dev/dsk/hda1 */</span>
+	<span class="k">struct</span> <span class="n">list_head</span> <span class="n">mnt_list</span><span class="p">;</span>
+	<span class="k">struct</span> <span class="n">list_head</span> <span class="n">mnt_expire</span><span class="p">;</span>	<span class="cm">/* link in fs-specific expiry list */</span>
+	<span class="k">struct</span> <span class="n">list_head</span> <span class="n">mnt_share</span><span class="p">;</span>	<span class="cm">/* circular list of shared mounts */</span>
+	<span class="k">struct</span> <span class="n">list_head</span> <span class="n">mnt_slave_list</span><span class="p">;</span><span class="cm">/* list of slave mounts */</span>
+	<span class="k">struct</span> <span class="n">list_head</span> <span class="n">mnt_slave</span><span class="p">;</span>	<span class="cm">/* slave list entry */</span>
+	<span class="k">struct</span> <span class="n">vfsmount</span> <span class="o">*</span><span class="n">mnt_master</span><span class="p">;</span>	<span class="cm">/* slave is on master-&gt;mnt_slave_list */</span>
+	<span class="k">struct</span> <span class="n">mnt_namespace</span> <span class="o">*</span><span class="n">mnt_ns</span><span class="p">;</span>	<span class="cm">/* containing namespace */</span>
+	<span class="kt">int</span> <span class="n">mnt_id</span><span class="p">;</span>			<span class="cm">/* mount identifier */</span>
+	<span class="kt">int</span> <span class="n">mnt_group_id</span><span class="p">;</span>		<span class="cm">/* peer group identifier */</span>
+	<span class="kt">int</span> <span class="n">mnt_expiry_mark</span><span class="p">;</span>		<span class="cm">/* true if marked for expiry */</span>
+	<span class="kt">int</span> <span class="n">mnt_pinned</span><span class="p">;</span>
+	<span class="kt">int</span> <span class="n">mnt_ghosts</span><span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div><h2 id="与进程相关的数据结构">与进程相关的数据结构</h2>
 <p>files_struct : 包含进程打开的所有文件信息</p>
-
-<pre><code class="language-c">struct files_struct {
-  /*
-   * read mostly part
-   */
-	atomic_t count;
-	struct fdtable __rcu *fdt;
-	struct fdtable fdtab;
-  /*
-   * written part on a separate cache line in SMP
-   */
-	spinlock_t file_lock ____cacheline_aligned_in_smp;
-	int next_fd;
-	struct embedded_fd_set close_on_exec_init;
-	struct embedded_fd_set open_fds_init;
-	struct file __rcu * fd_array[NR_OPEN_DEFAULT];
-};
-</code></pre>
-
-<p>fs_struct : 描述进程和文件系统相关的信息</p>
-
-<pre><code class="language-c">struct fs_struct {
-	int users;
-	spinlock_t lock;
-	seqcount_t seq;
-	int umask;
-	int in_exec;
-	struct path root, pwd;
-};
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="k">struct</span> <span class="n">files_struct</span> <span class="p">{</span>
+  <span class="cm">/*
+</span><span class="cm">   * read mostly part
+</span><span class="cm">   */</span>
+	<span class="n">atomic_t</span> <span class="n">count</span><span class="p">;</span>
+	<span class="k">struct</span> <span class="n">fdtable</span> <span class="n">__rcu</span> <span class="o">*</span><span class="n">fdt</span><span class="p">;</span>
+	<span class="k">struct</span> <span class="n">fdtable</span> <span class="n">fdtab</span><span class="p">;</span>
+  <span class="cm">/*
+</span><span class="cm">   * written part on a separate cache line in SMP
+</span><span class="cm">   */</span>
+	<span class="n">spinlock_t</span> <span class="n">file_lock</span> <span class="n">____cacheline_aligned_in_smp</span><span class="p">;</span>
+	<span class="kt">int</span> <span class="n">next_fd</span><span class="p">;</span>
+	<span class="k">struct</span> <span class="n">embedded_fd_set</span> <span class="n">close_on_exec_init</span><span class="p">;</span>
+	<span class="k">struct</span> <span class="n">embedded_fd_set</span> <span class="n">open_fds_init</span><span class="p">;</span>
+	<span class="k">struct</span> <span class="n">file</span> <span class="n">__rcu</span> <span class="o">*</span> <span class="n">fd_array</span><span class="p">[</span><span class="n">NR_OPEN_DEFAULT</span><span class="p">];</span>
+<span class="p">};</span>
+</code></pre></div><p>fs_struct : 描述进程和文件系统相关的信息</p>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="k">struct</span> <span class="n">fs_struct</span> <span class="p">{</span>
+	<span class="kt">int</span> <span class="n">users</span><span class="p">;</span>
+	<span class="n">spinlock_t</span> <span class="n">lock</span><span class="p">;</span>
+	<span class="n">seqcount_t</span> <span class="n">seq</span><span class="p">;</span>
+	<span class="kt">int</span> <span class="n">umask</span><span class="p">;</span>
+	<span class="kt">int</span> <span class="n">in_exec</span><span class="p">;</span>
+	<span class="k">struct</span> <span class="n">path</span> <span class="n">root</span><span class="p">,</span> <span class="n">pwd</span><span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div>
     
 	</div>
   <footer class="article-footer clearfix">
@@ -669,6 +606,8 @@ sb-&gt;s_op-&gt;write(sb);
     
     <li><a href="/categories/%e5%86%85%e5%ad%98%e7%ae%a1%e7%90%86" title="内存管理">内存管理<sup>1</sup></a></li>
     
+    <li><a href="/categories/%e5%86%85%e6%a0%b8%e5%ae%9e%e9%aa%8c" title="内核实验">内核实验<sup>1</sup></a></li>
+    
     <li><a href="/categories/%e5%91%bd%e4%bb%a4%e8%a1%8c%e8%89%ba%e6%9c%af" title="命令行艺术">命令行艺术<sup>3</sup></a></li>
     
     <li><a href="/categories/%e5%ad%a6%e4%b9%a0%e7%ac%94%e8%ae%b0" title="学习笔记">学习笔记<sup>13</sup></a></li>
@@ -694,6 +633,8 @@ sb-&gt;s_op-&gt;write(sb);
 	<p class="asidetitle">标签</p>
 		<ul class="clearfix">
       
+			<li><a href="/tags/bochs" title="bochs">bochs<sup>1</sup></a></li>
+      
 			<li><a href="/tags/c&#43;&#43;" title="c&#43;&#43;">c&#43;&#43;<sup>10</sup></a></li>
       
 			<li><a href="/tags/command" title="command">command<sup>3</sup></a></li>
@@ -708,9 +649,9 @@ sb-&gt;s_op-&gt;write(sb);
       
 			<li><a href="/tags/jemalloc" title="jemalloc">jemalloc<sup>1</sup></a></li>
       
-			<li><a href="/tags/kernel" title="kernel">kernel<sup>7</sup></a></li>
+			<li><a href="/tags/kernel" title="kernel">kernel<sup>8</sup></a></li>
       
-			<li><a href="/tags/linux" title="linux">linux<sup>12</sup></a></li>
+			<li><a href="/tags/linux" title="linux">linux<sup>13</sup></a></li>
       
 			<li><a href="/tags/linux%e5%86%85%e6%a0%b8" title="linux内核">linux内核<sup>1</sup></a></li>
       
@@ -772,6 +713,11 @@ sb-&gt;s_op-&gt;write(sb);
       
       
       <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2020-04">2020年04月</a><span class="archive-list-count">1</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
         <a class="archive-list-link" href="/post/#2019-09">2019年09月</a><span class="archive-list-count">1</span>
       </li>
       
@@ -825,6 +771,8 @@ sb-&gt;s_op-&gt;write(sb);
 <div class="tagcloudlist">
   <p class="asidetitle">标签云</p>
   <div class="tagcloudlist clearfix">
+    
+    <a href="/tags/bochs" style="font-size: 12px;">bochs</a>
     
     <a href="/tags/c&#43;&#43;" style="font-size: 12px;">c&#43;&#43;</a>
     
@@ -924,7 +872,7 @@ sb-&gt;s_op-&gt;write(sb);
     
     
   </div>
-  <p class="copyright">Powered by <a href="http://gohugo.io" target="_blank" title="hugo">hugo</a> and Theme by <a href="https://github.com/coderzh/hugo-pacman-theme" target="_blank" title="hugo-pacman-theme">hugo-pacman-theme</a> © 2019
+  <p class="copyright">Powered by <a href="http://gohugo.io" target="_blank" title="hugo">hugo</a> and Theme by <a href="https://github.com/coderzh/hugo-pacman-theme" target="_blank" title="hugo-pacman-theme">hugo-pacman-theme</a> © 2020
     
     <a href="/" title="北极狼徒">北极狼徒</a>
     

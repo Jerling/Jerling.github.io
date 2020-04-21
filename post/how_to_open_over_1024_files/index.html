@@ -78,63 +78,45 @@
 		<div class="toc-article">
 			<strong class="toc-title">文章目录</strong>
       <nav id="TableOfContents">
-<ul>
-<li>
-<ul>
-<li><a href="#问题来源">问题来源</a></li>
-<li><a href="#解决办法">解决办法</a>
-<ul>
-<li><a href="#临时方案">临时方案</a></li>
-<li><a href="#永久方案">永久方案</a></li>
-</ul></li>
-<li><a href="#总结">总结</a></li>
-</ul></li>
-</ul>
+  <ul>
+    <li><a href="#问题来源">问题来源</a></li>
+    <li><a href="#解决办法">解决办法</a>
+      <ul>
+        <li><a href="#临时方案">临时方案</a></li>
+        <li><a href="#永久方案">永久方案</a></li>
+      </ul>
+    </li>
+    <li><a href="#总结">总结</a></li>
+  </ul>
 </nav>
 		</div>
     
-    
-
-<h2 id="问题来源">问题来源</h2>
-
+    <h2 id="问题来源">问题来源</h2>
 <p>Linux 系统默认能打开的文件个数上限是 1024 个，可通过  <code>limits -n</code> 查看，但实际上系统可打开的文件个数远超过这个限制，通过 <code>cat /proc/sys/fs/file-max</code> 可以看到，在我的 64 位机器上这个数为 <code>9223372036854775807</code> 。</p>
-
 <h2 id="解决办法">解决办法</h2>
-
 <p>针对这种问题，有两种解决办法，一种是临时解决方案，另一种是永久性的解决方案。</p>
-
 <h3 id="临时方案">临时方案</h3>
-
 <p>临时方案是通过修改当前终端的限制来解决，这种方案仅限于当前终端，退出之后恢复系统默认，不推荐此方案：</p>
-
-<pre><code class="language-bash">ulimits -n 2048
-</code></pre>
-
-<h3 id="永久方案">永久方案</h3>
-
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">ulimits -n <span class="m">2048</span>
+</code></pre></div><h3 id="永久方案">永久方案</h3>
 <p>永久方案通过修改配置文件，使得系统启动时读取配置文件来设置默认的描述符个数。</p>
-
 <ol>
-<li><p>在 <code>/etc/security/limits.conf</code> 文件末添加以下两行：</p>
-
-<pre><code class="language-bash">​   * soft nofile 655360
-　 * hard nofile 655360
-</code></pre>
-
-<p>命令格式可以参考文件中例子，第一个字段表示域（如特定用户、用户组等），第二个字段表示类型（soft 为软限制，hard 为硬限制），第三个字段为要操作的资源，第四个字段表示资源值。</p></li>
-
-<li><p>在 <code>/etc/pam.d/login</code> 文件中添加以下内容：</p>
-
-<pre><code class="language-bash">   session required /lib/security/pam_limits.so
-</code></pre>
-
-<p>因为在系统启动的时候需要用 <code>pam_limits.so</code> 是配置生效。</p></li>
-
-<li><p>重启系统</p></li>
+<li>
+<p>在 <code>/etc/security/limits.conf</code> 文件末添加以下两行：</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">​   * soft nofile <span class="m">655360</span>
+　 * hard nofile <span class="m">655360</span>
+</code></pre></div><p>命令格式可以参考文件中例子，第一个字段表示域（如特定用户、用户组等），第二个字段表示类型（soft 为软限制，hard 为硬限制），第三个字段为要操作的资源，第四个字段表示资源值。</p>
+</li>
+<li>
+<p>在 <code>/etc/pam.d/login</code> 文件中添加以下内容：</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">   session required /lib/security/pam_limits.so
+</code></pre></div><p>因为在系统启动的时候需要用 <code>pam_limits.so</code> 是配置生效。</p>
+</li>
+<li>
+<p>重启系统</p>
+</li>
 </ol>
-
 <h2 id="总结">总结</h2>
-
 <p>第二种方案操作复杂，但相对与第一种方案有不可替代的好处，如果只是需要一次性修改，可以采用第一种方案，快捷有效。但还是推荐第二种方案。</p>
 
     
@@ -189,6 +171,8 @@
     
     <li><a href="/categories/%e5%86%85%e5%ad%98%e7%ae%a1%e7%90%86" title="内存管理">内存管理<sup>1</sup></a></li>
     
+    <li><a href="/categories/%e5%86%85%e6%a0%b8%e5%ae%9e%e9%aa%8c" title="内核实验">内核实验<sup>1</sup></a></li>
+    
     <li><a href="/categories/%e5%91%bd%e4%bb%a4%e8%a1%8c%e8%89%ba%e6%9c%af" title="命令行艺术">命令行艺术<sup>3</sup></a></li>
     
     <li><a href="/categories/%e5%ad%a6%e4%b9%a0%e7%ac%94%e8%ae%b0" title="学习笔记">学习笔记<sup>13</sup></a></li>
@@ -214,6 +198,8 @@
 	<p class="asidetitle">标签</p>
 		<ul class="clearfix">
       
+			<li><a href="/tags/bochs" title="bochs">bochs<sup>1</sup></a></li>
+      
 			<li><a href="/tags/c&#43;&#43;" title="c&#43;&#43;">c&#43;&#43;<sup>10</sup></a></li>
       
 			<li><a href="/tags/command" title="command">command<sup>3</sup></a></li>
@@ -228,9 +214,9 @@
       
 			<li><a href="/tags/jemalloc" title="jemalloc">jemalloc<sup>1</sup></a></li>
       
-			<li><a href="/tags/kernel" title="kernel">kernel<sup>7</sup></a></li>
+			<li><a href="/tags/kernel" title="kernel">kernel<sup>8</sup></a></li>
       
-			<li><a href="/tags/linux" title="linux">linux<sup>12</sup></a></li>
+			<li><a href="/tags/linux" title="linux">linux<sup>13</sup></a></li>
       
 			<li><a href="/tags/linux%e5%86%85%e6%a0%b8" title="linux内核">linux内核<sup>1</sup></a></li>
       
@@ -292,6 +278,11 @@
       
       
       <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2020-04">2020年04月</a><span class="archive-list-count">1</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
         <a class="archive-list-link" href="/post/#2019-09">2019年09月</a><span class="archive-list-count">1</span>
       </li>
       
@@ -345,6 +336,8 @@
 <div class="tagcloudlist">
   <p class="asidetitle">标签云</p>
   <div class="tagcloudlist clearfix">
+    
+    <a href="/tags/bochs" style="font-size: 12px;">bochs</a>
     
     <a href="/tags/c&#43;&#43;" style="font-size: 12px;">c&#43;&#43;</a>
     
@@ -444,7 +437,7 @@
     
     
   </div>
-  <p class="copyright">Powered by <a href="http://gohugo.io" target="_blank" title="hugo">hugo</a> and Theme by <a href="https://github.com/coderzh/hugo-pacman-theme" target="_blank" title="hugo-pacman-theme">hugo-pacman-theme</a> © 2019
+  <p class="copyright">Powered by <a href="http://gohugo.io" target="_blank" title="hugo">hugo</a> and Theme by <a href="https://github.com/coderzh/hugo-pacman-theme" target="_blank" title="hugo-pacman-theme">hugo-pacman-theme</a> © 2020
     
     <a href="/" title="北极狼徒">北极狼徒</a>
     

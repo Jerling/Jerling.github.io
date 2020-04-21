@@ -78,124 +78,94 @@
 		<div class="toc-article">
 			<strong class="toc-title">文章目录</strong>
       <nav id="TableOfContents">
-<ul>
-<li>
-<ul>
-<li><a href="#概述">概述</a>
-<ul>
-<li><a href="#内存管理">内存管理</a></li>
-<li><a href="#内存配置器">内存配置器</a></li>
-<li><a href="#重要性">重要性</a></li>
-</ul></li>
-<li><a href="#ptmalloc2">ptmalloc2</a>
-<ul>
-<li><a href="#内存管理对象">内存管理对象</a></li>
-<li><a href="#多线程处理">多线程处理</a></li>
-<li><a href="#分配流程">分配流程</a></li>
-<li><a href="#系统回收">系统回收</a></li>
-<li><a href="#缺点">缺点</a></li>
-</ul></li>
-<li><a href="#tcmalloc">tcmalloc</a>
-<ul>
-<li><a href="#threadcache">ThreadCache</a>
-<ul>
-<li><a href="#分配流程-1">分配流程</a></li>
-</ul></li>
-<li><a href="#centralcache">CentralCache</a>
-<ul>
-<li><a href="#分配流程-2">分配流程</a></li>
-</ul></li>
-<li><a href="#回收内存">回收内存</a></li>
-<li><a href="#优点">优点</a></li>
-</ul></li>
-<li><a href="#jemalloc">jemalloc</a>
-<ul>
-<li><a href="#size-class">size-class</a></li>
-<li><a href="#jemalloc-中对象的关系">jemalloc 中对象的关系</a></li>
-<li><a href="#优点-1">优点</a></li>
-</ul></li>
-<li><a href="#总结">总结</a></li>
-</ul></li>
-</ul>
+  <ul>
+    <li><a href="#概述">概述</a>
+      <ul>
+        <li><a href="#内存管理">内存管理</a></li>
+        <li><a href="#内存配置器">内存配置器</a></li>
+        <li><a href="#重要性">重要性</a></li>
+      </ul>
+    </li>
+    <li><a href="#ptmalloc2">ptmalloc2</a>
+      <ul>
+        <li><a href="#内存管理对象">内存管理对象</a></li>
+        <li><a href="#多线程处理">多线程处理</a></li>
+        <li><a href="#分配流程">分配流程</a></li>
+        <li><a href="#系统回收">系统回收</a></li>
+        <li><a href="#缺点">缺点</a></li>
+      </ul>
+    </li>
+    <li><a href="#tcmalloc">tcmalloc</a>
+      <ul>
+        <li><a href="#threadcache">ThreadCache</a></li>
+        <li><a href="#centralcache">CentralCache</a></li>
+        <li><a href="#回收内存">回收内存</a></li>
+        <li><a href="#优点">优点</a></li>
+      </ul>
+    </li>
+    <li><a href="#jemalloc">jemalloc</a>
+      <ul>
+        <li><a href="#size-class">size-class</a></li>
+        <li><a href="#jemalloc-中对象的关系">jemalloc 中对象的关系</a></li>
+        <li><a href="#优点">优点</a></li>
+      </ul>
+    </li>
+    <li><a href="#总结">总结</a></li>
+  </ul>
 </nav>
 		</div>
     
-    
-
-<h2 id="概述">概述</h2>
-
+    <h2 id="概述">概述</h2>
 <h3 id="内存管理">内存管理</h3>
-
 <p>我们通常说的内存管理是操作系统内核提供的功能之一，也就是对于虚拟内存的管理。可以
 分为以下几个不同的层次。</p>
-
 <ul>
 <li>操作系统： 内核对虚拟内存的管理，通过系统调用为库函数或用户程序提供服务</li>
 <li>C库函数： 函数虚拟内存进行管理，避免频繁使用系统调用带来的开销</li>
 <li>用户程序： 用户程序先通过系统调用申请一大块内存，然后自己来管理这块内存</li>
 </ul>
-
 <h3 id="内存配置器">内存配置器</h3>
-
 <p>我们通常把用来管理内存的对象称为内存配置器，一个设计良好的内存配置器
 应该满足如下要</p>
-
 <ul>
 <li>内存碎片尽可少</li>
 <li>良好的本地缓</li>
 <li>额外的内存碎片尽可能少</li>
 <li>通用性，兼容性，可移植性，易调试</li>
 </ul>
-
 <h3 id="重要性">重要性</h3>
-
 <p>系统的物理能内存是有限的，但是对内存的需求是动态的，动态性越强，内存管理的重要性
 越强。我们设计的程序对内存的申请需求是不一样的，因此选择合适的内存配置，可以更好
 的发挥应用程序的性能。</p>
-
 <p>本文简单地分析目前常用的几个内存配置器，包括 ptmalloc2,tc_malloc,jemalloc。</p>
-
 <h2 id="ptmalloc2">ptmalloc2</h2>
-
 <p>目前 ptmalloc2 是 glibc 这中 malloc 的默认内存配置器，在之前还有一些其它的实现如
 dlmalloc 等。但由于多核的出现，而 dlmalloc 没有针对多线程的实现。因此已经退出历
 史舞台。为了比较当前比较优秀的配置器，选择了 ptmalloc2 。</p>
-
 <h3 id="内存管理对象">内存管理对象</h3>
-
 <p>在 ptmalloc2 中的内存管理对象叫做 arena , 在 arena 中有一个空闲链表数组 bits ，每一个
 链表称为一个 bin 。每个 bin 管理多个固定大小的 chunks。</p>
-
 <figure>
     <img src="/images/ptmalloc2.png"/> 
 </figure>
 
-
 <p>如上图所示， ptmalloc2 将 bins 划分为三部份， unsorted bin , small bins 以及
 large bins 。其实还有一个 bin , 称为 fast bin 。 ptmalloc2 将不大于 64 B 的
 chunk 先放到 fast bin 中加快分配速度。</p>
-
 <h3 id="多线程处理">多线程处理</h3>
-
 <p>在 ptmalloc2 中，多线程的处理方式是在每一个线程中维护一个 arena 。在主线程中维护
 主分配器 main arena , 在其它线程中维护副分配器 thread arena 。 thread arena 中的
 内存只会通过 mmap 在映射区获取一块 <code>HEAP_MAX_SIZE</code> 大小的内存作为该线程的私有内
 存池进行管理。 main arena 如果内存不够通过调用 <code>sbrk</code> 进行扩容。</p>
-
 <h3 id="分配流程">分配流程</h3>
-
 <figure>
     <img src="/images/ptmalloc2_malloc.png"/> 
 </figure>
 
-
 <h3 id="系统回收">系统回收</h3>
-
 <p>每一个 arena 都有一个 top chunk ,用来保存堆顶的块，当释放的内存和 top chunk 相邻
 ,则将其合并到 top chunk, 当其大小超过阈值时，将其释放给操作系统。</p>
-
 <h3 id="缺点">缺点</h3>
-
 <ul>
 <li>只能从后分配的内存开始释放</li>
 <li>多线程开销大，ptmalloc2 并不是严格的每个线程一个 arena,而是在线程第一次申请内
@@ -204,73 +174,52 @@ chunk 先放到 fast bin 中加快分配速度。</p>
 <li>至少 8 字节的额外开销</li>
 <li>不定期分配长时间的内存容易造成内存碎片</li>
 </ul>
-
 <h2 id="tcmalloc">tcmalloc</h2>
-
 <p>tcmalloc 是 Google 开源的一内存管理库，地址：<a href="https://github.com/gperftools/gperftool">https://github.com/gperftools/gperftool</a></p>
-
 <h3 id="threadcache">ThreadCache</h3>
-
 <p>tcmalloc 为每个线程都分配一个线程本地的内存池 threadCache, 用于分配小内存。这样
 在多线程时，可以减少对内存管理器加锁解锁的开销。当然， threadCache 只用于小对象
 的分配， size &lt;= 32KB . 在 threadCache 中维护一个空闲链表数组，每个对象称为
 size-class. 这个和 ptmalloc2 中的 bin 作用一样。</p>
-
 <figure>
     <img src="/images/tcmalloc_threadcache.png"/> 
 </figure>
 
-
-<h4 id="分配流程-1">分配流程</h4>
-
+<h4 id="分配流程">分配流程</h4>
 <figure>
     <img src="/images/tcmalloc_threadcache_malloc.png"/> 
 </figure>
 
-
 <h3 id="centralcache">CentralCache</h3>
-
 <p>tcmalloc 除了在每个线程分配一个本地分配器，整体还分配一个中央配置器，
 CentralCache 用来分配大对象的，管理的内存单元时 4K 对齐的，如果 ThreadCache 中的
 内存不够，需要到 CentralCache 中获取对应 size-class 的内存。</p>
-
 <figure>
     <img src="/images/tcmalloc_centralcache.png"/> 
 </figure>
 
-
 <p>rest 链表挂接大于 255 个 pages 的页面。</p>
-
-<h4 id="分配流程-2">分配流程</h4>
-
+<h4 id="分配流程">分配流程</h4>
 <figure>
     <img src="/images/tcmalloc_centralcache_malloc.png"/> 
 </figure>
 
-
 <h3 id="回收内存">回收内存</h3>
-
 <figure>
     <img src="/images/tcmalloc_free.png"/> 
 </figure>
 
-
 <h3 id="优点">优点</h3>
-
 <ul>
 <li>ThreadCache 会阶段性的回收内存到 CentralCache 中，解决 ptmalloc2 中 arena 不能
 迁移问题</li>
 <li>占用很少的空间，约 1%</li>
 <li>快，小对象几乎无锁</li>
 </ul>
-
 <h2 id="jemalloc">jemalloc</h2>
-
 <p>原理和 tcmalloc 差不多，都是在 &lt; 32KB 时无锁使用本地 cache. 差别主要是在
 size-class 的分类上不一样。地址： <a href="https://github.com/jemalloc/jemalloc">https://github.com/jemalloc/jemalloc</a></p>
-
 <h3 id="size-class">size-class</h3>
-
 <ul>
 <li>Small: [8], [16,32,&hellip;,138], [192,256,&hellip;,512], [768,1024,&hellip;,3840]</li>
 <li>Large: [4K, 8K, &hellip; , 4072K]</li>
@@ -278,27 +227,20 @@ size-class 的分类上不一样。地址： <a href="https://github.com/jemallo
 <li>small/large 对象查找 metedata 需要常数时间</li>
 <li>Huge 对象通过全局红黑树在对数时间内查找</li>
 </ul>
-
 <h3 id="jemalloc-中对象的关系">jemalloc 中对象的关系</h3>
-
 <figure>
     <img src="/images/jemalloc_objs.png"/> 
 </figure>
 
-
 <p>分配流程和 tcmalloc 大同小异。</p>
-
-<h3 id="优点-1">优点</h3>
-
+<h3 id="优点">优点</h3>
 <ul>
 <li>低地址优先策略，降低内存碎片花， tcmalloc 采用 best fit</li>
 <li>额外开销约 2%</li>
 <li>和 tcmalloc 一样的本地缓存，避免竞争</li>
 <li>优先使用脏页，提升缓冲命中</li>
 </ul>
-
 <h2 id="总结">总结</h2>
-
 <p>ptmalloc2, tcmalloc 以及 jemalloc 都是比较出色的内存配置器，据 tcmalloc 官网公布
 数据， tcmalloc 的速度是 ptmalloc2 的数倍，主要还是出色的多线程本地缓存设计。对
 于释放内存方面，ptmalloc2 比后两者要差的多，因为它只能从 top chunk 释放。
@@ -363,6 +305,8 @@ tcmalloc 和 jemalloc 性能差不多，但是 jemalloc 在提升缓存命中中
     
     <li><a href="/categories/%e5%86%85%e5%ad%98%e7%ae%a1%e7%90%86" title="内存管理">内存管理<sup>1</sup></a></li>
     
+    <li><a href="/categories/%e5%86%85%e6%a0%b8%e5%ae%9e%e9%aa%8c" title="内核实验">内核实验<sup>1</sup></a></li>
+    
     <li><a href="/categories/%e5%91%bd%e4%bb%a4%e8%a1%8c%e8%89%ba%e6%9c%af" title="命令行艺术">命令行艺术<sup>3</sup></a></li>
     
     <li><a href="/categories/%e5%ad%a6%e4%b9%a0%e7%ac%94%e8%ae%b0" title="学习笔记">学习笔记<sup>13</sup></a></li>
@@ -388,6 +332,8 @@ tcmalloc 和 jemalloc 性能差不多，但是 jemalloc 在提升缓存命中中
 	<p class="asidetitle">标签</p>
 		<ul class="clearfix">
       
+			<li><a href="/tags/bochs" title="bochs">bochs<sup>1</sup></a></li>
+      
 			<li><a href="/tags/c&#43;&#43;" title="c&#43;&#43;">c&#43;&#43;<sup>10</sup></a></li>
       
 			<li><a href="/tags/command" title="command">command<sup>3</sup></a></li>
@@ -402,9 +348,9 @@ tcmalloc 和 jemalloc 性能差不多，但是 jemalloc 在提升缓存命中中
       
 			<li><a href="/tags/jemalloc" title="jemalloc">jemalloc<sup>1</sup></a></li>
       
-			<li><a href="/tags/kernel" title="kernel">kernel<sup>7</sup></a></li>
+			<li><a href="/tags/kernel" title="kernel">kernel<sup>8</sup></a></li>
       
-			<li><a href="/tags/linux" title="linux">linux<sup>12</sup></a></li>
+			<li><a href="/tags/linux" title="linux">linux<sup>13</sup></a></li>
       
 			<li><a href="/tags/linux%e5%86%85%e6%a0%b8" title="linux内核">linux内核<sup>1</sup></a></li>
       
@@ -466,6 +412,11 @@ tcmalloc 和 jemalloc 性能差不多，但是 jemalloc 在提升缓存命中中
       
       
       <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2020-04">2020年04月</a><span class="archive-list-count">1</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
         <a class="archive-list-link" href="/post/#2019-09">2019年09月</a><span class="archive-list-count">1</span>
       </li>
       
@@ -519,6 +470,8 @@ tcmalloc 和 jemalloc 性能差不多，但是 jemalloc 在提升缓存命中中
 <div class="tagcloudlist">
   <p class="asidetitle">标签云</p>
   <div class="tagcloudlist clearfix">
+    
+    <a href="/tags/bochs" style="font-size: 12px;">bochs</a>
     
     <a href="/tags/c&#43;&#43;" style="font-size: 12px;">c&#43;&#43;</a>
     
@@ -618,7 +571,7 @@ tcmalloc 和 jemalloc 性能差不多，但是 jemalloc 在提升缓存命中中
     
     
   </div>
-  <p class="copyright">Powered by <a href="http://gohugo.io" target="_blank" title="hugo">hugo</a> and Theme by <a href="https://github.com/coderzh/hugo-pacman-theme" target="_blank" title="hugo-pacman-theme">hugo-pacman-theme</a> © 2019
+  <p class="copyright">Powered by <a href="http://gohugo.io" target="_blank" title="hugo">hugo</a> and Theme by <a href="https://github.com/coderzh/hugo-pacman-theme" target="_blank" title="hugo-pacman-theme">hugo-pacman-theme</a> © 2020
     
     <a href="/" title="北极狼徒">北极狼徒</a>
     

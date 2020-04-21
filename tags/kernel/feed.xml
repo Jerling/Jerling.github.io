@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>kernel on 北极狼徒</title>
@@ -6,10 +6,19 @@
     <description>Recent content in kernel on 北极狼徒</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Sun, 07 Jul 2019 12:48:54 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 20 Apr 2020 22:21:06 +0800</lastBuildDate>
     
 	<atom:link href="/tags/kernel/feed.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Linux 内核学习 — 实验环境</title>
+      <link>/post/oslab_env/</link>
+      <pubDate>Mon, 20 Apr 2020 22:21:06 +0800</pubDate>
+      
+      <guid>/post/oslab_env/</guid>
+      <description>编译环境 这里选择轻量级的 Lubuntu，版本为19.10。 oslab环境搭建 感谢 Wangzhike提供开源的一键配置环境。 安装包下载 git clone https://github.com/Wangzhike/HIT-Linux-0.11.git 环</description>
+    </item>
     
     <item>
       <title>Linux 内核设计与实现 — 虚拟文件系统</title>

@@ -78,405 +78,352 @@
 		<div class="toc-article">
 			<strong class="toc-title">文章目录</strong>
       <nav id="TableOfContents">
-<ul>
-<li>
-<ul>
-<li><a href="#页">页</a></li>
-<li><a href="#区">区</a></li>
-<li><a href="#获得页">获得页</a>
-<ul>
-<li><a href="#取得全部为-0-的页">取得全部为 0 的页</a></li>
-<li><a href="#释放页">释放页</a></li>
-<li><a href="#kmalloc">kmalloc()</a>
-<ul>
-<li><a href="#gfp-mask">gfp_mask</a></li>
-<li><a href="#vmalloc">vmalloc()</a></li>
-</ul></li>
-</ul></li>
-<li><a href="#slab-分配器">slab 分配器</a>
-<ul>
-<li><a href="#slab-设计">slab 设计</a></li>
-<li><a href="#接口">接口</a>
-<ul>
-<li><a href="#分配内存">分配内存</a></li>
-<li><a href="#释放内存">释放内存</a></li>
-</ul></li>
-</ul></li>
-<li><a href="#静态分配">静态分配</a>
-<ul>
-<li><a href="#单页内核栈">单页内核栈</a></li>
-</ul></li>
-<li><a href="#高端内存的映射">高端内存的映射</a>
-<ul>
-<li><a href="#永久映射">永久映射</a></li>
-<li><a href="#临时映射">临时映射</a></li>
-</ul></li>
-<li><a href="#cpu-上的数据">cpu 上的数据</a></li>
-<li><a href="#新的-percpu-接口">新的 percpu 接口</a>
-<ul>
-<li><a href="#编译时的每个-cpu-数据">编译时的每个 CPU 数据</a></li>
-<li><a href="#运行时创建">运行时创建</a></li>
-</ul></li>
-<li><a href="#使用-percpu-的好处">使用 percpu 的好处</a></li>
-<li><a href="#总结">总结</a></li>
-</ul></li>
-</ul>
+  <ul>
+    <li><a href="#页">页</a></li>
+    <li><a href="#区">区</a></li>
+    <li><a href="#获得页">获得页</a>
+      <ul>
+        <li><a href="#取得全部为-0-的页">取得全部为 0 的页</a></li>
+        <li><a href="#释放页">释放页</a></li>
+        <li><a href="#kmalloc">kmalloc()</a></li>
+      </ul>
+    </li>
+    <li><a href="#slab-分配器">slab 分配器</a>
+      <ul>
+        <li><a href="#slab-设计">slab 设计</a></li>
+        <li><a href="#接口">接口</a></li>
+      </ul>
+    </li>
+    <li><a href="#静态分配">静态分配</a>
+      <ul>
+        <li><a href="#单页内核栈">单页内核栈</a></li>
+      </ul>
+    </li>
+    <li><a href="#高端内存的映射">高端内存的映射</a>
+      <ul>
+        <li><a href="#永久映射">永久映射</a></li>
+        <li><a href="#临时映射">临时映射</a></li>
+      </ul>
+    </li>
+    <li><a href="#cpu-上的数据">cpu 上的数据</a></li>
+    <li><a href="#新的-percpu-接口">新的 percpu 接口</a>
+      <ul>
+        <li><a href="#编译时的每个-cpu-数据">编译时的每个 CPU 数据</a></li>
+        <li><a href="#运行时创建">运行时创建</a></li>
+      </ul>
+    </li>
+    <li><a href="#使用-percpu-的好处">使用 percpu 的好处</a></li>
+    <li><a href="#总结">总结</a></li>
+  </ul>
 </nav>
 		</div>
     
-    
-
-<p>内核的内存分配相比用户空间来说相对较为困难，主要是因为内核本身不能奢侈的使用内存，而且一般不能睡眠，处理内存分配错误也比较棘手。</p>
-
+    <p>内核的内存分配相比用户空间来说相对较为困难，主要是因为内核本身不能奢侈的使用内存，而且一般不能睡眠，处理内存分配错误也比较棘手。</p>
 <h2 id="页">页</h2>
-
 <p>内核将物理页作为内存管理的基本单位。一般来说，32 位体系结构支持 4KB 的页，64 位支持
 8KB 的页。</p>
-
 <p>数据结构： <code>struct page</code> , 定义于 <code>&lt;linux/mm_types.h&gt;</code></p>
-
-<pre><code class="language-c">/*
- * Each physical page in the system has a struct page associated with
- * it to keep track of whatever it is we are using the page for at the
- * moment. Note that we have no way to track which tasks are using
- * a page, though if it is a pagecache page, rmap structures can tell us
- * who is mapping it.
- */
-struct page {
-	unsigned long flags;		/* Atomic flags, some possibly
-					 * updated asynchronously */
-	atomic_t _count;		/* Usage count, see below. */
-	union {
-		atomic_t _mapcount;	/* Count of ptes mapped in mms,
-					 * to show when page is mapped
-					 * &amp; limit reverse map searches.
-					 */
-		struct {		/* SLUB */
-			u16 inuse;
-			u16 objects;
-		};
-	};
-	union {
-	    struct {
-		unsigned long private;		/* Mapping-private opaque data:
-					 	 * usually used for buffer_heads
-						 * if PagePrivate set; used for
-						 * swp_entry_t if PageSwapCache;
-						 * indicates order in the buddy
-						 * system if PG_buddy is set.
-						 */
-		struct address_space *mapping;	/* If low bit clear, points to
-						 * inode address_space, or NULL.
-						 * If page mapped as anonymous
-						 * memory, low bit is set, and
-						 * it points to anon_vma object:
-						 * see PAGE_MAPPING_ANON below.
-						 */
-	    };
-#if USE_SPLIT_PTLOCKS
-	    spinlock_t ptl;
-#endif
-	    struct kmem_cache *slab;	/* SLUB: Pointer to slab */
-	    struct page *first_page;	/* Compound tail pages */
-	};
-	union {
-		pgoff_t index;		/* Our offset within mapping. */
-		void *freelist;		/* SLUB: freelist req. slab lock */
-	};
-	struct list_head lru;		/* Pageout list, eg. active_list
-					 * protected by zone-&gt;lru_lock !
-					 */
-	/*
-	 * On machines where all RAM is mapped into kernel address space,
-	 * we can simply calculate the virtual address. On machines with
-	 * highmem some memory is mapped into kernel virtual memory
-	 * dynamically, so we need a place to store that address.
-	 * Note that this field could be 16 bits on x86 ... ;)
-	 *
-	 * Architectures with slow multiplication can define
-	 * WANT_PAGE_VIRTUAL in asm/page.h
-	 */
-#if defined(WANT_PAGE_VIRTUAL)
-	void *virtual;			/* Kernel virtual address (NULL if
-					   not kmapped, ie. highmem) */
-#endif /* WANT_PAGE_VIRTUAL */
-#ifdef CONFIG_WANT_PAGE_DEBUG_FLAGS
-	unsigned long debug_flags;	/* Use atomic bitops on this */
-#endif
-
-#ifdef CONFIG_KMEMCHECK
-	/*
-	 * kmemcheck wants to track the status of each byte in a page; this
-	 * is a pointer to such a status block. NULL if not tracked.
-	 */
-	void *shadow;
-#endif
-};
-</code></pre>
-
-<ul>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="cm">/*
+</span><span class="cm"> * Each physical page in the system has a struct page associated with
+</span><span class="cm"> * it to keep track of whatever it is we are using the page for at the
+</span><span class="cm"> * moment. Note that we have no way to track which tasks are using
+</span><span class="cm"> * a page, though if it is a pagecache page, rmap structures can tell us
+</span><span class="cm"> * who is mapping it.
+</span><span class="cm"> */</span>
+<span class="k">struct</span> <span class="n">page</span> <span class="p">{</span>
+	<span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">flags</span><span class="p">;</span>		<span class="cm">/* Atomic flags, some possibly
+</span><span class="cm">					 * updated asynchronously */</span>
+	<span class="n">atomic_t</span> <span class="n">_count</span><span class="p">;</span>		<span class="cm">/* Usage count, see below. */</span>
+	<span class="k">union</span> <span class="p">{</span>
+		<span class="n">atomic_t</span> <span class="n">_mapcount</span><span class="p">;</span>	<span class="cm">/* Count of ptes mapped in mms,
+</span><span class="cm">					 * to show when page is mapped
+</span><span class="cm">					 * &amp; limit reverse map searches.
+</span><span class="cm">					 */</span>
+		<span class="k">struct</span> <span class="p">{</span>		<span class="cm">/* SLUB */</span>
+			<span class="n">u16</span> <span class="n">inuse</span><span class="p">;</span>
+			<span class="n">u16</span> <span class="n">objects</span><span class="p">;</span>
+		<span class="p">};</span>
+	<span class="p">};</span>
+	<span class="k">union</span> <span class="p">{</span>
+	    <span class="k">struct</span> <span class="p">{</span>
+		<span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">private</span><span class="p">;</span>		<span class="cm">/* Mapping-private opaque data:
+</span><span class="cm">					 	 * usually used for buffer_heads
+</span><span class="cm">						 * if PagePrivate set; used for
+</span><span class="cm">						 * swp_entry_t if PageSwapCache;
+</span><span class="cm">						 * indicates order in the buddy
+</span><span class="cm">						 * system if PG_buddy is set.
+</span><span class="cm">						 */</span>
+		<span class="k">struct</span> <span class="n">address_space</span> <span class="o">*</span><span class="n">mapping</span><span class="p">;</span>	<span class="cm">/* If low bit clear, points to
+</span><span class="cm">						 * inode address_space, or NULL.
+</span><span class="cm">						 * If page mapped as anonymous
+</span><span class="cm">						 * memory, low bit is set, and
+</span><span class="cm">						 * it points to anon_vma object:
+</span><span class="cm">						 * see PAGE_MAPPING_ANON below.
+</span><span class="cm">						 */</span>
+	    <span class="p">};</span>
+<span class="cp">#if USE_SPLIT_PTLOCKS
+</span><span class="cp"></span>	    <span class="n">spinlock_t</span> <span class="n">ptl</span><span class="p">;</span>
+<span class="cp">#endif
+</span><span class="cp"></span>	    <span class="k">struct</span> <span class="n">kmem_cache</span> <span class="o">*</span><span class="n">slab</span><span class="p">;</span>	<span class="cm">/* SLUB: Pointer to slab */</span>
+	    <span class="k">struct</span> <span class="n">page</span> <span class="o">*</span><span class="n">first_page</span><span class="p">;</span>	<span class="cm">/* Compound tail pages */</span>
+	<span class="p">};</span>
+	<span class="k">union</span> <span class="p">{</span>
+		<span class="n">pgoff_t</span> <span class="n">index</span><span class="p">;</span>		<span class="cm">/* Our offset within mapping. */</span>
+		<span class="kt">void</span> <span class="o">*</span><span class="n">freelist</span><span class="p">;</span>		<span class="cm">/* SLUB: freelist req. slab lock */</span>
+	<span class="p">};</span>
+	<span class="k">struct</span> <span class="n">list_head</span> <span class="n">lru</span><span class="p">;</span>		<span class="cm">/* Pageout list, eg. active_list
+</span><span class="cm">					 * protected by zone-&gt;lru_lock !
+</span><span class="cm">					 */</span>
+	<span class="cm">/*
+</span><span class="cm">	 * On machines where all RAM is mapped into kernel address space,
+</span><span class="cm">	 * we can simply calculate the virtual address. On machines with
+</span><span class="cm">	 * highmem some memory is mapped into kernel virtual memory
+</span><span class="cm">	 * dynamically, so we need a place to store that address.
+</span><span class="cm">	 * Note that this field could be 16 bits on x86 ... ;)
+</span><span class="cm">	 *
+</span><span class="cm">	 * Architectures with slow multiplication can define
+</span><span class="cm">	 * WANT_PAGE_VIRTUAL in asm/page.h
+</span><span class="cm">	 */</span>
+<span class="cp">#if defined(WANT_PAGE_VIRTUAL)
+</span><span class="cp"></span>	<span class="kt">void</span> <span class="o">*</span><span class="n">virtual</span><span class="p">;</span>			<span class="cm">/* Kernel virtual address (NULL if
+</span><span class="cm">					   not kmapped, ie. highmem) */</span>
+<span class="cp">#endif </span><span class="cm">/* WANT_PAGE_VIRTUAL */</span><span class="cp">
+</span><span class="cp">#ifdef CONFIG_WANT_PAGE_DEBUG_FLAGS
+</span><span class="cp"></span>	<span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">debug_flags</span><span class="p">;</span>	<span class="cm">/* Use atomic bitops on this */</span>
+<span class="cp">#endif
+</span><span class="cp"></span>
+<span class="cp">#ifdef CONFIG_KMEMCHECK
+</span><span class="cp"></span>	<span class="cm">/*
+</span><span class="cm">	 * kmemcheck wants to track the status of each byte in a page; this
+</span><span class="cm">	 * is a pointer to such a status block. NULL if not tracked.
+</span><span class="cm">	 */</span>
+	<span class="kt">void</span> <span class="o">*</span><span class="n">shadow</span><span class="p">;</span>
+<span class="cp">#endif
+</span><span class="cp"></span><span class="p">};</span>
+</code></pre></div><ul>
 <li><code>flag</code> : 状态</li>
 <li><code>_count</code> :引用计数，值为 -1 表示内核没有引用，内核代码不应直接检查，而是通过
 <code>page_count()</code> 检查。</li>
 <li><code>mapping</code> : 当由页缓存使用时，指向和这个页相关联的 <code>address_space</code> 对象，或者作为私有数据 (由 <code>private</code> 指向),或者作为页表中的映射。</li>
 <li><code>virtual</code> : 虚拟地址，有些高地址内存不会总是映射到内存空间，此时为 <code>NULL</code> ,当要使用时重新映射。</li>
 </ul>
-
 <h2 id="区">区</h2>
-
 <p>位于某些特定位置的物理地址上不能用于一些特殊任务，因此内核将页化为不同的区。</p>
-
 <p>Linux 必须处理两种有硬件存在缺陷引起的内存寻址问题：</p>
-
 <ol>
 <li>一些硬件只能用某些特定的内存地址来执行 DMA</li>
 <li>一些体系结构的内存的物理寻址范围比虚拟寻址大得多</li>
 </ol>
-
 <p>Linux 主要存在四种区：</p>
-
 <ol>
 <li>ZONE_DMA : 执行 DMA 操作</li>
 <li>ZONE_DMA32 : 功能同 ZONE_DMA, 不同在它只能被 32 位设备访问</li>
 <li>ZONE_NORMAL : 正常映射的页</li>
 <li>ZONE_HIGHEM : &ldquo;高端内存&rdquo;, 其中的页不能永久映射到内核地址空间</li>
 </ol>
-
 <p>数据结构： <code>struct zone</code> 定义在 <code>&lt;linux/mmzone.h&gt;</code></p>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="k">struct</span> <span class="n">zone</span> <span class="p">{</span>
+	<span class="cm">/* Fields commonly accessed by the page allocator */</span>
 
-<pre><code class="language-c">struct zone {
-	/* Fields commonly accessed by the page allocator */
+	<span class="cm">/* zone watermarks, access with *_wmark_pages(zone) macros */</span>
+	<span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">watermark</span><span class="p">[</span><span class="n">NR_WMARK</span><span class="p">];</span>
 
-	/* zone watermarks, access with *_wmark_pages(zone) macros */
-	unsigned long watermark[NR_WMARK];
+	<span class="cm">/*
+</span><span class="cm">	 * When free pages are below this point, additional steps are taken
+</span><span class="cm">	 * when reading the number of free pages to avoid per-cpu counter
+</span><span class="cm">	 * drift allowing watermarks to be breached
+</span><span class="cm">	 */</span>
+	<span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">percpu_drift_mark</span><span class="p">;</span>
 
-	/*
-	 * When free pages are below this point, additional steps are taken
-	 * when reading the number of free pages to avoid per-cpu counter
-	 * drift allowing watermarks to be breached
-	 */
-	unsigned long percpu_drift_mark;
+	<span class="cm">/*
+</span><span class="cm">	 * We don&#39;t know if the memory that we&#39;re going to allocate will be freeable
+</span><span class="cm">	 * or/and it will be released eventually, so to avoid totally wasting several
+</span><span class="cm">	 * GB of ram we must reserve some of the lower zone memory (otherwise we risk
+</span><span class="cm">	 * to run OOM on the lower zones despite there&#39;s tons of freeable ram
+</span><span class="cm">	 * on the higher zones). This array is recalculated at runtime if the
+</span><span class="cm">	 * sysctl_lowmem_reserve_ratio sysctl changes.
+</span><span class="cm">	 */</span>
+	<span class="kt">unsigned</span> <span class="kt">long</span>		<span class="n">lowmem_reserve</span><span class="p">[</span><span class="n">MAX_NR_ZONES</span><span class="p">];</span>
 
-	/*
-	 * We don't know if the memory that we're going to allocate will be freeable
-	 * or/and it will be released eventually, so to avoid totally wasting several
-	 * GB of ram we must reserve some of the lower zone memory (otherwise we risk
-	 * to run OOM on the lower zones despite there's tons of freeable ram
-	 * on the higher zones). This array is recalculated at runtime if the
-	 * sysctl_lowmem_reserve_ratio sysctl changes.
-	 */
-	unsigned long		lowmem_reserve[MAX_NR_ZONES];
+<span class="cp">#ifdef CONFIG_NUMA
+</span><span class="cp"></span>	<span class="kt">int</span> <span class="n">node</span><span class="p">;</span>
+	<span class="cm">/*
+</span><span class="cm">	 * zone reclaim becomes active if more unmapped pages exist.
+</span><span class="cm">	 */</span>
+	<span class="kt">unsigned</span> <span class="kt">long</span>		<span class="n">min_unmapped_pages</span><span class="p">;</span>
+	<span class="kt">unsigned</span> <span class="kt">long</span>		<span class="n">min_slab_pages</span><span class="p">;</span>
+<span class="cp">#endif
+</span><span class="cp"></span>	<span class="k">struct</span> <span class="n">per_cpu_pageset</span> <span class="n">__percpu</span> <span class="o">*</span><span class="n">pageset</span><span class="p">;</span>
+	<span class="cm">/*
+</span><span class="cm">	 * free areas of different sizes
+</span><span class="cm">	 */</span>
+	<span class="n">spinlock_t</span>		<span class="n">lock</span><span class="p">;</span>
+	<span class="kt">int</span>                     <span class="n">all_unreclaimable</span><span class="p">;</span> <span class="cm">/* All pages pinned */</span>
+<span class="cp">#ifdef CONFIG_MEMORY_HOTPLUG
+</span><span class="cp"></span>	<span class="cm">/* see spanned/present_pages for more description */</span>
+	<span class="n">seqlock_t</span>		<span class="n">span_seqlock</span><span class="p">;</span>
+<span class="cp">#endif
+</span><span class="cp"></span>	<span class="k">struct</span> <span class="n">free_area</span>	<span class="n">free_area</span><span class="p">[</span><span class="n">MAX_ORDER</span><span class="p">];</span>
 
-#ifdef CONFIG_NUMA
-	int node;
-	/*
-	 * zone reclaim becomes active if more unmapped pages exist.
-	 */
-	unsigned long		min_unmapped_pages;
-	unsigned long		min_slab_pages;
-#endif
-	struct per_cpu_pageset __percpu *pageset;
-	/*
-	 * free areas of different sizes
-	 */
-	spinlock_t		lock;
-	int                     all_unreclaimable; /* All pages pinned */
-#ifdef CONFIG_MEMORY_HOTPLUG
-	/* see spanned/present_pages for more description */
-	seqlock_t		span_seqlock;
-#endif
-	struct free_area	free_area[MAX_ORDER];
+<span class="cp">#ifndef CONFIG_SPARSEMEM
+</span><span class="cp"></span>	<span class="cm">/*
+</span><span class="cm">	 * Flags for a pageblock_nr_pages block. See pageblock-flags.h.
+</span><span class="cm">	 * In SPARSEMEM, this map is stored in struct mem_section
+</span><span class="cm">	 */</span>
+	<span class="kt">unsigned</span> <span class="kt">long</span>		<span class="o">*</span><span class="n">pageblock_flags</span><span class="p">;</span>
+<span class="cp">#endif </span><span class="cm">/* CONFIG_SPARSEMEM */</span><span class="cp">
+</span><span class="cp"></span>
+<span class="cp">#ifdef CONFIG_COMPACTION
+</span><span class="cp"></span>	<span class="cm">/*
+</span><span class="cm">	 * On compaction failure, 1&lt;&lt;compact_defer_shift compactions
+</span><span class="cm">	 * are skipped before trying again. The number attempted since
+</span><span class="cm">	 * last failure is tracked with compact_considered.
+</span><span class="cm">	 */</span>
+	<span class="kt">unsigned</span> <span class="kt">int</span>		<span class="n">compact_considered</span><span class="p">;</span>
+	<span class="kt">unsigned</span> <span class="kt">int</span>		<span class="n">compact_defer_shift</span><span class="p">;</span>
+<span class="cp">#endif
+</span><span class="cp"></span>
+	<span class="n">ZONE_PADDING</span><span class="p">(</span><span class="n">_pad1_</span><span class="p">)</span>
 
-#ifndef CONFIG_SPARSEMEM
-	/*
-	 * Flags for a pageblock_nr_pages block. See pageblock-flags.h.
-	 * In SPARSEMEM, this map is stored in struct mem_section
-	 */
-	unsigned long		*pageblock_flags;
-#endif /* CONFIG_SPARSEMEM */
+	<span class="cm">/* Fields commonly accessed by the page reclaim scanner */</span>
+	<span class="n">spinlock_t</span>		<span class="n">lru_lock</span><span class="p">;</span>
+	<span class="k">struct</span> <span class="n">zone_lru</span> <span class="p">{</span>
+		<span class="k">struct</span> <span class="n">list_head</span> <span class="n">list</span><span class="p">;</span>
+	<span class="p">}</span> <span class="n">lru</span><span class="p">[</span><span class="n">NR_LRU_LISTS</span><span class="p">];</span>
 
-#ifdef CONFIG_COMPACTION
-	/*
-	 * On compaction failure, 1&lt;&lt;compact_defer_shift compactions
-	 * are skipped before trying again. The number attempted since
-	 * last failure is tracked with compact_considered.
-	 */
-	unsigned int		compact_considered;
-	unsigned int		compact_defer_shift;
-#endif
+	<span class="k">struct</span> <span class="n">zone_reclaim_stat</span> <span class="n">reclaim_stat</span><span class="p">;</span>
 
-	ZONE_PADDING(_pad1_)
+	<span class="kt">unsigned</span> <span class="kt">long</span>		<span class="n">pages_scanned</span><span class="p">;</span>	   <span class="cm">/* since last reclaim */</span>
+	<span class="kt">unsigned</span> <span class="kt">long</span>		<span class="n">flags</span><span class="p">;</span>		   <span class="cm">/* zone flags, see below */</span>
 
-	/* Fields commonly accessed by the page reclaim scanner */
-	spinlock_t		lru_lock;
-	struct zone_lru {
-		struct list_head list;
-	} lru[NR_LRU_LISTS];
+	<span class="cm">/* Zone statistics */</span>
+	<span class="n">atomic_long_t</span>		<span class="n">vm_stat</span><span class="p">[</span><span class="n">NR_VM_ZONE_STAT_ITEMS</span><span class="p">];</span>
 
-	struct zone_reclaim_stat reclaim_stat;
-
-	unsigned long		pages_scanned;	   /* since last reclaim */
-	unsigned long		flags;		   /* zone flags, see below */
-
-	/* Zone statistics */
-	atomic_long_t		vm_stat[NR_VM_ZONE_STAT_ITEMS];
-
-	/*
-	 * The target ratio of ACTIVE_ANON to INACTIVE_ANON pages on
-	 * this zone's LRU.  Maintained by the pageout code.
-	 */
-	unsigned int inactive_ratio;
+	<span class="cm">/*
+</span><span class="cm">	 * The target ratio of ACTIVE_ANON to INACTIVE_ANON pages on
+</span><span class="cm">	 * this zone&#39;s LRU.  Maintained by the pageout code.
+</span><span class="cm">	 */</span>
+	<span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">inactive_ratio</span><span class="p">;</span>
 
 
-	ZONE_PADDING(_pad2_)
-	/* Rarely used or read-mostly fields */
+	<span class="n">ZONE_PADDING</span><span class="p">(</span><span class="n">_pad2_</span><span class="p">)</span>
+	<span class="cm">/* Rarely used or read-mostly fields */</span>
 
-	/*
-	 * wait_table		-- the array holding the hash table
-	 * wait_table_hash_nr_entries	-- the size of the hash table array
-	 * wait_table_bits	-- wait_table_size == (1 &lt;&lt; wait_table_bits)
-	 *
-	 * The purpose of all these is to keep track of the people
-	 * waiting for a page to become available and make them
-	 * runnable again when possible. The trouble is that this
-	 * consumes a lot of space, especially when so few things
-	 * wait on pages at a given time. So instead of using
-	 * per-page waitqueues, we use a waitqueue hash table.
-	 *
-	 * The bucket discipline is to sleep on the same queue when
-	 * colliding and wake all in that wait queue when removing.
-	 * When something wakes, it must check to be sure its page is
-	 * truly available, a la thundering herd. The cost of a
-	 * collision is great, but given the expected load of the
-	 * table, they should be so rare as to be outweighed by the
-	 * benefits from the saved space.
-	 *
-	 * __wait_on_page_locked() and unlock_page() in mm/filemap.c, are the
-	 * primary users of these fields, and in mm/page_alloc.c
-	 * free_area_init_core() performs the initialization of them.
-	 */
-	wait_queue_head_t	* wait_table;
-	unsigned long		wait_table_hash_nr_entries;
-	unsigned long		wait_table_bits;
+	<span class="cm">/*
+</span><span class="cm">	 * wait_table		-- the array holding the hash table
+</span><span class="cm">	 * wait_table_hash_nr_entries	-- the size of the hash table array
+</span><span class="cm">	 * wait_table_bits	-- wait_table_size == (1 &lt;&lt; wait_table_bits)
+</span><span class="cm">	 *
+</span><span class="cm">	 * The purpose of all these is to keep track of the people
+</span><span class="cm">	 * waiting for a page to become available and make them
+</span><span class="cm">	 * runnable again when possible. The trouble is that this
+</span><span class="cm">	 * consumes a lot of space, especially when so few things
+</span><span class="cm">	 * wait on pages at a given time. So instead of using
+</span><span class="cm">	 * per-page waitqueues, we use a waitqueue hash table.
+</span><span class="cm">	 *
+</span><span class="cm">	 * The bucket discipline is to sleep on the same queue when
+</span><span class="cm">	 * colliding and wake all in that wait queue when removing.
+</span><span class="cm">	 * When something wakes, it must check to be sure its page is
+</span><span class="cm">	 * truly available, a la thundering herd. The cost of a
+</span><span class="cm">	 * collision is great, but given the expected load of the
+</span><span class="cm">	 * table, they should be so rare as to be outweighed by the
+</span><span class="cm">	 * benefits from the saved space.
+</span><span class="cm">	 *
+</span><span class="cm">	 * __wait_on_page_locked() and unlock_page() in mm/filemap.c, are the
+</span><span class="cm">	 * primary users of these fields, and in mm/page_alloc.c
+</span><span class="cm">	 * free_area_init_core() performs the initialization of them.
+</span><span class="cm">	 */</span>
+	<span class="n">wait_queue_head_t</span>	<span class="o">*</span> <span class="n">wait_table</span><span class="p">;</span>
+	<span class="kt">unsigned</span> <span class="kt">long</span>		<span class="n">wait_table_hash_nr_entries</span><span class="p">;</span>
+	<span class="kt">unsigned</span> <span class="kt">long</span>		<span class="n">wait_table_bits</span><span class="p">;</span>
 
-	/*
-	 * Discontig memory support fields.
-	 */
-	struct pglist_data	*zone_pgdat;
-	/* zone_start_pfn == zone_start_paddr &gt;&gt; PAGE_SHIFT */
-	unsigned long		zone_start_pfn;
+	<span class="cm">/*
+</span><span class="cm">	 * Discontig memory support fields.
+</span><span class="cm">	 */</span>
+	<span class="k">struct</span> <span class="n">pglist_data</span>	<span class="o">*</span><span class="n">zone_pgdat</span><span class="p">;</span>
+	<span class="cm">/* zone_start_pfn == zone_start_paddr &gt;&gt; PAGE_SHIFT */</span>
+	<span class="kt">unsigned</span> <span class="kt">long</span>		<span class="n">zone_start_pfn</span><span class="p">;</span>
 
-	/*
-	 * zone_start_pfn, spanned_pages and present_pages are all
-	 * protected by span_seqlock.  It is a seqlock because it has
-	 * to be read outside of zone-&gt;lock, and it is done in the main
-	 * allocator path.  But, it is written quite infrequently.
-	 *
-	 * The lock is declared along with zone-&gt;lock because it is
-	 * frequently read in proximity to zone-&gt;lock.  It's good to
-	 * give them a chance of being in the same cacheline.
-	 */
-	unsigned long		spanned_pages;	/* total size, including holes */
-	unsigned long		present_pages;	/* amount of memory (excluding holes) */
+	<span class="cm">/*
+</span><span class="cm">	 * zone_start_pfn, spanned_pages and present_pages are all
+</span><span class="cm">	 * protected by span_seqlock.  It is a seqlock because it has
+</span><span class="cm">	 * to be read outside of zone-&gt;lock, and it is done in the main
+</span><span class="cm">	 * allocator path.  But, it is written quite infrequently.
+</span><span class="cm">	 *
+</span><span class="cm">	 * The lock is declared along with zone-&gt;lock because it is
+</span><span class="cm">	 * frequently read in proximity to zone-&gt;lock.  It&#39;s good to
+</span><span class="cm">	 * give them a chance of being in the same cacheline.
+</span><span class="cm">	 */</span>
+	<span class="kt">unsigned</span> <span class="kt">long</span>		<span class="n">spanned_pages</span><span class="p">;</span>	<span class="cm">/* total size, including holes */</span>
+	<span class="kt">unsigned</span> <span class="kt">long</span>		<span class="n">present_pages</span><span class="p">;</span>	<span class="cm">/* amount of memory (excluding holes) */</span>
 
-	/*
-	 * rarely used fields:
-	 */
-	const char		*name;
-} ____cacheline_internodealigned_in_smp;
-</code></pre>
-
-<ul>
+	<span class="cm">/*
+</span><span class="cm">	 * rarely used fields:
+</span><span class="cm">	 */</span>
+	<span class="k">const</span> <span class="kt">char</span>		<span class="o">*</span><span class="n">name</span><span class="p">;</span>
+<span class="p">}</span> <span class="n">____cacheline_internodealigned_in_smp</span><span class="p">;</span>
+</code></pre></div><ul>
 <li><code>lock</code> : 自旋锁，防止结构被并发访问</li>
 <li><code>watermark</code> : 持有最小值，最低和最高水位值</li>
 <li><code>name</code> : 以 <code>NULL</code> 结尾的字符串表示该区的名字。内核启动时初始化这个值</li>
 </ul>
-
 <h2 id="获得页">获得页</h2>
-
 <p>内核获取和释放内存的接口都以页为单位</p>
-
-<pre><code class="language-c">struct page *alloc_pages(gfp_t gfp_mask, unsigned int order);
-</code></pre>
-
-<p>分配 2<sup>order</sup> 个连续物理页。</p>
-
-<pre><code class="language-c">void *page_address(struct page *page);
-</code></pre>
-
-<p>返回指向物理页的逻辑地址。</p>
-
-<pre><code class="language-c">unsigned long __get_free_pages(gfp_t gfp_mask, unsigned int order);
-</code></pre>
-
-<p>取得连续逻辑地址</p>
-
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="k">struct</span> <span class="n">page</span> <span class="o">*</span><span class="nf">alloc_pages</span><span class="p">(</span><span class="n">gfp_t</span> <span class="n">gfp_mask</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">order</span><span class="p">);</span>
+</code></pre></div><p>分配 2<!-- raw HTML omitted -->order<!-- raw HTML omitted --> 个连续物理页。</p>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">void</span> <span class="o">*</span><span class="nf">page_address</span><span class="p">(</span><span class="k">struct</span> <span class="n">page</span> <span class="o">*</span><span class="n">page</span><span class="p">);</span>
+</code></pre></div><p>返回指向物理页的逻辑地址。</p>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">unsigned</span> <span class="kt">long</span> <span class="nf">__get_free_pages</span><span class="p">(</span><span class="n">gfp_t</span> <span class="n">gfp_mask</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">order</span><span class="p">);</span>
+</code></pre></div><p>取得连续逻辑地址</p>
 <h3 id="取得全部为-0-的页">取得全部为 0 的页</h3>
-
-<pre><code class="language-c">unsigned long get_zeroed_page(gfp_t gfp_mask);
-</code></pre>
-
-<p>这种一般对用户空间的内存分配，防止内存中的敏感信息分配出去，保障系统安全</p>
-
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">unsigned</span> <span class="kt">long</span> <span class="nf">get_zeroed_page</span><span class="p">(</span><span class="n">gfp_t</span> <span class="n">gfp_mask</span><span class="p">);</span>
+</code></pre></div><p>这种一般对用户空间的内存分配，防止内存中的敏感信息分配出去，保障系统安全</p>
 <figure>
     <img src="/images/%e6%88%aa%e5%9b%be_2019-06-23_15-59-35.png"/> 
 </figure>
 
-
 <h3 id="释放页">释放页</h3>
-
-<pre><code class="language-c">void __free_pages(struct page *page, unsigned int order);
-void free_pages(unsigned long addr, unsigned int order);
-void free_page(unsigned long addr);
-</code></pre>
-
-<h3 id="kmalloc">kmalloc()</h3>
-
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">void</span> <span class="nf">__free_pages</span><span class="p">(</span><span class="k">struct</span> <span class="n">page</span> <span class="o">*</span><span class="n">page</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">order</span><span class="p">);</span>
+<span class="kt">void</span> <span class="nf">free_pages</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">addr</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">order</span><span class="p">);</span>
+<span class="kt">void</span> <span class="nf">free_page</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">addr</span><span class="p">);</span>
+</code></pre></div><h3 id="kmalloc">kmalloc()</h3>
 <p>功能与用户空间的 <code>malloc()</code> 非常相似。可以获得字节为单位的内核内存。和 <code>kfree()</code> 成对使用。</p>
-
 <h4 id="gfp-mask">gfp_mask</h4>
-
 <p>该标志分为三类：</p>
-
 <ol>
 <li>行为修饰符：表示内核如何分配所需的内存</li>
 <li>区修饰符：表示从哪里分</li>
 <li>类型修饰符：组合了行为和区修饰符，将各种可能用到的组合归纳为不同类型，简化修饰符的使用</li>
 </ol>
-
 <ul>
-<li><p>行为修饰符</p>
-
-<p><img src="/images/截图_2019-06-23_16-15-28.png" alt="" />
-<img src="/images/截图_2019-06-23_16-16-34.png" alt="" /></p></li>
-
-<li><p>区修饰符</p>
-
-<figure>
+<li>行为修饰符</li>
+</ul>
+<pre><code>![](/images/截图_2019-06-23_16-15-28.png)
+![](/images/截图_2019-06-23_16-16-34.png)
+</code></pre>
+<ul>
+<li>区修饰符</li>
+</ul>
+<pre><code><figure>
     <img src="/images/%e6%88%aa%e5%9b%be_2019-06-23_16-17-33.png"/> 
 </figure>
-</li>
 
-<li><p>类型修饰符</p>
-
-<p></images/截图_2019-06-23_16-19-02.png ><img src="/images/截图_2019-06-23_16-19-30.png" alt="" /></p>
+</code></pre>
+<ul>
+<li>类型修饰符</li>
+</ul>
+<pre><code>&lt;/images/截图_2019-06-23_16-19-02.png &gt;![](/images/截图_2019-06-23_16-19-30.png)
 
 <figure>
     <img src="/images/%e6%88%aa%e5%9b%be_2019-06-23_16-20-49.png"/> 
 </figure>
-</li>
-</ul>
 
+</code></pre>
 <h4 id="vmalloc">vmalloc()</h4>
-
 <p>工作方式和 <code>kmalloc</code> 类似，只是分配的虚拟地址是连续的，而物理地址无须连续。用户空间的 <code>malloc</code> 也是如此。和 <code>vfree()</code> 成对使用。</p>
-
 <h2 id="slab-分配器">slab 分配器</h2>
-
 <p>通用数据结构的缓存层。</p>
-
 <p>基本原则：</p>
-
 <ol>
 <li>频繁使用的数据结构也会频繁分配和释放</li>
 <li>频繁分配和回收必然会导致内存碎片</li>
@@ -486,236 +433,166 @@ void free_page(unsigned long addr);
 <li>如果分配器是与 NUMA 相关的，就可以从相同的内存节点为请求者进行分配</li>
 <li>对存放的对象进行着色，以防止多个对象映射到相同的高速缓存行</li>
 </ol>
-
 <h3 id="slab-设计">slab 设计</h3>
-
 <p>把不同的对象化分为高速缓存组用来放不同类型的对象。</p>
-
 <figure>
     <img src="/images/%e6%88%aa%e5%9b%be_2019-06-23_19-41-38.png"/> 
 </figure>
 
-
 <p>高速缓存数据结构： <code>kmem_cache</code> 包含三个链表： <code>slabs_full</code>, <code>slabs_partial</code>,
 <code>slabs_empty</code>. 都放在 <code>kmem_list3</code> 结构中。</p>
-
 <p>slab 数据结构： <code>struck slab</code></p>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="cm">/*
+</span><span class="cm"> * struct slab
+</span><span class="cm"> *
+</span><span class="cm"> * Manages the objs in a slab. Placed either at the beginning of mem allocated
+</span><span class="cm"> * for a slab, or allocated from an general cache.
+</span><span class="cm"> * Slabs are chained into three list: fully used, partial, fully free slabs.
+</span><span class="cm"> */</span>
+<span class="k">struct</span> <span class="n">slab</span> <span class="p">{</span>
+	<span class="k">union</span> <span class="p">{</span>
+		<span class="k">struct</span> <span class="p">{</span>
+			<span class="k">struct</span> <span class="n">list_head</span> <span class="n">list</span><span class="p">;</span>     <span class="cm">/* 满、部分或空链表 */</span>
+			<span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">colouroff</span><span class="p">;</span>   <span class="cm">/* slab 着色偏移量 **/</span>
+			<span class="kt">void</span> <span class="o">*</span><span class="n">s_mem</span><span class="p">;</span>		<span class="cm">/* including colour offset */</span>
+			<span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">inuse</span><span class="p">;</span>	<span class="cm">/* num of objs active in slab */</span>
+			<span class="n">kmem_bufctl_t</span> <span class="n">free</span><span class="p">;</span>
+			<span class="kt">unsigned</span> <span class="kt">short</span> <span class="n">nodeid</span><span class="p">;</span>
+		<span class="p">};</span>
+		<span class="k">struct</span> <span class="n">slab_rcu</span> <span class="n">__slab_cover_slab_rcu</span><span class="p">;</span>
+	<span class="p">};</span>
+<span class="p">};</span>
+</code></pre></div><p>slab 分配器可以创建新的 slab, 通过 <code>__get_free_pages()</code> 低级内核页分配器进行：</p>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="k">static</span> <span class="kt">void</span> <span class="o">*</span><span class="nf">kmem_getpages</span><span class="p">(</span><span class="k">struct</span> <span class="n">kmem_cache</span> <span class="o">*</span><span class="n">cachep</span><span class="p">,</span> <span class="n">gfp_t</span> <span class="n">flags</span><span class="p">,</span> <span class="kt">int</span> <span class="n">nodeid</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="k">struct</span> <span class="n">page</span> <span class="o">*</span><span class="n">page</span><span class="p">;</span>
+	<span class="kt">int</span> <span class="n">nr_pages</span><span class="p">;</span>
+	<span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
 
-<pre><code class="language-c">/*
- * struct slab
- *
- * Manages the objs in a slab. Placed either at the beginning of mem allocated
- * for a slab, or allocated from an general cache.
- * Slabs are chained into three list: fully used, partial, fully free slabs.
- */
-struct slab {
-	union {
-		struct {
-			struct list_head list;     /* 满、部分或空链表 */
-			unsigned long colouroff;   /* slab 着色偏移量 **/
-			void *s_mem;		/* including colour offset */
-			unsigned int inuse;	/* num of objs active in slab */
-			kmem_bufctl_t free;
-			unsigned short nodeid;
-		};
-		struct slab_rcu __slab_cover_slab_rcu;
-	};
-};
-</code></pre>
+<span class="cp">#ifndef CONFIG_MMU
+</span><span class="cp"></span>	<span class="cm">/*
+</span><span class="cm">	 * Nommu uses slab&#39;s for process anonymous memory allocations, and thus
+</span><span class="cm">	 * requires __GFP_COMP to properly refcount higher order allocations
+</span><span class="cm">	 */</span>
+	<span class="n">flags</span> <span class="o">|=</span> <span class="n">__GFP_COMP</span><span class="p">;</span>
+<span class="cp">#endif
+</span><span class="cp"></span>
+	<span class="n">flags</span> <span class="o">|=</span> <span class="n">cachep</span><span class="o">-&gt;</span><span class="n">gfpflags</span><span class="p">;</span>
+	<span class="k">if</span> <span class="p">(</span><span class="n">cachep</span><span class="o">-&gt;</span><span class="n">flags</span> <span class="o">&amp;</span> <span class="n">SLAB_RECLAIM_ACCOUNT</span><span class="p">)</span>
+		<span class="n">flags</span> <span class="o">|=</span> <span class="n">__GFP_RECLAIMABLE</span><span class="p">;</span>
 
-<p>slab 分配器可以创建新的 slab, 通过 <code>__get_free_pages()</code> 低级内核页分配器进行：</p>
+	<span class="n">page</span> <span class="o">=</span> <span class="n">alloc_pages_exact_node</span><span class="p">(</span><span class="n">nodeid</span><span class="p">,</span> <span class="n">flags</span> <span class="o">|</span> <span class="n">__GFP_NOTRACK</span><span class="p">,</span> <span class="n">cachep</span><span class="o">-&gt;</span><span class="n">gfporder</span><span class="p">);</span>
+	<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">page</span><span class="p">)</span>
+		<span class="k">return</span> <span class="nb">NULL</span><span class="p">;</span>
 
-<pre><code class="language-c">static void *kmem_getpages(struct kmem_cache *cachep, gfp_t flags, int nodeid)
-{
-	struct page *page;
-	int nr_pages;
-	int i;
+	<span class="n">nr_pages</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">cachep</span><span class="o">-&gt;</span><span class="n">gfporder</span><span class="p">);</span>
+	<span class="k">if</span> <span class="p">(</span><span class="n">cachep</span><span class="o">-&gt;</span><span class="n">flags</span> <span class="o">&amp;</span> <span class="n">SLAB_RECLAIM_ACCOUNT</span><span class="p">)</span>
+		<span class="n">add_zone_page_state</span><span class="p">(</span><span class="n">page_zone</span><span class="p">(</span><span class="n">page</span><span class="p">),</span>
+			<span class="n">NR_SLAB_RECLAIMABLE</span><span class="p">,</span> <span class="n">nr_pages</span><span class="p">);</span>
+	<span class="k">else</span>
+		<span class="n">add_zone_page_state</span><span class="p">(</span><span class="n">page_zone</span><span class="p">(</span><span class="n">page</span><span class="p">),</span>
+			<span class="n">NR_SLAB_UNRECLAIMABLE</span><span class="p">,</span> <span class="n">nr_pages</span><span class="p">);</span>
+	<span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">nr_pages</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+		<span class="n">__SetPageSlab</span><span class="p">(</span><span class="n">page</span> <span class="o">+</span> <span class="n">i</span><span class="p">);</span>
 
-#ifndef CONFIG_MMU
-	/*
-	 * Nommu uses slab's for process anonymous memory allocations, and thus
-	 * requires __GFP_COMP to properly refcount higher order allocations
-	 */
-	flags |= __GFP_COMP;
-#endif
+	<span class="k">if</span> <span class="p">(</span><span class="n">kmemcheck_enabled</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="p">(</span><span class="n">cachep</span><span class="o">-&gt;</span><span class="n">flags</span> <span class="o">&amp;</span> <span class="n">SLAB_NOTRACK</span><span class="p">))</span> <span class="p">{</span>
+		<span class="n">kmemcheck_alloc_shadow</span><span class="p">(</span><span class="n">page</span><span class="p">,</span> <span class="n">cachep</span><span class="o">-&gt;</span><span class="n">gfporder</span><span class="p">,</span> <span class="n">flags</span><span class="p">,</span> <span class="n">nodeid</span><span class="p">);</span>
 
-	flags |= cachep-&gt;gfpflags;
-	if (cachep-&gt;flags &amp; SLAB_RECLAIM_ACCOUNT)
-		flags |= __GFP_RECLAIMABLE;
+		<span class="k">if</span> <span class="p">(</span><span class="n">cachep</span><span class="o">-&gt;</span><span class="n">ctor</span><span class="p">)</span>
+			<span class="n">kmemcheck_mark_uninitialized_pages</span><span class="p">(</span><span class="n">page</span><span class="p">,</span> <span class="n">nr_pages</span><span class="p">);</span>
+		<span class="k">else</span>
+			<span class="n">kmemcheck_mark_unallocated_pages</span><span class="p">(</span><span class="n">page</span><span class="p">,</span> <span class="n">nr_pages</span><span class="p">);</span>
+	<span class="p">}</span>
 
-	page = alloc_pages_exact_node(nodeid, flags | __GFP_NOTRACK, cachep-&gt;gfporder);
-	if (!page)
-		return NULL;
-
-	nr_pages = (1 &lt;&lt; cachep-&gt;gfporder);
-	if (cachep-&gt;flags &amp; SLAB_RECLAIM_ACCOUNT)
-		add_zone_page_state(page_zone(page),
-			NR_SLAB_RECLAIMABLE, nr_pages);
-	else
-		add_zone_page_state(page_zone(page),
-			NR_SLAB_UNRECLAIMABLE, nr_pages);
-	for (i = 0; i &lt; nr_pages; i++)
-		__SetPageSlab(page + i);
-
-	if (kmemcheck_enabled &amp;&amp; !(cachep-&gt;flags &amp; SLAB_NOTRACK)) {
-		kmemcheck_alloc_shadow(page, cachep-&gt;gfporder, flags, nodeid);
-
-		if (cachep-&gt;ctor)
-			kmemcheck_mark_uninitialized_pages(page, nr_pages);
-		else
-			kmemcheck_mark_unallocated_pages(page, nr_pages);
-	}
-
-	return page_address(page);
-}
-</code></pre>
-
-<p>slab 层关键是要避免频繁分配和释放，只有在没有满也没有空的 slab 时才会调用页分配函数；当内存变得紧缺时才释放。</p>
-
+	<span class="k">return</span> <span class="n">page_address</span><span class="p">(</span><span class="n">page</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div><p>slab 层关键是要避免频繁分配和释放，只有在没有满也没有空的 slab 时才会调用页分配函数；当内存变得紧缺时才释放。</p>
 <p>slab 层的管理是在每个高速缓存的基础上，通过提供给整个内核一个简单的接口来完成。</p>
-
 <h3 id="接口">接口</h3>
-
 <p>高速缓存通过以下接口创建：</p>
-
-<pre><code class="language-c">struct kmem_cache *kmem_cache_create(const char *name, size_t size, size_t align,
-			unsigned long flags,
-			void (*ctor)(void *));
-</code></pre>
-
-<ul>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="k">struct</span> <span class="n">kmem_cache</span> <span class="o">*</span><span class="nf">kmem_cache_create</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">name</span><span class="p">,</span> <span class="n">size_t</span> <span class="n">size</span><span class="p">,</span> <span class="n">size_t</span> <span class="n">align</span><span class="p">,</span>
+			<span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">flags</span><span class="p">,</span>
+			<span class="kt">void</span> <span class="p">(</span><span class="o">*</span><span class="n">ctor</span><span class="p">)(</span><span class="kt">void</span> <span class="o">*</span><span class="p">));</span>
+</code></pre></div><ul>
 <li>name : 高速缓存的名字</li>
 <li>size : 每个元素的大小</li>
 <li>align : 第一对象的偏移</li>
 <li>flags : 控制告诉缓存的行为
-
 <ul>
 <li>SLAB_HWCACHE_ALIGN : 所有对象按高速行对齐</li>
 <li>SLAB_POISON : 用已知值填充</li>
 <li>SLAB_RED_ZONE : 在已分配的内存周围插入 &ldquo;红色警戒区&rdquo; 以探测缓冲边界</li>
 <li>SLAB_PANIC : 分配失败时提醒 slab 层</li>
 <li>SLAB_CACHE_DMA : 使用可以执行 DMA 的内存给每个 slab 分配空间。</li>
-</ul></li>
+</ul>
+</li>
 <li>ctor : 高速缓存构造函数， 实际上不需要，可以直接赋值为空</li>
 </ul>
-
 <p>撤销一个高速缓存：</p>
-
-<pre><code class="language-c">int kmem_cache_destory(struct kmem_cache *cachep);
-</code></pre>
-
-<p>调用条件：</p>
-
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">int</span> <span class="nf">kmem_cache_destory</span><span class="p">(</span><span class="k">struct</span> <span class="n">kmem_cache</span> <span class="o">*</span><span class="n">cachep</span><span class="p">);</span>
+</code></pre></div><p>调用条件：</p>
 <ol>
 <li>所有的 slab 为空</li>
 <li>调用过程中不访问这个高速缓存</li>
 </ol>
-
 <h4 id="分配内存">分配内存</h4>
-
-<pre><code class="language-c">void *kmem_cache_alloc(struct kmem_cache *cachep, gfp_t flags);
-</code></pre>
-
-<h4 id="释放内存">释放内存</h4>
-
-<pre><code class="language-c">void kmem_cache_free(struct kmem_cache *cachep, void *objp);
-</code></pre>
-
-<h2 id="静态分配">静态分配</h2>
-
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">void</span> <span class="o">*</span><span class="nf">kmem_cache_alloc</span><span class="p">(</span><span class="k">struct</span> <span class="n">kmem_cache</span> <span class="o">*</span><span class="n">cachep</span><span class="p">,</span> <span class="n">gfp_t</span> <span class="n">flags</span><span class="p">);</span>
+</code></pre></div><h4 id="释放内存">释放内存</h4>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">void</span> <span class="nf">kmem_cache_free</span><span class="p">(</span><span class="k">struct</span> <span class="n">kmem_cache</span> <span class="o">*</span><span class="n">cachep</span><span class="p">,</span> <span class="kt">void</span> <span class="o">*</span><span class="n">objp</span><span class="p">);</span>
+</code></pre></div><h2 id="静态分配">静态分配</h2>
 <p>每个进程的内核栈大小既依赖体系结构，也依赖编译选项。一般为两个页面大小。</p>
-
 <h3 id="单页内核栈">单页内核栈</h3>
-
 <p>2.6 系列早期可以通过设置单页编译选项。原因：</p>
-
 <ol>
 <li>让每个进程减少内存消耗</li>
 <li>随着机器的运行时间增加，找两个未分配的连续页比较困难</li>
 </ol>
-
 <p>当使用单页内核栈时，中断处理程序将拥有自己的中断栈，否则和中断进程共享内核栈。</p>
-
 <h2 id="高端内存的映射">高端内存的映射</h2>
-
 <h3 id="永久映射">永久映射</h3>
-
 <p>映射一个给定的 <code>page</code> 结构到内核地址空间，可以使用 <code>&lt;linux/highmem&gt;</code> 中的函数：</p>
-
-<pre><code class="language-c">void *kmap(struct page *page);
-</code></pre>
-
-<p>在高端个低端的内存都可用。如果是低端内存，返回该页的虚拟地址。位于高端，则会建立永久映射，再返回地址。该函数能睡眠，所以只能用于进程上下文。</p>
-
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">void</span> <span class="o">*</span><span class="nf">kmap</span><span class="p">(</span><span class="k">struct</span> <span class="n">page</span> <span class="o">*</span><span class="n">page</span><span class="p">);</span>
+</code></pre></div><p>在高端个低端的内存都可用。如果是低端内存，返回该页的虚拟地址。位于高端，则会建立永久映射，再返回地址。该函数能睡眠，所以只能用于进程上下文。</p>
 <p>永久映射数量有限，不用的时候应该解除：</p>
-
-<pre><code class="language-c">void kunmap(struct page *page);
-</code></pre>
-
-<h3 id="临时映射">临时映射</h3>
-
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">void</span> <span class="nf">kunmap</span><span class="p">(</span><span class="k">struct</span> <span class="n">page</span> <span class="o">*</span><span class="n">page</span><span class="p">);</span>
+</code></pre></div><h3 id="临时映射">临时映射</h3>
 <p>当前上下文不能睡眠时，内核提供了临时映射。内核可以原子地把高端内存中的一个页映射到某个保留的映射中。比如中断处理程序可以使用临时映射防止进入睡眠。</p>
-
-<pre><code class="language-c">void *kmap_atomic(struct page *page, enum km_type type);
-</code></pre>
-
-<p>取消映射：</p>
-
-<pre><code class="language-c">void kunmap_atomic(void *kvaddr, enum km_type type);
-</code></pre>
-
-<h2 id="cpu-上的数据">cpu 上的数据</h2>
-
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">void</span> <span class="o">*</span><span class="nf">kmap_atomic</span><span class="p">(</span><span class="k">struct</span> <span class="n">page</span> <span class="o">*</span><span class="n">page</span><span class="p">,</span> <span class="k">enum</span> <span class="n">km_type</span> <span class="n">type</span><span class="p">);</span>
+</code></pre></div><p>取消映射：</p>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">void</span> <span class="nf">kunmap_atomic</span><span class="p">(</span><span class="kt">void</span> <span class="o">*</span><span class="n">kvaddr</span><span class="p">,</span> <span class="k">enum</span> <span class="n">km_type</span> <span class="n">type</span><span class="p">);</span>
+</code></pre></div><h2 id="cpu-上的数据">cpu 上的数据</h2>
 <p>每个 cpu 上数据是唯一的，一般存放在一个数组中。按当前的处理器号确定当前的元素。</p>
-
 <p>访问的过程中不需要加锁，因为这份数据对于当前的处理器来说是唯一的。</p>
-
 <p>但要注意的是内核抢占：</p>
-
 <ol>
 <li>当前代码被其它处理器枪占并占用并重新调度， CPU 变量将会无效，因为它指向错误的处理器</li>
 <li>另一个任务枪占了当前代码，那么有可能在同一个处理器上发生并发访问数据的情况，这时会出现竞争</li>
 </ol>
-
 <p>不过在 <code>get_cpu()</code> 时已经禁止内核抢占了，必须通过 <code>put_cpu()</code> 恢复。</p>
-
 <h2 id="新的-percpu-接口">新的 percpu 接口</h2>
-
 <p>2.6 为了方便创建和操作每个 CPU 数据，引进 percpu 操作接口。</p>
-
 <h3 id="编译时的每个-cpu-数据">编译时的每个 CPU 数据</h3>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="c1">// 定义和声明
+</span><span class="c1"></span><span class="n">DEFINE_PER_CPU</span><span class="p">(</span><span class="n">type</span><span class="p">,</span> <span class="n">name</span><span class="p">);</span>
+<span class="n">DECLARE_PER_CPU</span><span class="p">(</span><span class="n">type</span><span class="p">,</span> <span class="n">name</span><span class="p">);</span>
 
-<pre><code class="language-c">// 定义和声明
-DEFINE_PER_CPU(type, name);
-DECLARE_PER_CPU(type, name);
-
-// 操作接口
-get_cpu_var(name);
-put_cpu_var(name);
-</code></pre>
-
-<blockquote>
+<span class="c1">// 操作接口
+</span><span class="c1"></span><span class="n">get_cpu_var</span><span class="p">(</span><span class="n">name</span><span class="p">);</span>
+<span class="n">put_cpu_var</span><span class="p">(</span><span class="n">name</span><span class="p">);</span>
+</code></pre></div><blockquote>
 <p>编译时每个 CPU 数据不能在模块中使用，因为链接程序实际上将它们放在一个唯一的可执行段中 (.data.percpu)</p>
 </blockquote>
-
 <h3 id="运行时创建">运行时创建</h3>
-
 <p>类似于 <code>kmalloc()</code>, 定义于 <code>&lt;linux/percpu.h&gt;</code> :</p>
-
-<pre><code class="language-c">void *alloc_percpu(type);
-void *__alloc_percpu(size_t size, size_t align );
-void free_percpu(const void *);
-</code></pre>
-
-<h2 id="使用-percpu-的好处">使用 percpu 的好处</h2>
-
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">void</span> <span class="o">*</span><span class="nf">alloc_percpu</span><span class="p">(</span><span class="n">type</span><span class="p">);</span>
+<span class="kt">void</span> <span class="o">*</span><span class="nf">__alloc_percpu</span><span class="p">(</span><span class="n">size_t</span> <span class="n">size</span><span class="p">,</span> <span class="n">size_t</span> <span class="n">align</span> <span class="p">);</span>
+<span class="kt">void</span> <span class="nf">free_percpu</span><span class="p">(</span><span class="k">const</span> <span class="kt">void</span> <span class="o">*</span><span class="p">);</span>
+</code></pre></div><h2 id="使用-percpu-的好处">使用 percpu 的好处</h2>
 <ol>
 <li>减少数据加锁，唯一安全要求是禁止内核枪占</li>
 <li>使用每个 cpu 数据可以大大减少缓存失效</li>
 </ol>
-
 <h2 id="总结">总结</h2>
-
 <ol>
 <li>需要连续的页，选择某个低级页分配器或 <code>kmalloc()</code></li>
 <li>从高端内存分配，使用 <code>alloc_pages()</code></li>
@@ -777,6 +654,8 @@ void free_percpu(const void *);
     
     <li><a href="/categories/%e5%86%85%e5%ad%98%e7%ae%a1%e7%90%86" title="内存管理">内存管理<sup>1</sup></a></li>
     
+    <li><a href="/categories/%e5%86%85%e6%a0%b8%e5%ae%9e%e9%aa%8c" title="内核实验">内核实验<sup>1</sup></a></li>
+    
     <li><a href="/categories/%e5%91%bd%e4%bb%a4%e8%a1%8c%e8%89%ba%e6%9c%af" title="命令行艺术">命令行艺术<sup>3</sup></a></li>
     
     <li><a href="/categories/%e5%ad%a6%e4%b9%a0%e7%ac%94%e8%ae%b0" title="学习笔记">学习笔记<sup>13</sup></a></li>
@@ -802,6 +681,8 @@ void free_percpu(const void *);
 	<p class="asidetitle">标签</p>
 		<ul class="clearfix">
       
+			<li><a href="/tags/bochs" title="bochs">bochs<sup>1</sup></a></li>
+      
 			<li><a href="/tags/c&#43;&#43;" title="c&#43;&#43;">c&#43;&#43;<sup>10</sup></a></li>
       
 			<li><a href="/tags/command" title="command">command<sup>3</sup></a></li>
@@ -816,9 +697,9 @@ void free_percpu(const void *);
       
 			<li><a href="/tags/jemalloc" title="jemalloc">jemalloc<sup>1</sup></a></li>
       
-			<li><a href="/tags/kernel" title="kernel">kernel<sup>7</sup></a></li>
+			<li><a href="/tags/kernel" title="kernel">kernel<sup>8</sup></a></li>
       
-			<li><a href="/tags/linux" title="linux">linux<sup>12</sup></a></li>
+			<li><a href="/tags/linux" title="linux">linux<sup>13</sup></a></li>
       
 			<li><a href="/tags/linux%e5%86%85%e6%a0%b8" title="linux内核">linux内核<sup>1</sup></a></li>
       
@@ -880,6 +761,11 @@ void free_percpu(const void *);
       
       
       <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2020-04">2020年04月</a><span class="archive-list-count">1</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
         <a class="archive-list-link" href="/post/#2019-09">2019年09月</a><span class="archive-list-count">1</span>
       </li>
       
@@ -933,6 +819,8 @@ void free_percpu(const void *);
 <div class="tagcloudlist">
   <p class="asidetitle">标签云</p>
   <div class="tagcloudlist clearfix">
+    
+    <a href="/tags/bochs" style="font-size: 12px;">bochs</a>
     
     <a href="/tags/c&#43;&#43;" style="font-size: 12px;">c&#43;&#43;</a>
     
@@ -1032,7 +920,7 @@ void free_percpu(const void *);
     
     
   </div>
-  <p class="copyright">Powered by <a href="http://gohugo.io" target="_blank" title="hugo">hugo</a> and Theme by <a href="https://github.com/coderzh/hugo-pacman-theme" target="_blank" title="hugo-pacman-theme">hugo-pacman-theme</a> © 2019
+  <p class="copyright">Powered by <a href="http://gohugo.io" target="_blank" title="hugo">hugo</a> and Theme by <a href="https://github.com/coderzh/hugo-pacman-theme" target="_blank" title="hugo-pacman-theme">hugo-pacman-theme</a> © 2020
     
     <a href="/" title="北极狼徒">北极狼徒</a>
     

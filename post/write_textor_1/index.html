@@ -75,29 +75,24 @@
 
 	<div class="article-content">
     
-    
-
-<h2 id="table-of-contens">Table of Contens</h2>
-
+    <h2 id="table-of-contens">Table of Contens</h2>
 <ul>
-<li><a href="#写作动机">写作动机</a></li>
-<li><a href="#规范模式">规范模式</a></li>
-<li><a href="#文本模式">文本模式</a></li>
-<li><a href="#设置属性">设置属性</a>
-
+<li><a href="#%E5%86%99%E4%BD%9C%E5%8A%A8%E6%9C%BA">写作动机</a></li>
+<li><a href="#%E8%A7%84%E8%8C%83%E6%A8%A1%E5%BC%8F">规范模式</a></li>
+<li><a href="#%E6%96%87%E6%9C%AC%E6%A8%A1%E5%BC%8F">文本模式</a></li>
+<li><a href="#%E8%AE%BE%E7%BD%AE%E5%B1%9E%E6%80%A7">设置属性</a>
 <ul>
-<li><a href="#本地模式标志-c-lflag">本地模式标志 ~~ <code>c_lflag</code></a></li>
-<li><a href="#输入模式标志-c-iflag">输入模式标志 ~~ <code>c_iflag</code></a></li>
-<li><a href="#输出模式标志-c-oflag">输出模式标志 ~~ <code>c_oflag</code></a></li>
-<li><a href="#杂项标志">杂项标志</a></li>
-</ul></li>
-<li><a href="#开启和关闭文本模式">开启和关闭文本模式</a></li>
-<li><a href="#总结">总结</a></li>
-<li><a href="#参考">参考</a></li>
+<li><a href="#%E6%9C%AC%E5%9C%B0%E6%A8%A1%E5%BC%8F%E6%A0%87%E5%BF%97-c-lflag">本地模式标志 ~~ <code>c_lflag</code></a></li>
+<li><a href="#%E8%BE%93%E5%85%A5%E6%A8%A1%E5%BC%8F%E6%A0%87%E5%BF%97-c-iflag">输入模式标志 ~~ <code>c_iflag</code></a></li>
+<li><a href="#%E8%BE%93%E5%87%BA%E6%A8%A1%E5%BC%8F%E6%A0%87%E5%BF%97-c-oflag">输出模式标志 ~~ <code>c_oflag</code></a></li>
+<li><a href="#%E6%9D%82%E9%A1%B9%E6%A0%87%E5%BF%97">杂项标志</a></li>
 </ul>
-
+</li>
+<li><a href="#%E5%BC%80%E5%90%AF%E5%92%8C%E5%85%B3%E9%97%AD%E6%96%87%E6%9C%AC%E6%A8%A1%E5%BC%8F">开启和关闭文本模式</a></li>
+<li><a href="#%E6%80%BB%E7%BB%93">总结</a></li>
+<li><a href="#%E5%8F%82%E8%80%83">参考</a></li>
+</ul>
 <h2 id="写作动机">写作动机</h2>
-
 <p>因为是该项目的第一篇文章，在这里简单介绍实现该项目的动机。作为程序员，动手能力是
 第一位的，不管看了多少经典书籍、亦或浏览过多少源码。如果没有自己动手去实现，这些
 东西都不是自己的。本人可以说是一个编辑器爱好者吧，前前后后折腾过 N 多编辑器：
@@ -106,259 +101,194 @@
 用了这么多的编辑器，是时候自己实现一个了。当然并不打算参与竞争，单纯为了学习。再
 说了，目前我的 emacs+doom 已经能处理各种写作任务，而且我很享受在上面码字，就想
 弹钢琴一样，无须鼠标干扰，安心写作。Ok~ 让我们开始一段奇妙的旅行吧～～～</p>
-
 <h2 id="规范模式">规范模式</h2>
-
 <p>我们平常使用的交互式命令终端就是所谓的 <code>canonical mode</code>。简单来说就是，它每次接收一行文本，
 允许通过退格键进行删除输入的内容，以 <code>enter</code> 作为发送触发键发送给程序，然后程序
 对其进行响应。这种模式大多用于交互命令处理中。但是用在文本编辑器(如 nano)中
 显然是不合适，因为它要处理的是每一个按键(包括 enter)。</p>
-
 <h2 id="文本模式">文本模式</h2>
-
 <p>文本模式(raw mode)可以不处理 <code>enter</code> 触发的发送功能，而是把其作为键值进行处理。这个才
 接近文本编辑器的要求。但是呢，终端默认都是规范模式，而且这两个模式之间的差别不仅
 仅是这一个，而且要完全切换会涉及很多的标志位的设置。下面我们就一步步来让终端来实
 现期望的文本模式。</p>
-
 <h2 id="设置属性">设置属性</h2>
-
 <p>上一章节提到文本模式和规范模式中间隔了很多 <code>flag</code> ，这些 <code>flag</code> 其实就是一些属性，我们通
 过修改这些属性的值来实现我们的目标。终端的属性是通过 <code>struct termios</code> 类型来描述
 的，我们先看看它的基本组成：</p>
-
-<pre><code class="language-C">// /usr/include/bits/termios.h
-struct termios
-  {
-    tcflag_t c_iflag;		/* input mode flags */
-    tcflag_t c_oflag;		/* output mode flags */
-    tcflag_t c_cflag;		/* control mode flags */
-    tcflag_t c_lflag;		/* local mode flags */
-    cc_t c_line;			/* line discipline */
-    cc_t c_cc[NCCS];		/* control characters */
-    speed_t c_ispeed;		/* input speed */
-    speed_t c_ospeed;		/* output speed */
-}
-</code></pre>
-
-<p>从注释中容易看出， <code>termios</code> 是一些 <code>flag</code> 的集合，其中和文本模式相关的主要有
+<div class="highlight"><pre class="chroma"><code class="language-C" data-lang="C"><span class="c1">// /usr/include/bits/termios.h
+</span><span class="c1"></span><span class="k">struct</span> <span class="n">termios</span>
+  <span class="p">{</span>
+    <span class="n">tcflag_t</span> <span class="n">c_iflag</span><span class="p">;</span>		<span class="cm">/* input mode flags */</span>
+    <span class="n">tcflag_t</span> <span class="n">c_oflag</span><span class="p">;</span>		<span class="cm">/* output mode flags */</span>
+    <span class="n">tcflag_t</span> <span class="n">c_cflag</span><span class="p">;</span>		<span class="cm">/* control mode flags */</span>
+    <span class="n">tcflag_t</span> <span class="n">c_lflag</span><span class="p">;</span>		<span class="cm">/* local mode flags */</span>
+    <span class="n">cc_t</span> <span class="n">c_line</span><span class="p">;</span>			<span class="cm">/* line discipline */</span>
+    <span class="n">cc_t</span> <span class="n">c_cc</span><span class="p">[</span><span class="n">NCCS</span><span class="p">];</span>		<span class="cm">/* control characters */</span>
+    <span class="n">speed_t</span> <span class="n">c_ispeed</span><span class="p">;</span>		<span class="cm">/* input speed */</span>
+    <span class="n">speed_t</span> <span class="n">c_ospeed</span><span class="p">;</span>		<span class="cm">/* output speed */</span>
+<span class="p">}</span>
+</code></pre></div><p>从注释中容易看出， <code>termios</code> 是一些 <code>flag</code> 的集合，其中和文本模式相关的主要有
 <code>c_lflag</code>, <code>c_iflag</code> , <code>c_oflag</code> 。下面我们将分别从这三个标志集合中提取出和文本
 模式相关的 <code>flag</code> 。</p>
-
 <p>在终端启动的时候，系统会为其初始化 <code>termios</code> , 我们需要通过 <code>tcgetattr</code> 获取这些
 初始化值，切记不能自己初始化一个新实例，然后设置相关标志，最后用这个新实例去替换
 原始的初始值。这可能会引发许多问题，一些标志的可能并不是我们提供的值，因此会修改
 很多我们未知的属性。正确的做法是先获取属性值，然后修改我们需要改的属性，再来通过
 <code>tcsetattr</code> 替换系统的 <code>termios</code> 。这不是源码分析博客，这两个函数就不介绍了。</p>
-
 <h3 id="本地模式标志-c-lflag">本地模式标志 ~~ <code>c_lflag</code></h3>
-
 <p>从名字可以推断这是和本地（local）相关的 flag 集合。 先看看它的定义以及拥有的属性标志吧。</p>
+<div class="highlight"><pre class="chroma"><code class="language-C" data-lang="C"><span class="k">typedef</span> <span class="kt">unsigned</span> <span class="kt">int</span>	<span class="n">tcflag_t</span><span class="p">;</span>
 
-<pre><code class="language-C">typedef unsigned int	tcflag_t;
+<span class="p">...</span>
 
-...
-
-/* c_lflag bits */
-#define ISIG	0000001
-#define ICANON	0000002
-#if defined __USE_MISC || (defined __USE_XOPEN &amp;&amp; !defined __USE_XOPEN2K)
-# define XCASE	0000004
-#endif
-#define ECHO	0000010
-#define ECHOE	0000020
-#define ECHOK	0000040
-#define ECHONL	0000100
-#define NOFLSH	0000200
-#define TOSTOP	0000400
-#ifdef __USE_MISC
-# define ECHOCTL 0001000
-# define ECHOPRT 0002000
-# define ECHOKE	 0004000
-# define FLUSHO	 0010000
-# define PENDIN	 0040000
-#endif
-#define IEXTEN	0100000
-#ifdef __USE_MISC
-# define EXTPROC 0200000
-#endif
-</code></pre>
-
-<p>c_lflag 被定义为 <code>unsigned int</code> 类型，也就是 32 位，那么它就可以表示 32 个
+<span class="cm">/* c_lflag bits */</span>
+<span class="cp">#define ISIG	0000001
+</span><span class="cp">#define ICANON	0000002
+</span><span class="cp">#if defined __USE_MISC || (defined __USE_XOPEN &amp;&amp; !defined __USE_XOPEN2K)
+</span><span class="cp"># define XCASE	0000004
+</span><span class="cp">#endif
+</span><span class="cp">#define ECHO	0000010
+</span><span class="cp">#define ECHOE	0000020
+</span><span class="cp">#define ECHOK	0000040
+</span><span class="cp">#define ECHONL	0000100
+</span><span class="cp">#define NOFLSH	0000200
+</span><span class="cp">#define TOSTOP	0000400
+</span><span class="cp">#ifdef __USE_MISC
+</span><span class="cp"># define ECHOCTL 0001000
+</span><span class="cp"># define ECHOPRT 0002000
+</span><span class="cp"># define ECHOKE	 0004000
+</span><span class="cp"># define FLUSHO	 0010000
+</span><span class="cp"># define PENDIN	 0040000
+</span><span class="cp">#endif
+</span><span class="cp">#define IEXTEN	0100000
+</span><span class="cp">#ifdef __USE_MISC
+</span><span class="cp"># define EXTPROC 0200000
+</span><span class="cp">#endif
+</span></code></pre></div><p>c_lflag 被定义为 <code>unsigned int</code> 类型，也就是 32 位，那么它就可以表示 32 个
 <code>flag</code> 。下面就一个个来关闭相关的标志位。</p>
-
 <h4 id="关闭规范模式">关闭规范模式</h4>
-
 <p>规范的英文为 <code>canonical</code> , 从上面的标志中， <code>ICANON</code> 是规范模式标志，默认
 是开启的规范模式， 所以我们只要将该 flag 取反后与 <code>termios</code> 相与就可以将该
 属性去掉。即：</p>
-
-<pre><code class="language-C">termios.c_lflag &amp;= ~ICANON;
-</code></pre>
-
-<h4 id="关闭回显">关闭回显</h4>
-
+<div class="highlight"><pre class="chroma"><code class="language-C" data-lang="C"><span class="n">termios</span><span class="p">.</span><span class="n">c_lflag</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="n">ICANON</span><span class="p">;</span>
+</code></pre></div><h4 id="关闭回显">关闭回显</h4>
 <p>我们有时候可能不需要将输入文字打印到显示器，比如密码。这就要求我们把回显关闭：</p>
-
-<pre><code class="language-C">termios.c_cflag &amp;= ~ECHO;
-</code></pre>
-
-<h4 id="关闭信号">关闭信号</h4>
-
+<div class="highlight"><pre class="chroma"><code class="language-C" data-lang="C"><span class="n">termios</span><span class="p">.</span><span class="n">c_cflag</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="n">ECHO</span><span class="p">;</span>
+</code></pre></div><h4 id="关闭信号">关闭信号</h4>
 <p>我们知道再终端要终止正在运行的程序，直接 <code>C+c</code> (C表示 ctrl 键)就可以退出。
 这个过程其实是向运行进程发了一个 <code>SIGINT</code> 信号。类似的还有暂停信号 <code>C+z</code>,</p>
-
-<pre><code class="language-C">termios.c_cflag &amp;= ~ISIG;
-</code></pre>
-
-<h4 id="关闭-c-v">关闭 C+v</h4>
-
+<div class="highlight"><pre class="chroma"><code class="language-C" data-lang="C"><span class="n">termios</span><span class="p">.</span><span class="n">c_cflag</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="n">ISIG</span><span class="p">;</span>
+</code></pre></div><h4 id="关闭-c-v">关闭 C+v</h4>
 <p>下该快捷键可以实现后面的输入字符逐字符的发送，例如输入处理 <code>C+v</code> 再输入 <code>C+c</code>
 会被识别为三个字符，而不会发送信号)。由 IEXTEN 标志。</p>
-
-<pre><code class="language-C">termios.c_cflag &amp;= ~IEXTEN;
-</code></pre>
-
-<h3 id="输入模式标志-c-iflag">输入模式标志 ~~ <code>c_iflag</code></h3>
-
+<div class="highlight"><pre class="chroma"><code class="language-C" data-lang="C"><span class="n">termios</span><span class="p">.</span><span class="n">c_cflag</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="n">IEXTEN</span><span class="p">;</span>
+</code></pre></div><h3 id="输入模式标志-c-iflag">输入模式标志 ~~ <code>c_iflag</code></h3>
 <p>和本地模式一样定义为 <code>unsigned int</code> 类型。我们主要看它提供哪些标志。</p>
-
-<pre><code class="language-C">/* c_iflag bits */
-#define IGNBRK	0000001
-#define BRKINT	0000002
-#define IGNPAR	0000004
-#define PARMRK	0000010
-#define INPCK	0000020
-#define ISTRIP	0000040
-#define INLCR	0000100
-#define IGNCR	0000200
-#define ICRNL	0000400
-#define IUCLC	0001000
-#define IXON	0002000
-#define IXANY	0004000
-#define IXOFF	0010000
-#define IMAXBEL	0020000
-#define IUTF8	0040000
-</code></pre>
-
-<h4 id="禁用流控制">禁用流控制</h4>
-
+<div class="highlight"><pre class="chroma"><code class="language-C" data-lang="C"><span class="cm">/* c_iflag bits */</span>
+<span class="cp">#define IGNBRK	0000001
+</span><span class="cp">#define BRKINT	0000002
+</span><span class="cp">#define IGNPAR	0000004
+</span><span class="cp">#define PARMRK	0000010
+</span><span class="cp">#define INPCK	0000020
+</span><span class="cp">#define ISTRIP	0000040
+</span><span class="cp">#define INLCR	0000100
+</span><span class="cp">#define IGNCR	0000200
+</span><span class="cp">#define ICRNL	0000400
+</span><span class="cp">#define IUCLC	0001000
+</span><span class="cp">#define IXON	0002000
+</span><span class="cp">#define IXANY	0004000
+</span><span class="cp">#define IXOFF	0010000
+</span><span class="cp">#define IMAXBEL	0020000
+</span><span class="cp">#define IUTF8	0040000
+</span></code></pre></div><h4 id="禁用流控制">禁用流控制</h4>
 <p><code>C+s</code> 和 <code>C+q</code> 是用来控制流的快捷键，比如说，我们运行某个程序一直有输出流，而此
 时你不想看这些输出流。那么使用 <code>C+s</code> 就可以关闭输出流，相反 <code>C+q</code> 可以让输出流再次打印
 到终端显示器。由 <code>IXON</code> 标志。</p>
-
-<pre><code class="language-C">termios.c_iflag &amp;= ~IXON;
-</code></pre>
-
-<h4 id="固定">固定</h4>
-
+<div class="highlight"><pre class="chroma"><code class="language-C" data-lang="C"><span class="n">termios</span><span class="p">.</span><span class="n">c_iflag</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="n">IXON</span><span class="p">;</span>
+</code></pre></div><h4 id="固定">固定</h4>
 <p><code>C-m</code> 组合会发送 &lsquo;\n&rsquo; 字符，也就是 <code>enter</code> 键。通过 <code>ICRNL</code> 标志。</p>
-
-<pre><code class="language-C">termios.c_iflag &amp;= ~ICRNL;
-</code></pre>
-
-<h3 id="输出模式标志-c-oflag">输出模式标志 ~~ <code>c_oflag</code></h3>
-
+<div class="highlight"><pre class="chroma"><code class="language-C" data-lang="C"><span class="n">termios</span><span class="p">.</span><span class="n">c_iflag</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="n">ICRNL</span><span class="p">;</span>
+</code></pre></div><h3 id="输出模式标志-c-oflag">输出模式标志 ~~ <code>c_oflag</code></h3>
 <p>同样的，先看看提供哪些标志位。</p>
-
-<pre><code class="language-C">/* c_oflag bits */
-#define OPOST	0000001
-#define OLCUC	0000002
-#define ONLCR	0000004
-#define OCRNL	0000010
-#define ONOCR	0000020
-#define ONLRET	0000040
-#define OFILL	0000100
-#define OFDEL	0000200
-#if defined __USE_MISC || defined __USE_XOPEN
-# define NLDLY	0000400
-# define   NL0	0000000
-# define   NL1	0000400
-# define CRDLY	0003000
-# define   CR0	0000000
-# define   CR1	0001000
-# define   CR2	0002000
-# define   CR3	0003000
-# define TABDLY	0014000
-# define   TAB0	0000000
-# define   TAB1	0004000
-# define   TAB2	0010000
-# define   TAB3	0014000
-# define BSDLY	0020000
-# define   BS0	0000000
-# define   BS1	0020000
-# define FFDLY	0100000
-# define   FF0	0000000
-# define   FF1	0100000
-#endif
-
-#define VTDLY	0040000
-#define   VT0	0000000
-#define   VT1	0040000
-
-#ifdef __USE_MISC
-# define XTABS	0014000
-#endif
-</code></pre>
-
-<p>再终端的所有的输出中，它都会将 &lsquo;\n&rsquo; 转换为 &lsquo;\r\n&rsquo; 。因此我们每次输入一行文本，按
+<div class="highlight"><pre class="chroma"><code class="language-C" data-lang="C"><span class="cm">/* c_oflag bits */</span>
+<span class="cp">#define OPOST	0000001
+</span><span class="cp">#define OLCUC	0000002
+</span><span class="cp">#define ONLCR	0000004
+</span><span class="cp">#define OCRNL	0000010
+</span><span class="cp">#define ONOCR	0000020
+</span><span class="cp">#define ONLRET	0000040
+</span><span class="cp">#define OFILL	0000100
+</span><span class="cp">#define OFDEL	0000200
+</span><span class="cp">#if defined __USE_MISC || defined __USE_XOPEN
+</span><span class="cp"># define NLDLY	0000400
+</span><span class="cp"># define   NL0	0000000
+</span><span class="cp"># define   NL1	0000400
+</span><span class="cp"># define CRDLY	0003000
+</span><span class="cp"># define   CR0	0000000
+</span><span class="cp"># define   CR1	0001000
+</span><span class="cp"># define   CR2	0002000
+</span><span class="cp"># define   CR3	0003000
+</span><span class="cp"># define TABDLY	0014000
+</span><span class="cp"># define   TAB0	0000000
+</span><span class="cp"># define   TAB1	0004000
+</span><span class="cp"># define   TAB2	0010000
+</span><span class="cp"># define   TAB3	0014000
+</span><span class="cp"># define BSDLY	0020000
+</span><span class="cp"># define   BS0	0000000
+</span><span class="cp"># define   BS1	0020000
+</span><span class="cp"># define FFDLY	0100000
+</span><span class="cp"># define   FF0	0000000
+</span><span class="cp"># define   FF1	0100000
+</span><span class="cp">#endif
+</span><span class="cp"></span>
+<span class="cp">#define VTDLY	0040000
+</span><span class="cp">#define   VT0	0000000
+</span><span class="cp">#define   VT1	0040000
+</span><span class="cp"></span>
+<span class="cp">#ifdef __USE_MISC
+</span><span class="cp"># define XTABS	0014000
+</span><span class="cp">#endif
+</span></code></pre></div><p>再终端的所有的输出中，它都会将 &lsquo;\n&rsquo; 转换为 &lsquo;\r\n&rsquo; 。因此我们每次输入一行文本，按
 下 <code>enter</code> 键后，它总是出现在下一行的最前面，这里其实涉及两个动作：回车和换行。
 但在编辑器中我们要避开这种转换。通过关闭 <code>OPOST</code> 标志关闭。</p>
-
-<pre><code class="language-C">termios.c_oflag &amp;= ~OPOST;
-</code></pre>
-
-<h3 id="杂项标志">杂项标志</h3>
-
+<div class="highlight"><pre class="chroma"><code class="language-C" data-lang="C"><span class="n">termios</span><span class="p">.</span><span class="n">c_oflag</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="n">OPOST</span><span class="p">;</span>
+</code></pre></div><h3 id="杂项标志">杂项标志</h3>
 <p>这主要是根据不同的系统以及版本历史的差异导致的不一致，可能有的系统初始话已经关闭
 了，为了保险起见，这里统一重新关闭，也为了兼容差异吧。具体细节就不解释了。</p>
-
-<pre><code class="language-C">termios.c_cflag |= (CS8);
-termios.c_iflag &amp;= ~(BRKINT | INPCK | ISTRIP);
-</code></pre>
-
-<h2 id="开启和关闭文本模式">开启和关闭文本模式</h2>
-
+<div class="highlight"><pre class="chroma"><code class="language-C" data-lang="C"><span class="n">termios</span><span class="p">.</span><span class="n">c_cflag</span> <span class="o">|=</span> <span class="p">(</span><span class="n">CS8</span><span class="p">);</span>
+<span class="n">termios</span><span class="p">.</span><span class="n">c_iflag</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="p">(</span><span class="n">BRKINT</span> <span class="o">|</span> <span class="n">INPCK</span> <span class="o">|</span> <span class="n">ISTRIP</span><span class="p">);</span>
+</code></pre></div><h2 id="开启和关闭文本模式">开启和关闭文本模式</h2>
 <p>上面我们提到要开启文本模式，只需要设置相应的标志即可，我们一个一个去设置或者每次
 去设置，这是不可取的，因次我们把它放在一个函数里一起处理。</p>
+<div class="highlight"><pre class="chroma"><code class="language-C++" data-lang="C++"><span class="kt">void</span> <span class="nf">enable_raw_mode</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">tcgetattr</span><span class="p">(</span><span class="n">STDIN_FILENO</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">_orig_termios</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">SPDLOG_ERROR</span><span class="p">(</span><span class="s">&#34;tcgetattr&#34;</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="n">atexit</span><span class="p">(</span><span class="n">disable_raw_mode</span><span class="p">);</span>
 
-<pre><code class="language-C++">void enable_raw_mode() {
-  if (tcgetattr(STDIN_FILENO, &amp;_orig_termios) != 0) {
-    SPDLOG_ERROR(&quot;tcgetattr&quot;);
-  }
-  atexit(disable_raw_mode);
+  <span class="k">struct</span> <span class="nc">termios</span> <span class="n">raw</span> <span class="o">=</span> <span class="n">_orig_termios</span><span class="p">;</span>
+  <span class="n">raw</span><span class="p">.</span><span class="n">c_lflag</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="p">(</span><span class="n">ECHO</span> <span class="o">|</span> <span class="n">ICANON</span> <span class="o">|</span> <span class="n">ISIG</span> <span class="o">|</span> <span class="n">IEXTEN</span><span class="p">);</span>
+  <span class="n">raw</span><span class="p">.</span><span class="n">c_iflag</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="p">(</span><span class="n">IXON</span> <span class="o">|</span> <span class="n">ICRNL</span> <span class="o">|</span> <span class="n">BRKINT</span> <span class="o">|</span> <span class="n">INPCK</span> <span class="o">|</span> <span class="n">ISTRIP</span><span class="p">);</span>
+  <span class="n">raw</span><span class="p">.</span><span class="n">c_oflag</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="p">(</span><span class="n">OPOST</span><span class="p">);</span>
+  <span class="n">raw</span><span class="p">.</span><span class="n">c_cflag</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="p">(</span><span class="n">CS8</span><span class="p">);</span>
+  <span class="n">raw</span><span class="p">.</span><span class="n">c_cc</span><span class="p">[</span><span class="n">VMIN</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="n">raw</span><span class="p">.</span><span class="n">c_cc</span><span class="p">[</span><span class="n">VTIME</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
 
-  struct termios raw = _orig_termios;
-  raw.c_lflag &amp;= ~(ECHO | ICANON | ISIG | IEXTEN);
-  raw.c_iflag &amp;= ~(IXON | ICRNL | BRKINT | INPCK | ISTRIP);
-  raw.c_oflag &amp;= ~(OPOST);
-  raw.c_cflag &amp;= ~(CS8);
-  raw.c_cc[VMIN] = 0;
-  raw.c_cc[VTIME] = 1;
-
-  if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &amp;raw) != 0) {
-    SPDLOG_ERROR(&quot;tcsetattr&quot;);
-  };
-}
-</code></pre>
-
-<p>当然从我们编辑中退出后，那么必须关闭文本模式，使终端回到规范模式。</p>
-
-<pre><code class="language-C++">inline void disable_raw_mode() {
-  if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &amp;_orig_termios) != 0) {
-    SPDLOG_ERROR(&quot;tcgetattr&quot;);
-  }
-}
-</code></pre>
-
-<h2 id="总结">总结</h2>
-
+  <span class="k">if</span> <span class="p">(</span><span class="n">tcsetattr</span><span class="p">(</span><span class="n">STDIN_FILENO</span><span class="p">,</span> <span class="n">TCSAFLUSH</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">raw</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">SPDLOG_ERROR</span><span class="p">(</span><span class="s">&#34;tcsetattr&#34;</span><span class="p">);</span>
+  <span class="p">};</span>
+<span class="p">}</span>
+</code></pre></div><p>当然从我们编辑中退出后，那么必须关闭文本模式，使终端回到规范模式。</p>
+<div class="highlight"><pre class="chroma"><code class="language-C++" data-lang="C++"><span class="kr">inline</span> <span class="kt">void</span> <span class="nf">disable_raw_mode</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">tcsetattr</span><span class="p">(</span><span class="n">STDIN_FILENO</span><span class="p">,</span> <span class="n">TCSAFLUSH</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">_orig_termios</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">SPDLOG_ERROR</span><span class="p">(</span><span class="s">&#34;tcgetattr&#34;</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><h2 id="总结">总结</h2>
 <p>这篇博客只是开篇，总结了终端编辑器应该有的模式以及如何设置，同时在写作的过程中可
 能会涉及错误的处理，由于本项目重点不是错误处理，因此使用 <a href="https://github.com/gabime/spdlog/">spdlog</a> 库来处理相关的错
 误信息。好了，开篇写完了～～～</p>
-
 <h2 id="参考">参考</h2>
-
 <p><a href="https://viewsourcecode.org/snaptoken/kilo/02.enteringRawMode.html">https://viewsourcecode.org/snaptoken/kilo/02.enteringRawMode.html</a></p>
 
     
@@ -415,6 +345,8 @@ termios.c_iflag &amp;= ~(BRKINT | INPCK | ISTRIP);
     
     <li><a href="/categories/%e5%86%85%e5%ad%98%e7%ae%a1%e7%90%86" title="内存管理">内存管理<sup>1</sup></a></li>
     
+    <li><a href="/categories/%e5%86%85%e6%a0%b8%e5%ae%9e%e9%aa%8c" title="内核实验">内核实验<sup>1</sup></a></li>
+    
     <li><a href="/categories/%e5%91%bd%e4%bb%a4%e8%a1%8c%e8%89%ba%e6%9c%af" title="命令行艺术">命令行艺术<sup>3</sup></a></li>
     
     <li><a href="/categories/%e5%ad%a6%e4%b9%a0%e7%ac%94%e8%ae%b0" title="学习笔记">学习笔记<sup>13</sup></a></li>
@@ -440,6 +372,8 @@ termios.c_iflag &amp;= ~(BRKINT | INPCK | ISTRIP);
 	<p class="asidetitle">标签</p>
 		<ul class="clearfix">
       
+			<li><a href="/tags/bochs" title="bochs">bochs<sup>1</sup></a></li>
+      
 			<li><a href="/tags/c&#43;&#43;" title="c&#43;&#43;">c&#43;&#43;<sup>10</sup></a></li>
       
 			<li><a href="/tags/command" title="command">command<sup>3</sup></a></li>
@@ -454,9 +388,9 @@ termios.c_iflag &amp;= ~(BRKINT | INPCK | ISTRIP);
       
 			<li><a href="/tags/jemalloc" title="jemalloc">jemalloc<sup>1</sup></a></li>
       
-			<li><a href="/tags/kernel" title="kernel">kernel<sup>7</sup></a></li>
+			<li><a href="/tags/kernel" title="kernel">kernel<sup>8</sup></a></li>
       
-			<li><a href="/tags/linux" title="linux">linux<sup>12</sup></a></li>
+			<li><a href="/tags/linux" title="linux">linux<sup>13</sup></a></li>
       
 			<li><a href="/tags/linux%e5%86%85%e6%a0%b8" title="linux内核">linux内核<sup>1</sup></a></li>
       
@@ -518,6 +452,11 @@ termios.c_iflag &amp;= ~(BRKINT | INPCK | ISTRIP);
       
       
       <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2020-04">2020年04月</a><span class="archive-list-count">1</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
         <a class="archive-list-link" href="/post/#2019-09">2019年09月</a><span class="archive-list-count">1</span>
       </li>
       
@@ -571,6 +510,8 @@ termios.c_iflag &amp;= ~(BRKINT | INPCK | ISTRIP);
 <div class="tagcloudlist">
   <p class="asidetitle">标签云</p>
   <div class="tagcloudlist clearfix">
+    
+    <a href="/tags/bochs" style="font-size: 12px;">bochs</a>
     
     <a href="/tags/c&#43;&#43;" style="font-size: 12px;">c&#43;&#43;</a>
     
@@ -670,7 +611,7 @@ termios.c_iflag &amp;= ~(BRKINT | INPCK | ISTRIP);
     
     
   </div>
-  <p class="copyright">Powered by <a href="http://gohugo.io" target="_blank" title="hugo">hugo</a> and Theme by <a href="https://github.com/coderzh/hugo-pacman-theme" target="_blank" title="hugo-pacman-theme">hugo-pacman-theme</a> © 2019
+  <p class="copyright">Powered by <a href="http://gohugo.io" target="_blank" title="hugo">hugo</a> and Theme by <a href="https://github.com/coderzh/hugo-pacman-theme" target="_blank" title="hugo-pacman-theme">hugo-pacman-theme</a> © 2020
     
     <a href="/" title="北极狼徒">北极狼徒</a>
     

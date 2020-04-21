@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>c&#43;&#43; on 北极狼徒</title>
@@ -44,7 +44,7 @@
       <pubDate>Tue, 07 May 2019 23:36:30 +0800</pubDate>
       
       <guid>/post/cpp_object_models_ch01/</guid>
-      <description>关于对象 面向过程 在 C 语言中, 我们通常将 *数据* 和 *处理数据的操作(函数)* 分开声明, 也就是说语言本身没有支持 *数据和函数* 之间的关联性. 这种</description>
+      <description>关于对象 面向过程 在 C 语言中, 我们通常将 数据 和 处理数据的操作(函数) 分开声明, 也就是说语言本身没有支持 数据和函数 之间的关联性. 这种程序为典型的</description>
     </item>
     
     <item>

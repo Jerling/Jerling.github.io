@@ -76,33 +76,27 @@
 
 	<div class="article-content">
     
-    
-
-<ul>
+    <ul>
 <li><a href="#%E6%9F%A5%E6%89%BE">查找</a>
-
 <ul>
 <li><a href="#%E6%96%87%E4%BB%B6%E6%9F%A5%E6%89%BE">文件查找</a></li>
 <li><a href="#%E5%86%85%E5%AE%B9%E6%9F%A5%E6%89%BE">内容查找</a></li>
-</ul></li>
+</ul>
+</li>
 <li><a href="#%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86">数据处理</a>
-
 <ul>
 <li><a href="#%E6%96%87%E4%BB%B6%E5%A4%84%E7%90%86">文件处理</a></li>
 <li><a href="#%E5%86%85%E5%AE%B9%E5%A4%84%E7%90%86">内容处理</a></li>
 <li><a href="#%E6%95%B0%E6%8D%AE%E7%BB%9F%E8%AE%A1">数据统计</a></li>
-</ul></li>
+</ul>
+</li>
 <li><a href="#%E6%96%87%E4%BB%B6%E6%8B%B7%E8%B4%9D">文件拷贝</a></li>
 <li><a href="#%E6%9D%82%E9%A1%B9">杂项</a></li>
 </ul>
-
 <h1 id="查找">查找</h1>
-
 <h2 id="文件查找">文件查找</h2>
-
 <ul>
 <li>在当前目录下通过文件名查找一个文件，使用类似于这样的命令：<code>find . -iname '*something*'</code>
-
 <ul>
 <li>name : 文件名</li>
 <li>type : 文件类型</li>
@@ -111,80 +105,83 @@
 <li>perm : 权限</li>
 <li>[a|c|m]time</li>
 <li>&hellip; 还有很多，只列举了常用的几个选项</li>
-</ul></li>
+</ul>
+</li>
 <li>在所有路径下通过文件名查找文件，使用 <code>locate something</code>，它是在数据库中搜索，比 <code>find</code> 快；但是可能需要 <code>update</code> 更新数据库。</li>
 <li>程序名搜索，使用 <code>whereis</code>
-
 <ul>
 <li>-b : 只搜索二进制文件</li>
 <li>-m : 只搜索 man 说明文件</li>
 <li>-s : 只搜索源代码文件</li>
-</ul></li>
+</ul>
+</li>
 <li>在 PATH 路径下，<code>which</code> 搜索系统命令，并返回第一个搜索结果</li>
 <li>查看命令是系统自带的，还是外部命令，加上 <code>-p</code> 参数相当于 <code>which</code> 命令</li>
 </ul>
-
 <h2 id="内容查找">内容查找</h2>
-
 <ul>
 <li>使用 <code>ag</code> 在源代码或数据文件里检索（<code>grep -r</code> 同样可以做到，但相比之下 ag 更加先进）。还有其它的替代软件如：<code>rg</code>、<code>pt</code> 等</li>
 </ul>
-
 <h1 id="数据处理">数据处理</h1>
-
 <h2 id="文件处理">文件处理</h2>
-
 <ul>
-<li>将 HTML 转为文本：<code>lynx -dump -stdin</code> 。</li>
-<li>Markdown，HTML，以及所有文档格式之间的转换，试试 <code>pandoc</code>。</li>
-<li>当要处理棘手的 XML 时候，<code>xmlstarlet</code> 算是上古时代流传下来的神器。</li>
-<li>使用 <code>jq</code> 处理 JSON。</li>
-<li>使用 <code>shyaml</code> 处理 YAML。</li>
-<li>要处理 Excel 或 CSV 文件的话，<code>csvkit</code> 提供了 <code>in2csv</code>，<code>csvcue</code>，<code>csvjoin</code>，<code>csvgrep</code> 等方便易用的工具。</li>
-<li>当要处理 Amazon S3 相关的工作的时候，<code>s3cmd</code> 是一个很方便的工具而 <code>s4cmd</code> 的效率更高。Amazon 官方提供的 aws 以及 saws 是其他 AWS 相关工作的基础，值得学习。</li>
-<li>拆分文件可以使用 <code>split</code>（按大小拆分）和 <code>csplit</code>（按模式拆分）。</li>
-
-<li><p>使用 <code>zless</code>、<code>zmore</code>、<code>zcat</code> 和 <code>zgrep</code> 对压缩过的文件进行操作。</p></li>
-
-<li><p>文件属性可以通过 <code>chattr</code> 进行设置，它比文件权限更加底层。例如，为了保护文件不被意外删除，可以使用不可修改标记：<code>sudo chattr +i /critical/directory/or/file</code></p></li>
-
-<li><p>使用 <code>getfacl</code> 和 <code>setfacl</code> 以保存和恢复文件权限。例如：</p>
-
-<pre><code class="language-bash">getfacl -R /some/path &gt; permissions.txt
-setfacl --restore=permissions.txt
-</code></pre></li>
-
-<li><p>为了高效地创建空文件，请使用 <code>truncate</code>（创建稀疏文件），<code>fallocate</code>（用于 ext4，xfs，btrf 和 ocfs2 文件系统），<code>xfs_mkfile</code>（适用于几乎所有的文件系统，包含在 xfsprogs 包中），<code>mkfile</code>（用于类 Unix 操作系统，比如 Solaris 和 Mac OS）。</p></li>
-
-<li><p>标准的源代码对比及合并工具是 <code>diff</code> 和 <code>patch</code>。使用 <code>diffstat</code> 查看变更总览数据。注意到 <code>diff -r</code> 对整个文件夹有效。使用 <code>diff -r tree1 tree2 | diffstat</code> 查看变更的统计数据。<code>vimdiff</code> 用于比对并编辑文件。</p></li>
-
-<li><p>对于二进制文件，使用 <code>hd</code>，<code>hexdump</code> 或者 <code>xxd</code> 使其以十六进制显示，使用 <code>bvi</code>，<code>hexedit</code> 或者 <code>biew</code> 来进行二进制编辑。</p></li>
-
-<li><p>同样对于二进制文件，<code>strings</code>（包括 grep 等工具）可以帮助在二进制文件中查找特定比特。</p></li>
-
-<li><p>制作二进制差分文件（Delta 压缩），使用 <code>xdelta3</code>。</p></li>
-
-<li><p>使用 <code>iconv</code> 更改文本编码。需要更高级的功能，可以使用 <code>uconv</code>，它支持一些高级的 Unicode 功能。例如，这条命令移除了所有重音符号：</p>
-
-<pre><code class="language-bash">uconv -f utf-8 -t utf-8 -x '::Any-Lower; ::Any-NFD; [:Nonspacing Mark:] &gt;; ::Any-NFC; ' &lt; input.txt &gt; output.txt
-</code></pre></li>
-
-<li><p>使用 <code>repren</code> 来批量重命名文件，或是在多个文件中搜索替换内容。（有些时候 rename 命令也可以批量重命名，但要注意，它在不同 Linux 发行版中的功能并不完全一样。）</p>
-
-<pre><code class="language-bash">  # 将文件、目录和内容全部重命名 foo -&gt; bar:
-  repren --full --preserve-case --from foo --to bar .
-  # 还原所有备份文件 whatever.bak -&gt; whatever:
-  repren --renames --from '(.*)\.bak' --to '\1' *.bak
-  # 用 rename 实现上述功能（若可用）:
-  rename 's/\.bak$//' *.bak
-</code></pre></li>
+<li>
+<p>将 HTML 转为文本：<code>lynx -dump -stdin</code> 。</p>
+</li>
+<li>
+<p>Markdown，HTML，以及所有文档格式之间的转换，试试 <code>pandoc</code>。</p>
+</li>
+<li>
+<p>当要处理棘手的 XML 时候，<code>xmlstarlet</code> 算是上古时代流传下来的神器。</p>
+</li>
+<li>
+<p>使用 <code>jq</code> 处理 JSON。</p>
+</li>
+<li>
+<p>使用 <code>shyaml</code> 处理 YAML。</p>
+</li>
+<li>
+<p>要处理 Excel 或 CSV 文件的话，<code>csvkit</code> 提供了 <code>in2csv</code>，<code>csvcue</code>，<code>csvjoin</code>，<code>csvgrep</code> 等方便易用的工具。</p>
+</li>
+<li>
+<p>当要处理 Amazon S3 相关的工作的时候，<code>s3cmd</code> 是一个很方便的工具而 <code>s4cmd</code> 的效率更高。Amazon 官方提供的 aws 以及 saws 是其他 AWS 相关工作的基础，值得学习。</p>
+</li>
+<li>
+<p>拆分文件可以使用 <code>split</code>（按大小拆分）和 <code>csplit</code>（按模式拆分）。</p>
+</li>
+<li>
+<p>使用 <code>zless</code>、<code>zmore</code>、<code>zcat</code> 和 <code>zgrep</code> 对压缩过的文件进行操作。</p>
+</li>
+<li>
+<p>文件属性可以通过 <code>chattr</code> 进行设置，它比文件权限更加底层。例如，为了保护文件不被意外删除，可以使用不可修改标记：<code>sudo chattr +i /critical/directory/or/file</code></p>
+</li>
+<li>
+<p>使用 <code>getfacl</code> 和 <code>setfacl</code> 以保存和恢复文件权限。例如：</p>
+</li>
 </ul>
-
-<h2 id="内容处理">内容处理</h2>
-
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">getfacl -R /some/path &gt; permissions.txt
+setfacl --restore<span class="o">=</span>permissions.txt
+</code></pre></div><ul>
+<li>为了高效地创建空文件，请使用 <code>truncate</code>（创建稀疏文件），<code>fallocate</code>（用于 ext4，xfs，btrf 和 ocfs2 文件系统），<code>xfs_mkfile</code>（适用于几乎所有的文件系统，包含在 xfsprogs 包中），<code>mkfile</code>（用于类 Unix 操作系统，比如 Solaris 和 Mac OS）。</li>
+<li>标准的源代码对比及合并工具是 <code>diff</code> 和 <code>patch</code>。使用 <code>diffstat</code> 查看变更总览数据。注意到 <code>diff -r</code> 对整个文件夹有效。使用 <code>diff -r tree1 tree2 | diffstat</code> 查看变更的统计数据。<code>vimdiff</code> 用于比对并编辑文件。</li>
+<li>对于二进制文件，使用 <code>hd</code>，<code>hexdump</code> 或者 <code>xxd</code> 使其以十六进制显示，使用 <code>bvi</code>，<code>hexedit</code> 或者 <code>biew</code> 来进行二进制编辑。</li>
+<li>同样对于二进制文件，<code>strings</code>（包括 grep 等工具）可以帮助在二进制文件中查找特定比特。</li>
+<li>制作二进制差分文件（Delta 压缩），使用 <code>xdelta3</code>。</li>
+<li>使用 <code>iconv</code> 更改文本编码。需要更高级的功能，可以使用 <code>uconv</code>，它支持一些高级的 Unicode 功能。例如，这条命令移除了所有重音符号：</li>
+</ul>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">uconv -f utf-8 -t utf-8 -x <span class="s1">&#39;::Any-Lower; ::Any-NFD; [:Nonspacing Mark:] &gt;; ::Any-NFC; &#39;</span> &lt; input.txt &gt; output.txt
+</code></pre></div><ul>
+<li>使用 <code>repren</code> 来批量重命名文件，或是在多个文件中搜索替换内容。（有些时候 rename 命令也可以批量重命名，但要注意，它在不同 Linux 发行版中的功能并不完全一样。）</li>
+</ul>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">      <span class="c1"># 将文件、目录和内容全部重命名 foo -&gt; bar:</span>
+      repren --full --preserve-case --from foo --to bar .
+      <span class="c1"># 还原所有备份文件 whatever.bak -&gt; whatever:</span>
+      repren --renames --from <span class="s1">&#39;(.*)\.bak&#39;</span> --to <span class="s1">&#39;\1&#39;</span> *.bak
+      <span class="c1"># 用 rename 实现上述功能（若可用）:</span>
+      rename <span class="s1">&#39;s/\.bak$//&#39;</span> *.bak
+</code></pre></div><h2 id="内容处理">内容处理</h2>
 <ul>
 <li>了解如何使用 <a href="http://www.runoob.com/linux/linux-comm-uniq.html">uniq</a>，检查文件中重复出现的行列，一般与 <code>sort</code> 结合使用
-
 <ul>
 <li>-c或&ndash;count 在每列旁边显示该行重复出现的次数</li>
 <li>-d或&ndash;repeated 仅显示重复出现的行列</li>
@@ -192,18 +189,14 @@ setfacl --restore=permissions.txt
 <li>-s&lt;字符位置&gt;或&ndash;skip-chars=&lt;字符位置&gt; 忽略比较指定的字符</li>
 <li>-u或&ndash;unique 仅显示出一次的行列</li>
 <li>-w&lt;字符位置&gt;或&ndash;check-chars=&lt;字符位置&gt; 指定要比较的字符</li>
-</ul></li>
+</ul>
+</li>
 <li>了解如何使用 <a href="http://www.runoob.com/linux/linux-comm-cut.html">cut</a>, <a href="http://www.runoob.com/linux/linux-comm-paste.html">paste</a> 和 <a href="http://www.runoob.com/linux/linux-comm-join.html">join</a> 来更改文件。很多人都会使用 cut，但遗忘了 join。</li>
 <li>了解如何使用 <code>awk</code> 和 <code>sed</code> 来进行简单的数据处理。</li>
-
-<li><p>替换一个或多个文件中出现的字符串：</p>
-
-<pre><code class="language-bash">perl -pi.bak -e 's/old-string/new-string/g' my-files-*.txt
-</code></pre></li>
+<li>替换一个或多个文件中出现的字符串：</li>
 </ul>
-
-<h2 id="数据统计">数据统计</h2>
-
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">perl -pi.bak -e <span class="s1">&#39;s/old-string/new-string/g&#39;</span> my-files-*.txt
+</code></pre></div><h2 id="数据统计">数据统计</h2>
 <ul>
 <li>了解如何运用 <code>wc</code> 去计算新行数（-l），字符数（-m），单词数（-w）以及字节数（-c）。</li>
 <li>了解如何使用 <code>tee</code> 将标准输入复制到文件甚至标准输出，例如 ls -al | tee file.txt。</li>
@@ -212,20 +205,15 @@ setfacl --restore=permissions.txt
 <li>使用 <code>shuf</code> 可以以行为单位来打乱文件的内容或从一个文件中随机选取多行。</li>
 <li>了解 <code>sort</code> 的参数。显示数字时，使用 -n 或者 -h 来显示更易读的数（例如 du -h 的输出）。明白排序时关键字的工作原理（-t 和 -k）。例如，注意到你需要 -k1，1 来仅按第一个域来排序，而 -k1 意味着按整行排序。稳定排序（sort -s）在某些情况下很有用。例如，以第二个域为主关键字，第一个域为次关键字进行排序，你可以使用 <code>sort -k1，1 | sort -s -k2，2</code>。</li>
 </ul>
-
 <h1 id="文件拷贝">文件拷贝</h1>
-
 <ul>
-<li><p>根据 man 页面的描述，<code>rsync</code> 是一个快速且非常灵活的文件复制工具。它闻名于设备之间的文件同步，但其实它在本地情况下也同样有用。在安全设置允许下，用 <code>rsync</code> 代替 <code>scp</code> 可以实现文件续传，而不用重新从头开始。它同时也是删除大量文件的最快方法之一：</p>
-
-<pre><code class="language-bash">mkdir empty &amp;&amp; rsync -r --delete empty/ some-dir &amp;&amp; rmdir some-dir
-</code></pre></li>
-
-<li><p>若要在复制文件时获取当前进度，可使用 <code>pv</code>，<code>pycp</code>，<code>progress</code>，<code>rsync --progress</code>。若所执行的复制为 block 块拷贝，可以使用 <code>dd status=progress</code>。</p></li>
+<li>根据 man 页面的描述，<code>rsync</code> 是一个快速且非常灵活的文件复制工具。它闻名于设备之间的文件同步，但其实它在本地情况下也同样有用。在安全设置允许下，用 <code>rsync</code> 代替 <code>scp</code> 可以实现文件续传，而不用重新从头开始。它同时也是删除大量文件的最快方法之一：</li>
 </ul>
-
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">mkdir empty <span class="o">&amp;&amp;</span> rsync -r --delete empty/ some-dir <span class="o">&amp;&amp;</span> rmdir some-dir
+</code></pre></div><ul>
+<li>若要在复制文件时获取当前进度，可使用 <code>pv</code>，<code>pycp</code>，<code>progress</code>，<code>rsync --progress</code>。若所执行的复制为 block 块拷贝，可以使用 <code>dd status=progress</code>。</li>
+</ul>
 <h1 id="杂项">杂项</h1>
-
 <ul>
 <li>如果想在 Bash 命令行中写 tab 制表符，按下 <code>ctrl-v [Tab]</code> 或键入 <code>$'\t'</code> （后者可能更好，因为你可以复制粘贴它）。</li>
 <li>操作日期和时间表达式，可以用 <code>dateutils</code> 中的 <code>dateadd</code>、<code>datediff</code>、<code>strptime</code> 等工具。</li>
@@ -286,6 +274,8 @@ setfacl --restore=permissions.txt
     
     <li><a href="/categories/%e5%86%85%e5%ad%98%e7%ae%a1%e7%90%86" title="内存管理">内存管理<sup>1</sup></a></li>
     
+    <li><a href="/categories/%e5%86%85%e6%a0%b8%e5%ae%9e%e9%aa%8c" title="内核实验">内核实验<sup>1</sup></a></li>
+    
     <li><a href="/categories/%e5%91%bd%e4%bb%a4%e8%a1%8c%e8%89%ba%e6%9c%af" title="命令行艺术">命令行艺术<sup>3</sup></a></li>
     
     <li><a href="/categories/%e5%ad%a6%e4%b9%a0%e7%ac%94%e8%ae%b0" title="学习笔记">学习笔记<sup>13</sup></a></li>
@@ -311,6 +301,8 @@ setfacl --restore=permissions.txt
 	<p class="asidetitle">标签</p>
 		<ul class="clearfix">
       
+			<li><a href="/tags/bochs" title="bochs">bochs<sup>1</sup></a></li>
+      
 			<li><a href="/tags/c&#43;&#43;" title="c&#43;&#43;">c&#43;&#43;<sup>10</sup></a></li>
       
 			<li><a href="/tags/command" title="command">command<sup>3</sup></a></li>
@@ -325,9 +317,9 @@ setfacl --restore=permissions.txt
       
 			<li><a href="/tags/jemalloc" title="jemalloc">jemalloc<sup>1</sup></a></li>
       
-			<li><a href="/tags/kernel" title="kernel">kernel<sup>7</sup></a></li>
+			<li><a href="/tags/kernel" title="kernel">kernel<sup>8</sup></a></li>
       
-			<li><a href="/tags/linux" title="linux">linux<sup>12</sup></a></li>
+			<li><a href="/tags/linux" title="linux">linux<sup>13</sup></a></li>
       
 			<li><a href="/tags/linux%e5%86%85%e6%a0%b8" title="linux内核">linux内核<sup>1</sup></a></li>
       
@@ -389,6 +381,11 @@ setfacl --restore=permissions.txt
       
       
       <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2020-04">2020年04月</a><span class="archive-list-count">1</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
         <a class="archive-list-link" href="/post/#2019-09">2019年09月</a><span class="archive-list-count">1</span>
       </li>
       
@@ -442,6 +439,8 @@ setfacl --restore=permissions.txt
 <div class="tagcloudlist">
   <p class="asidetitle">标签云</p>
   <div class="tagcloudlist clearfix">
+    
+    <a href="/tags/bochs" style="font-size: 12px;">bochs</a>
     
     <a href="/tags/c&#43;&#43;" style="font-size: 12px;">c&#43;&#43;</a>
     
@@ -541,7 +540,7 @@ setfacl --restore=permissions.txt
     
     
   </div>
-  <p class="copyright">Powered by <a href="http://gohugo.io" target="_blank" title="hugo">hugo</a> and Theme by <a href="https://github.com/coderzh/hugo-pacman-theme" target="_blank" title="hugo-pacman-theme">hugo-pacman-theme</a> © 2019
+  <p class="copyright">Powered by <a href="http://gohugo.io" target="_blank" title="hugo">hugo</a> and Theme by <a href="https://github.com/coderzh/hugo-pacman-theme" target="_blank" title="hugo-pacman-theme">hugo-pacman-theme</a> © 2020
     
     <a href="/" title="北极狼徒">北极狼徒</a>
     

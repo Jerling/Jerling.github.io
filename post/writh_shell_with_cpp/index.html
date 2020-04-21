@@ -75,26 +75,21 @@
 
 	<div class="article-content">
     
-    
-
-<h2 id="table-of-contens">Table of Contens</h2>
-
+    <h2 id="table-of-contens">Table of Contens</h2>
 <ul>
-<li><a href="#linux-shell-基本知识">Linux shell 基本知识</a></li>
-<li><a href="#shell-工作流程">shell 工作流程</a></li>
-<li><a href="#shell-实现">shell 实现</a>
-
+<li><a href="#linux-shell-%E5%9F%BA%E6%9C%AC%E7%9F%A5%E8%AF%86">Linux shell 基本知识</a></li>
+<li><a href="#shell-%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B">shell 工作流程</a></li>
+<li><a href="#shell-%E5%AE%9E%E7%8E%B0">shell 实现</a>
 <ul>
-<li><a href="#可执行程序该有的样子">可执行程序该有的样子</a></li>
-<li><a href="#一探循环体究竟">一探循环体究竟</a></li>
-<li><a href="#解剖循环体">解剖循环体</a></li>
-</ul></li>
-<li><a href="#总结">总结</a></li>
-<li><a href="#参考">参考</a></li>
+<li><a href="#%E5%8F%AF%E6%89%A7%E8%A1%8C%E7%A8%8B%E5%BA%8F%E8%AF%A5%E6%9C%89%E7%9A%84%E6%A0%B7%E5%AD%90">可执行程序该有的样子</a></li>
+<li><a href="#%E4%B8%80%E6%8E%A2%E5%BE%AA%E7%8E%AF%E4%BD%93%E7%A9%B6%E7%AB%9F">一探循环体究竟</a></li>
+<li><a href="#%E8%A7%A3%E5%89%96%E5%BE%AA%E7%8E%AF%E4%BD%93">解剖循环体</a></li>
 </ul>
-
+</li>
+<li><a href="#%E6%80%BB%E7%BB%93">总结</a></li>
+<li><a href="#%E5%8F%82%E8%80%83">参考</a></li>
+</ul>
 <h2 id="linux-shell-基本知识">Linux shell 基本知识</h2>
-
 <p>目前市场上主要有三大主流操作系统，除了 windows 系列几乎不需要在终端工作，其它两
 大操作系统大部份应该是和终端打交道。当然这和不同系统的定位不一样有很大的关系， W
 系主要面向娱乐办公，Linux 系主要是用服务器系统，所以对于程序员来说，或多或少得面
@@ -109,154 +104,119 @@ shell 自从诞生以来，也出现各种版本，虽然实现不同，功能�
 具，但是由于 shell 语法和 bash 不兼容，建议个人使用，不要用于工作中。 xosh 是用
 python 实现的，所以终端直接执行 python 语句就可以执行，同时可以执行系统命令。
 pythoner 可以尝试一波，随时随地测试 python 语句。</p>
-
 <h2 id="shell-工作流程">shell 工作流程</h2>
-
 <p>介绍完 shell , 下面简单讲讲工作流程：</p>
-
 <p>首先，我们运行一个 shell 程序，它将阻塞等待用户的输入。当用户在标准输入上输入一
 行命令文本，这时程序成功读入一行文本，不再阻塞，可以继续执行。接下来将读入的文本
 进行切分，将其切分为命令和参数两部分。然后就可以 fork 一个子进程调用 exec 系统调
 用运行切分好的命令，父进程 wait 等待子进程的执行结果。最后将执行结果反馈给用户。
 等待下一行执行命名的出现。直到用户退出或者信号中断退出。</p>
-
 <h2 id="shell-实现">shell 实现</h2>
-
 <p>上面的工作流程说的比较简单，实现也是比较简单的。下面我们就一步步的来实现这个
 shell:</p>
-
 <blockquote>
 <p>本文使用 C++ 实现</p>
 </blockquote>
-
 <h3 id="可执行程序该有的样子">可执行程序该有的样子</h3>
-
 <p>我们知道，每个程序都有一个入口函数，在 C++ 中，为 main 函数：</p>
-
-<pre><code class="language-C++">int main() {
-  lsh::lshell lsh;
-  lsh.loop();
-  return 0;
-}
-</code></pre>
-
-<p>本人的代码风格类似 linux 风格――小写加下滑线。其中的意思也是字面意思，先创建一
+<div class="highlight"><pre class="chroma"><code class="language-C++" data-lang="C++"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">lsh</span><span class="o">::</span><span class="n">lshell</span> <span class="n">lsh</span><span class="p">;</span>
+  <span class="n">lsh</span><span class="p">.</span><span class="n">loop</span><span class="p">();</span>
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div><p>本人的代码风格类似 linux 风格――小写加下滑线。其中的意思也是字面意思，先创建一
 个 shell 实例，然后循环执行命令。</p>
-
 <h3 id="一探循环体究竟">一探循环体究竟</h3>
-
 <p>在探索之前，我们先借助点小工具用来表示命令执行返回状态：</p>
-
-<pre><code class="language-C++">/* 命令返回状态 */
-enum status_enum {
-  fork_failed = -1,
-  success = 0,
-  exit_s = 1,  // 和后面的 exit 有冲突，因此在后边加上 _s
-};
-</code></pre>
-
-<p>进入正菜：</p>
-
-<pre><code class="language-C++">inline void lshell::loop() {
-  do {
-    std::cout &lt;&lt; &quot;&gt;&gt;&gt; &quot;;
-    read_line__();
-    split_line__();
-    excute__();
-    clear__();
-  } while (status_ == status_enum::success);
-}
-</code></pre>
-
-<p>em～～～，和我们之前提到的工作流程一致吧。有些细心的读者发现我给的代码中多了
+<div class="highlight"><pre class="chroma"><code class="language-C++" data-lang="C++"><span class="cm">/* 命令返回状态 */</span>
+<span class="k">enum</span> <span class="nc">status_enum</span> <span class="p">{</span>
+  <span class="n">fork_failed</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+  <span class="n">success</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+  <span class="n">exit_s</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>  <span class="c1">// 和后面的 exit 有冲突，因此在后边加上 _s
+</span><span class="c1"></span><span class="p">};</span>
+</code></pre></div><p>进入正菜：</p>
+<div class="highlight"><pre class="chroma"><code class="language-C++" data-lang="C++"><span class="kr">inline</span> <span class="kt">void</span> <span class="n">lshell</span><span class="o">::</span><span class="n">loop</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">do</span> <span class="p">{</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;&gt;&gt;&gt; &#34;</span><span class="p">;</span>
+    <span class="n">read_line__</span><span class="p">();</span>
+    <span class="n">split_line__</span><span class="p">();</span>
+    <span class="n">excute__</span><span class="p">();</span>
+    <span class="n">clear__</span><span class="p">();</span>
+  <span class="p">}</span> <span class="k">while</span> <span class="p">(</span><span class="n">status_</span> <span class="o">==</span> <span class="n">status_enum</span><span class="o">::</span><span class="n">success</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div><p>em～～～，和我们之前提到的工作流程一致吧。有些细心的读者发现我给的代码中多了
 clear__(), 这个和本人的实现有关了，先留个疑问吧。继续探索。。。</p>
-
 <h3 id="解剖循环体">解剖循环体</h3>
-
 <p>接下来就是将循环体解剖分开实现了。</p>
-
 <h4 id="读文本">读文本</h4>
-
 <p>首当其冲的是 read_line__:</p>
-
-<pre><code class="language-C++">inline void lshell::read_line__() { getline(std::cin, line_); }
-</code></pre>
-
-<p>em~~~~, 就一句话。虽然可以插入到其它代码块中，为了更好理解工作流程，我还是不省这
+<div class="highlight"><pre class="chroma"><code class="language-C++" data-lang="C++"><span class="kr">inline</span> <span class="kt">void</span> <span class="n">lshell</span><span class="o">::</span><span class="n">read_line__</span><span class="p">()</span> <span class="p">{</span> <span class="n">getline</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">cin</span><span class="p">,</span> <span class="n">line_</span><span class="p">);</span> <span class="p">}</span>
+</code></pre></div><p>em~~~~, 就一句话。虽然可以插入到其它代码块中，为了更好理解工作流程，我还是不省这
 句代码了。虽然使用函数实现，不过不用担心性能，因为使用编译器关键字 <code>inline</code> 编译
 的时候，编译器会用代码替换调用的部分，不会增加调用开销。</p>
-
 <h4 id="拆分文本">拆分文本</h4>
-
 <p>C++ 拆分字符串得自己实现，不过实现比较简单。如下：</p>
-
-<pre><code class="language-C++">void lshell::split_line__() {
-  if (line_.empty()) return;
-  std::string arg;
-  int len = line_.length();
-  int i = 0;
-  while (i &lt; len) {
-    if (std::isblank(line_[i])) {
-      args_.push_back(arg);
-      arg.clear();
-    } else {
-      arg += line_[i];
-    }
-    ++i;
-  }
-  args_.push_back(arg);
-}
-</code></pre>
-
-<p>我的代码写得比较 low , 当然还有其它方法实现，比如可以将 string 转换为 char*, 然
+<div class="highlight"><pre class="chroma"><code class="language-C++" data-lang="C++"><span class="kt">void</span> <span class="n">lshell</span><span class="o">::</span><span class="n">split_line__</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">line_</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span> <span class="k">return</span><span class="p">;</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">arg</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">len</span> <span class="o">=</span> <span class="n">line_</span><span class="p">.</span><span class="n">length</span><span class="p">();</span>
+  <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="k">while</span> <span class="p">(</span><span class="n">i</span> <span class="o">&lt;</span> <span class="n">len</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">isblank</span><span class="p">(</span><span class="n">line_</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span> <span class="p">{</span>
+      <span class="n">args_</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">arg</span><span class="p">);</span>
+      <span class="n">arg</span><span class="p">.</span><span class="n">clear</span><span class="p">();</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+      <span class="n">arg</span> <span class="o">+=</span> <span class="n">line_</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+    <span class="p">}</span>
+    <span class="o">++</span><span class="n">i</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="n">args_</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">arg</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div><p>我的代码写得比较 low , 当然还有其它方法实现，比如可以将 string 转换为 char*, 然
 后配合 C 函数 <code>strtok</code> 将字符串分割。仁者见仁。</p>
-
 <h4 id="执行命令">执行命令</h4>
-
 <p>shell 的内核所在，前面的都只是铺垫。</p>
-
-<pre><code class="language-C++">void lshell::excute__() {
-  const int arg_len = args_.size();
-  if (!arg_len) {
-    status_setter(status_enum::success);
-    return;
-  }
-  char **args = new char *[arg_len];
-  for (int i = 0; i &lt; arg_len; ++i) {
-    args[i] = new char[args_[i].size() + 1];
-    strncpy(args[i], args_[i].c_str(), args_[i].size());
-  }
-  auto is_builtin = builtins_.begin();
-  if ((is_builtin = builtins_.find(args_[0])) != builtins_.end()) {
-    status_setter(is_builtin-&gt;second(args));
-  } else {
-    status_setter(__launch(args));
-  }
-  for (auto i = 0; i &lt; arg_len; ++i) delete args[i];
-}
-</code></pre>
-
-<p>这里主要分为两部分，一个是内置命令，令一个是系统命令程序。</p>
-
+<div class="highlight"><pre class="chroma"><code class="language-C++" data-lang="C++"><span class="kt">void</span> <span class="n">lshell</span><span class="o">::</span><span class="n">excute__</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">const</span> <span class="kt">int</span> <span class="n">arg_len</span> <span class="o">=</span> <span class="n">args_</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">arg_len</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">status_setter</span><span class="p">(</span><span class="n">status_enum</span><span class="o">::</span><span class="n">success</span><span class="p">);</span>
+    <span class="k">return</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="kt">char</span> <span class="o">**</span><span class="n">args</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">char</span> <span class="o">*</span><span class="p">[</span><span class="n">arg_len</span><span class="p">];</span>
+  <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">arg_len</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">args</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">char</span><span class="p">[</span><span class="n">args_</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">size</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">];</span>
+    <span class="n">strncpy</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">args_</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">c_str</span><span class="p">(),</span> <span class="n">args_</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">size</span><span class="p">());</span>
+  <span class="p">}</span>
+  <span class="k">auto</span> <span class="n">is_builtin</span> <span class="o">=</span> <span class="n">builtins_</span><span class="p">.</span><span class="n">begin</span><span class="p">();</span>
+  <span class="k">if</span> <span class="p">((</span><span class="n">is_builtin</span> <span class="o">=</span> <span class="n">builtins_</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="n">args_</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span> <span class="o">!=</span> <span class="n">builtins_</span><span class="p">.</span><span class="n">end</span><span class="p">())</span> <span class="p">{</span>
+    <span class="n">status_setter</span><span class="p">(</span><span class="n">is_builtin</span><span class="o">-&gt;</span><span class="n">second</span><span class="p">(</span><span class="n">args</span><span class="p">));</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="n">status_setter</span><span class="p">(</span><span class="n">__launch</span><span class="p">(</span><span class="n">args</span><span class="p">));</span>
+  <span class="p">}</span>
+  <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">arg_len</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="k">delete</span> <span class="n">args</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+<span class="p">}</span>
+</code></pre></div><p>这里主要分为两部分，一个是内置命令，令一个是系统命令程序。</p>
 <ul>
-<li><p>内置命令</p>
+<li>内置命令</li>
+</ul>
+<pre><code>系统中没有实现如 cd, help, exit 等命令，所以需要我们手动实现这些命令，也即内置命
+令。在本文代码中，我使用哈希表存储内置命令处理函数。
 
-<p>系统中没有实现如 cd, help, exit 等命令，所以需要我们手动实现这些命令，也即内置命
-令。在本文代码中，我使用哈希表存储内置命令处理函数。</p>
-
-<pre><code class="language-C++">/* 内置命令：如 cd, help, exit... */
+```C++
+/* 内置命令：如 cd, help, exit... */
 status_enum __cd(char **);
 status_enum __help(char **);
 inline status_enum __exit(char **) { return status_enum::exit_s; };
 /* 内置命令对应的处理函数表，使用哈希表实现 */
 const std::unordered_map&lt;std::string, status_enum (*)(char **)&gt; _builtins{
     {&quot;cd&quot;, &amp;__cd}, {&quot;help&quot;, &amp;__help}, {&quot;exit&quot;, &amp;__exit}};
-</code></pre>
+```
 
-<p>后续添加内置命令也方便，不用修改 execute__ 中的代码。以 cd 命令为例，看看内置命
-令的实现，其实是调用系统调用：</p>
+后续添加内置命令也方便，不用修改 execute\_\_ 中的代码。以 cd 命令为例，看看内置命
+令的实现，其实是调用系统调用：
 
-<pre><code class="language-C++">status_enum __cd(char **args) {
+```C++
+status_enum __cd(char **args) {
   if (args[1] &amp;&amp; int(args[1][0])) {
     if (chdir(args[1])) {
       std::cout &lt;&lt; &quot;The dir '&quot; &lt;&lt; args[1][0] &lt;&lt; &quot;' cannot be found! &quot;
@@ -267,11 +227,13 @@ const std::unordered_map&lt;std::string, status_enum (*)(char **)&gt; _builtins{
   }
   return status_enum::success;
 }
-</code></pre></li>
-
-<li><p>系统命令</p>
-
-<pre><code class="language-C++">status_enum __launch(char **args) {
+```
+</code></pre>
+<ul>
+<li>系统命令</li>
+</ul>
+<pre><code>```C++
+status_enum __launch(char **args) {
   pid_t pid = fork();
   if (pid &gt; 0) {
     pid_t wpid;
@@ -292,26 +254,20 @@ const std::unordered_map&lt;std::string, status_enum (*)(char **)&gt; _builtins{
   }
   return status_enum::success;
 }
+```
+
+这个就是一般的创建子进程，然后通过 execvp 系统调用执行环境变量里的程序，当然父进
+程必须等待子进程执行完毕，将结果反馈给用户。
 </code></pre>
-
-<p>这个就是一般的创建子进程，然后通过 execvp 系统调用执行环境变量里的程序，当然父进
-程必须等待子进程执行完毕，将结果反馈给用户。</p></li>
-</ul>
-
 <h4 id="最后是清理">最后是清理</h4>
-
 <p>也就是清理上一次执行完的命令文本，本人的实现是将文本存储在私有变量里，避免了传参
 过程产生的临时变量。虽然通过C++的一些高级语法避免这些开销，但是鄙人小菜一枚。所
 以使用比较容易实现的方式，算是抛砖引玉吧，欢迎各位大佬指教。</p>
-
 <h2 id="总结">总结</h2>
-
 <p>好了，到目前所有的核心代码几乎展示完毕了，这个是个小项目，主要是学习。 本人的完
 整项目代码就不展示了，毕竟都是超级简单的东西。文末会给出项目的链接地址，作者是用
 C写的，有兴趣可以参考他的实现。</p>
-
 <h2 id="参考">参考</h2>
-
 <p><a href="https://brennan.io/2015/01/16/write-a-shell-in-c/">https://brennan.io/2015/01/16/write-a-shell-in-c/</a></p>
 
     
@@ -368,6 +324,8 @@ C写的，有兴趣可以参考他的实现。</p>
     
     <li><a href="/categories/%e5%86%85%e5%ad%98%e7%ae%a1%e7%90%86" title="内存管理">内存管理<sup>1</sup></a></li>
     
+    <li><a href="/categories/%e5%86%85%e6%a0%b8%e5%ae%9e%e9%aa%8c" title="内核实验">内核实验<sup>1</sup></a></li>
+    
     <li><a href="/categories/%e5%91%bd%e4%bb%a4%e8%a1%8c%e8%89%ba%e6%9c%af" title="命令行艺术">命令行艺术<sup>3</sup></a></li>
     
     <li><a href="/categories/%e5%ad%a6%e4%b9%a0%e7%ac%94%e8%ae%b0" title="学习笔记">学习笔记<sup>13</sup></a></li>
@@ -393,6 +351,8 @@ C写的，有兴趣可以参考他的实现。</p>
 	<p class="asidetitle">标签</p>
 		<ul class="clearfix">
       
+			<li><a href="/tags/bochs" title="bochs">bochs<sup>1</sup></a></li>
+      
 			<li><a href="/tags/c&#43;&#43;" title="c&#43;&#43;">c&#43;&#43;<sup>10</sup></a></li>
       
 			<li><a href="/tags/command" title="command">command<sup>3</sup></a></li>
@@ -407,9 +367,9 @@ C写的，有兴趣可以参考他的实现。</p>
       
 			<li><a href="/tags/jemalloc" title="jemalloc">jemalloc<sup>1</sup></a></li>
       
-			<li><a href="/tags/kernel" title="kernel">kernel<sup>7</sup></a></li>
+			<li><a href="/tags/kernel" title="kernel">kernel<sup>8</sup></a></li>
       
-			<li><a href="/tags/linux" title="linux">linux<sup>12</sup></a></li>
+			<li><a href="/tags/linux" title="linux">linux<sup>13</sup></a></li>
       
 			<li><a href="/tags/linux%e5%86%85%e6%a0%b8" title="linux内核">linux内核<sup>1</sup></a></li>
       
@@ -471,6 +431,11 @@ C写的，有兴趣可以参考他的实现。</p>
       
       
       <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2020-04">2020年04月</a><span class="archive-list-count">1</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
         <a class="archive-list-link" href="/post/#2019-09">2019年09月</a><span class="archive-list-count">1</span>
       </li>
       
@@ -524,6 +489,8 @@ C写的，有兴趣可以参考他的实现。</p>
 <div class="tagcloudlist">
   <p class="asidetitle">标签云</p>
   <div class="tagcloudlist clearfix">
+    
+    <a href="/tags/bochs" style="font-size: 12px;">bochs</a>
     
     <a href="/tags/c&#43;&#43;" style="font-size: 12px;">c&#43;&#43;</a>
     
@@ -623,7 +590,7 @@ C写的，有兴趣可以参考他的实现。</p>
     
     
   </div>
-  <p class="copyright">Powered by <a href="http://gohugo.io" target="_blank" title="hugo">hugo</a> and Theme by <a href="https://github.com/coderzh/hugo-pacman-theme" target="_blank" title="hugo-pacman-theme">hugo-pacman-theme</a> © 2019
+  <p class="copyright">Powered by <a href="http://gohugo.io" target="_blank" title="hugo">hugo</a> and Theme by <a href="https://github.com/coderzh/hugo-pacman-theme" target="_blank" title="hugo-pacman-theme">hugo-pacman-theme</a> © 2020
     
     <a href="/" title="北极狼徒">北极狼徒</a>
     

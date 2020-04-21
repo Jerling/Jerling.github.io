@@ -76,134 +76,112 @@
 
 	<div class="article-content">
     
-    
-
-<h2 id="table-of-contens">Table of Contens</h2>
-
+    <h2 id="table-of-contens">Table of Contens</h2>
 <ul>
-<li><a href="#安装准备">安装准备</a>
-
+<li><a href="#%E5%AE%89%E8%A3%85%E5%87%86%E5%A4%87">安装准备</a>
 <ul>
-<li><a href="#系统镜像">系统镜像</a></li>
-<li><a href="#虚拟软件">虚拟软件</a></li>
-<li><a href="#启动系统">启动系统</a></li>
-</ul></li>
-<li><a href="#配置网络">配置网络</a></li>
-<li><a href="#准备磁盘">准备磁盘</a>
-
-<ul>
-<li><a href="#创建分区">创建分区</a></li>
-<li><a href="#创建文件系统">创建文件系统</a></li>
-<li><a href="#挂载根分区">挂载根分区</a></li>
-</ul></li>
-<li><a href="#安装-stage3">安装 stage3</a>
-
-<ul>
-<li><a href="#配置编译选项">配置编译选项</a></li>
-</ul></li>
-<li><a href="#基本系统">基本系统</a>
-
-<ul>
-<li><a href="#镜像站点">镜像站点</a></li>
-<li><a href="#复制-dns-信息">复制 DNS 信息</a></li>
-<li><a href="#挂载必要的文件系统">挂载必要的文件系统</a></li>
-<li><a href="#进入新环境">进入新环境</a></li>
-<li><a href="#挂载-boot-分区">挂载 boot 分区</a></li>
-<li><a href="#选择配置文件">选择配置文件</a></li>
-<li><a href="#更新-world-集合">更新 @world 集合</a></li>
-<li><a href="#设置时区">设置时区</a></li>
-<li><a href="#配置地区">配置地区</a></li>
-</ul></li>
-<li><a href="#编译内核">编译内核</a>
-
-<ul>
-<li><a href="#安装源码">安装源码</a></li>
-<li><a href="#配置内核">配置内核</a></li>
-<li><a href="#编译和安装内核">编译和安装内核</a></li>
-</ul></li>
-<li><a href="#配置系统">配置系统</a>
-
-<ul>
-<li><a href="#配置-fstab-文件">配置 fstab 文件</a></li>
-<li><a href="#网络信息">网络信息</a></li>
-</ul></li>
-<li><a href="#系统工具">系统工具</a>
-
-<ul>
-<li><a href="#日志工具">日志工具</a></li>
-<li><a href="#文件索引">文件索引</a></li>
-<li><a href="#远程访问">远程访问</a></li>
-<li><a href="#文件系统工具">文件系统工具</a></li>
-<li><a href="#网络工具">网络工具</a></li>
-</ul></li>
-<li><a href="#安装引导">安装引导</a>
-
-<ul>
-<li><a href="#重启系统">重启系统</a></li>
-</ul></li>
-<li><a href="#后记">后记</a>
-
-<ul>
-<li><a href="#添加用户">添加用户</a></li>
-<li><a href="#清理垃圾">清理垃圾</a></li>
-</ul></li>
-<li><a href="#总结">总结</a>
-
-<ul>
-<li><a href="#系统安装">系统安装</a></li>
-<li><a href="#安装软件">安装软件</a></li>
-</ul></li>
-<li><a href="#参考链接">参考链接</a></li>
+<li><a href="#%E7%B3%BB%E7%BB%9F%E9%95%9C%E5%83%8F">系统镜像</a></li>
+<li><a href="#%E8%99%9A%E6%8B%9F%E8%BD%AF%E4%BB%B6">虚拟软件</a></li>
+<li><a href="#%E5%90%AF%E5%8A%A8%E7%B3%BB%E7%BB%9F">启动系统</a></li>
 </ul>
-
+</li>
+<li><a href="#%E9%85%8D%E7%BD%AE%E7%BD%91%E7%BB%9C">配置网络</a></li>
+<li><a href="#%E5%87%86%E5%A4%87%E7%A3%81%E7%9B%98">准备磁盘</a>
+<ul>
+<li><a href="#%E5%88%9B%E5%BB%BA%E5%88%86%E5%8C%BA">创建分区</a></li>
+<li><a href="#%E5%88%9B%E5%BB%BA%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F">创建文件系统</a></li>
+<li><a href="#%E6%8C%82%E8%BD%BD%E6%A0%B9%E5%88%86%E5%8C%BA">挂载根分区</a></li>
+</ul>
+</li>
+<li><a href="#%E5%AE%89%E8%A3%85-stage3">安装 stage3</a>
+<ul>
+<li><a href="#%E9%85%8D%E7%BD%AE%E7%BC%96%E8%AF%91%E9%80%89%E9%A1%B9">配置编译选项</a></li>
+</ul>
+</li>
+<li><a href="#%E5%9F%BA%E6%9C%AC%E7%B3%BB%E7%BB%9F">基本系统</a>
+<ul>
+<li><a href="#%E9%95%9C%E5%83%8F%E7%AB%99%E7%82%B9">镜像站点</a></li>
+<li><a href="#%E5%A4%8D%E5%88%B6-dns-%E4%BF%A1%E6%81%AF">复制 DNS 信息</a></li>
+<li><a href="#%E6%8C%82%E8%BD%BD%E5%BF%85%E8%A6%81%E7%9A%84%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F">挂载必要的文件系统</a></li>
+<li><a href="#%E8%BF%9B%E5%85%A5%E6%96%B0%E7%8E%AF%E5%A2%83">进入新环境</a></li>
+<li><a href="#%E6%8C%82%E8%BD%BD-boot-%E5%88%86%E5%8C%BA">挂载 boot 分区</a></li>
+<li><a href="#%E9%80%89%E6%8B%A9%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6">选择配置文件</a></li>
+<li><a href="#%E6%9B%B4%E6%96%B0-world-%E9%9B%86%E5%90%88">更新 @world 集合</a></li>
+<li><a href="#%E8%AE%BE%E7%BD%AE%E6%97%B6%E5%8C%BA">设置时区</a></li>
+<li><a href="#%E9%85%8D%E7%BD%AE%E5%9C%B0%E5%8C%BA">配置地区</a></li>
+</ul>
+</li>
+<li><a href="#%E7%BC%96%E8%AF%91%E5%86%85%E6%A0%B8">编译内核</a>
+<ul>
+<li><a href="#%E5%AE%89%E8%A3%85%E6%BA%90%E7%A0%81">安装源码</a></li>
+<li><a href="#%E9%85%8D%E7%BD%AE%E5%86%85%E6%A0%B8">配置内核</a></li>
+<li><a href="#%E7%BC%96%E8%AF%91%E5%92%8C%E5%AE%89%E8%A3%85%E5%86%85%E6%A0%B8">编译和安装内核</a></li>
+</ul>
+</li>
+<li><a href="#%E9%85%8D%E7%BD%AE%E7%B3%BB%E7%BB%9F">配置系统</a>
+<ul>
+<li><a href="#%E9%85%8D%E7%BD%AE-fstab-%E6%96%87%E4%BB%B6">配置 fstab 文件</a></li>
+<li><a href="#%E7%BD%91%E7%BB%9C%E4%BF%A1%E6%81%AF">网络信息</a></li>
+</ul>
+</li>
+<li><a href="#%E7%B3%BB%E7%BB%9F%E5%B7%A5%E5%85%B7">系统工具</a>
+<ul>
+<li><a href="#%E6%97%A5%E5%BF%97%E5%B7%A5%E5%85%B7">日志工具</a></li>
+<li><a href="#%E6%96%87%E4%BB%B6%E7%B4%A2%E5%BC%95">文件索引</a></li>
+<li><a href="#%E8%BF%9C%E7%A8%8B%E8%AE%BF%E9%97%AE">远程访问</a></li>
+<li><a href="#%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E5%B7%A5%E5%85%B7">文件系统工具</a></li>
+<li><a href="#%E7%BD%91%E7%BB%9C%E5%B7%A5%E5%85%B7">网络工具</a></li>
+</ul>
+</li>
+<li><a href="#%E5%AE%89%E8%A3%85%E5%BC%95%E5%AF%BC">安装引导</a>
+<ul>
+<li><a href="#%E9%87%8D%E5%90%AF%E7%B3%BB%E7%BB%9F">重启系统</a></li>
+</ul>
+</li>
+<li><a href="#%E5%90%8E%E8%AE%B0">后记</a>
+<ul>
+<li><a href="#%E6%B7%BB%E5%8A%A0%E7%94%A8%E6%88%B7">添加用户</a></li>
+<li><a href="#%E6%B8%85%E7%90%86%E5%9E%83%E5%9C%BE">清理垃圾</a></li>
+</ul>
+</li>
+<li><a href="#%E6%80%BB%E7%BB%93">总结</a>
+<ul>
+<li><a href="#%E7%B3%BB%E7%BB%9F%E5%AE%89%E8%A3%85">系统安装</a></li>
+<li><a href="#%E5%AE%89%E8%A3%85%E8%BD%AF%E4%BB%B6">安装软件</a></li>
+</ul>
+</li>
+<li><a href="#%E5%8F%82%E8%80%83%E9%93%BE%E6%8E%A5">参考链接</a></li>
+</ul>
 <h2 id="安装准备">安装准备</h2>
-
 <p><a href="https://www.gentoo.org/">Gentoo</a> 一直是一个特别的存在，号称极客系统。网上对其推(装)崇(逼)备(必)至(备)。作为一个爱装逼的骚年，自然是想一探究尽。关于它的介绍，这里就不说了，
 因为想挑战它的 Geeker 肯定都知道，如果没听过，还是选择隔壁 <a href="https://www.manjaro.cn/">manjaro</a> 。manjaro 是基于另一个优秀的发行版 <a href="https://www.archlinux.org/">Arch Linux</a>，就是很贴心的省去了痛苦的
 安装过程。想体验 Geeker 的成就感， Gentoo 和 Arch Linux 选择其中一个即可。这两者的区别是前者安装软件默认从源代码编译，而后者人性化一点，使用二进制安装包。
 安装速度不知快了多少倍。也不知这些极客怎么忍受的，不过 Gentoo 的滚动更新没有 Arch 哪么快，所以安装完必要的软件之后就不须要频繁的更新，而 Arch 三天两头就可以
 滚一滚了。</p>
-
 <h3 id="系统镜像">系统镜像</h3>
-
 <p>安装系统，镜像是必须的(废话)。去 <a href="https://www.gentoo.org/downloads/mirrors/">Gentoo官方镜像站</a> 下载的时候根据自己的硬件和地区选择合适的镜像，我这边使用的amd64的架构，
 因此使用的是 releases/amd64/autobuilds/install-amd64-minimal-20181220T214503Z.iso。</p>
-
 <h3 id="虚拟软件">虚拟软件</h3>
-
 <p>这里以 VirtualBox 为例，VMware 应该是一样的。用VirtualBox的理由是便于端口转发，然后使用 putty 连接 LiveCD 系统，这样就没必要一个个的敲命令了。
 当然这是最快体验大 Gentoo 的方法，如果要安装到物理机，除非另一个系统或电脑，否则只能一个个敲了。</p>
-
 <h3 id="启动系统">启动系统</h3>
-
 <p>这里参考网上创建虚拟机即可，启动的时候可以选择可用内核，本文用的是默认的4.14.83内核，快捷键： <code>F1</code> 显示可用内核； <code>F2</code> 显示可用的启动项。需要
 详细参数的可以参考<a href="https://wiki.gentoo.org/wiki/Handbook:AMD64/Installation/Media/zh-cn">官方文档</a> 。
 启动后，先设置 root 密码，便于ssh远程连接，然后开启 ssh 服务即可使用 ssh 客户端连接。</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">root <span class="c1"># passwd</span>
+New password: <span class="o">(</span>Enter the new password<span class="o">)</span>
+Re-enter password: <span class="o">(</span>Re-enter the password<span class="o">)</span>
 
-<pre><code class="language-bash">root # passwd
-New password: (Enter the new password)
-Re-enter password: (Re-enter the password)
-
-root # rc-service sshd start
-</code></pre>
-
-<p>如果是只有一台电脑安装，那么可以借助终端浏览器 <code>links2</code> 来实现查阅在线文档：</p>
-
-<pre><code class="language-bash">root # links https://wiki.gentoo.org/wiki/Handbook:AMD64
-</code></pre>
-
-<h2 id="配置网络">配置网络</h2>
-
+root <span class="c1"># rc-service sshd start</span>
+</code></pre></div><p>如果是只有一台电脑安装，那么可以借助终端浏览器 <code>links2</code> 来实现查阅在线文档：</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">root <span class="c1"># links https://wiki.gentoo.org/wiki/Handbook:AMD64</span>
+</code></pre></div><h2 id="配置网络">配置网络</h2>
 <p>这里我使用的 NAT 网络模式，内部系统默认使用的是 dhcp。反正是用来装系统的，所以能够联网就行，管它是不是静态ip呢。</p>
-
 <h2 id="准备磁盘">准备磁盘</h2>
-
 <h3 id="创建分区">创建分区</h3>
-
 <p>分区表有 GPT 和 MBR 两种，前者是新的的分区格式，后者为比较老的。但是 GPT 要求主板支持 UEFI 启动，稍微有点麻烦。这个
 麻烦主要体现在安装引导的地方，如果硬件不支持 UEFI ，那么引导是装不上去的。所以为了简单，本例以 MBR 为例。分区工具使用
 fdisk，因为它是交互式的，命令也很简单。本例的最后的目标分区如下：</p>
-
 <table>
 <thead>
 <tr>
@@ -211,36 +189,31 @@ fdisk，因为它是交互式的，命令也很简单。本例的最后的目标
 <th>描述</th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
 <td>/dev/sda1</td>
 <td>BIOS启动分区</td>
 </tr>
-
 <tr>
 <td>/dev/sda2</td>
 <td>系统boot分区</td>
 </tr>
-
 <tr>
 <td>/dev/sda3</td>
 <td>交换分区</td>
 </tr>
-
 <tr>
 <td>/dev/sda4</td>
 <td>根分区</td>
 </tr>
 </tbody>
 </table>
-
-<pre><code class="language-bash">root # fdisk /dev/sda
-  命令(输入 m 获取帮助)：m
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">root <span class="c1"># fdisk /dev/sda</span>
+  命令<span class="o">(</span>输入 m 获取帮助<span class="o">)</span>：m
 
   帮助：
 
-    DOS (MBR)
+    DOS <span class="o">(</span>MBR<span class="o">)</span>
      a   开关 可启动 标志
      b   编辑嵌套的 BSD 磁盘标签
      c   开关 dos 兼容性标志
@@ -258,7 +231,7 @@ fdisk，因为它是交互式的，命令也很简单。本例的最后的目标
     杂项
      m   打印此菜单
      u   更改 显示/记录 单位
-     x   更多功能(仅限专业人员)
+     x   更多功能<span class="o">(</span>仅限专业人员<span class="o">)</span>
 
     脚本
      I   从 sfdisk 脚本文件加载磁盘布局
@@ -270,292 +243,191 @@ fdisk，因为它是交互式的，命令也很简单。本例的最后的目标
 
     新建空磁盘标签
      g   新建一份 GPT 分区表
-     G   新建一份空 GPT (IRIX) 分区表
+     G   新建一份空 GPT <span class="o">(</span>IRIX<span class="o">)</span> 分区表
      o   新建一份的空 DOS 分区表
      s   新建一份空 Sun 分区表
 
 
-  命令(输入 m 获取帮助)：
-</code></pre>
-
-<p>根据上面的提示就可以轻松的创建自己的分区，如果是新硬盘，须要先新建分区表。如果要创建
+  命令<span class="o">(</span>输入 m 获取帮助<span class="o">)</span>：
+</code></pre></div><p>根据上面的提示就可以轻松的创建自己的分区，如果是新硬盘，须要先新建分区表。如果要创建
 GPT 分区表，使用 <code>g</code> 命令， MBR 则使用 <code>o</code> 命令，然后就是创建分区了， <code>p</code> 可以显示分区
 信息， <code>n</code> 用于添加新分区，按照提示给定分区大小。这里值得一提的是 MBR 只能有 <code>4</code> 个主分区。
 如果想多于 <code>4</code> 个，应将其中一个设置为扩展分区。本例最后的分区结果如下：</p>
-
-<pre><code class="language-bash">命令(输入 m 获取帮助)：p
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">命令<span class="o">(</span>输入 m 获取帮助<span class="o">)</span>：p
 Disk /dev/sda：59.1 GiB，63433342976 字节，123893248 个扇区
-单元：扇区 / 1 * 512 = 512 字节
-扇区大小(逻辑/物理)：512 字节 / 512 字节
-I/O 大小(最小/最佳)：512 字节 / 512 字节
+单元：扇区 / <span class="m">1</span> * <span class="nv">512</span> <span class="o">=</span> <span class="m">512</span> 字节
+扇区大小<span class="o">(</span>逻辑/物理<span class="o">)</span>：512 字节 / <span class="m">512</span> 字节
+I/O 大小<span class="o">(</span>最小/最佳<span class="o">)</span>：512 字节 / <span class="m">512</span> 字节
 磁盘标签类型：dos
 磁盘标识符：0x158b7a45
 
 设备       启动    起点      末尾      扇区  大小 Id 类型
-/dev/sda1          2048      6143      4096    2M 83 Linux
-/dev/sda2          6144    268287    262144  128M 83 Linux
-/dev/sda3        268288   1316863   1048576  512M 83 Linux
-/dev/sda4       1316864 123893247 122576384 58.5G 83 Linux
+/dev/sda1          <span class="m">2048</span>      <span class="m">6143</span>      <span class="m">4096</span>    2M <span class="m">83</span> Linux
+/dev/sda2          <span class="m">6144</span>    <span class="m">268287</span>    <span class="m">262144</span>  128M <span class="m">83</span> Linux
+/dev/sda3        <span class="m">268288</span>   <span class="m">1316863</span>   <span class="m">1048576</span>  512M <span class="m">83</span> Linux
+/dev/sda4       <span class="m">1316864</span> <span class="m">123893247</span> <span class="m">122576384</span> 58.5G <span class="m">83</span> Linux
 
-命令(输入 m 获取帮助)：
-</code></pre>
-
-<h3 id="创建文件系统">创建文件系统</h3>
-
+命令<span class="o">(</span>输入 m 获取帮助<span class="o">)</span>：
+</code></pre></div><h3 id="创建文件系统">创建文件系统</h3>
 <p>BIOS分区可以不用管，只要创建其分区的文件系统即可：</p>
-
-<pre><code class="language-bash">root # mkfs.ext2 /dev/sda2
-root # mkfs.ext4 /dev/sda4
-root # mkswap /dev/sda3
-root # swapon /dev/sda3
-</code></pre>
-
-<h3 id="挂载根分区">挂载根分区</h3>
-
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">root <span class="c1"># mkfs.ext2 /dev/sda2</span>
+root <span class="c1"># mkfs.ext4 /dev/sda4</span>
+root <span class="c1"># mkswap /dev/sda3</span>
+root <span class="c1"># swapon /dev/sda3</span>
+</code></pre></div><h3 id="挂载根分区">挂载根分区</h3>
 <p>现在把根区挂载到 liveCD 上，这样才能使用该分区来安装系统。</p>
-
-<pre><code class="language-bash">root # mount /dev/sda4 /mnt/gentoo
-</code></pre>
-
-<h2 id="安装-stage3">安装 stage3</h2>
-
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">root <span class="c1"># mount /dev/sda4 /mnt/gentoo</span>
+</code></pre></div><h2 id="安装-stage3">安装 stage3</h2>
 <p>在下载系统镜像的地址有对应的 stage3 的镜像，把它下载下来并解压到 /mnt/gentoo 目录。
 在下载之前先确定一下系统的时间, 如果不对则设置时间，否则安下载 stage3 会报错：</p>
-
-<pre><code class="language-bash">root # date
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">root <span class="c1"># date</span>
 2018年 12月 25日 星期二 20:36:02 CST
-root # date 122520362018  # 如果不是就设置
-</code></pre>
-
-<pre><code class="language-bash">root # cd /mnt/gentoo
-root # wget https://mirrors.tuna.tsinghua.edu.cn/gentoo/releases/amd64/autobuilds/current-stage3-amd64/stage3-x32-20181220T214503Z.tar.xz
-root # tar xvJf stage3-x32-20181220T214503Z.tar.xz
-</code></pre>
-
-<h3 id="配置编译选项">配置编译选项</h3>
-
+root <span class="c1"># date 122520362018  # 如果不是就设置</span>
+</code></pre></div><div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">root <span class="c1"># cd /mnt/gentoo</span>
+root <span class="c1"># wget https://mirrors.tuna.tsinghua.edu.cn/gentoo/releases/amd64/autobuilds/current-stage3-amd64/stage3-x32-20181220T214503Z.tar.xz</span>
+root <span class="c1"># tar xvJf stage3-x32-20181220T214503Z.tar.xz</span>
+</code></pre></div><h3 id="配置编译选项">配置编译选项</h3>
 <p>这里基本是用的默认选项，只增加了 make 的编译线程，据说线程数为 CPU 核心数的 2 倍的时候
 编译效果最佳。吐嘈一下，镜像里竟然不带vi。</p>
-
-<pre><code class="language-bash">root #nano -w /mnt/gentoo/etc/portage/make.conf
-MAKEOPTS=&quot;-j2&quot;
-</code></pre>
-
-<h2 id="基本系统">基本系统</h2>
-
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">root <span class="c1">#nano -w /mnt/gentoo/etc/portage/make.conf</span>
+<span class="nv">MAKEOPTS</span><span class="o">=</span><span class="s2">&#34;-j2&#34;</span>
+</code></pre></div><h2 id="基本系统">基本系统</h2>
 <p>现在就需要配置需要编译的模块了，各取所需了，想想这应该是极客比较喜欢
 它的理由吧，小而强悍，没必要添加不需要的模块。</p>
-
 <h3 id="镜像站点">镜像站点</h3>
-
 <p>虽然是可选操作，但是为了速度，选择国内站点是个明智的选择，选完站点后，需要配置 Gentoo ebuild
 软件仓库。</p>
-
-<pre><code class="language-bash">root #mirrorselect -i -o &gt;&gt; /mnt/gentoo/etc/portage/make.conf
-root #mkdir --parents /mnt/gentoo/etc/portage/repos.conf
-root #cp /mnt/gentoo/usr/share/portage/config/repos.conf /mnt/gentoo/etc/portage/repos.conf/gentoo.conf
-</code></pre>
-
-<h3 id="复制-dns-信息">复制 DNS 信息</h3>
-
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">root <span class="c1">#mirrorselect -i -o &gt;&gt; /mnt/gentoo/etc/portage/make.conf</span>
+root <span class="c1">#mkdir --parents /mnt/gentoo/etc/portage/repos.conf</span>
+root <span class="c1">#cp /mnt/gentoo/usr/share/portage/config/repos.conf /mnt/gentoo/etc/portage/repos.conf/gentoo.conf</span>
+</code></pre></div><h3 id="复制-dns-信息">复制 DNS 信息</h3>
 <p>便于进入到里面的系统联网，需要复制 DNS 信息。</p>
-
-<pre><code class="language-bash">cp --dereference /etc/resolv.conf /mnt/gentoo/etc/
-</code></pre>
-
-<h3 id="挂载必要的文件系统">挂载必要的文件系统</h3>
-
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">cp --dereference /etc/resolv.conf /mnt/gentoo/etc/
+</code></pre></div><h3 id="挂载必要的文件系统">挂载必要的文件系统</h3>
 <p>等会儿Linux的根将变更到新的位置。为了确保新环境正常工作，需要确保一些文件系统可以正常使用。</p>
-
 <p>需要提供的文件系统是：</p>
-
 <ul>
 <li>/proc : 一个pseudo文件系统（看起来像是常规文件，事实上却是实时生成的），由Linux内核暴露的一些环境信息</li>
 <li>_sys :  一个pseudo文件系统，像要被取代的/proc_一样，比_proc_更加有结构</li>
 <li>/dev : 是一个包含全部设备文件的常规文件系统，一部分由Linux设备管理器（通常是udev）管理</li>
 </ul>
-
-<p>_proc_位置将要挂载到_mnt/gentoo/proc_，而其它的两个都是绑定挂载。字面上的意思是，例如_mnt/gentoo/sys_事实上就是_sys_（它只是同一个文件系统的第二个条目点），而_mnt/gentoo/proc_是（可以说是）文件系统的一个新的挂载。</p>
-
-<pre><code class="language-bash">root #mount --types proc /proc /mnt/gentoo/proc
-root #mount --rbind /sys /mnt/gentoo/sys
-root #mount --make-rslave /mnt/gentoo/sys
-root #mount --rbind /dev /mnt/gentoo/dev
-root #mount --make-rslave /mnt/gentoo/dev
-</code></pre>
-
-<h3 id="进入新环境">进入新环境</h3>
-
+<p><em>proc_位置将要挂载到_mnt/gentoo/proc</em>，而其它的两个都是绑定挂载。字面上的意思是，例如_mnt/gentoo/sys_事实上就是_sys_（它只是同一个文件系统的第二个条目点），而_mnt/gentoo/proc_是（可以说是）文件系统的一个新的挂载。</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">root <span class="c1">#mount --types proc /proc /mnt/gentoo/proc</span>
+root <span class="c1">#mount --rbind /sys /mnt/gentoo/sys</span>
+root <span class="c1">#mount --make-rslave /mnt/gentoo/sys</span>
+root <span class="c1">#mount --rbind /dev /mnt/gentoo/dev</span>
+root <span class="c1">#mount --make-rslave /mnt/gentoo/dev</span>
+</code></pre></div><h3 id="进入新环境">进入新环境</h3>
 <p>只需使用 chroot 命令即可进入新系统，当然还有一些必要的环境切换，如加载新环境的环境变量以及
 修改提示符用来区分系统。</p>
-
-<pre><code class="language-bash">root #chroot /mnt/gentoo /bin/bash
-root #source /etc/profile
-root #export PS1=&quot;(chroot) ${PS1}&quot;
-</code></pre>
-
-<h3 id="挂载-boot-分区">挂载 boot 分区</h3>
-
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">root <span class="c1">#chroot /mnt/gentoo /bin/bash</span>
+root <span class="c1">#source /etc/profile</span>
+root <span class="c1">#export PS1=&#34;(chroot) ${PS1}&#34;</span>
+</code></pre></div><h3 id="挂载-boot-分区">挂载 boot 分区</h3>
 <p>这一步很重要，当编译内核并安装引导加载程序时会放在 boot 里。</p>
-
-<pre><code class="language-bash">root #mount /dev/sda2 /boot
-</code></pre>
-
-<h3 id="选择配置文件">选择配置文件</h3>
-
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">root <span class="c1">#mount /dev/sda2 /boot</span>
+</code></pre></div><h3 id="选择配置文件">选择配置文件</h3>
 <p>配置文件会决定你想要安装什么软件，所以这个也会决定编译时间的长短，为了快速体验 Gentoo，本例
 使用了默认的选项，没有桌面环境以及 systemd 等。</p>
-
-<pre><code class="language-bash">root #eselect profile list
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">root <span class="c1">#eselect profile list</span>
 
 Available profile symlink targets:
-  [1]   default/linux/amd64/13.0 *
-  [2]   default/linux/amd64/13.0/desktop
-  [3]   default/linux/amd64/13.0/desktop/gnome
-  [4]   default/linux/amd64/13.0/desktop/kde
-  [5]   default/linux/amd64/13.0/desktop/gnome/systemd (stable)
-  [6]   default/linux/amd64/13.0/desktop/plasma (stable)
-  [7]   default/linux/amd64/13.0/desktop/plasma/systemd (stable)
-  [8]   default/linux/amd64/13.0/developer (stable)
-  [9]   default/linux/amd64/13.0/no-multilib (stable)
-  [10]  default/linux/amd64/13.0/systemd (stable)
-  [11]  default/linux/amd64/13.0/x32 (dev)
-  [12]  default/linux/amd64/17.0 (stable) *
-  [13]  default/linux/amd64/17.0/selinux (stable)
-  [14]  default/linux/amd64/17.0/hardened (stable)
-  [15]  default/linux/amd64/17.0/hardened/selinux (stable)
-  [16]  default/linux/amd64/17.0/desktop (stable)
-  [17]  default/linux/amd64/17.0/desktop/gnome (stable)
-  [18]  default/linux/amd64/17.0/desktop/gnome/systemd (stable)
-  [19]  default/linux/amd64/17.0/desktop/plasma (stable)
-  [20]  default/linux/amd64/17.0/desktop/plasma/systemd (stable)
-  [21]  default/linux/amd64/17.0/developer (stable)
-  [22]  default/linux/amd64/17.0/no-multilib (stable)
-  [23]  default/linux/amd64/17.0/no-multilib/hardened (stable)
-  [24]  default/linux/amd64/17.0/no-multilib/hardened/selinux (stable)
-  [25]  default/linux/amd64/17.0/systemd (stable)
-  [26]  default/linux/amd64/17.0/x32 (dev)
-</code></pre>
-
-<p>如果想选择其他的配置，比如想使用17.0版本的 gnome 桌面，则使用如下命令选择即可：</p>
-
-<pre><code class="language-bash">root # eselect profile set 17
-</code></pre>
-
-<h3 id="更新-world-集合">更新 @world 集合</h3>
-
+  <span class="o">[</span>1<span class="o">]</span>   default/linux/amd64/13.0 *
+  <span class="o">[</span>2<span class="o">]</span>   default/linux/amd64/13.0/desktop
+  <span class="o">[</span>3<span class="o">]</span>   default/linux/amd64/13.0/desktop/gnome
+  <span class="o">[</span>4<span class="o">]</span>   default/linux/amd64/13.0/desktop/kde
+  <span class="o">[</span>5<span class="o">]</span>   default/linux/amd64/13.0/desktop/gnome/systemd <span class="o">(</span>stable<span class="o">)</span>
+  <span class="o">[</span>6<span class="o">]</span>   default/linux/amd64/13.0/desktop/plasma <span class="o">(</span>stable<span class="o">)</span>
+  <span class="o">[</span>7<span class="o">]</span>   default/linux/amd64/13.0/desktop/plasma/systemd <span class="o">(</span>stable<span class="o">)</span>
+  <span class="o">[</span>8<span class="o">]</span>   default/linux/amd64/13.0/developer <span class="o">(</span>stable<span class="o">)</span>
+  <span class="o">[</span>9<span class="o">]</span>   default/linux/amd64/13.0/no-multilib <span class="o">(</span>stable<span class="o">)</span>
+  <span class="o">[</span>10<span class="o">]</span>  default/linux/amd64/13.0/systemd <span class="o">(</span>stable<span class="o">)</span>
+  <span class="o">[</span>11<span class="o">]</span>  default/linux/amd64/13.0/x32 <span class="o">(</span>dev<span class="o">)</span>
+  <span class="o">[</span>12<span class="o">]</span>  default/linux/amd64/17.0 <span class="o">(</span>stable<span class="o">)</span> *
+  <span class="o">[</span>13<span class="o">]</span>  default/linux/amd64/17.0/selinux <span class="o">(</span>stable<span class="o">)</span>
+  <span class="o">[</span>14<span class="o">]</span>  default/linux/amd64/17.0/hardened <span class="o">(</span>stable<span class="o">)</span>
+  <span class="o">[</span>15<span class="o">]</span>  default/linux/amd64/17.0/hardened/selinux <span class="o">(</span>stable<span class="o">)</span>
+  <span class="o">[</span>16<span class="o">]</span>  default/linux/amd64/17.0/desktop <span class="o">(</span>stable<span class="o">)</span>
+  <span class="o">[</span>17<span class="o">]</span>  default/linux/amd64/17.0/desktop/gnome <span class="o">(</span>stable<span class="o">)</span>
+  <span class="o">[</span>18<span class="o">]</span>  default/linux/amd64/17.0/desktop/gnome/systemd <span class="o">(</span>stable<span class="o">)</span>
+  <span class="o">[</span>19<span class="o">]</span>  default/linux/amd64/17.0/desktop/plasma <span class="o">(</span>stable<span class="o">)</span>
+  <span class="o">[</span>20<span class="o">]</span>  default/linux/amd64/17.0/desktop/plasma/systemd <span class="o">(</span>stable<span class="o">)</span>
+  <span class="o">[</span>21<span class="o">]</span>  default/linux/amd64/17.0/developer <span class="o">(</span>stable<span class="o">)</span>
+  <span class="o">[</span>22<span class="o">]</span>  default/linux/amd64/17.0/no-multilib <span class="o">(</span>stable<span class="o">)</span>
+  <span class="o">[</span>23<span class="o">]</span>  default/linux/amd64/17.0/no-multilib/hardened <span class="o">(</span>stable<span class="o">)</span>
+  <span class="o">[</span>24<span class="o">]</span>  default/linux/amd64/17.0/no-multilib/hardened/selinux <span class="o">(</span>stable<span class="o">)</span>
+  <span class="o">[</span>25<span class="o">]</span>  default/linux/amd64/17.0/systemd <span class="o">(</span>stable<span class="o">)</span>
+  <span class="o">[</span>26<span class="o">]</span>  default/linux/amd64/17.0/x32 <span class="o">(</span>dev<span class="o">)</span>
+</code></pre></div><p>如果想选择其他的配置，比如想使用17.0版本的 gnome 桌面，则使用如下命令选择即可：</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">root <span class="c1"># eselect profile set 17</span>
+</code></pre></div><h3 id="更新-world-集合">更新 @world 集合</h3>
 <p>当系统应用了任何的升级，或从任何 profile 构建了 stage3 后，应用了变化的 use 标记时，
 都需要更新一下 <code>@world</code> :</p>
-
-<pre><code class="language-bash">root #emerge --ask --verbose --update --deep --newuse @world
-</code></pre>
-
-<h3 id="设置时区">设置时区</h3>
-
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">root <span class="c1">#emerge --ask --verbose --update --deep --newuse @world</span>
+</code></pre></div><h3 id="设置时区">设置时区</h3>
 <p>为系统选择时区。在_usr/share/zoneinfo_中查找可用的时区，然后写进/etc/timezone文件。</p>
-
-<pre><code class="language-bash">root # ls /usr/share/zoneinfo
-root #echo &quot;Asia/Shanghai&quot; &gt; /etc/timezone
-</code></pre>
-
-<p>安装 <a href="https://packages.gentoo.org/packages/sys-libs/timezone-data">sys-libs/timezone-data</a> 自动更新 <code>/etc/localtime</code> 文件。该文件用于让系统的 C 类库知道
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">root <span class="c1"># ls /usr/share/zoneinfo</span>
+root <span class="c1">#echo &#34;Asia/Shanghai&#34; &gt; /etc/timezone</span>
+</code></pre></div><p>安装 <a href="https://packages.gentoo.org/packages/sys-libs/timezone-data">sys-libs/timezone-data</a> 自动更新 <code>/etc/localtime</code> 文件。该文件用于让系统的 C 类库知道
 系统在什么时区。</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">root <span class="c1">#emerge --config sys-libs/timezone-data</span>
+</code></pre></div><h3 id="配置地区">配置地区</h3>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">root <span class="c1">#nano -w /etc/locale.gen</span>
 
-<pre><code class="language-bash">root #emerge --config sys-libs/timezone-data
-</code></pre>
-
-<h3 id="配置地区">配置地区</h3>
-
-<pre><code class="language-bash">root #nano -w /etc/locale.gen
-
-# 将下面的文本加入文件中
+<span class="c1"># 将下面的文本加入文件中</span>
 en_US ISO-8859-1
 en_US.UTF-8 UTF-8
 zh_CN GBK
 zh_CN.UTF-8 UTF-8
-</code></pre>
+</code></pre></div><p>使设置生效，运行命令： <code>locale-gen</code> 。最后选择默认字体:</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">root <span class="c1">#eselect locale list</span>
 
-<p>使设置生效，运行命令： <code>locale-gen</code> 。最后选择默认字体:</p>
-
-<pre><code class="language-bash">root #eselect locale list
-
-Available targets for the LANG variable:
-  [1]   C
-  [2]   en_US
-  [3]   en_US.iso88591
-  [4]   en_US.utf8
-  [5]   POSIX
-  [6]   zh_CN
-  [7]   zh_CN.gbk
-  [8]   zh_CN.utf8
-  [ ]   (free form)
-root #eselect locale set 8
-</code></pre>
-
-<p>重新加载环境：</p>
-
-<pre><code class="language-bash">root #env-update &amp;&amp; source /etc/profile &amp;&amp; export PS1=&quot;(chroot) $PS1&quot;
-</code></pre>
-
-<h2 id="编译内核">编译内核</h2>
-
+Available targets <span class="k">for</span> the LANG variable:
+  <span class="o">[</span>1<span class="o">]</span>   C
+  <span class="o">[</span>2<span class="o">]</span>   en_US
+  <span class="o">[</span>3<span class="o">]</span>   en_US.iso88591
+  <span class="o">[</span>4<span class="o">]</span>   en_US.utf8
+  <span class="o">[</span>5<span class="o">]</span>   POSIX
+  <span class="o">[</span>6<span class="o">]</span>   zh_CN
+  <span class="o">[</span>7<span class="o">]</span>   zh_CN.gbk
+  <span class="o">[</span>8<span class="o">]</span>   zh_CN.utf8
+  <span class="o">[</span> <span class="o">]</span>   <span class="o">(</span>free form<span class="o">)</span>
+root <span class="c1">#eselect locale set 8</span>
+</code></pre></div><p>重新加载环境：</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">root <span class="c1">#env-update &amp;&amp; source /etc/profile &amp;&amp; export PS1=&#34;(chroot) $PS1&#34;</span>
+</code></pre></div><h2 id="编译内核">编译内核</h2>
 <p>前期的准备基本已经完成，终于要上主菜了。</p>
-
 <h3 id="安装源码">安装源码</h3>
-
 <p>这里使用 gentoo-source 包来安装内核。安装完就可以在 <code>/usr/src/linux</code> 找到对应的源码了。</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">root <span class="c1">#emerge --ask sys-kernel/gentoo-sources</span>
+root <span class="c1">#ls -l /usr/src/linux</span>
 
-<pre><code class="language-bash">root #emerge --ask sys-kernel/gentoo-sources
-root #ls -l /usr/src/linux
-
-lrwxrwxrwx    1 root   root    12 Oct 13 11:04 /usr/src/linux -&gt; linux-3.16.5-gentoo
-</code></pre>
-
-<h3 id="配置内核">配置内核</h3>
-
+lrwxrwxrwx    <span class="m">1</span> root   root    <span class="m">12</span> Oct <span class="m">13</span> 11:04 /usr/src/linux -&gt; linux-3.16.5-gentoo
+</code></pre></div><h3 id="配置内核">配置内核</h3>
 <p>首先要知道自己的硬件配置，这样才能配置对应的内核，查看硬件信息需要借助 <code>lspci</code> 命令。
 因此需要先安装对应的工具：</p>
-
-<pre><code class="language-bash">root #emerge --ask sys-apps/pciutils
-</code></pre>
-
-<p>在了解了自己的硬件配置之后，就可以进行配置了，官网提供了两种方法，第二种是自动化，本来想偷个
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">root <span class="c1">#emerge --ask sys-apps/pciutils</span>
+</code></pre></div><p>在了解了自己的硬件配置之后，就可以进行配置了，官网提供了两种方法，第二种是自动化，本来想偷个
 懒使用 genkernel 软件省去自己手动配置的烦恼。可惜事与愿违，这个软件死活装不上去，只能手动配置了。
 还好大部分的配置都选好了，这里只增加了32位的软件支持：</p>
-
-<pre><code class="language-bash">Executable file formats / Emulations  ---&gt;
-   [*] IA32 Emulation
-</code></pre>
-
-<p>当然如果是 UEFI ，就需要增加一些配置，不然没法驱动。传送门：<a href="https://wiki.gentoo.org/wiki/Handbook:AMD64/Installation/Kernel/zh-cn">https://wiki.gentoo.org/wiki/Handbook:AMD64/Installation/Kernel/zh-cn</a></p>
-
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">Executable file formats / Emulations  ---&gt;
+   <span class="o">[</span>*<span class="o">]</span> IA32 Emulation
+</code></pre></div><p>当然如果是 UEFI ，就需要增加一些配置，不然没法驱动。传送门：<a href="https://wiki.gentoo.org/wiki/Handbook:AMD64/Installation/Kernel/zh-cn">https://wiki.gentoo.org/wiki/Handbook:AMD64/Installation/Kernel/zh-cn</a></p>
 <p>记得保存配置。。。</p>
-
 <h3 id="编译和安装内核">编译和安装内核</h3>
-
 <p>这个步骤就比较慢了，估计半个多小时吧，可以泡杯咖啡慢慢等了。</p>
-
-<pre><code class="language-bash">root # make &amp;&amp; make modules_install &amp;&amp; make install
-</code></pre>
-
-<h2 id="配置系统">配置系统</h2>
-
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">root <span class="c1"># make &amp;&amp; make modules_install &amp;&amp; make install</span>
+</code></pre></div><h2 id="配置系统">配置系统</h2>
 <p>如果上面的步骤没有报错，那么恭喜你，你离成功只有一步之遥了。</p>
-
 <h3 id="配置-fstab-文件">配置 fstab 文件</h3>
-
 <p>这是系统所有分区挂载的文件。引用官网的一段介绍：</p>
-
 <blockquote>
 <p>/etc/fstab文件使用一种特殊语法格式。每行都包含六个字段。这些字段之间由空白键（空格键，
 tab键，或者两者混合使用）分隔。每个字段都有自己的含意：</p>
-
 <ol>
 <li><code>＃</code> 第一个字段显示要挂载的特殊 block 设备或远程文件系统。 有几种设备标识符可用于特殊块设备节点，</li>
 </ol>
-
 <p>包括设备文件路径，文件系统标签，UUID，分区标签以及UUID。</p>
-
 <ol>
 <li>第二个字段是分区挂载点，也就是分区应该挂载到的地方</li>
 <li>第三个字段给出分区所用的文件系统</li>
@@ -563,76 +435,43 @@ tab键，或者两者混合使用）分隔。每个字段都有自己的含意�
 <li>第五个字段是给dump使用的，用以决定这个分区是否需要dump。一般情况下，你可以把该字段设为0（零）。</li>
 <li>第六个字段是给fsck使用的，用以决定系统非正常关机之后文件系统的检查顺序。</li>
 </ol>
-
 <p>根文件系统应该为1，而其它的应该为2（如果不需要文件系统自检的话可以设为0）</p>
 </blockquote>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">root <span class="c1"># nano -w /etc/fstab</span>
 
-<pre><code class="language-bash">root # nano -w /etc/fstab
+<span class="c1"># 将下面的内容拷贝到 fstab 中</span>
+/dev/sda2   /boot        ext2    defaults,noatime     <span class="m">0</span> <span class="m">2</span>
+/dev/sda3   none         swap    sw                   <span class="m">0</span> <span class="m">0</span>
+/dev/sda4   /            ext4    noatime              <span class="m">0</span> <span class="m">1</span>
 
-# 将下面的内容拷贝到 fstab 中
-/dev/sda2   /boot        ext2    defaults,noatime     0 2
-/dev/sda3   none         swap    sw                   0 0
-/dev/sda4   /            ext4    noatime              0 1
-
-/dev/cdrom  /mnt/cdrom   auto    noauto,user          0 0
-</code></pre>
-
-<h3 id="网络信息">网络信息</h3>
-
+/dev/cdrom  /mnt/cdrom   auto    noauto,user          <span class="m">0</span> <span class="m">0</span>
+</code></pre></div><h3 id="网络信息">网络信息</h3>
 <h4 id="主机名">主机名</h4>
-
-<pre><code class="language-bash">root # echo 'hostname=&quot;Gentoo&quot;' &gt; /etc/conf.d/hostname
-</code></pre>
-
-<h4 id="配置网络-1">配置网络</h4>
-
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">root <span class="c1"># echo &#39;hostname=&#34;Gentoo&#34;&#39; &gt; /etc/conf.d/hostname</span>
+</code></pre></div><h4 id="配置网络">配置网络</h4>
 <p>这里使用的 DHCP 自动获取 IP:</p>
-
-<pre><code class="language-bash">root # echo 'config_enp0s3=&quot;dhcp&quot;' &gt; /etc/conf.d/net
-</code></pre>
-
-<p>当然也可以使用静态 ip :</p>
-
-<pre><code class="language-bash"># /etc/conf.d/net静态IP定义
-config_enp0s3=&quot;192.168.0.2 netmask 255.255.255.0 brd 192.168.0.255&quot;
-routes_enp0s3=&quot;default via 192.168.0.1&quot;
-</code></pre>
-
-<p>设置开机启动网络：</p>
-
-<pre><code class="language-bash">root #cd /etc/init.d
-root #ln -s net.lo net.enp0s3
-root #rc-update add net.enp0s3 default
-</code></pre>
-
-<h4 id="root-密码">Root 密码</h4>
-
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">root <span class="c1"># echo &#39;config_enp0s3=&#34;dhcp&#34;&#39; &gt; /etc/conf.d/net</span>
+</code></pre></div><p>当然也可以使用静态 ip :</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># /etc/conf.d/net静态IP定义</span>
+<span class="nv">config_enp0s3</span><span class="o">=</span><span class="s2">&#34;192.168.0.2 netmask 255.255.255.0 brd 192.168.0.255&#34;</span>
+<span class="nv">routes_enp0s3</span><span class="o">=</span><span class="s2">&#34;default via 192.168.0.1&#34;</span>
+</code></pre></div><p>设置开机启动网络：</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">root <span class="c1">#cd /etc/init.d</span>
+root <span class="c1">#ln -s net.lo net.enp0s3</span>
+root <span class="c1">#rc-update add net.enp0s3 default</span>
+</code></pre></div><h4 id="root-密码">Root 密码</h4>
 <p>这个前面已经介绍过了，千万别忘记。</p>
-
 <h2 id="系统工具">系统工具</h2>
-
 <p>现在只需要安装必要的系统软件即可。</p>
-
 <h3 id="日志工具">日志工具</h3>
-
-<pre><code class="language-bash">root #emerge --ask app-admin/sysklogd
-root #rc-update add sysklogd default
-</code></pre>
-
-<h3 id="文件索引">文件索引</h3>
-
-<pre><code class="language-bash">root #emerge --ask sys-apps/mlocate
-</code></pre>
-
-<h3 id="远程访问">远程访问</h3>
-
-<pre><code class="language-bash">rc-update add sshd default
-</code></pre>
-
-<h3 id="文件系统工具">文件系统工具</h3>
-
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">root <span class="c1">#emerge --ask app-admin/sysklogd</span>
+root <span class="c1">#rc-update add sysklogd default</span>
+</code></pre></div><h3 id="文件索引">文件索引</h3>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">root <span class="c1">#emerge --ask sys-apps/mlocate</span>
+</code></pre></div><h3 id="远程访问">远程访问</h3>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">rc-update add sshd default
+</code></pre></div><h3 id="文件系统工具">文件系统工具</h3>
 <p>系统已经自带了 ext 文件系统的工具，需要其它文件系统需要自行安装。</p>
-
 <table>
 <thead>
 <tr>
@@ -640,76 +479,54 @@ root #rc-update add sysklogd default
 <th>Package</th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
 <td>Ext2, 3, and 4</td>
 <td>sys-fs/e2fsprogs</td>
 </tr>
-
 <tr>
 <td>XFS</td>
 <td>sys-fs/xfsprogs</td>
 </tr>
-
 <tr>
 <td>ReiserFS</td>
 <td>sys-fs/reiserfsprogs</td>
 </tr>
-
 <tr>
 <td>JFS</td>
 <td>sys-fs/jfsutils</td>
 </tr>
-
 <tr>
 <td>VFAT (FAT32, &hellip;)</td>
 <td>sys-fs/dosfstools</td>
 </tr>
-
 <tr>
 <td>Btrfs</td>
 <td>sys-fs/btrfs-progs</td>
 </tr>
 </tbody>
 </table>
-
 <h3 id="网络工具">网络工具</h3>
-
 <p>因为系统不带 dhcp 客户端，需要自己安装，Gentoo 为了保持干净也是拼了。</p>
-
-<pre><code class="language-bash">root #emerge --ask net-misc/dhcpcd
-</code></pre>
-
-<h2 id="安装引导">安装引导</h2>
-
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">root <span class="c1">#emerge --ask net-misc/dhcpcd</span>
+</code></pre></div><h2 id="安装引导">安装引导</h2>
 <p>最后一关到了，成功与否就看它了。不过如果使用 MBR 分区表就没必要担心了。
 这一步主要难在要支持 UEFI 启动，这个是比较麻烦的，也许是我搭的虚拟机的硬件不
 支持 UEFI，所以第一次配置到这里的时候以失败告终。所以换了 MBR 后，一步成功。</p>
-
-<pre><code class="language-bash">root # emerge --ask --verbose sys-boot/grub:2
-root # grub-install /dev/sda
-root # grub-mkconfig -o /boot/grub/grub.cfg
-</code></pre>
-
-<h3 id="重启系统">重启系统</h3>
-
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">root <span class="c1"># emerge --ask --verbose sys-boot/grub:2</span>
+root <span class="c1"># grub-install /dev/sda</span>
+root <span class="c1"># grub-mkconfig -o /boot/grub/grub.cfg</span>
+</code></pre></div><h3 id="重启系统">重启系统</h3>
 <p>OK，彻底结束了，重启之后就可以享(折)受(腾) Gentoo 了。</p>
-
-<pre><code class="language-bash">root #exit
-livecd ~# cd
-livecd ~# umount -l /mnt/gentoo/dev{/shm,/pts,}
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">root <span class="c1">#exit</span>
+livecd ~# <span class="nb">cd</span>
+livecd ~# umount -l /mnt/gentoo/dev<span class="o">{</span>/shm,/pts,<span class="o">}</span>
 livecd ~# umount -R /mnt/gentoo
 livecd ~# reboot
-</code></pre>
-
-<h2 id="后记">后记</h2>
-
+</code></pre></div><h2 id="后记">后记</h2>
 <p>如果启动成功，那么就可以开心的使用它了，首先要建立一个普通用户，避免权限过大
 损坏系统。</p>
-
 <h3 id="添加用户">添加用户</h3>
-
 <table>
 <thead>
 <tr>
@@ -717,85 +534,67 @@ livecd ~# reboot
 <th>Description</th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
 <td>audio</td>
 <td>允许使用声音设备</td>
 </tr>
-
 <tr>
 <td>cdrom</td>
 <td>允许直接使用光驱设备</td>
 </tr>
-
 <tr>
 <td>floppy</td>
 <td>允许直接使用软驱</td>
 </tr>
-
 <tr>
 <td>games</td>
 <td>允许运行游戏</td>
 </tr>
-
 <tr>
 <td>portage</td>
 <td>能够访问portage受限资源。</td>
 </tr>
-
 <tr>
 <td>usb</td>
 <td>允许使用USB设备</td>
 </tr>
-
 <tr>
 <td>video</td>
 <td>允许使用视频采集设备和硬件加速</td>
 </tr>
-
 <tr>
 <td>wheel</td>
 <td>可以使用su.</td>
 </tr>
 </tbody>
 </table>
-
-<pre><code class="language-bash">root #useradd -m -G users,wheel,audio -s /bin/bash jer
-root #passwd jer
-</code></pre>
-
-<h3 id="清理垃圾">清理垃圾</h3>
-
-<pre><code class="language-bash">root #rm /stage3-*.tar.bz2*
-</code></pre>
-
-<h2 id="总结">总结</h2>
-
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">root <span class="c1">#useradd -m -G users,wheel,audio -s /bin/bash jer</span>
+root <span class="c1">#passwd jer</span>
+</code></pre></div><h3 id="清理垃圾">清理垃圾</h3>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">root <span class="c1">#rm /stage3-*.tar.bz2*</span>
+</code></pre></div><h2 id="总结">总结</h2>
 <h3 id="系统安装">系统安装</h3>
-
 <p>很早就听说 Gentoo 系统，只是怕麻烦，懒得去安装。昨天突然心血来潮，就装了一下试试。
 总的来说和 Arch 安装过程差不多，不过这编译速度太感人了， Arch 下载基本系统也就十来分钟
 吧，源比较快可能几分钟就搞定了，而 Gentoo 光是编译内核就需要半个小时以上。</p>
-
 <h3 id="安装软件">安装软件</h3>
-
 <p>常用的软件使用以及建议，vim 和 emacs 这两大编译器最好自己去安防网下载源码自行编译，
 因为emerge安装的是腌割版。至于 nodejs (hexo) 需要，因为依赖的软件太多了，所以要一个个
 安装完再安装 nodejs，而且如果有提示版本不一致的，需要卸载再装。目前还在探索中。。。
 如果要使用 emerge 安装软件，而又记不得软件名使用 <code>-s</code> 参数查询软件，然后选择合适的版本进行安装。
 这里提一最好用正则表达式搜索，不然可能会搜到好多软件。</p>
-
 <p>给出vim 和 emacs 的编译选项，免得再找：</p>
-
 <ul>
-<li><p>vim : ./configure  &ndash;enable-pythoninterp=yes &ndash;with-python-config-dir=/usr/lib64/python3.6/config &ndash;enable-cscope</p></li>
-
-<li><p>emacs: ./configure &ndash;with-pop &ndash;with-mailutils</p></li>
-
-<li><p>nodejs:</p>
-
-<pre><code class="language-bash">  sudo emerge net-libs/http-parser
+<li>
+<p>vim : ./configure  &ndash;enable-pythoninterp=yes &ndash;with-python-config-dir=/usr/lib64/python3.6/config &ndash;enable-cscope</p>
+</li>
+<li>
+<p>emacs: ./configure &ndash;with-pop &ndash;with-mailutils</p>
+</li>
+<li>
+<p>nodejs:</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">  sudo emerge net-libs/http-parser
   sudo emerge dev-util/boost-build
   sudo emerge  dev-libs/boost
   sudo emerge  dev-libs/libuv
@@ -803,11 +602,9 @@ root #passwd jer
   sudo emerge dev-libs/openssl
   sudo emerge net-libs/nghttp2
   sudo emerge net-libs/nodejs
-</code></pre></li>
+</code></pre></div></li>
 </ul>
-
 <h2 id="参考链接">参考链接</h2>
-
 <p><a href="https://wiki.gentoo.org/wiki/Handbook:AMD64/Full/Installation/zh-cn">https://wiki.gentoo.org/wiki/Handbook:AMD64/Full/Installation/zh-cn</a></p>
 
     
@@ -864,6 +661,8 @@ root #passwd jer
     
     <li><a href="/categories/%e5%86%85%e5%ad%98%e7%ae%a1%e7%90%86" title="内存管理">内存管理<sup>1</sup></a></li>
     
+    <li><a href="/categories/%e5%86%85%e6%a0%b8%e5%ae%9e%e9%aa%8c" title="内核实验">内核实验<sup>1</sup></a></li>
+    
     <li><a href="/categories/%e5%91%bd%e4%bb%a4%e8%a1%8c%e8%89%ba%e6%9c%af" title="命令行艺术">命令行艺术<sup>3</sup></a></li>
     
     <li><a href="/categories/%e5%ad%a6%e4%b9%a0%e7%ac%94%e8%ae%b0" title="学习笔记">学习笔记<sup>13</sup></a></li>
@@ -889,6 +688,8 @@ root #passwd jer
 	<p class="asidetitle">标签</p>
 		<ul class="clearfix">
       
+			<li><a href="/tags/bochs" title="bochs">bochs<sup>1</sup></a></li>
+      
 			<li><a href="/tags/c&#43;&#43;" title="c&#43;&#43;">c&#43;&#43;<sup>10</sup></a></li>
       
 			<li><a href="/tags/command" title="command">command<sup>3</sup></a></li>
@@ -903,9 +704,9 @@ root #passwd jer
       
 			<li><a href="/tags/jemalloc" title="jemalloc">jemalloc<sup>1</sup></a></li>
       
-			<li><a href="/tags/kernel" title="kernel">kernel<sup>7</sup></a></li>
+			<li><a href="/tags/kernel" title="kernel">kernel<sup>8</sup></a></li>
       
-			<li><a href="/tags/linux" title="linux">linux<sup>12</sup></a></li>
+			<li><a href="/tags/linux" title="linux">linux<sup>13</sup></a></li>
       
 			<li><a href="/tags/linux%e5%86%85%e6%a0%b8" title="linux内核">linux内核<sup>1</sup></a></li>
       
@@ -967,6 +768,11 @@ root #passwd jer
       
       
       <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2020-04">2020年04月</a><span class="archive-list-count">1</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
         <a class="archive-list-link" href="/post/#2019-09">2019年09月</a><span class="archive-list-count">1</span>
       </li>
       
@@ -1020,6 +826,8 @@ root #passwd jer
 <div class="tagcloudlist">
   <p class="asidetitle">标签云</p>
   <div class="tagcloudlist clearfix">
+    
+    <a href="/tags/bochs" style="font-size: 12px;">bochs</a>
     
     <a href="/tags/c&#43;&#43;" style="font-size: 12px;">c&#43;&#43;</a>
     
@@ -1119,7 +927,7 @@ root #passwd jer
     
     
   </div>
-  <p class="copyright">Powered by <a href="http://gohugo.io" target="_blank" title="hugo">hugo</a> and Theme by <a href="https://github.com/coderzh/hugo-pacman-theme" target="_blank" title="hugo-pacman-theme">hugo-pacman-theme</a> © 2019
+  <p class="copyright">Powered by <a href="http://gohugo.io" target="_blank" title="hugo">hugo</a> and Theme by <a href="https://github.com/coderzh/hugo-pacman-theme" target="_blank" title="hugo-pacman-theme">hugo-pacman-theme</a> © 2020
     
     <a href="/" title="北极狼徒">北极狼徒</a>
     

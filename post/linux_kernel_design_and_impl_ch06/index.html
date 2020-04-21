@@ -78,422 +78,328 @@
 		<div class="toc-article">
 			<strong class="toc-title">文章目录</strong>
       <nav id="TableOfContents">
-<ul>
-<li>
-<ul>
-<li><a href="#链表">链表</a></li>
-<li><a href="#linux-链表的实现">Linux 链表的实现</a>
-<ul>
-<li><a href="#链表的数据结构">链表的数据结构</a></li>
-<li><a href="#访问链表元素">访问链表元素</a></li>
-<li><a href="#静态创建链表的最简方式">静态创建链表的最简方式</a></li>
-<li><a href="#链表头">链表头</a></li>
-<li><a href="#操作链表">操作链表</a></li>
-<li><a href="#遍历">遍历</a>
-<ul>
-<li><a href="#最简单方法">最简单方法</a></li>
-<li><a href="#可用的方法">可用的方法</a></li>
-<li><a href="#反向遍历">反向遍历</a></li>
-<li><a href="#同时删除">同时删除</a></li>
-</ul></li>
-</ul></li>
-<li><a href="#队列">队列</a>
-<ul>
-<li><a href="#创建队列">创建队列</a>
-<ul>
-<li><a href="#动态创建">动态创建</a></li>
-<li><a href="#静态创建">静态创建</a></li>
-</ul></li>
-<li><a href="#入列">入列</a></li>
-<li><a href="#出列">出列</a></li>
-<li><a href="#长度">长度</a></li>
-<li><a href="#重置和撤销">重置和撤销</a></li>
-</ul></li>
-<li><a href="#映射">映射</a></li>
-<li><a href="#总结">总结</a></li>
-</ul></li>
-</ul>
+  <ul>
+    <li><a href="#链表">链表</a></li>
+    <li><a href="#linux-链表的实现">Linux 链表的实现</a>
+      <ul>
+        <li><a href="#链表的数据结构">链表的数据结构</a></li>
+        <li><a href="#访问链表元素">访问链表元素</a></li>
+        <li><a href="#静态创建链表的最简方式">静态创建链表的最简方式</a></li>
+        <li><a href="#链表头">链表头</a></li>
+        <li><a href="#操作链表">操作链表</a></li>
+        <li><a href="#遍历">遍历</a></li>
+      </ul>
+    </li>
+    <li><a href="#队列">队列</a>
+      <ul>
+        <li><a href="#创建队列">创建队列</a></li>
+        <li><a href="#入列">入列</a></li>
+        <li><a href="#出列">出列</a></li>
+        <li><a href="#长度">长度</a></li>
+        <li><a href="#重置和撤销">重置和撤销</a></li>
+      </ul>
+    </li>
+    <li><a href="#映射">映射</a></li>
+    <li><a href="#总结">总结</a></li>
+  </ul>
 </nav>
 		</div>
     
-    
-
-<p>本章节的内容是一些数据结构，没甚么可说的。随便记记笔记吧。内容包括链表、队列、映
+    <p>本章节的内容是一些数据结构，没甚么可说的。随便记记笔记吧。内容包括链表、队列、映
 射、二叉树。</p>
-
 <h2 id="链表">链表</h2>
-
 <p>这是 linux 中最简单的数据结构，是一种存放客可变数量元素的数据结构。具体的就是用
 指针将元素连接起来。具体的定义就看数据结构书吧，这里主要讲 linux 下的实现。</p>
-
 <h2 id="linux-链表的实现">Linux 链表的实现</h2>
-
 <h3 id="链表的数据结构">链表的数据结构</h3>
-
-<pre><code class="language-c">struct list_head {
-  struct list_head *next;
-  struct list_head *prev;
-};
-</code></pre>
-
-<p>通过这种结构，就可以将操作和数据分离开来，只要将该链表作为某种数据的成员，那么就
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="k">struct</span> <span class="n">list_head</span> <span class="p">{</span>
+  <span class="k">struct</span> <span class="n">list_head</span> <span class="o">*</span><span class="n">next</span><span class="p">;</span>
+  <span class="k">struct</span> <span class="n">list_head</span> <span class="o">*</span><span class="n">prev</span><span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div><p>通过这种结构，就可以将操作和数据分离开来，只要将该链表作为某种数据的成员，那么就
 可以获得一个该数据为链表元素的一个链表。使用如下：</p>
-
-<pre><code class="language-c">struct fox {
-  unsigned long tail_legth;
-  unsigned long weight;
-  bool is_fantastic;
-  struct list_head list;
-};
-</code></pre>
-
-<p>这样我们便历元素时，就可以通过移动 <code>list</code> 的指针就可以了。</p>
-
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="k">struct</span> <span class="n">fox</span> <span class="p">{</span>
+  <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">tail_legth</span><span class="p">;</span>
+  <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">weight</span><span class="p">;</span>
+  <span class="kt">bool</span> <span class="n">is_fantastic</span><span class="p">;</span>
+  <span class="k">struct</span> <span class="n">list_head</span> <span class="n">list</span><span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div><p>这样我们便历元素时，就可以通过移动 <code>list</code> 的指针就可以了。</p>
 <h3 id="访问链表元素">访问链表元素</h3>
-
 <p>我们每次获得的是指针，它的地址在元素中间的位置，我们并不知道元素起始地址，所以不
 不能直接访问。</p>
-
 <p>在 C 语言中，一个给定结构中的变量的偏移编译时就固定了。因此使用将当前的指针成员
 的地址减去它在链表元素中的偏移地址就可以获得元素首地址。这里需要用到 <code>typeof</code>
 关键字和 <code>offsetof</code> 宏，前者是获得参数的类型，后者是获得成员在结构这中的偏移。为
 了方便， C 库将这些操作定义为宏了。如：</p>
-
-<pre><code class="language-c">#define offsetof(type, member) (size_t)&amp;(((type*)0)-&gt;member)
-
-#define container_of(ptr, type, member) ({                   \
-        const typeof( ((type *)0 )-&gt;member ) *__mptr = (ptr);\
-        (type*)( (char*)__mptr - offsetof(type, member) );})
-</code></pre>
-
-<p>Linux 内核使用 <code>list_entry</code> 可以获得数据结构的起始地址。</p>
-
-<pre><code class="language-c">#define list_entry(ptr, type, member) \
-	container_of(ptr, type, member)
-</code></pre>
-
-<h3 id="静态创建链表的最简方式">静态创建链表的最简方式</h3>
-
-<pre><code class="language-c">struct fox red_fox = {
-  .tail_legth = 40,
-  .weight = 6,
-  .list = LIST_HEAD_INIT(red_fox.list),
-};
-</code></pre>
-
-<h3 id="链表头">链表头</h3>
-
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#define offsetof(type, member) (size_t)&amp;(((type*)0)-&gt;member)
+</span><span class="cp"></span>
+<span class="cp">#define container_of(ptr, type, member) ({                   \
+</span><span class="cp">        const typeof( ((type *)0 )-&gt;member ) *__mptr = (ptr);\
+</span><span class="cp">        (type*)( (char*)__mptr - offsetof(type, member) );})
+</span></code></pre></div><p>Linux 内核使用 <code>list_entry</code> 可以获得数据结构的起始地址。</p>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#define list_entry(ptr, type, member) \
+</span><span class="cp">	container_of(ptr, type, member)
+</span></code></pre></div><h3 id="静态创建链表的最简方式">静态创建链表的最简方式</h3>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="k">struct</span> <span class="n">fox</span> <span class="n">red_fox</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="p">.</span><span class="n">tail_legth</span> <span class="o">=</span> <span class="mi">40</span><span class="p">,</span>
+  <span class="p">.</span><span class="n">weight</span> <span class="o">=</span> <span class="mi">6</span><span class="p">,</span>
+  <span class="p">.</span><span class="n">list</span> <span class="o">=</span> <span class="n">LIST_HEAD_INIT</span><span class="p">(</span><span class="n">red_fox</span><span class="p">.</span><span class="n">list</span><span class="p">),</span>
+<span class="p">};</span>
+</code></pre></div><h3 id="链表头">链表头</h3>
 <p>内核链表实现的最杰出的特性是：所有节点都是无差别的包含 <code>list_head</code> 指针，所以可
 以从任一节点起遍历整个链表。</p>
-
-<pre><code class="language-c">static LIST_HEAD(fox_list);
-</code></pre>
-
-<p>该函数定义并初始化了一个名为 <code>fox_list</code> 的链表例程。</p>
-
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="k">static</span> <span class="nf">LIST_HEAD</span><span class="p">(</span><span class="n">fox_list</span><span class="p">);</span>
+</code></pre></div><p>该函数定义并初始化了一个名为 <code>fox_list</code> 的链表例程。</p>
 <h3 id="操作链表">操作链表</h3>
-
 <ol>
 <li>增加
-
 <ul>
 <li><code>list_add(struct list_head *new, struct list_head *head)</code> : head 后插入 new</li>
 <li><code>list_add_tail(struct list_head *new, struct list_head *head)</code> : head 前插入 new</li>
-</ul></li>
+</ul>
+</li>
 <li>删除
-
 <ul>
 <li><code>list_del(struct list_head *entry)</code> : 只改了指针，没有销毁，需手动销毁包含
 <code>entry</code> 的数据结构以及 <code>entry</code> 项</li>
 <li><code>list_del_init(struct list_head *entry)</code> : 删除后初始化 <code>entry</code>,这样做是因
 为链表不需要 <code>entry</code> 项，但是可以继续使用包含 <code>entry</code> 的数据结构。</li>
-</ul></li>
+</ul>
+</li>
 <li>移动
-
 <ul>
 <li><code>list_move(struct list_head *list, struct list_head *head)</code></li>
 <li><code>list_move_tail(struct list_head *list, struct list_head *head)</code></li>
-</ul></li>
+</ul>
+</li>
 <li>判空
-
 <ul>
 <li><code>list_empty(struct list_head *head)</code></li>
-</ul></li>
+</ul>
+</li>
 <li>合并
-
 <ul>
 <li><code>list_splice(struct list_head *list, struct list_head *head)</code></li>
 <li><code>list_splice_init(struct list_head *list, struct list_head *head)</code> : <code>list</code>
 指向的链表要初始化</li>
-</ul></li>
+</ul>
+</li>
 </ol>
-
 <h3 id="遍历">遍历</h3>
-
 <p><code>include/linux/list.h</code> 中预定了很多遍历的宏，几个比较典型的例子如下：</p>
-
 <blockquote>
 <p>在所有的宏定义中都有 <code>prefetch</code> 函数，是内核中一个预热内存函数，这样下次遍历时就
 能高效命中内存cache，从而提升程序性能。</p>
 </blockquote>
-
 <h4 id="最简单方法">最简单方法</h4>
-
 <p><code>list_for_each()</code> 宏：</p>
-
-<pre><code class="language-c">#define list_for_each(pos, head) \
-	for (pos = (head)-&gt;next; prefetch(pos-&gt;next), pos != (head); \
-        	pos = pos-&gt;next)
-</code></pre>
-
-<h4 id="可用的方法">可用的方法</h4>
-
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#define list_for_each(pos, head) \
+</span><span class="cp">	for (pos = (head)-&gt;next; prefetch(pos-&gt;next), pos != (head); \
+</span><span class="cp">        	pos = pos-&gt;next)
+</span></code></pre></div><h4 id="可用的方法">可用的方法</h4>
 <p><code>list_for_each_entry()</code> 宏：</p>
-
-<pre><code class="language-c">#define list_for_each_entry(pos, head, member)				\
-	for (pos = list_entry((head)-&gt;next, typeof(*pos), member);	\
-	     prefetch(pos-&gt;member.next), &amp;pos-&gt;member != (head); 	\
-	     pos = list_entry(pos-&gt;member.next, typeof(*pos), member))
-</code></pre>
-
-<h4 id="反向遍历">反向遍历</h4>
-
-<pre><code class="language-c">#define list_for_each_entry_reverse(pos, head, member)			\
-	for (pos = list_entry((head)-&gt;prev, typeof(*pos), member);	\
-	     prefetch(pos-&gt;member.prev), &amp;pos-&gt;member != (head); 	\
-	     pos = list_entry(pos-&gt;member.prev, typeof(*pos), member))
-</code></pre>
-
-<h4 id="同时删除">同时删除</h4>
-
-<pre><code class="language-c">/**
- * list_for_each_safe - iterate over a list safe against removal of list entry
- * @pos:	the &amp;struct list_head to use as a loop cursor.
- * @n:		another &amp;struct list_head to use as temporary storage
- * @head:	the head for your list.
- */
-#define list_for_each_safe(pos, n, head) \
-	for (pos = (head)-&gt;next, n = pos-&gt;next; pos != (head); \
-		pos = n, n = pos-&gt;next)
-</code></pre>
-
-<h2 id="队列">队列</h2>
-
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#define list_for_each_entry(pos, head, member)				\
+</span><span class="cp">	for (pos = list_entry((head)-&gt;next, typeof(*pos), member);	\
+</span><span class="cp">	     prefetch(pos-&gt;member.next), &amp;pos-&gt;member != (head); 	\
+</span><span class="cp">	     pos = list_entry(pos-&gt;member.next, typeof(*pos), member))
+</span></code></pre></div><h4 id="反向遍历">反向遍历</h4>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#define list_for_each_entry_reverse(pos, head, member)			\
+</span><span class="cp">	for (pos = list_entry((head)-&gt;prev, typeof(*pos), member);	\
+</span><span class="cp">	     prefetch(pos-&gt;member.prev), &amp;pos-&gt;member != (head); 	\
+</span><span class="cp">	     pos = list_entry(pos-&gt;member.prev, typeof(*pos), member))
+</span></code></pre></div><h4 id="同时删除">同时删除</h4>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="cm">/**
+</span><span class="cm"> * list_for_each_safe - iterate over a list safe against removal of list entry
+</span><span class="cm"> * @pos:	the &amp;struct list_head to use as a loop cursor.
+</span><span class="cm"> * @n:		another &amp;struct list_head to use as temporary storage
+</span><span class="cm"> * @head:	the head for your list.
+</span><span class="cm"> */</span>
+<span class="cp">#define list_for_each_safe(pos, n, head) \
+</span><span class="cp">	for (pos = (head)-&gt;next, n = pos-&gt;next; pos != (head); \
+</span><span class="cp">		pos = n, n = pos-&gt;next)
+</span></code></pre></div><h2 id="队列">队列</h2>
 <p>内核中队列使用 <code>kfifo</code> , 核心结构为 <code>__kfifo</code>. 都定义在 <code>include/linux/kfifo.h</code>
 中</p>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="k">struct</span> <span class="n">__kfifo</span> <span class="p">{</span>
+	<span class="kt">unsigned</span> <span class="kt">int</span>	<span class="n">in</span><span class="p">;</span>
+	<span class="kt">unsigned</span> <span class="kt">int</span>	<span class="n">out</span><span class="p">;</span>
+	<span class="kt">unsigned</span> <span class="kt">int</span>	<span class="n">mask</span><span class="p">;</span>
+	<span class="kt">unsigned</span> <span class="kt">int</span>	<span class="n">esize</span><span class="p">;</span>
+	<span class="kt">void</span>		<span class="o">*</span><span class="n">data</span><span class="p">;</span>
+<span class="p">};</span>
 
-<pre><code class="language-c">struct __kfifo {
-	unsigned int	in;
-	unsigned int	out;
-	unsigned int	mask;
-	unsigned int	esize;
-	void		*data;
-};
-
-#define __STRUCT_KFIFO_COMMON(datatype, recsize, ptrtype) \
-	union { \
-		struct __kfifo	kfifo; \
-		datatype	*type; \
-		char		(*rectype)[recsize]; \
-		ptrtype		*ptr; \
-		const ptrtype	*ptr_const; \
-	}
-
-#define __STRUCT_KFIFO_PTR(type, recsize, ptrtype) \
-{ \
-	__STRUCT_KFIFO_COMMON(type, recsize, ptrtype); \
-	type		buf[0]; \
-}
-/*
- * define compatibility &quot;struct kfifo&quot; for dynamic allocated fifos
- */
-struct kfifo __STRUCT_KFIFO_PTR(unsigned char, 0, void);
-</code></pre>
-
-<h3 id="创建队列">创建队列</h3>
-
+<span class="cp">#define __STRUCT_KFIFO_COMMON(datatype, recsize, ptrtype) \
+</span><span class="cp">	union { \
+</span><span class="cp">		struct __kfifo	kfifo; \
+</span><span class="cp">		datatype	*type; \
+</span><span class="cp">		char		(*rectype)[recsize]; \
+</span><span class="cp">		ptrtype		*ptr; \
+</span><span class="cp">		const ptrtype	*ptr_const; \
+</span><span class="cp">	}
+</span><span class="cp"></span>
+<span class="cp">#define __STRUCT_KFIFO_PTR(type, recsize, ptrtype) \
+</span><span class="cp">{ \
+</span><span class="cp">	__STRUCT_KFIFO_COMMON(type, recsize, ptrtype); \
+</span><span class="cp">	type		buf[0]; \
+</span><span class="cp">}
+</span><span class="cp"></span><span class="cm">/*
+</span><span class="cm"> * define compatibility &#34;struct kfifo&#34; for dynamic allocated fifos
+</span><span class="cm"> */</span>
+<span class="k">struct</span> <span class="n">kfifo</span> <span class="nf">__STRUCT_KFIFO_PTR</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kt">char</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kt">void</span><span class="p">);</span>
+</code></pre></div><h3 id="创建队列">创建队列</h3>
 <p>使用 <code>fifo</code> 之前必须定义并初始化。</p>
-
 <h4 id="动态创建">动态创建</h4>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c">  <span class="cp">#define kfifo_alloc(fifo, size, gfp_mask) \
+</span><span class="cp">__kfifo_int_must_check_helper( \
+</span><span class="cp">({ \
+</span><span class="cp">	typeof((fifo) + 1) __tmp = (fifo); \
+</span><span class="cp">	struct __kfifo *__kfifo = &amp;__tmp-&gt;kfifo; \
+</span><span class="cp">	__is_kfifo_ptr(__tmp) ? \
+</span><span class="cp">	__kfifo_alloc(__kfifo, size, sizeof(*__tmp-&gt;type), gfp_mask) : \
+</span><span class="cp">	-EINVAL; \
+</span><span class="cp">}) \
+</span><span class="cp">)
+</span><span class="cp"></span>
+<span class="kt">int</span> <span class="nf">__kfifo_alloc</span><span class="p">(</span><span class="k">struct</span> <span class="n">__kfifo</span> <span class="o">*</span><span class="n">fifo</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">size</span><span class="p">,</span>
+		<span class="n">size_t</span> <span class="n">esize</span><span class="p">,</span> <span class="n">gfp_t</span> <span class="n">gfp_mask</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="cm">/*
+</span><span class="cm">	 * round down to the next power of 2, since our &#39;let the indices
+</span><span class="cm">	 * wrap&#39; technique works only in this case.
+</span><span class="cm">	 */</span>
+	<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">is_power_of_2</span><span class="p">(</span><span class="n">size</span><span class="p">))</span>
+		<span class="n">size</span> <span class="o">=</span> <span class="n">rounddown_pow_of_two</span><span class="p">(</span><span class="n">size</span><span class="p">);</span>
 
-<pre><code class="language-c">  #define kfifo_alloc(fifo, size, gfp_mask) \
-__kfifo_int_must_check_helper( \
-({ \
-	typeof((fifo) + 1) __tmp = (fifo); \
-	struct __kfifo *__kfifo = &amp;__tmp-&gt;kfifo; \
-	__is_kfifo_ptr(__tmp) ? \
-	__kfifo_alloc(__kfifo, size, sizeof(*__tmp-&gt;type), gfp_mask) : \
-	-EINVAL; \
-}) \
-)
+	<span class="n">fifo</span><span class="o">-&gt;</span><span class="n">in</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+	<span class="n">fifo</span><span class="o">-&gt;</span><span class="n">out</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+	<span class="n">fifo</span><span class="o">-&gt;</span><span class="n">esize</span> <span class="o">=</span> <span class="n">esize</span><span class="p">;</span>
 
-int __kfifo_alloc(struct __kfifo *fifo, unsigned int size,
-		size_t esize, gfp_t gfp_mask)
-{
-	/*
-	 * round down to the next power of 2, since our 'let the indices
-	 * wrap' technique works only in this case.
-	 */
-	if (!is_power_of_2(size))
-		size = rounddown_pow_of_two(size);
+	<span class="k">if</span> <span class="p">(</span><span class="n">size</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
+		<span class="n">fifo</span><span class="o">-&gt;</span><span class="n">data</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+		<span class="n">fifo</span><span class="o">-&gt;</span><span class="n">mask</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+		<span class="k">return</span> <span class="o">-</span><span class="n">EINVAL</span><span class="p">;</span>
+	<span class="p">}</span>
 
-	fifo-&gt;in = 0;
-	fifo-&gt;out = 0;
-	fifo-&gt;esize = esize;
+	<span class="n">fifo</span><span class="o">-&gt;</span><span class="n">data</span> <span class="o">=</span> <span class="n">kmalloc</span><span class="p">(</span><span class="n">size</span> <span class="o">*</span> <span class="n">esize</span><span class="p">,</span> <span class="n">gfp_mask</span><span class="p">);</span>
 
-	if (size &lt; 2) {
-		fifo-&gt;data = NULL;
-		fifo-&gt;mask = 0;
-		return -EINVAL;
-	}
+	<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">fifo</span><span class="o">-&gt;</span><span class="n">data</span><span class="p">)</span> <span class="p">{</span>
+		<span class="n">fifo</span><span class="o">-&gt;</span><span class="n">mask</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+		<span class="k">return</span> <span class="o">-</span><span class="n">ENOMEM</span><span class="p">;</span>
+	<span class="p">}</span>
+	<span class="n">fifo</span><span class="o">-&gt;</span><span class="n">mask</span> <span class="o">=</span> <span class="n">size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
 
-	fifo-&gt;data = kmalloc(size * esize, gfp_mask);
-
-	if (!fifo-&gt;data) {
-		fifo-&gt;mask = 0;
-		return -ENOMEM;
-	}
-	fifo-&gt;mask = size - 1;
-
-	return 0;
-}
-</code></pre>
-
-<h4 id="静态创建">静态创建</h4>
-
-<pre><code class="language-c">#define __STRUCT_KFIFO(type, size, recsize, ptrtype) \
-{ \
-	__STRUCT_KFIFO_COMMON(type, recsize, ptrtype); \
-	type		buf[((size &lt; 2) || (size &amp; (size - 1))) ? -1 : size]; \
-}
-
-#define STRUCT_KFIFO(type, size) \
-	struct __STRUCT_KFIFO(type, size, 0, type)
-
-#define DECLARE_KFIFO(fifo, type, size)	STRUCT_KFIFO(type, size) fifo
-
-/**
- * INIT_KFIFO - Initialize a fifo declared by DECLARE_KFIFO
- * @fifo: name of the declared fifo datatype
- */
-#define INIT_KFIFO(fifo) \
-(void)({ \
-	typeof(&amp;(fifo)) __tmp = &amp;(fifo); \
-	struct __kfifo *__kfifo = &amp;__tmp-&gt;kfifo; \
-	__kfifo-&gt;in = 0; \
-	__kfifo-&gt;out = 0; \
-	__kfifo-&gt;mask = __is_kfifo_ptr(__tmp) ? 0 : ARRAY_SIZE(__tmp-&gt;buf) - 1;\
-	__kfifo-&gt;esize = sizeof(*__tmp-&gt;buf); \
-	__kfifo-&gt;data = __is_kfifo_ptr(__tmp) ?  NULL : __tmp-&gt;buf; \
-})
-</code></pre>
-
-<p>通过 <code>DECLARE_KFIFO</code> 定义一个名为 <code>fifo</code> 的队列对象。 <code>INIT_KFIFO</code> 对队列进行初
+	<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div><h4 id="静态创建">静态创建</h4>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#define __STRUCT_KFIFO(type, size, recsize, ptrtype) \
+</span><span class="cp">{ \
+</span><span class="cp">	__STRUCT_KFIFO_COMMON(type, recsize, ptrtype); \
+</span><span class="cp">	type		buf[((size &lt; 2) || (size &amp; (size - 1))) ? -1 : size]; \
+</span><span class="cp">}
+</span><span class="cp"></span>
+<span class="cp">#define STRUCT_KFIFO(type, size) \
+</span><span class="cp">	struct __STRUCT_KFIFO(type, size, 0, type)
+</span><span class="cp"></span>
+<span class="cp">#define DECLARE_KFIFO(fifo, type, size)	STRUCT_KFIFO(type, size) fifo
+</span><span class="cp"></span>
+<span class="cm">/**
+</span><span class="cm"> * INIT_KFIFO - Initialize a fifo declared by DECLARE_KFIFO
+</span><span class="cm"> * @fifo: name of the declared fifo datatype
+</span><span class="cm"> */</span>
+<span class="cp">#define INIT_KFIFO(fifo) \
+</span><span class="cp">(void)({ \
+</span><span class="cp">	typeof(&amp;(fifo)) __tmp = &amp;(fifo); \
+</span><span class="cp">	struct __kfifo *__kfifo = &amp;__tmp-&gt;kfifo; \
+</span><span class="cp">	__kfifo-&gt;in = 0; \
+</span><span class="cp">	__kfifo-&gt;out = 0; \
+</span><span class="cp">	__kfifo-&gt;mask = __is_kfifo_ptr(__tmp) ? 0 : ARRAY_SIZE(__tmp-&gt;buf) - 1;\
+</span><span class="cp">	__kfifo-&gt;esize = sizeof(*__tmp-&gt;buf); \
+</span><span class="cp">	__kfifo-&gt;data = __is_kfifo_ptr(__tmp) ?  NULL : __tmp-&gt;buf; \
+</span><span class="cp">})
+</span></code></pre></div><p>通过 <code>DECLARE_KFIFO</code> 定义一个名为 <code>fifo</code> 的队列对象。 <code>INIT_KFIFO</code> 对队列进行初
 始化。</p>
-
 <blockquote>
 <p>不管动态还是静态， size 都必须为 2 的幂</p>
 </blockquote>
-
 <h3 id="入列">入列</h3>
-
-<pre><code class="language-c">#define	kfifo_in(fifo, buf, n) \
-({ \
-	typeof((fifo) + 1) __tmp = (fifo); \
-	typeof((buf) + 1) __buf = (buf); \
-	unsigned long __n = (n); \
-	const size_t __recsize = sizeof(*__tmp-&gt;rectype); \
-	struct __kfifo *__kfifo = &amp;__tmp-&gt;kfifo; \
-	if (0) { \
-		typeof(__tmp-&gt;ptr_const) __dummy __attribute__ ((unused)); \
-		__dummy = (typeof(__buf))NULL; \
-	} \
-	(__recsize) ?\
-	__kfifo_in_r(__kfifo, __buf, __n, __recsize) : \
-	__kfifo_in(__kfifo, __buf, __n); \
-})
-</code></pre>
-
-<p>将 <code>from</code> 指针的 <code>len</code> 字节数据拷贝到 <code>fifo</code> 所指的队列中。成功返回 <code>len</code>,如果空
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#define	kfifo_in(fifo, buf, n) \
+</span><span class="cp">({ \
+</span><span class="cp">	typeof((fifo) + 1) __tmp = (fifo); \
+</span><span class="cp">	typeof((buf) + 1) __buf = (buf); \
+</span><span class="cp">	unsigned long __n = (n); \
+</span><span class="cp">	const size_t __recsize = sizeof(*__tmp-&gt;rectype); \
+</span><span class="cp">	struct __kfifo *__kfifo = &amp;__tmp-&gt;kfifo; \
+</span><span class="cp">	if (0) { \
+</span><span class="cp">		typeof(__tmp-&gt;ptr_const) __dummy __attribute__ ((unused)); \
+</span><span class="cp">		__dummy = (typeof(__buf))NULL; \
+</span><span class="cp">	} \
+</span><span class="cp">	(__recsize) ?\
+</span><span class="cp">	__kfifo_in_r(__kfifo, __buf, __n, __recsize) : \
+</span><span class="cp">	__kfifo_in(__kfifo, __buf, __n); \
+</span><span class="cp">})
+</span></code></pre></div><p>将 <code>from</code> 指针的 <code>len</code> 字节数据拷贝到 <code>fifo</code> 所指的队列中。成功返回 <code>len</code>,如果空
 闲字节小于 <code>len</code>, 则进行截断拷贝，返回实际拷贝的字节数。</p>
-
 <h3 id="出列">出列</h3>
-
-<pre><code class="language-c">#define	kfifo_out(fifo, buf, n) \
-__kfifo_uint_must_check_helper( \
-({ \
-	typeof((fifo) + 1) __tmp = (fifo); \
-	typeof((buf) + 1) __buf = (buf); \
-	unsigned long __n = (n); \
-	const size_t __recsize = sizeof(*__tmp-&gt;rectype); \
-	struct __kfifo *__kfifo = &amp;__tmp-&gt;kfifo; \
-	if (0) { \
-		typeof(__tmp-&gt;ptr) __dummy = NULL; \
-		__buf = __dummy; \
-	} \
-	(__recsize) ?\
-	__kfifo_out_r(__kfifo, __buf, __n, __recsize) : \
-	__kfifo_out(__kfifo, __buf, __n); \
-}) \
-)
-</code></pre>
-
-<p>从 <code>fifo</code> 所指向的队列中拷贝出 <code>len</code> 字节数据到 <code>to</code> 所指的队列中。</p>
-
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#define	kfifo_out(fifo, buf, n) \
+</span><span class="cp">__kfifo_uint_must_check_helper( \
+</span><span class="cp">({ \
+</span><span class="cp">	typeof((fifo) + 1) __tmp = (fifo); \
+</span><span class="cp">	typeof((buf) + 1) __buf = (buf); \
+</span><span class="cp">	unsigned long __n = (n); \
+</span><span class="cp">	const size_t __recsize = sizeof(*__tmp-&gt;rectype); \
+</span><span class="cp">	struct __kfifo *__kfifo = &amp;__tmp-&gt;kfifo; \
+</span><span class="cp">	if (0) { \
+</span><span class="cp">		typeof(__tmp-&gt;ptr) __dummy = NULL; \
+</span><span class="cp">		__buf = __dummy; \
+</span><span class="cp">	} \
+</span><span class="cp">	(__recsize) ?\
+</span><span class="cp">	__kfifo_out_r(__kfifo, __buf, __n, __recsize) : \
+</span><span class="cp">	__kfifo_out(__kfifo, __buf, __n); \
+</span><span class="cp">}) \
+</span><span class="cp">)
+</span></code></pre></div><p>从 <code>fifo</code> 所指向的队列中拷贝出 <code>len</code> 字节数据到 <code>to</code> 所指的队列中。</p>
 <p>上面的函数会删除队列中的数据，不删除只查看，则用 <code>k_fifo_peek</code> 即可。</p>
-
 <h3 id="长度">长度</h3>
-
-<pre><code class="language-c">#define kfifo_size(fifo)	((fifo)-&gt;kfifo.mask + 1)
-
-#define	kfifo_avail(fifo) \
-__kfifo_uint_must_check_helper( \
-({ \
-	typeof((fifo) + 1) __tmpq = (fifo); \
-	const size_t __recsize = sizeof(*__tmpq-&gt;rectype); \
-	unsigned int __avail = kfifo_size(__tmpq) - kfifo_len(__tmpq); \
-	(__recsize) ? ((__avail &lt;= __recsize) ? 0 : \
-	__kfifo_max_r(__avail - __recsize, __recsize)) : \
-	__avail; \
-}) \
-)
-</code></pre>
-
-<h3 id="重置和撤销">重置和撤销</h3>
-
-<pre><code class="language-c">#define kfifo_reset(fifo) \
-(void)({ \
-	typeof((fifo) + 1) __tmp = (fifo); \
-	__tmp-&gt;kfifo.in = __tmp-&gt;kfifo.out = 0; \
-})
-
-#define kfifo_free(fifo) \
-({ \
-	typeof((fifo) + 1) __tmp = (fifo); \
-	struct __kfifo *__kfifo = &amp;__tmp-&gt;kfifo; \
-	if (__is_kfifo_ptr(__tmp)) \
-		__kfifo_free(__kfifo); \
-})
-</code></pre>
-
-<h2 id="映射">映射</h2>
-
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#define kfifo_size(fifo)	((fifo)-&gt;kfifo.mask + 1)
+</span><span class="cp"></span>
+<span class="cp">#define	kfifo_avail(fifo) \
+</span><span class="cp">__kfifo_uint_must_check_helper( \
+</span><span class="cp">({ \
+</span><span class="cp">	typeof((fifo) + 1) __tmpq = (fifo); \
+</span><span class="cp">	const size_t __recsize = sizeof(*__tmpq-&gt;rectype); \
+</span><span class="cp">	unsigned int __avail = kfifo_size(__tmpq) - kfifo_len(__tmpq); \
+</span><span class="cp">	(__recsize) ? ((__avail &lt;= __recsize) ? 0 : \
+</span><span class="cp">	__kfifo_max_r(__avail - __recsize, __recsize)) : \
+</span><span class="cp">	__avail; \
+</span><span class="cp">}) \
+</span><span class="cp">)
+</span></code></pre></div><h3 id="重置和撤销">重置和撤销</h3>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#define kfifo_reset(fifo) \
+</span><span class="cp">(void)({ \
+</span><span class="cp">	typeof((fifo) + 1) __tmp = (fifo); \
+</span><span class="cp">	__tmp-&gt;kfifo.in = __tmp-&gt;kfifo.out = 0; \
+</span><span class="cp">})
+</span><span class="cp"></span>
+<span class="cp">#define kfifo_free(fifo) \
+</span><span class="cp">({ \
+</span><span class="cp">	typeof((fifo) + 1) __tmp = (fifo); \
+</span><span class="cp">	struct __kfifo *__kfifo = &amp;__tmp-&gt;kfifo; \
+</span><span class="cp">	if (__is_kfifo_ptr(__tmp)) \
+</span><span class="cp">		__kfifo_free(__kfifo); \
+</span><span class="cp">})
+</span></code></pre></div><h2 id="映射">映射</h2>
 <p>关联数组，至少支持三个操作：</p>
-
 <ol>
 <li>Add(key, value)</li>
 <li>Remove(key)</li>
 <li>value = Lookup(Key)</li>
 </ol>
-
 <p>实现可以使用散列表，也可以使用自平衡二叉树。前者提供更好的平均复杂度，后者在最坏
 情况下有更好的表现，且保证有序。</p>
-
 <p>在 Linux 内核中实现了红黑树。红黑树的具体实现比较复杂，这里就不讲了，但是原理得
 懂，具体可以参考前面一篇关于树的一些总结 <a href="https://jerling.github.io/post/data%5Fstruct%5Ftrees%5Fconclusion/">https://jerling.github.io/post/data%5Fstruct%5Ftrees%5Fconclusion/</a></p>
-
 <h2 id="总结">总结</h2>
-
 <p>这一章节主要是对内核的主要数据结构进行总结，大部分的实现都采用宏来实现的，看起来
 比较费力。不过相对于函数，宏实现的简单替换可以提升运行速度。</p>
 
@@ -549,6 +455,8 @@ __kfifo_uint_must_check_helper( \
     
     <li><a href="/categories/%e5%86%85%e5%ad%98%e7%ae%a1%e7%90%86" title="内存管理">内存管理<sup>1</sup></a></li>
     
+    <li><a href="/categories/%e5%86%85%e6%a0%b8%e5%ae%9e%e9%aa%8c" title="内核实验">内核实验<sup>1</sup></a></li>
+    
     <li><a href="/categories/%e5%91%bd%e4%bb%a4%e8%a1%8c%e8%89%ba%e6%9c%af" title="命令行艺术">命令行艺术<sup>3</sup></a></li>
     
     <li><a href="/categories/%e5%ad%a6%e4%b9%a0%e7%ac%94%e8%ae%b0" title="学习笔记">学习笔记<sup>13</sup></a></li>
@@ -574,6 +482,8 @@ __kfifo_uint_must_check_helper( \
 	<p class="asidetitle">标签</p>
 		<ul class="clearfix">
       
+			<li><a href="/tags/bochs" title="bochs">bochs<sup>1</sup></a></li>
+      
 			<li><a href="/tags/c&#43;&#43;" title="c&#43;&#43;">c&#43;&#43;<sup>10</sup></a></li>
       
 			<li><a href="/tags/command" title="command">command<sup>3</sup></a></li>
@@ -588,9 +498,9 @@ __kfifo_uint_must_check_helper( \
       
 			<li><a href="/tags/jemalloc" title="jemalloc">jemalloc<sup>1</sup></a></li>
       
-			<li><a href="/tags/kernel" title="kernel">kernel<sup>7</sup></a></li>
+			<li><a href="/tags/kernel" title="kernel">kernel<sup>8</sup></a></li>
       
-			<li><a href="/tags/linux" title="linux">linux<sup>12</sup></a></li>
+			<li><a href="/tags/linux" title="linux">linux<sup>13</sup></a></li>
       
 			<li><a href="/tags/linux%e5%86%85%e6%a0%b8" title="linux内核">linux内核<sup>1</sup></a></li>
       
@@ -652,6 +562,11 @@ __kfifo_uint_must_check_helper( \
       
       
       <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2020-04">2020年04月</a><span class="archive-list-count">1</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
         <a class="archive-list-link" href="/post/#2019-09">2019年09月</a><span class="archive-list-count">1</span>
       </li>
       
@@ -705,6 +620,8 @@ __kfifo_uint_must_check_helper( \
 <div class="tagcloudlist">
   <p class="asidetitle">标签云</p>
   <div class="tagcloudlist clearfix">
+    
+    <a href="/tags/bochs" style="font-size: 12px;">bochs</a>
     
     <a href="/tags/c&#43;&#43;" style="font-size: 12px;">c&#43;&#43;</a>
     
@@ -804,7 +721,7 @@ __kfifo_uint_must_check_helper( \
     
     
   </div>
-  <p class="copyright">Powered by <a href="http://gohugo.io" target="_blank" title="hugo">hugo</a> and Theme by <a href="https://github.com/coderzh/hugo-pacman-theme" target="_blank" title="hugo-pacman-theme">hugo-pacman-theme</a> © 2019
+  <p class="copyright">Powered by <a href="http://gohugo.io" target="_blank" title="hugo">hugo</a> and Theme by <a href="https://github.com/coderzh/hugo-pacman-theme" target="_blank" title="hugo-pacman-theme">hugo-pacman-theme</a> © 2020
     
     <a href="/" title="北极狼徒">北极狼徒</a>
     

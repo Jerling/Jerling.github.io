@@ -75,340 +75,287 @@
 
 	<div class="article-content">
     
-    
-
-<h2 id="table-of-contens">Table of Contens</h2>
-
+    <h2 id="table-of-contens">Table of Contens</h2>
 <ul>
-<li><a href="#关于继承">关于继承</a>
-
+<li><a href="#%E5%85%B3%E4%BA%8E%E7%BB%A7%E6%89%BF">关于继承</a>
 <ul>
-<li><a href="#何为对象">何为对象</a></li>
-<li><a href="#何为继承">何为继承</a></li>
-</ul></li>
-<li><a href="#public-继承">public 继承</a>
-
-<ul>
-<li><a href="#public-继承权限">public 继承权限</a></li>
-<li><a href="#实例">实例</a></li>
-</ul></li>
-<li><a href="#protected-继承">protected 继承</a>
-
-<ul>
-<li><a href="#protected-继承权限">protected 继承权限</a></li>
-<li><a href="#实例">实例</a></li>
-</ul></li>
-<li><a href="#private-继承">private 继承</a>
-
-<ul>
-<li><a href="#protected-继承权限">protected 继承权限</a></li>
-<li><a href="#实例">实例</a></li>
-</ul></li>
-<li><a href="#虚继承">虚继承</a>
-
-<ul>
-<li><a href="#实例">实例</a></li>
-<li><a href="#虚继承与虚函数">虚继承与虚函数</a></li>
-</ul></li>
-<li><a href="#总结">总结</a></li>
+<li><a href="#%E4%BD%95%E4%B8%BA%E5%AF%B9%E8%B1%A1">何为对象</a></li>
+<li><a href="#%E4%BD%95%E4%B8%BA%E7%BB%A7%E6%89%BF">何为继承</a></li>
 </ul>
-
+</li>
+<li><a href="#public-%E7%BB%A7%E6%89%BF">public 继承</a>
+<ul>
+<li><a href="#public-%E7%BB%A7%E6%89%BF%E6%9D%83%E9%99%90">public 继承权限</a></li>
+<li><a href="#%E5%AE%9E%E4%BE%8B">实例</a></li>
+</ul>
+</li>
+<li><a href="#protected-%E7%BB%A7%E6%89%BF">protected 继承</a>
+<ul>
+<li><a href="#protected-%E7%BB%A7%E6%89%BF%E6%9D%83%E9%99%90">protected 继承权限</a></li>
+<li><a href="#%E5%AE%9E%E4%BE%8B">实例</a></li>
+</ul>
+</li>
+<li><a href="#private-%E7%BB%A7%E6%89%BF">private 继承</a>
+<ul>
+<li><a href="#protected-%E7%BB%A7%E6%89%BF%E6%9D%83%E9%99%90">protected 继承权限</a></li>
+<li><a href="#%E5%AE%9E%E4%BE%8B">实例</a></li>
+</ul>
+</li>
+<li><a href="#%E8%99%9A%E7%BB%A7%E6%89%BF">虚继承</a>
+<ul>
+<li><a href="#%E5%AE%9E%E4%BE%8B">实例</a></li>
+<li><a href="#%E8%99%9A%E7%BB%A7%E6%89%BF%E4%B8%8E%E8%99%9A%E5%87%BD%E6%95%B0">虚继承与虚函数</a></li>
+</ul>
+</li>
+<li><a href="#%E6%80%BB%E7%BB%93">总结</a></li>
+</ul>
 <h2 id="关于继承">关于继承</h2>
-
 <p>随着软件功能的日益完善，随之而来的就是软件的也越来越大，变得难以维护。传统的面向
 过程的编程范式难以满足日益丰富的用户需求，因此需要一种新的编程范式来应对这种
 复杂的需求。面向对象在这个时候出现，很好的解决了这些难题。它是一种软件开发方法，
 利用对世界关系的分析方法来分析复杂软件体系关系，实践证明这是可行的。</p>
-
 <h3 id="何为对象">何为对象</h3>
-
 <p>世界的所有事物都可以抽象为一个对象，一个对象拥有基本的属性以及作用在这些属性上
 的功能。举个简单的例子：人为一个对象，有基本属性（身高、体重等），以及功能
 （吃饭、说话等）。在面向对象的软件开发方法中，有三大特性：继承、封装及多态。今天
 的主角是继承。</p>
-
 <h3 id="何为继承">何为继承</h3>
-
 <p>每个对象的可以抽象为不同的级别，我们将有某些共同属性或功能抽象成一个基类对象，然
 后让派生类来继续延用（继承）公用的属性或功能。同样举个简单例子：父亲是一个基类或
 父类，小孩就是派生类或子类，小孩会继承父亲遗传的某些性状（如血型）。</p>
-
 <p>继承是实现代码重用的重要手段，直接使用基类对象的属性和方法，呈现面向对象程序设计
 的层次结构，体现由简单到复杂、一般到特殊的认知过程。继承的方式有三种： <code>public</code> 继承、
- <code>protected</code> 继承、 <code>private</code> 继承。编译器通过三种方式对应的限定符进行区分。</p>
-
+<code>protected</code> 继承、 <code>private</code> 继承。编译器通过三种方式对应的限定符进行区分。</p>
 <h2 id="public-继承">public 继承</h2>
-
 <p>公有继承是比较常见的继承方式，通过 <code>public</code> 关键字来表明。</p>
-
 <h3 id="public-继承权限">public 继承权限</h3>
-
 <ul>
 <li>父类的 <code>public</code> 成员继承为子类的 <code>public</code> 成员，子类可以访问。</li>
 <li>父类的 <code>protected</code> 成员继承为子类的 <code>protected</code> 成员，子类成员函数可以访问。</li>
 <li>父类的 <code>private</code> 成员仍为 <strong>父类</strong> 的 <code>private</code> 成员，子类不可以访问。</li>
 </ul>
-
 <h3 id="实例">实例</h3>
+<div class="highlight"><pre class="chroma"><code class="language-C++" data-lang="C++"><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
+</span><span class="cp"></span>
+<span class="k">class</span> <span class="nc">Base</span> <span class="p">{</span>
+ <span class="k">public</span><span class="o">:</span>
+  <span class="kt">int</span> <span class="n">int_pub</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
-<pre><code class="language-C++">#include &lt;iostream&gt;
+ <span class="k">protected</span><span class="o">:</span>
+  <span class="kt">int</span> <span class="n">int_pro</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
-class Base {
- public:
-  int int_pub = 0;
+ <span class="k">private</span><span class="o">:</span>
+  <span class="kt">int</span> <span class="n">int_pri</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">};</span>
 
- protected:
-  int int_pro = 0;
+<span class="k">class</span> <span class="nc">Derive</span> <span class="o">:</span> <span class="k">public</span> <span class="n">Base</span> <span class="p">{</span>
+ <span class="k">public</span><span class="o">:</span>
+  <span class="kt">void</span> <span class="n">print</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;print:&#34;</span> <span class="o">&lt;&lt;</span> <span class="n">int_pub</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;print:&#34;</span> <span class="o">&lt;&lt;</span> <span class="n">int_pro</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+    <span class="c1">// std::cout &lt;&lt; &#34;print:&#34; &lt;&lt; int_pri &lt;&lt; std::endl;
+</span><span class="c1"></span>  <span class="p">}</span>
+<span class="p">};</span>
 
- private:
-  int int_pri = 0;
-};
-
-class Derive : public Base {
- public:
-  void print() {
-    std::cout &lt;&lt; &quot;print:&quot; &lt;&lt; int_pub &lt;&lt; std::endl;
-    std::cout &lt;&lt; &quot;print:&quot; &lt;&lt; int_pro &lt;&lt; std::endl;
-    // std::cout &lt;&lt; &quot;print:&quot; &lt;&lt; int_pri &lt;&lt; std::endl;
-  }
-};
-
-int main() {
-  Derive d;
-  std::cout &lt;&lt; &quot;main:&quot; &lt;&lt; d.int_pub &lt;&lt; std::endl;
-  // std::cout &lt;&lt; &quot;main:&quot; &lt;&lt; d.int_pro &lt;&lt; std::endl;
-  d.print();
-  return 0;
-}
-</code></pre>
-
-<p>在子类的成员函数种访问父类的 <code>private</code> 会出错，错误信息也会提示这是 <code>Base</code> 的私
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">Derive</span> <span class="n">d</span><span class="p">;</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;main:&#34;</span> <span class="o">&lt;&lt;</span> <span class="n">d</span><span class="p">.</span><span class="n">int_pub</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+  <span class="c1">// std::cout &lt;&lt; &#34;main:&#34; &lt;&lt; d.int_pro &lt;&lt; std::endl;
+</span><span class="c1"></span>  <span class="n">d</span><span class="p">.</span><span class="n">print</span><span class="p">();</span>
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div><p>在子类的成员函数种访问父类的 <code>private</code> 会出错，错误信息也会提示这是 <code>Base</code> 的私
 有成员。子类直接访问继承的 <code>protected</code> 成员也会报错。</p>
-
 <h2 id="protected-继承">protected 继承</h2>
-
 <p>保护继承通过 <code>protected</code> 关键字限定表明。</p>
-
 <h3 id="protected-继承权限">protected 继承权限</h3>
-
 <ul>
 <li>父类的 <code>public</code> 成员继承为子类的 <code>protected</code> 成员，可通过成员函数访问。</li>
 <li>父类的 <code>protected</code> 成员继承为子类的 <code>protected</code> 成员，可通过成员函数访问。</li>
 <li>父类的 <code>private</code> 成员仍为 <strong>父类</strong> 的 <code>private</code> 成员，子类不可以访问。</li>
 </ul>
+<h3 id="实例">实例</h3>
+<div class="highlight"><pre class="chroma"><code class="language-C++" data-lang="C++"><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
+</span><span class="cp"></span>
+<span class="k">class</span> <span class="nc">Base</span> <span class="p">{</span>
+ <span class="k">public</span><span class="o">:</span>
+  <span class="kt">int</span> <span class="n">int_pub</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
-<h3 id="实例-1">实例</h3>
+ <span class="k">protected</span><span class="o">:</span>
+  <span class="kt">int</span> <span class="n">int_pro</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
-<pre><code class="language-C++">#include &lt;iostream&gt;
+ <span class="k">private</span><span class="o">:</span>
+  <span class="kt">int</span> <span class="n">int_pri</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">};</span>
 
-class Base {
- public:
-  int int_pub = 0;
+<span class="k">class</span> <span class="nc">Derive</span> <span class="o">:</span> <span class="k">protected</span> <span class="n">Base</span> <span class="p">{</span>
+ <span class="k">public</span><span class="o">:</span>
+  <span class="kt">void</span> <span class="n">print</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;print:&#34;</span> <span class="o">&lt;&lt;</span> <span class="n">int_pub</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;print:&#34;</span> <span class="o">&lt;&lt;</span> <span class="n">int_pro</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+    <span class="c1">// std::cout &lt;&lt; &#34;print:&#34; &lt;&lt; int_pri &lt;&lt; std::endl;
+</span><span class="c1"></span>  <span class="p">}</span>
+<span class="p">};</span>
 
- protected:
-  int int_pro = 0;
-
- private:
-  int int_pri = 0;
-};
-
-class Derive : protected Base {
- public:
-  void print() {
-    std::cout &lt;&lt; &quot;print:&quot; &lt;&lt; int_pub &lt;&lt; std::endl;
-    std::cout &lt;&lt; &quot;print:&quot; &lt;&lt; int_pro &lt;&lt; std::endl;
-    // std::cout &lt;&lt; &quot;print:&quot; &lt;&lt; int_pri &lt;&lt; std::endl;
-  }
-};
-
-int main() {
-  Derive d;
-  // std::cout &lt;&lt; &quot;main:&quot; &lt;&lt; d.int_pub &lt;&lt; std::endl;
-  // std::cout &lt;&lt; &quot;main:&quot; &lt;&lt; d.int_pro &lt;&lt; std::endl;
-  d.print();
-  return 0;
-}
-</code></pre>
-
-<p>通过对象直接访问继承自父类的 <code>public</code> 成员会出错。</p>
-
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">Derive</span> <span class="n">d</span><span class="p">;</span>
+  <span class="c1">// std::cout &lt;&lt; &#34;main:&#34; &lt;&lt; d.int_pub &lt;&lt; std::endl;
+</span><span class="c1"></span>  <span class="c1">// std::cout &lt;&lt; &#34;main:&#34; &lt;&lt; d.int_pro &lt;&lt; std::endl;
+</span><span class="c1"></span>  <span class="n">d</span><span class="p">.</span><span class="n">print</span><span class="p">();</span>
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div><p>通过对象直接访问继承自父类的 <code>public</code> 成员会出错。</p>
 <h2 id="private-继承">private 继承</h2>
-
 <p>私有继承通过 <code>private</code> 关键字限定表明。</p>
-
-<h3 id="protected-继承权限-1">protected 继承权限</h3>
-
+<h3 id="protected-继承权限">protected 继承权限</h3>
 <ul>
 <li>父类的 <code>public</code> 成员继承为子类的 <code>private</code> 成员，可通过成员函数访问。</li>
 <li>父类的 <code>protected</code> 成员继承为子类的 <code>private</code> 成员，可通过成员函数访问。</li>
 <li>父类的 <code>private</code> 成员仍为 <strong>父类</strong> 的 <code>private</code> 成员，子类不可以访问。</li>
 </ul>
+<h3 id="实例">实例</h3>
+<div class="highlight"><pre class="chroma"><code class="language-C++" data-lang="C++"><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
+</span><span class="cp"></span>
+<span class="k">class</span> <span class="nc">Base</span> <span class="p">{</span>
+ <span class="k">public</span><span class="o">:</span>
+  <span class="kt">int</span> <span class="n">int_pub</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
-<h3 id="实例-2">实例</h3>
+ <span class="k">protected</span><span class="o">:</span>
+  <span class="kt">int</span> <span class="n">int_pro</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
-<pre><code class="language-C++">#include &lt;iostream&gt;
+ <span class="k">private</span><span class="o">:</span>
+  <span class="kt">int</span> <span class="n">int_pri</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">};</span>
 
-class Base {
- public:
-  int int_pub = 0;
+<span class="k">class</span> <span class="nc">Derive</span> <span class="o">:</span> <span class="k">protected</span> <span class="n">Base</span> <span class="p">{</span>
+ <span class="k">public</span><span class="o">:</span>
+  <span class="kt">void</span> <span class="n">print</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;print:&#34;</span> <span class="o">&lt;&lt;</span> <span class="n">int_pub</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;print:&#34;</span> <span class="o">&lt;&lt;</span> <span class="n">int_pro</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+    <span class="c1">// std::cout &lt;&lt; &#34;print:&#34; &lt;&lt; int_pri &lt;&lt; std::endl;
+</span><span class="c1"></span>  <span class="p">}</span>
+<span class="p">};</span>
 
- protected:
-  int int_pro = 0;
-
- private:
-  int int_pri = 0;
-};
-
-class Derive : protected Base {
- public:
-  void print() {
-    std::cout &lt;&lt; &quot;print:&quot; &lt;&lt; int_pub &lt;&lt; std::endl;
-    std::cout &lt;&lt; &quot;print:&quot; &lt;&lt; int_pro &lt;&lt; std::endl;
-    // std::cout &lt;&lt; &quot;print:&quot; &lt;&lt; int_pri &lt;&lt; std::endl;
-  }
-};
-
-int main() {
-  Derive d;
-  // std::cout &lt;&lt; &quot;main:&quot; &lt;&lt; d.int_pub &lt;&lt; std::endl;
-  // std::cout &lt;&lt; &quot;main:&quot; &lt;&lt; d.int_pro &lt;&lt; std::endl;
-  d.print();
-  return 0;
-}
-</code></pre>
-
-<p>访问和 <code>protected</code> 是一样。这里说明 <code>private</code> 和 <code>protected</code> 的异同：继承权限不
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">Derive</span> <span class="n">d</span><span class="p">;</span>
+  <span class="c1">// std::cout &lt;&lt; &#34;main:&#34; &lt;&lt; d.int_pub &lt;&lt; std::endl;
+</span><span class="c1"></span>  <span class="c1">// std::cout &lt;&lt; &#34;main:&#34; &lt;&lt; d.int_pro &lt;&lt; std::endl;
+</span><span class="c1"></span>  <span class="n">d</span><span class="p">.</span><span class="n">print</span><span class="p">();</span>
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div><p>访问和 <code>protected</code> 是一样。这里说明 <code>private</code> 和 <code>protected</code> 的异同：继承权限不
 一样，前者不可继承后者可以；访问权限是一样的，都必须通过成员函数才能访问。</p>
-
 <h2 id="虚继承">虚继承</h2>
-
 <p>虚继承的出现是用来解决多继承的对象多次被继承带来的问题。普通继承在不同途径继承来
 自同一基类的子孙类中存在多份拷贝。这将存在两个问题：其一，浪费存储空间；第二，存
 在二义性问题，通常可以将派生类对象的地址赋值给基类对象，实现的具体方式是，将基类
 指针指向继承类（继承类有基类的拷贝）中的基类对象的地址，但是多重继承可能存在一个
 基类的多份拷贝，这就出现了二义性。</p>
-
 <p>虚继承可以解决多种继承前面提到的两个问题：</p>
-
 <p>虚继承底层实现原理与编译器相关，一般通过虚基类指针和虚基类表实现，每个虚继承的子
 类都有一个虚基类指针（占用一个指针的存储空间，4字节）和虚基类表（不占用类对象的
 存储空间）（需要强调的是，虚基类依旧会在子类里面存在拷贝，只是仅仅最多存在一份而
 已，并不是不在子类里面了）；当虚继承的子类被当做父类继承时，虚基类指针也会被继承。</p>
-
 <p>实际上，vbptr指的是虚基类表指针（virtual base table pointer），该指针指
 向了一个虚基类表（virtual table），虚表中记录了虚基类与本类的偏移地址；通过
 偏移地址，这样就找到了虚基类成员，而虚继承也不用像普通多继承那样维持着公共基类
 （虚基类）的两份同样的拷贝，节省了存储空间。</p>
-
 <p>在这里我们可以对比虚函数的实现原理：他们有相似之处，都利用了虚指针（均占用类的
 存储空间）和虚表（均不占用类的存储空间）。</p>
-
 <p>虚基类依旧存在继承类中，只占用存储空间；虚函数不占用存储空间。</p>
-
 <p>虚基类表存储的是虚基类相对直接继承类的偏移；而虚函数表存储的是虚函数地址。</p>
-
 <figure>
     <img src="/images/virtual_inherit.png"/> 
 </figure>
 
-
-<h3 id="实例-3">实例</h3>
-
+<h3 id="实例">实例</h3>
 <ul>
-<li><p>普通继承</p>
-
-<pre><code class="language-C++">#include&lt;iostream&gt;
-using namespace std;
-
-class A  //大小为4
-{
-public:
-	int a;
-};
-class B :public A  //大小为8，变量a,b共8字节
-{
-public:
-	int b;
-};
-class C :public A //与B一样8
-{
-public:
-	int c;
-};
-class D :public B, public C //大小为20,变量 2xa + b + c + d = 20
-{
-public:
-	int d;
-};
-
-int main()
-{
-	A a;
-	B b;
-	C c;
-	D d;
-	cout &lt;&lt; &quot;A &quot; &lt;&lt; sizeof(a) &lt;&lt; endl;
-	cout &lt;&lt; &quot;B &quot; &lt;&lt; sizeof(b) &lt;&lt; endl;
-	cout &lt;&lt; &quot;C &quot; &lt;&lt; sizeof(c) &lt;&lt; endl;
-	cout &lt;&lt; &quot;D &quot; &lt;&lt; sizeof(d) &lt;&lt; endl;
-	return 0;
-}
-
-</code></pre></li>
-
-<li><p>虚继承</p>
-
-<pre><code class="language-C++">#include&lt;iostream&gt;
-using namespace std;
-
-class A  //大小为4
-{
-public:
-	int a;
-};
-class B :virtual public A  //大小为16，变量a,b共8字节，虚基类表指针8
-{
-public:
-	int b;
-};
-class C :virtual public A //与B一样16
-{
-public:
-	int c;
-};
-class D :public B, public C
-     //大小为40,变量a,b,c,d共16，B的虚基类指针8，C的虚基类指针8,D类的虚指针8
-     //也可以这样算： B, C 一共 32, d占4字节，D虚指针8,一共44, 减去B,C重复的A，得 40
-{
-public:
-	int d;
-};
-
-int main()
-{
-	A a;
-	B b;
-	C c;
-	D d;
-	cout &lt;&lt; &quot;A &quot; &lt;&lt; sizeof(a) &lt;&lt; endl;
-	cout &lt;&lt; &quot;B &quot; &lt;&lt; sizeof(b) &lt;&lt; endl;
-	cout &lt;&lt; &quot;C &quot; &lt;&lt; sizeof(c) &lt;&lt; endl;
-	cout &lt;&lt; &quot;D &quot; &lt;&lt; sizeof(d) &lt;&lt; endl;
-	return 0;
-}
-</code></pre></li>
+<li>普通继承</li>
 </ul>
+<div class="highlight"><pre class="chroma"><code class="language-C++" data-lang="C++"><span class="cp">#include</span><span class="cpf">&lt;iostream&gt;</span><span class="cp">
+</span><span class="cp"></span><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
 
-<p>从上面的两个例子中可以看出，在普通继承中的通过不同途径继承自同一继承祖先类的子孙
+<span class="k">class</span> <span class="nc">A</span>  <span class="c1">//大小为4
+</span><span class="c1"></span><span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+	<span class="kt">int</span> <span class="n">a</span><span class="p">;</span>
+<span class="p">};</span>
+<span class="k">class</span> <span class="nc">B</span> <span class="o">:</span><span class="k">public</span> <span class="n">A</span>  <span class="c1">//大小为8，变量a,b共8字节
+</span><span class="c1"></span><span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+	<span class="kt">int</span> <span class="n">b</span><span class="p">;</span>
+<span class="p">};</span>
+<span class="k">class</span> <span class="nc">C</span> <span class="o">:</span><span class="k">public</span> <span class="n">A</span> <span class="c1">//与B一样8
+</span><span class="c1"></span><span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+	<span class="kt">int</span> <span class="n">c</span><span class="p">;</span>
+<span class="p">};</span>
+<span class="k">class</span> <span class="nc">D</span> <span class="o">:</span><span class="k">public</span> <span class="n">B</span><span class="p">,</span> <span class="k">public</span> <span class="n">C</span> <span class="c1">//大小为20,变量 2xa + b + c + d = 20
+</span><span class="c1"></span><span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+	<span class="kt">int</span> <span class="n">d</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+	<span class="n">A</span> <span class="n">a</span><span class="p">;</span>
+	<span class="n">B</span> <span class="n">b</span><span class="p">;</span>
+	<span class="n">C</span> <span class="n">c</span><span class="p">;</span>
+	<span class="n">D</span> <span class="n">d</span><span class="p">;</span>
+	<span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;A &#34;</span> <span class="o">&lt;&lt;</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+	<span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;B &#34;</span> <span class="o">&lt;&lt;</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+	<span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;C &#34;</span> <span class="o">&lt;&lt;</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+	<span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;D &#34;</span> <span class="o">&lt;&lt;</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+	<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+</code></pre></div><ul>
+<li>虚继承</li>
+</ul>
+<div class="highlight"><pre class="chroma"><code class="language-C++" data-lang="C++"><span class="cp">#include</span><span class="cpf">&lt;iostream&gt;</span><span class="cp">
+</span><span class="cp"></span><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">A</span>  <span class="c1">//大小为4
+</span><span class="c1"></span><span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+	<span class="kt">int</span> <span class="n">a</span><span class="p">;</span>
+<span class="p">};</span>
+<span class="k">class</span> <span class="nc">B</span> <span class="o">:</span><span class="k">virtual</span> <span class="k">public</span> <span class="n">A</span>  <span class="c1">//大小为16，变量a,b共8字节，虚基类表指针8
+</span><span class="c1"></span><span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+	<span class="kt">int</span> <span class="n">b</span><span class="p">;</span>
+<span class="p">};</span>
+<span class="k">class</span> <span class="nc">C</span> <span class="o">:</span><span class="k">virtual</span> <span class="k">public</span> <span class="n">A</span> <span class="c1">//与B一样16
+</span><span class="c1"></span><span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+	<span class="kt">int</span> <span class="n">c</span><span class="p">;</span>
+<span class="p">};</span>
+<span class="k">class</span> <span class="nc">D</span> <span class="o">:</span><span class="k">public</span> <span class="n">B</span><span class="p">,</span> <span class="k">public</span> <span class="n">C</span>
+         <span class="c1">//大小为40,变量a,b,c,d共16，B的虚基类指针8，C的虚基类指针8,D类的虚指针8
+</span><span class="c1"></span>         <span class="c1">//也可以这样算： B, C 一共 32, d占4字节，D虚指针8,一共44, 减去B,C重复的A，得 40
+</span><span class="c1"></span><span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+	<span class="kt">int</span> <span class="n">d</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+	<span class="n">A</span> <span class="n">a</span><span class="p">;</span>
+	<span class="n">B</span> <span class="n">b</span><span class="p">;</span>
+	<span class="n">C</span> <span class="n">c</span><span class="p">;</span>
+	<span class="n">D</span> <span class="n">d</span><span class="p">;</span>
+	<span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;A &#34;</span> <span class="o">&lt;&lt;</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+	<span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;B &#34;</span> <span class="o">&lt;&lt;</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+	<span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;C &#34;</span> <span class="o">&lt;&lt;</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+	<span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;D &#34;</span> <span class="o">&lt;&lt;</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+	<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div><p>从上面的两个例子中可以看出，在普通继承中的通过不同途径继承自同一继承祖先类的子孙
 类中包含多份拷贝，在大型的软件系统中，这很浪费资源。</p>
-
 <h3 id="虚继承与虚函数">虚继承与虚函数</h3>
-
 <p>这两者是完全不同的概念，虚继承是解决多重继承带来的两个问题；而虚函数是为了实现多
 态。</p>
-
 <h2 id="总结">总结</h2>
-
 <p>这篇是对面向对象三大特性之一进行简单的介绍，重点还是要理解继承权限的关系以及虚继
 承和普通继承的内存布局，不要把虚继承和虚函数的弄混淆。</p>
 
@@ -466,6 +413,8 @@ int main()
     
     <li><a href="/categories/%e5%86%85%e5%ad%98%e7%ae%a1%e7%90%86" title="内存管理">内存管理<sup>1</sup></a></li>
     
+    <li><a href="/categories/%e5%86%85%e6%a0%b8%e5%ae%9e%e9%aa%8c" title="内核实验">内核实验<sup>1</sup></a></li>
+    
     <li><a href="/categories/%e5%91%bd%e4%bb%a4%e8%a1%8c%e8%89%ba%e6%9c%af" title="命令行艺术">命令行艺术<sup>3</sup></a></li>
     
     <li><a href="/categories/%e5%ad%a6%e4%b9%a0%e7%ac%94%e8%ae%b0" title="学习笔记">学习笔记<sup>13</sup></a></li>
@@ -491,6 +440,8 @@ int main()
 	<p class="asidetitle">标签</p>
 		<ul class="clearfix">
       
+			<li><a href="/tags/bochs" title="bochs">bochs<sup>1</sup></a></li>
+      
 			<li><a href="/tags/c&#43;&#43;" title="c&#43;&#43;">c&#43;&#43;<sup>10</sup></a></li>
       
 			<li><a href="/tags/command" title="command">command<sup>3</sup></a></li>
@@ -505,9 +456,9 @@ int main()
       
 			<li><a href="/tags/jemalloc" title="jemalloc">jemalloc<sup>1</sup></a></li>
       
-			<li><a href="/tags/kernel" title="kernel">kernel<sup>7</sup></a></li>
+			<li><a href="/tags/kernel" title="kernel">kernel<sup>8</sup></a></li>
       
-			<li><a href="/tags/linux" title="linux">linux<sup>12</sup></a></li>
+			<li><a href="/tags/linux" title="linux">linux<sup>13</sup></a></li>
       
 			<li><a href="/tags/linux%e5%86%85%e6%a0%b8" title="linux内核">linux内核<sup>1</sup></a></li>
       
@@ -569,6 +520,11 @@ int main()
       
       
       <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2020-04">2020年04月</a><span class="archive-list-count">1</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
         <a class="archive-list-link" href="/post/#2019-09">2019年09月</a><span class="archive-list-count">1</span>
       </li>
       
@@ -622,6 +578,8 @@ int main()
 <div class="tagcloudlist">
   <p class="asidetitle">标签云</p>
   <div class="tagcloudlist clearfix">
+    
+    <a href="/tags/bochs" style="font-size: 12px;">bochs</a>
     
     <a href="/tags/c&#43;&#43;" style="font-size: 12px;">c&#43;&#43;</a>
     
@@ -721,7 +679,7 @@ int main()
     
     
   </div>
-  <p class="copyright">Powered by <a href="http://gohugo.io" target="_blank" title="hugo">hugo</a> and Theme by <a href="https://github.com/coderzh/hugo-pacman-theme" target="_blank" title="hugo-pacman-theme">hugo-pacman-theme</a> © 2019
+  <p class="copyright">Powered by <a href="http://gohugo.io" target="_blank" title="hugo">hugo</a> and Theme by <a href="https://github.com/coderzh/hugo-pacman-theme" target="_blank" title="hugo-pacman-theme">hugo-pacman-theme</a> © 2020
     
     <a href="/" title="北极狼徒">北极狼徒</a>
     
