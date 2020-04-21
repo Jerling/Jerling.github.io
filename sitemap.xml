@@ -3,12 +3,42 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>/tags/bochs/</loc>
+    <loc>/categories/</loc>
     <lastmod>2020-04-21T00:11:54+08:00</lastmod>
   </url>
   
   <url>
-    <loc>/categories/</loc>
+    <loc>/post/</loc>
+    <lastmod>2020-04-21T00:11:54+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/snippets/</loc>
+    <lastmod>2020-04-21T00:00:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/</loc>
+    <lastmod>2020-04-21T00:11:54+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/vscode/</loc>
+    <lastmod>2020-04-21T00:00:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/post/my_snippets/</loc>
+    <lastmod>2020-04-21T00:00:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/categories/%E6%95%88%E7%8E%87%E5%B7%A5%E5%85%B7/</loc>
+    <lastmod>2020-04-21T00:00:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/bochs/</loc>
     <lastmod>2020-04-21T00:11:54+08:00</lastmod>
   </url>
   
@@ -24,16 +54,6 @@
   
   <url>
     <loc>/post/oslab_env/</loc>
-    <lastmod>2020-04-21T00:11:54+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/post/</loc>
-    <lastmod>2020-04-21T00:11:54+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/tags/</loc>
     <lastmod>2020-04-21T00:11:54+08:00</lastmod>
   </url>
   
