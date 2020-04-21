@@ -124,7 +124,7 @@
   <span class="k">volatile</span> <span class="kt">int</span> <span class="n">counter</span><span class="p">;</span>
 <span class="p">}</span> <span class="n">atomic_t</span><span class="p">;</span>
 </code></pre></div><p>内核提供的接口在 <code>&lt;asm/atomic.h&gt;</code> 中：
-<img src="/images/%E6%88%AA%E5%9B%BE_2019-06-12_21-08-15.png" alt=""></p>
+{{ figure src= &ldquo;/images/截图_2019-06-12_21-08-15.png&rdquo; &gt;}}</p>
 <blockquote>
 <p>能使用原子操作时尽量使用，相比于其它的加锁机制。原子操作与复杂的同步方法系统开
 销更小，对高速缓存的影响也很小。原子操作大部分是内联函数，内嵌汇编代码。</p>
@@ -137,7 +137,7 @@
 <h4 id="原子位操作">原子位操作</h4>
 <p>位操作是对普通内存地址进行操作。参数是一个地址和位号。只要指针指向目标数据，就可
 以对其操作。
-<img src="/images/%E6%88%AA%E5%9B%BE_2019-06-12_21-23-14.png" alt=""></p>
+{{ figure src= &ldquo;/images/截图_2019-06-12_21-23-14.png&rdquo; &gt;}}</p>
 <p>内核同时还提供了非原子位操作，函数名称是上述函数前前面加上双下划线。如
 <code>test_bit()</code> 的非原子形式为 <code>__test_bit()</code>. 它通常比原子操作快些。</p>
 <h3 id="自旋锁">自旋锁</h3>
@@ -188,7 +188,10 @@
 <p>和读写自旋锁一样，将信号量细分为读写两个步骤进行加锁</p>
 <h3 id="互斥体">互斥体</h3>
 <p>是一种比互斥信号量简洁高效的互斥锁；行为和互斥信号量类似，但接口比互斥信号量简单；
-<img src="/images/%E6%88%AA%E5%9B%BE_2019-06-12_23-31-46.png" alt=""></p>
+<figure>
+    <img src="/images/%e6%88%aa%e5%9b%be_2019-06-12_23-31-46.png"/> 
+</figure>
+</p>
 <p>互斥体的使用场景相对而言更严格、定向：</p>
 <ul>
 <li>任何时刻只有一个任务持有 <code>mutex</code>,即 <code>mutex</code> 的计数永远为 1</li>
@@ -202,7 +205,10 @@
 约束法则的行为。</p>
 <p>对于信号量和互斥体的选择：首选互斥体，除非它的约束条件不够</p>
 <p>自旋锁和互斥体的选择：
-<img src="/images/%E6%88%AA%E5%9B%BE_2019-06-12_23-44-23.png" alt=""></p>
+<figure>
+    <img src="/images/%e6%88%aa%e5%9b%be_2019-06-12_23-44-23.png"/> 
+</figure>
+</p>
 <h3 id="完成变量">完成变量</h3>
 <p>用于一个任务发送给另一个任务发生某个特定事件的信号。他是信号量的简单替代解决方案，
 如子进程执行或退出时使用完成变量唤醒父进程。</p>
