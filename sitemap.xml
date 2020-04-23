@@ -3,6 +3,26 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>/post/oslab_syscall/</loc>
+    <lastmod>2020-04-23T17:36:13+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/post/</loc>
+    <lastmod>2020-04-23T17:36:13+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/syscall/</loc>
+    <lastmod>2020-04-23T17:36:13+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/</loc>
+    <lastmod>2020-04-23T17:36:13+08:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/tags/bootsect/</loc>
     <lastmod>2020-04-23T00:00:00+08:00</lastmod>
   </url>
@@ -18,17 +38,7 @@
   </url>
   
   <url>
-    <loc>/post/</loc>
-    <lastmod>2020-04-23T00:00:00+08:00</lastmod>
-  </url>
-  
-  <url>
     <loc>/tags/setup/</loc>
-    <lastmod>2020-04-23T00:00:00+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/tags/</loc>
     <lastmod>2020-04-23T00:00:00+08:00</lastmod>
   </url>
   

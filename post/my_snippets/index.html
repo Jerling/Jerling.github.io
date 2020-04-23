@@ -136,21 +136,23 @@
 <span class="p">}</span>
 </code></pre></div><h3 id="hugo相关">hugo相关</h3>
 <div class="highlight"><pre class="chroma"><code class="language-json" data-lang="json"><span class="s2">&#34;Hugo head&#34;</span><span class="err">:</span> <span class="p">{</span>
-    <span class="nt">&#34;prefix&#34;</span><span class="p">:</span> <span class="s2">&#34;hugo_head&#34;</span><span class="p">,</span>
-    <span class="nt">&#34;body&#34;</span><span class="p">:</span> <span class="p">[</span>
-        <span class="s2">&#34;title = \&#34;$1\&#34;&#34;</span><span class="p">,</span>
-        <span class="s2">&#34;author = [\&#34;Jerling\&#34;]&#34;</span><span class="p">,</span>
-        <span class="s2">&#34;description = \&#34;$2\&#34;&#34;</span><span class="p">,</span>
-        <span class="s2">&#34;date = $CURRENT_YEAR-$CURRENT_MONTH-$CURRENT_DATE $CURRENT_HOUR:$CURRENT_MINUTE:$CURRENT_SECOND&#34;</span><span class="p">,</span>
-        <span class="s2">&#34;lastmod = $CURRENT_YEAR-$CURRENT_MONTH-$CURRENT_DATE $CURRENT_HOUR:$CURRENT_MINUTE:$CURRENT_SECOND&#34;</span><span class="p">,</span>
-        <span class="s2">&#34;tags = [\&#34;$3\&#34;]&#34;</span><span class="p">,</span>
-        <span class="s2">&#34;categories = [\&#34;$4\&#34;]&#34;</span><span class="p">,</span>
-        <span class="s2">&#34;type = \&#34;post\&#34;&#34;</span><span class="p">,</span>
-        <span class="s2">&#34;draft = false&#34;</span><span class="p">,</span>
-        <span class="s2">&#34;author_homepage = \&#34;https://github.com/Jerling\&#34;&#34;</span><span class="p">,</span>
-        <span class="s2">&#34;toc = \&#34;true\&#34;&#34;</span>
-    <span class="p">]</span>
-<span class="p">}</span><span class="err">,</span>
+		<span class="nt">&#34;prefix&#34;</span><span class="p">:</span> <span class="s2">&#34;hugo_head&#34;</span><span class="p">,</span>
+		<span class="nt">&#34;body&#34;</span><span class="p">:</span> <span class="p">[</span>
+			<span class="s2">&#34;+++&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;title = \&#34;$1\&#34;&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;author = [\&#34;Jerling\&#34;]&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;description = \&#34;$2\&#34;&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;date = $CURRENT_YEAR-$CURRENT_MONTH-${CURRENT_DATE}T$CURRENT_HOUR:$CURRENT_MINUTE:$CURRENT_SECOND+08:00&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;lastmod = $CURRENT_YEAR-$CURRENT_MONTH-${CURRENT_DATE}T$CURRENT_HOUR:$CURRENT_MINUTE:$CURRENT_SECOND+08:00&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;tags = [\&#34;$4\&#34;, \&#34;$5\&#34;, \&#34;$6\&#34;]&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;categories = [\&#34;$7\&#34;]&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;type = \&#34;post\&#34;&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;draft = false&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;author_homepage = \&#34;https://github.com/Jerling\&#34;&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;toc = \&#34;true\&#34;&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;+++\n\n# $8&#34;</span>
+		<span class="p">]</span>
+	<span class="p">}</span><span class="err">,</span>
 </code></pre></div><div class="highlight"><pre class="chroma"><code class="language-json" data-lang="json"><span class="s2">&#34;insert figure src&#34;</span><span class="err">:</span> <span class="p">{</span>
     <span class="nt">&#34;prefix&#34;</span><span class="p">:</span> <span class="s2">&#34;hugo_figure&#34;</span><span class="p">,</span>
     <span class="nt">&#34;body&#34;</span><span class="p">:</span> <span class="s2">&#34;\{\{&lt; figure src=\&#34;/images/$1.png\&#34; &gt;}}\n&#34;</span>
@@ -269,6 +271,8 @@
       
 			<li><a href="/tags/snippets" title="snippets">snippets<sup>1</sup></a></li>
       
+			<li><a href="/tags/syscall" title="syscall">syscall<sup>1</sup></a></li>
+      
 			<li><a href="/tags/tcmalloc" title="tcmalloc">tcmalloc<sup>1</sup></a></li>
       
 			<li><a href="/tags/terminal" title="terminal">terminal<sup>5</sup></a></li>
@@ -325,7 +329,7 @@
       
       
       <li class="archive-list-item">
-        <a class="archive-list-link" href="/post/#2020-04">2020年04月</a><span class="archive-list-count">3</span>
+        <a class="archive-list-link" href="/post/#2020-04">2020年04月</a><span class="archive-list-count">4</span>
       </li>
       
       
@@ -415,6 +419,8 @@
     <a href="/tags/shell" style="font-size: 12px;">shell</a>
     
     <a href="/tags/snippets" style="font-size: 12px;">snippets</a>
+    
+    <a href="/tags/syscall" style="font-size: 12px;">syscall</a>
     
     <a href="/tags/tcmalloc" style="font-size: 12px;">tcmalloc</a>
     

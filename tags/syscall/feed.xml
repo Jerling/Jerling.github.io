@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>syscall on 北极狼徒</title>
+    <link>/tags/syscall/</link>
+    <description>Recent content in syscall on 北极狼徒</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Thu, 23 Apr 2020 09:54:13 +0800</lastBuildDate>
+    
+	<atom:link href="/tags/syscall/feed.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Linux 内核学习 ——— 系统调用</title>
+      <link>/post/oslab_syscall/</link>
+      <pubDate>Thu, 23 Apr 2020 09:54:13 +0800</pubDate>
+      
+      <guid>/post/oslab_syscall/</guid>
+      <description>系统调用 实验内容 在linux0.11上添加两个系统调用iam()和whoami，分别用于向内核空间存字符串和取字符串。 添加步骤 在 include/unistd.h 中添加系统</description>
+    </item>
+    
+  </channel>
+</rss>

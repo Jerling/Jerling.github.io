@@ -12,6 +12,15 @@
     
     
     <item>
+      <title>Linux 内核学习 ——— 系统调用</title>
+      <link>/post/oslab_syscall/</link>
+      <pubDate>Thu, 23 Apr 2020 09:54:13 +0800</pubDate>
+      
+      <guid>/post/oslab_syscall/</guid>
+      <description>系统调用 实验内容 在linux0.11上添加两个系统调用iam()和whoami，分别用于向内核空间存字符串和取字符串。 添加步骤 在 include/unistd.h 中添加系统</description>
+    </item>
+    
+    <item>
       <title>Linux内核学习 ———— 系统引导</title>
       <link>/post/oslab_experiment_01/</link>
       <pubDate>Thu, 23 Apr 2020 00:00:00 +0800</pubDate>
