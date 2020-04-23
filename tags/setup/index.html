@@ -2,17 +2,18 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <title>Linux 内核设计与实现 — 时间管理 - 北极狼徒</title>
+  <title>setup - 北极狼徒</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
   
-  <meta name="description" content="Short description">
+  <meta name="description" content="setup">
   
-  <meta itemprop="name" content="Linux 内核设计与实现 — 时间管理 - 北极狼徒">
-  <meta itemprop="description" content="Short description">
+  <meta itemprop="name" content="setup - 北极狼徒">
+  <meta itemprop="description" content="setup">
   <meta itemprop="image" content="/img/author.jpg">
   
-  <meta name="twitter:description" content="Short description" />
   
+  <meta name="twitter:description" content="随便写写">
+  <link rel="alternate" href="/feed.xml" title="北极狼徒" type="application/rss+xml"/>
   <link rel="shortcut icon" href="/img/favicon.ico"/>
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
   <link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png" />
@@ -57,228 +58,21 @@
 
   </header>
   <div id="container">
-    <div id="main" class="post" itemscope itemprop="blogPost">
-	<article itemprop="articleBody">
-    <header class="article-info clearfix">
-  <h1 itemprop="name">
-      <a href="/post/linux_kernel_design_and_impl_ch11/" title="Linux 内核设计与实现 — 时间管理" itemprop="url">Linux 内核设计与实现 — 时间管理</a>
-  </h1>
-  <p class="article-author">By
-    
-      <a href="https://github.com/Jerling" title="[Jerling]">[Jerling]</a>
-    
-  </p>
-  <p class="article-time">
-    <time datetime="2019-06-20 20:52:58 &#43;0800 CST" itemprop="datePublished">2019年06月20日</time>
-  </p>
-</header>
+    <div id="main">
+      
+      <h2 id="2020-04">2020-04</h2>
+      
+      <section class="post" itemscope itemprop="blogPost">
+    <a href="/post/oslab_experiment_01/" title="Linux内核学习 ———— 系统引导" itemprop="url">
+    <h1 itemprop="name">Linux内核学习 ———— 系统引导</h1>
+    <p itemprop="description">实验目的 了解操作系统的加载过程 实验内容 修改bootsect.s程序：实现打印一个字符串 修改setup.s 程序：实现打印字符串并打印至少一个硬</p>
+    <time datetime="2020-04-23 00:00:00 &#43;0800 CST" itemprop="datePublished">2020年04月23日</time>
+  </a>
+</section>
 
-	<div class="article-content">
-    
-		<div class="toc-article">
-			<strong class="toc-title">文章目录</strong>
-      <nav id="TableOfContents">
-  <ul>
-    <li><a href="#概念">概念</a></li>
-    <li><a href="#节拍率-hz">节拍率 : HZ</a>
-      <ul>
-        <li><a href="#理想的-hz-值">理想的 HZ 值</a></li>
-      </ul>
-    </li>
-    <li><a href="#jiffies">jiffies</a>
-      <ul>
-        <li><a href="#内部表示">内部表示</a></li>
-        <li><a href="#回绕">回绕</a></li>
-        <li><a href="#用户空间-hz">用户空间 HZ</a></li>
-      </ul>
-    </li>
-    <li><a href="#硬时钟和定时器">硬时钟和定时器</a>
-      <ul>
-        <li><a href="#实时时钟">实时时钟</a></li>
-        <li><a href="#系统定时器">系统定时器</a></li>
-      </ul>
-    </li>
-    <li><a href="#时钟中断处理程序">时钟中断处理程序</a></li>
-    <li><a href="#实际时间">实际时间</a></li>
-    <li><a href="#定时器">定时器</a>
-      <ul>
-        <li><a href="#使用定时器">使用定时器</a></li>
-      </ul>
-    </li>
-    <li><a href="#延迟执行">延迟执行</a>
-      <ul>
-        <li><a href="#忙等待">忙等待</a></li>
-        <li><a href="#短延迟">短延迟</a></li>
-        <li><a href="#shedule-timeout">shedule_timeout()</a></li>
-      </ul>
-    </li>
-  </ul>
-</nav>
-		</div>
-    
-    <p>内核中有很多基于时间驱动的函数，如调度程序中运行队列进行平衡调整或对屏幕进行刷新等。时间管理中需注意相对时间和绝对时间的差别以及周期性事件和推迟到某个时间点的区别。系统定时器是一种可编程硬件芯片，能以固定频率产生中断 &mdash; 定时器中断。</p>
-<h2 id="概念">概念</h2>
-<ul>
-<li>系统定时器：硬件为内核提供计算流逝的时间</li>
-<li>节拍率：系统时钟自行触发时钟的频率，可通过编程预定</li>
-<li>节拍：连续两次时钟中断的间隔时间，为节拍率的倒数</li>
-<li>墙上时间：实际时间</li>
-<li>系统运行时间：自系统启动后开始所经过的时间</li>
-</ul>
-<h2 id="节拍率-hz">节拍率 : HZ</h2>
-<p>通过静态预处理定义的。在 <code>&lt;asm/aparam.h&gt;</code> 中定义了该值。这个值不是一个固定不变的值。</p>
-<h3 id="理想的-hz-值">理想的 HZ 值</h3>
-<p>高频率的好处：</p>
-<ol>
-<li>提高时间驱动事件的解析度 (resolution)</li>
-<li>提高时间驱动事件的准确度 (accuracy)</li>
-</ol>
-<h4 id="优势">优势</h4>
-<ol>
-<li>内核定时器能以更高的精度和准确度运行</li>
-<li>依赖定时器的系统调用(poll,select) 能以更高的精度运行</li>
-<li>对诸如资源消耗和系统运行时间等的测量会有更精细的精度</li>
-<li>提高进程枪占的准确度</li>
-</ol>
-<h4 id="劣势">劣势</h4>
-<p>系统的负担越重。节拍率越高，中断处理程序占用处理器的时间越多。不仅减少其它工作的时间，而且更频繁地大乱处理器高速缓冲并增加耗电。</p>
-<blockquote>
-<p>无节拍OS:根据需要动态调整和重新设置 HZ 的OS. Linux 内核设置 <code>CONFIG_HZ</code> 可配置无节拍。</p>
-</blockquote>
-<h2 id="jiffies">jiffies</h2>
-<p>为全局变量，记录自系统启动以来产生的节拍的总数。</p>
-<p>定义在 <code>linux/jiffies.h</code> 中：</p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="k">extern</span> <span class="kt">unsigned</span> <span class="kt">long</span> <span class="k">volatile</span> <span class="n">jiffies</span><span class="p">;</span>
-</code></pre></div><h3 id="内部表示">内部表示</h3>
-<p>根据体系结构而定，在特定的体系结构相关的代码中还定义了 <code>jiffies_64</code> 这个变量。在
-32位机器上 <code>jiffies</code> 为 <code>jiffies_64</code> 的低32位的值，如果要获取 <code>jiffies_64</code> 的值，可通过 <code>get_jiffies_64()</code> 获取。在64位机器中， <code>jiffies</code> 和 <code>jiffies_64</code> 是同一变量。</p>
-<h3 id="回绕">回绕</h3>
-<p>当 <code>jiffies</code> 增加到最大值后会回到 <code>0</code>, 因此在定时事件比较时要防止回绕。</p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#define time_after(a,b)		\
-</span><span class="cp">	(typecheck(unsigned long, a) &amp;&amp; \
-</span><span class="cp">	 typecheck(unsigned long, b) &amp;&amp; \
-</span><span class="cp">	 ((long)(b) - (long)(a) &lt; 0))
-</span><span class="cp">#define time_before(a,b)	time_after(b,a)
-</span><span class="cp"></span>
-<span class="cp">#define time_after_eq(a,b)	\
-</span><span class="cp">	(typecheck(unsigned long, a) &amp;&amp; \
-</span><span class="cp">	 typecheck(unsigned long, b) &amp;&amp; \
-</span><span class="cp">	 ((long)(a) - (long)(b) &gt;= 0))
-</span><span class="cp">#define time_before_eq(a,b)	time_after_eq(b,a)
-</span></code></pre></div><h3 id="用户空间-hz">用户空间 HZ</h3>
-<p>定义为 <code>USER_HZ</code> . 这个值不一定等于 <code>HZ</code> . 可能需要内核提供一些转换的函数。</p>
-<h2 id="硬时钟和定时器">硬时钟和定时器</h2>
-<p>体系结构提供两种设备进行计时 &mdash; 系统定时器和实时时钟。</p>
-<h3 id="实时时钟">实时时钟</h3>
-<p>实时时钟 (RTC) 是用来持久存放系统时间的设备。</p>
-<p>系统启动时，内核读取 RTC 来初始化墙上时间，存放在 <code>xtime</code> 变量中。</p>
-<h3 id="系统定时器">系统定时器</h3>
-<p>一种周期性触发中断机制。不同的体系结构实现不一样，如对电子晶振进行分频、衰减测量器。</p>
-<p>在 x86 体系中，主要使用可编程中断时钟 (PIT). 内核在启动时对 PIT 进行编程初始化，使其能够以 HZ/秒的频率产生中断。</p>
-<h2 id="时钟中断处理程序">时钟中断处理程序</h2>
-<p>分为体系结构相关部分和不相关部分。</p>
-<p>相关部分的例程作为系统定时器的中断处理程序而注册到内核中，以便产生时钟中断时能够运行。大部分的处理程序最低限度地执行如下工作：</p>
-<ol>
-<li>获得 <code>xtime_lock</code> 锁，以便访问 <code>jiffies_64</code> 和保护墙上时间 <code>xtime</code></li>
-<li>需要时应答或重新设置系统时钟</li>
-<li>周期性地使用墙上时间更新实时时钟</li>
-<li>调用体系结构无关的时钟例程： <code>tick_periodic()</code>
-<ol>
-<li>给 <code>jiffies_64</code> 变量加 1</li>
-<li>更新资源消耗的统计值，比如当前进程的系统时间和用户时间</li>
-<li>执行已经到期的动态定时器</li>
-<li>执行 <code>sheduler_tick()</code> 函数</li>
-<li>更新墙上时间，放在 <code>xtime</code> 中</li>
-<li>计算平均负载值</li>
-</ol>
-</li>
-</ol>
-<h2 id="实际时间">实际时间</h2>
-<p>定义于 <code>kernel/time/timekeeping.c</code></p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="k">struct</span> <span class="n">timespec</span> <span class="n">xtime</span><span class="p">;</span>
-</code></pre></div><p>读写 <code>xtime</code> 需要使用 <code>xtime_lock</code>,该锁为 <code>seqlock</code> 锁。</p>
-<p>更新首先要申请一个 <code>seqlock</code>:</p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="n">write_seqlock</span><span class="p">(</span><span class="o">&amp;</span><span class="n">xtime_lock</span><span class="p">);</span>
-<span class="p">...</span>
-<span class="n">write_sequnlock</span><span class="p">(</span><span class="o">&amp;</span><span class="n">xtime_lock</span><span class="p">);</span>
-</code></pre></div><p>读取也要使用 <code>read_seqbegin()</code> 和 <code>read_seqretry()</code> 函数。</p>
-<p>从用户空间获取墙上时间的主要接口为 <code>gettimeofday()</code> . 设置时间 <code>settimeofday()</code>,
-需要 <code>CAP_SYS_TIME</code> 权能。</p>
-<h2 id="定时器">定时器</h2>
-<p>也称动态定时器或内核定时器，管理内核流逝的时间的基础。</p>
-<h3 id="使用定时器">使用定时器</h3>
-<p>由 <code>timer_list</code> 表示，定义在 <code>&lt;linux/timer.h&gt;</code> 中。</p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="k">struct</span> <span class="n">timer_list</span> <span class="p">{</span>
-	<span class="cm">/*
-</span><span class="cm">	 * All fields that change during normal runtime grouped to the
-</span><span class="cm">	 * same cacheline
-</span><span class="cm">	 */</span>
-	<span class="k">struct</span> <span class="n">list_head</span> <span class="n">entry</span><span class="p">;</span> <span class="cm">/* 定时器入口 */</span>
-	<span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">expires</span><span class="p">;</span>  <span class="cm">/* 以 jffies 为单位的定时值 */</span>
-	<span class="k">struct</span> <span class="n">tvec_base</span> <span class="o">*</span><span class="n">base</span><span class="p">;</span> <span class="cm">/* 定时器内部值 */</span>
-
-	<span class="kt">void</span> <span class="p">(</span><span class="o">*</span><span class="n">function</span><span class="p">)(</span><span class="kt">unsigned</span> <span class="kt">long</span><span class="p">);</span> <span class="cm">/* 定时器处理函数 */</span>
-	<span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">data</span><span class="p">;</span>    <span class="cm">/* 长整型参数 */</span>
-<span class="p">...</span>
-<span class="p">};</span>
-</code></pre></div><p>使用过程：定义 -&gt; 初始化 -&gt; 定义时间点，参数，处理函数 -&gt; 激活定时器。</p>
-<p>定时器事件在超时后会执行，但也可能推迟到下一次节拍才能运行。所以不能实现硬实时任务。</p>
-<p>修改已激活的定时器： <code>mod_timer()</code>, 也可以操作未激活的定时器，此时还会激活该定时器。</p>
-<p>删除定时器： <code>del_timer()</code>, 已超时的不需要调用，会自动删除。在多处理器上，需要等待可能在其它处理器上运行的定时器处理程序都退出，使用： <code>del_timer_sync()</code></p>
-<h2 id="延迟执行">延迟执行</h2>
-<h3 id="忙等待">忙等待</h3>
-<p>在想要延迟的时间是节拍的整数倍，或者精确率要求不高时使用。</p>
-<h3 id="短延迟">短延迟</h3>
-<p>多发生在和硬件同步时，需要短暂等待某个动作完成。内核提供了处理 <code>ms</code>, <code>ns</code>, <code>us</code>
-级别的延迟函数。</p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">void</span> <span class="nf">udelay</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">usecs</span><span class="p">);</span>
-<span class="kt">void</span> <span class="nf">ndelay</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">usecs</span><span class="p">);</span>
-<span class="kt">void</span> <span class="nf">mdelay</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">usecs</span><span class="p">);</span>
-</code></pre></div><h3 id="shedule-timeout">shedule_timeout()</h3>
-<p>该方法会让需要延迟执行的任务睡眠到指定的延迟时间点，但不能保证睡眠时间正好等于指定的延迟时间，只能尽量使睡眠时间接近指定的延迟时间。</p>
-
-    
-	</div>
-  <footer class="article-footer clearfix">
-  
-
-<div class="article-tags">
-  <span></span>
-  
-  <a href="/tags/linux">linux</a>
-  
-  <a href="/tags/kernel">kernel</a>
-  
-  <a href="/tags/%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86">时间管理</a>
-  
-</div>
-
-
-
-
-
-<div class="article-categories">
-  <span></span>
-  
-  <a class="article-category-link" href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0">学习笔记</a>
-  
-</div>
-
-
-
-  <div class="article-share" id="share">
-    <div data-url="/post/linux_kernel_design_and_impl_ch11/" data-title="Linux 内核设计与实现 — 时间管理" data-tsina="123" class="share clearfix">
+      
+      
     </div>
-  </div>
-</footer>
-
-	</article>
-  
-
-
-
-</div>
-
     <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
 <div id="asidepart">
 <div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
@@ -549,6 +343,10 @@
 
 
   
+<div class="rsspart">
+  <a rel="nofollow" href="/feed.xml" type="application/rss+xml" target="_blank">RSS 订阅</a>
+</div>
+
 
 </aside>
 </div>
@@ -639,38 +437,6 @@ $(document).ready(function(){
 
 <script type="text/javascript">
 $(document).ready(function(){
-  var ai = $('.article-content>iframe'),
-      ae = $('.article-content>embed'),
-      t  = $('#toc'),
-      h  = $('article h2')
-      ah = $('article h2'),
-      ta = $('#toc.toc-aside'),
-      o  = $('.openaside'),
-      c  = $('.closeaside');
-  if(ai.length>0){
-    ai.wrap('<div class="video-container" />');
-  };
-  if(ae.length>0){
-   ae.wrap('<div class="video-container" />');
-  };
-  if(ah.length==0){
-    t.css('display','none');
-  }else{
-    c.click(function(){
-      ta.css('display', 'block').addClass('fadeIn');
-    });
-    o.click(function(){
-      ta.css('display', 'none');
-    });
-    $(window).scroll(function(){
-      ta.css("top",Math.max(140,320-$(this).scrollTop()));
-    });
-  };
-});
-</script>
-
-<script type="text/javascript">
-$(document).ready(function(){
   var $this = $('.share'),
       url = $this.attr('data-url'),
       encodedUrl = encodeURIComponent(url),
@@ -697,27 +463,6 @@ $(document).ready(function(){
 });
 </script>
 
-
-<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
-<script src="/fancybox/jquery.fancybox.pack.js"></script>
-<script type="text/javascript">
-$(document).ready(function(){
-  $('.article-content').each(function(i){
-    $(this).find('img').each(function(){
-      if ($(this).parent().hasClass('fancybox')) return;
-      var alt = this.alt;
-      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
-      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
-    });
-    $(this).find('.fancybox').each(function(){
-      $(this).attr('rel', 'article' + i);
-    });
-  });
-  if($.fancybox){
-    $('.fancybox').fancybox();
-  }
-});
-</script>
 
 
 

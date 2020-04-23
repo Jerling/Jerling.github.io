@@ -1,0 +1,958 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>Linux内核学习 ———— 系统引导 - 北极狼徒</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+  
+  <meta name="description" content="系统启动">
+  
+  <meta itemprop="name" content="Linux内核学习 ———— 系统引导 - 北极狼徒">
+  <meta itemprop="description" content="系统启动">
+  <meta itemprop="image" content="/img/author.jpg">
+  
+  <meta name="twitter:description" content="系统启动" />
+  
+  <link rel="shortcut icon" href="/img/favicon.ico"/>
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png" />
+  <link rel="stylesheet" href="/highlight/styles/github.css">
+  <script src="/highlight/highlight.pack.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  
+  <link rel="stylesheet" href="/font/hack/css/hack.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <header>
+    <div>
+  
+  <div id="imglogo">
+    <a href="/"><img src="/img/logo.svg" alt="北极狼徒" title="北极狼徒"/></a>
+  </div>
+  
+  <div id="textlogo">
+    <h1 class="site-name"><a href="/" title="北极狼徒">北极狼徒</a></h1>
+    <h2 class="blog-motto">个人博客</h2>
+  </div>
+  <div class="navbar"><a class="navbutton navmobile" href="#" title="menu"></a></div>
+  <nav class="animated">
+    <ul>
+      
+      <li><a href="/">首页</a></li>
+      
+      <li><a href="/about">关于</a></li>
+      
+      <li>
+        <form class="search" method="get" action="https://www.google.com/search">
+          <div>
+            <input type="text" id="search" name="q" placeholder="搜索">
+          </div>
+        </form>
+      </li>
+    </ul>
+  </nav>
+</div>
+
+  </header>
+  <div id="container">
+    <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody">
+    <header class="article-info clearfix">
+  <h1 itemprop="name">
+      <a href="/post/oslab_experiment_01/" title="Linux内核学习 ———— 系统引导" itemprop="url">Linux内核学习 ———— 系统引导</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="https://github.com/Jerling" title="[Jerling]">[Jerling]</a>
+    
+  </p>
+  <p class="article-time">
+    <time datetime="2020-04-23 00:00:00 &#43;0800 CST" itemprop="datePublished">2020年04月23日</time>
+  </p>
+</header>
+
+	<div class="article-content">
+    
+		<div class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#实验目的">实验目的</a></li>
+    <li><a href="#实验内容">实验内容</a></li>
+    <li><a href="#bootsect程序">bootsect程序</a></li>
+    <li><a href="#setup程序">setup程序</a>
+      <ul>
+        <li><a href="#bootsect加载setup">bootsect加载setup</a></li>
+        <li><a href="#setup关键代码">setup关键代码</a></li>
+        <li><a href="#编译和链接">编译和链接</a></li>
+        <li><a href="#实验结果">实验结果</a></li>
+      </ul>
+    </li>
+    <li><a href="#实验总结">实验总结</a></li>
+    <li><a href="#参考">参考</a></li>
+  </ul>
+</nav>
+		</div>
+    
+    <h2 id="实验目的">实验目的</h2>
+<p>了解操作系统的加载过程</p>
+<h2 id="实验内容">实验内容</h2>
+<ol>
+<li>修改bootsect.s程序：实现打印一个字符串</li>
+<li>修改setup.s 程序：实现打印字符串并打印至少一个硬件参数</li>
+<li>linux-0.11中bootsect程序加载了系统镜像，这里不再加载</li>
+</ol>
+<h2 id="bootsect程序">bootsect程序</h2>
+<p>如果只考虑引导扇区程序的话，bootsect 可以做得非常简单，而且也必须非常简单，因为 BIOS只加载一个扇区，也就是说bootsect必须控制在512B以内：</p>
+<ol>
+<li>BIOS将 bootsect程序加载进内存特定地址(0x07c0)，这是固定的</li>
+<li>跳转到bootsect程序的开始地址开始执行</li>
+</ol>
+<p>下面以打印&quot;Welcome to BootSet&quot;字符串为例写一个最简单的bootsect程序</p>
+<div class="highlight"><pre class="chroma"><code class="language-asm" data-lang="asm"><span class="na">.globl</span> <span class="no">begtext</span><span class="p">,</span> <span class="no">begdata</span><span class="p">,</span> <span class="no">begbss</span><span class="p">,</span> <span class="no">endtext</span><span class="p">,</span> <span class="no">enddata</span><span class="p">,</span> <span class="no">endbss</span>
+<span class="na">.text</span>
+<span class="nl">begtext:</span>
+<span class="na">.data</span>
+<span class="nl">begdata:</span>
+<span class="na">.bss</span>
+<span class="nl">begbss:</span>
+<span class="na">.text</span>
+
+<span class="nf">BOOTSEG</span> <span class="err">=</span> <span class="mi">0x07c0</span>                        <span class="p">!</span><span class="no">BIOS将启动扇区加载在这个位置</span>
+
+<span class="nf">entry</span> <span class="no">_start</span>
+<span class="nl">_start:</span>
+        <span class="nf">jmpi</span>    <span class="no">main</span><span class="p">,</span> <span class="no">BOOTSEG</span>   <span class="p">!</span><span class="err">指定段基地址，表示跳转到</span><span class="no">BOOTSEG处的</span> <span class="no">main</span> <span class="err">标记处</span>
+<span class="err">!</span><span class="nf">bootsect</span> <span class="err">程序入口</span>
+<span class="nl">main:</span>
+    <span class="err">!设置</span><span class="nf">ds</span><span class="err">=</span><span class="no">es</span><span class="err">=</span><span class="no">ss</span><span class="err">=</span><span class="no">cs</span>
+    <span class="nf">mov</span> <span class="no">ax</span><span class="p">,</span><span class="no">cs</span>
+    <span class="nf">mov</span>     <span class="no">ds</span><span class="p">,</span><span class="no">ax</span>
+    <span class="nf">mov</span>     <span class="no">es</span><span class="p">,</span><span class="no">ax</span>
+    <span class="nf">mov</span>     <span class="no">ss</span><span class="p">,</span><span class="no">ax</span>
+    <span class="nf">mov</span>     <span class="no">sp</span><span class="p">,</span><span class="c">#0xFF00              ! 栈顶位置，必须远大于bootsect和setup程序的总大小
+</span><span class="c"></span>
+    <span class="err">!下面三行通过</span><span class="nf">BIOS中断获取光标的位置</span>
+    <span class="nf">mov</span>     <span class="no">ah</span><span class="p">,</span><span class="c">#0x03
+</span><span class="c"></span>    <span class="no">xor</span>     <span class="no">bh</span><span class="p">,</span><span class="no">bh</span>
+    <span class="nf">int</span>     <span class="mi">0x10</span>
+
+    <span class="err">!通过</span><span class="nf">BIOS中断打印字符串</span>
+    <span class="nf">mov</span>     <span class="no">cx</span><span class="p">,</span><span class="c">#28
+</span><span class="c"></span>    <span class="no">mov</span>     <span class="no">bx</span><span class="p">,</span><span class="c">#0x0007              ! 正常的白色字体
+</span><span class="c"></span>    <span class="no">mov</span>     <span class="no">bp</span><span class="p">,</span><span class="c">#msg
+</span><span class="c"></span>    <span class="no">mov</span>     <span class="no">ax</span><span class="p">,</span><span class="c">#0x1301              ! 打印字符串，并移动光标
+</span><span class="c"></span>    <span class="no">int</span>     <span class="mi">0x10</span>
+
+<span class="err">!死循环，等待结束</span>
+<span class="nl">death_loop:</span>
+    <span class="nf">j</span> <span class="no">death_loop</span>
+
+<span class="nl">msg:</span>
+        <span class="na">.byte</span> <span class="mi">13</span><span class="p">,</span><span class="mi">10</span>
+        <span class="na">.ascii</span> <span class="s">&#34;Welcome to BootSect...&#34;</span>
+        <span class="na">.byte</span> <span class="mi">13</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">13</span><span class="p">,</span><span class="mi">10</span>
+
+<span class="na">.org</span> <span class="mi">510</span>
+<span class="nl">boot_flag:</span>                          <span class="err">!必须要有的</span>
+        <span class="na">.word</span> <span class="mi">0xAA55</span>
+
+<span class="na">.text</span>
+<span class="nl">endtext:</span>
+<span class="na">.data</span>
+<span class="nl">enddata:</span>
+<span class="na">.bss</span>
+<span class="nl">endbss:</span>
+                                     <span class="err">!最后的空行必须存在，否则编译出错</span>
+</code></pre></div><p>编译和链接：</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">as86 -0 -a -o bootsect.o bootsect.s
+ld86 -0 -s -o bootsect bootsect.o
+</code></pre></div><p>其中-0（注意：这是数字0，不是字母O）表示生成8086的16位目标程序，-a表示生成与GNU as和ld部分兼容的代码，-s告诉链接器ld86去除最后生成的可执行文件中的符号信息。</p>
+<p>这样生成的代码实际大小是544B，因为ld86生成的是Minix可执行程序，里面包含头信息，刚好是32B。因此只需要将头部的32B字节删除即可。这里使用<code>dd</code>程序实现,并将镜像拷贝到linux-0.11根目录：</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">dd <span class="nv">bs</span><span class="o">=</span><span class="m">1</span> <span class="k">if</span><span class="o">=</span>bootsect <span class="nv">of</span><span class="o">=</span>Image <span class="nv">skip</span><span class="o">=</span><span class="m">32</span>
+</code></pre></div><p>实验结果：</p>
+<p><img src="%E5%9B%BE%E7%89%87/Snipaste_2020-04-22_23-08-09.png" alt=""></p>
+<h2 id="setup程序">setup程序</h2>
+<p>setup在linux启动过程中的作用如下：</p>
+<ol>
+<li>负责检测硬件及配置参数，并将这些数据存在内存特定位置；</li>
+<li>接着拷贝linux内核到内存起始处覆盖BIOS中断向量表；</li>
+<li>加载设置好的GDT至GDTR寄存器、IDT至IDTR寄存器；</li>
+<li>开启A20地址线，重新设置中断芯片控制器；</li>
+<li>设置CPU的机器状态字CR0，进入32位实模式，并跳转到linux内核起始出正式启动linux内核</li>
+</ol>
+<p>setup程序需要bootsect程序加载到内存中。在linux内核中，bootsect还负责将linux内核镜像加载进内存。这里只为学习引导程序，因此没有加载内核。</p>
+<h3 id="bootsect加载setup">bootsect加载setup</h3>
+<p>加载的时候需要指定内存位置，这里设置和linux中的设置保持一致。主要过程为：</p>
+<ol>
+<li>bootsect将自己拷贝到新地址，并将控制权转移到新地址</li>
+<li>加载setup程序到bootsect后面</li>
+<li>跳转到setup程序执行setup操作</li>
+</ol>
+<p>关键代码如下：</p>
+<div class="highlight"><pre class="chroma"><code class="language-asm" data-lang="asm"><span class="nf">BOOTSEG</span> <span class="err">=</span> <span class="mi">0x07c0</span>			<span class="p">!</span><span class="no">BIOS将启动扇区加载在这个位置</span>
+<span class="nf">SETUPLEN</span> <span class="err">=</span> <span class="mi">4</span>				<span class="p">!</span> <span class="no">setup</span> <span class="err">程序所占扇区数</span>
+<span class="nf">INITSEG</span>  <span class="err">=</span> <span class="mi">0x9000</span>			<span class="p">!</span> <span class="err">将</span><span class="no">bootsect程序复制到此处</span>
+<span class="nf">SETUPSEG</span> <span class="err">=</span> <span class="mi">0x9020</span>			<span class="p">!</span> <span class="err">将</span><span class="no">setup程序复制到此处</span>
+
+<span class="nf">entry</span> <span class="no">_start</span>
+<span class="nl">_start:</span>
+<span class="err">!移动</span><span class="nf">bootsect程序到</span> <span class="no">INITSEG</span> <span class="err">处</span>
+    <span class="nf">mov</span> <span class="no">ax</span><span class="p">,</span><span class="c">#BOOTSEG
+</span><span class="c"></span>    <span class="no">mov</span> <span class="no">ds</span><span class="p">,</span><span class="no">ax</span>
+    <span class="nf">mov</span> <span class="no">ax</span><span class="p">,</span><span class="c">#INITSEG
+</span><span class="c"></span>    <span class="no">mov</span> <span class="no">es</span><span class="p">,</span><span class="no">ax</span>
+    <span class="nf">mov</span> <span class="no">cx</span><span class="p">,</span><span class="c">#256
+</span><span class="c"></span>    <span class="no">sub</span> <span class="no">si</span><span class="p">,</span><span class="no">si</span>
+    <span class="nf">sub</span> <span class="no">di</span><span class="p">,</span><span class="no">di</span>
+    <span class="na">rep</span>
+    <span class="nf">movw</span>
+	<span class="nf">jmpi</span>    <span class="no">main</span><span class="p">,</span> <span class="no">INITSEG</span>   <span class="p">!</span><span class="err">指定段基地址，表示跳转到</span><span class="no">BOOTSEG处的</span> <span class="no">main</span> <span class="err">标记处</span>
+<span class="err">!</span><span class="nf">bootsect</span> <span class="err">程序入口</span>
+<span class="nl">main:</span>
+<span class="na">...</span>
+<span class="err">!</span> <span class="err">加载</span> <span class="nf">setup</span> <span class="err">程序</span>
+<span class="nl">load_setup:</span>
+	<span class="nf">mov</span>	<span class="no">dx</span><span class="p">,</span><span class="c">#0x0000		    ! drive 0, head 0
+</span><span class="c"></span>	<span class="no">mov</span>	<span class="no">cx</span><span class="p">,</span><span class="c">#0x0002		    ! sector 2, track 0
+</span><span class="c"></span>	<span class="no">mov</span>	<span class="no">bx</span><span class="p">,</span><span class="c">#0x0200		    ! address = 512, in INITSEG
+</span><span class="c"></span>	<span class="no">mov</span>	<span class="no">ax</span><span class="p">,</span><span class="c">#0x0200+SETUPLEN	! service 2, nr of sectors
+</span><span class="c"></span>	<span class="no">int</span>	<span class="mi">0x13</span>			    <span class="p">!</span> <span class="no">read</span> <span class="no">it</span>
+	<span class="nf">jnc</span>	<span class="no">ok_load_setup</span>		<span class="p">!</span> <span class="no">ok</span> <span class="p">-</span> <span class="no">continue</span>
+	<span class="nf">mov</span>	<span class="no">dx</span><span class="p">,</span><span class="c">#0x0000
+</span><span class="c"></span>	<span class="no">mov</span>	<span class="no">ax</span><span class="p">,</span><span class="c">#0x0000		    ! reset the diskette
+</span><span class="c"></span>	<span class="no">int</span>	<span class="mi">0x13</span>
+	<span class="nf">j</span>	<span class="no">load_setup</span>
+
+<span class="nl">ok_load_setup:</span>
+<span class="err">!</span> <span class="err">获取磁盘参数</span>
+	<span class="nf">mov</span>	<span class="no">dl</span><span class="p">,</span><span class="c">#0x00
+</span><span class="c"></span>	<span class="no">mov</span>	<span class="no">ax</span><span class="p">,</span><span class="c">#0x0800		! AH=8 is get drive parameters
+</span><span class="c"></span>	<span class="no">int</span>	<span class="mi">0x13</span>
+	<span class="nf">mov</span>	<span class="no">ch</span><span class="p">,</span><span class="c">#0x00
+</span><span class="c"></span>	<span class="no">seg</span> <span class="no">cs</span>
+	<span class="nf">mov</span>	<span class="no">sectors</span><span class="p">,</span><span class="no">cx</span>
+	<span class="nf">mov</span>	<span class="no">ax</span><span class="p">,</span><span class="c">#INITSEG
+</span><span class="c"></span>	<span class="no">mov</span>	<span class="no">es</span><span class="p">,</span><span class="no">ax</span>
+    
+<span class="err">!跳转到</span><span class="nf">setup程序</span>
+    <span class="nf">jmpi</span>	<span class="mi">0</span><span class="p">,</span><span class="no">SETUPSEG</span>
+</code></pre></div><h3 id="setup关键代码">setup关键代码</h3>
+<div class="highlight"><pre class="chroma"><code class="language-asm" data-lang="asm"><span class="nf">INITSEG</span>  <span class="err">=</span> <span class="mi">0x9000</span>	<span class="p">!</span> <span class="no">bootsec</span> <span class="err">移动的位置</span>
+<span class="nf">SETUPSEG</span> <span class="err">=</span> <span class="mi">0x9020</span>	<span class="p">!</span> <span class="no">setup</span> <span class="err">在内存中的位置</span>
+
+<span class="nf">entry</span> <span class="no">start</span>
+<span class="nl">start:</span>
+<span class="err">!</span> <span class="err">重新设置段寄存器</span>
+	<span class="nf">mov</span> <span class="no">ax</span><span class="p">,</span> <span class="c">#INITSEG
+</span><span class="c"></span>	<span class="no">mov</span> <span class="no">ss</span><span class="p">,</span> <span class="no">ax</span>
+	<span class="nf">mov</span> <span class="no">sp</span><span class="p">,</span> <span class="c">#0xFF00
+</span><span class="c"></span>
+	<span class="nf">mov</span> <span class="no">ax</span><span class="p">,</span> <span class="c">#SETUPSEG
+</span><span class="c"></span>	<span class="no">mov</span> <span class="no">es</span><span class="p">,</span> <span class="no">ax</span>
+
+<span class="err">!获取当前光标</span>
+	<span class="nf">call</span> <span class="no">get_cursor</span>
+	<span class="nf">mov</span>	<span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="no">dx</span>		<span class="p">!</span> <span class="no">it</span> <span class="no">from</span> <span class="mi">0x90000</span>
+
+<span class="err">!打印</span> <span class="nf">in</span> <span class="no">setup</span> <span class="err">字符串</span>
+	<span class="nf">mov</span> <span class="no">cx</span><span class="p">,</span> <span class="c">#22
+</span><span class="c"></span>	<span class="no">mov</span> <span class="no">bx</span><span class="p">,</span> <span class="c">#0x0007		! page 0, attribute 10(bright green)
+</span><span class="c"></span>	<span class="no">mov</span> <span class="no">bp</span><span class="p">,</span> <span class="c">#msg
+</span><span class="c"></span>	<span class="no">mov</span> <span class="no">ax</span><span class="p">,</span> <span class="c">#0x1301		! write string, move cursor
+</span><span class="c"></span>	<span class="no">int</span> <span class="mi">0x10</span>
+
+<span class="err">!</span> <span class="err">获取扩展内存(</span><span class="nf">extended</span> <span class="no">mem</span><span class="p">,</span> <span class="no">kB</span><span class="p">)</span>
+	<span class="nf">mov</span>	<span class="no">ah</span><span class="p">,</span><span class="c">#0x88
+</span><span class="c"></span>	<span class="no">int</span>	<span class="mi">0x15</span>
+	<span class="nf">mov</span>	<span class="p">[</span><span class="mi">2</span><span class="p">],</span><span class="no">ax</span>
+
+<span class="err">!</span> <span class="err">获取视频卡数据:</span>
+	<span class="nf">mov</span>	<span class="no">ah</span><span class="p">,</span><span class="c">#0x0f
+</span><span class="c"></span>	<span class="no">int</span>	<span class="mi">0x10</span>
+	<span class="nf">mov</span>	<span class="p">[</span><span class="mi">4</span><span class="p">],</span><span class="no">bx</span>		<span class="p">!</span> <span class="no">bh</span> <span class="err">=</span> <span class="no">display</span> <span class="no">page</span>
+	<span class="nf">mov</span>	<span class="p">[</span><span class="mi">6</span><span class="p">],</span><span class="no">ax</span>		<span class="p">!</span> <span class="no">al</span> <span class="err">=</span> <span class="no">video</span> <span class="no">mode</span><span class="p">,</span> <span class="no">ah</span> <span class="err">=</span> <span class="no">window</span> <span class="no">width</span>
+
+<span class="err">!</span> <span class="err">检查</span><span class="nf">VGA及配置参数</span>
+	<span class="nf">mov</span>	<span class="no">ah</span><span class="p">,</span><span class="c">#0x12
+</span><span class="c"></span>	<span class="no">mov</span>	<span class="no">bl</span><span class="p">,</span><span class="c">#0x10
+</span><span class="c"></span>	<span class="no">int</span>	<span class="mi">0x10</span>
+	<span class="nf">mov</span>	<span class="p">[</span><span class="mi">8</span><span class="p">],</span><span class="no">ax</span>
+	<span class="nf">mov</span>	<span class="p">[</span><span class="mi">10</span><span class="p">],</span><span class="no">bx</span>
+	<span class="nf">mov</span>	<span class="p">[</span><span class="mi">12</span><span class="p">],</span><span class="no">cx</span>
+
+<span class="err">!打印光标位置</span>
+	<span class="nf">call</span> <span class="no">get_cursor</span>
+	<span class="nf">mov</span> <span class="no">bp</span><span class="p">,</span><span class="c">#position
+</span><span class="c"></span>	<span class="no">mov</span> <span class="no">cx</span><span class="p">,</span><span class="c">#10
+</span><span class="c"></span>	<span class="no">mov</span> <span class="no">ax</span><span class="p">,</span><span class="c">#0x1301
+</span><span class="c"></span>	<span class="no">int</span> <span class="mi">0x10</span>
+
+	<span class="nf">call</span> <span class="no">get_cursor</span>
+	<span class="nf">mov</span> <span class="no">bp</span><span class="p">,</span><span class="c">#0x0000
+</span><span class="c"></span>	<span class="no">call</span> <span class="no">print_hex</span>
+	<span class="nf">call</span> <span class="no">print_nl</span>
+
+<span class="err">!打印内存信息</span>
+	<span class="nf">call</span> <span class="no">get_cursor</span>
+	<span class="nf">mov</span> <span class="no">bp</span><span class="p">,</span><span class="c">#memory_size
+</span><span class="c"></span>	<span class="no">mov</span> <span class="no">cx</span><span class="p">,</span><span class="c">#13
+</span><span class="c"></span>	<span class="no">mov</span> <span class="no">ax</span><span class="p">,</span><span class="c">#0x1301
+</span><span class="c"></span>	<span class="no">int</span> <span class="mi">0x10</span>
+
+	<span class="nf">call</span> <span class="no">get_cursor</span>
+	<span class="nf">mov</span> <span class="no">bp</span><span class="p">,</span><span class="c">#0x0002
+</span><span class="c"></span>	<span class="no">call</span> <span class="no">print_hex</span>
+	<span class="nf">call</span> <span class="no">print_nl</span>
+
+<span class="err">!打印显卡参数</span>
+	<span class="nf">call</span> <span class="no">get_cursor</span>
+	<span class="nf">mov</span> <span class="no">bp</span><span class="p">,</span><span class="c">#video_card
+</span><span class="c"></span>	<span class="no">mov</span> <span class="no">cx</span><span class="p">,</span><span class="c">#12
+</span><span class="c"></span>	<span class="no">mov</span> <span class="no">ax</span><span class="p">,</span><span class="c">#0x1301
+</span><span class="c"></span>	<span class="no">int</span> <span class="mi">0x10</span>
+
+	<span class="nf">call</span> <span class="no">get_cursor</span>
+	<span class="nf">mov</span> <span class="no">bp</span><span class="p">,</span><span class="c">#0x0004
+</span><span class="c"></span>	<span class="no">call</span> <span class="no">print_hex</span>
+
+	<span class="nf">call</span> <span class="no">print_backspace</span>
+
+	<span class="nf">call</span> <span class="no">get_cursor</span>
+	<span class="nf">mov</span> <span class="no">bp</span><span class="p">,</span><span class="c">#0x0006
+</span><span class="c"></span>	<span class="no">call</span> <span class="no">print_hex</span>
+	<span class="nf">call</span> <span class="no">print_nl</span>
+
+<span class="err">!打印</span><span class="nf">VGA参数</span>
+	<span class="nf">call</span> <span class="no">get_cursor</span>
+	<span class="nf">mov</span> <span class="no">bp</span><span class="p">,</span><span class="c">#VGA
+</span><span class="c"></span>	<span class="no">mov</span> <span class="no">cx</span><span class="p">,</span><span class="c">#5
+</span><span class="c"></span>	<span class="no">mov</span> <span class="no">ax</span><span class="p">,</span><span class="c">#0x1301
+</span><span class="c"></span>	<span class="no">int</span> <span class="mi">0x10</span>
+
+	<span class="nf">call</span> <span class="no">get_cursor</span>
+	<span class="nf">mov</span> <span class="no">bp</span><span class="p">,</span><span class="c">#0x0008
+</span><span class="c"></span>	<span class="no">call</span> <span class="no">print_hex</span>
+
+	<span class="nf">call</span> <span class="no">print_backspace</span>
+
+	<span class="nf">call</span> <span class="no">get_cursor</span>
+	<span class="nf">mov</span> <span class="no">bp</span><span class="p">,</span><span class="c">#0x0010
+</span><span class="c"></span>	<span class="no">call</span> <span class="no">print_hex</span>
+
+	<span class="nf">call</span> <span class="no">print_backspace</span>
+
+	<span class="nf">call</span> <span class="no">get_cursor</span>
+	<span class="nf">mov</span> <span class="no">bp</span><span class="p">,</span><span class="c">#0x0012
+</span><span class="c"></span>	<span class="no">call</span> <span class="no">print_hex</span>
+	<span class="nf">call</span> <span class="no">print_nl</span>
+
+	<span class="nf">call</span> <span class="no">death_loop</span>
+
+<span class="nl">get_cursor:</span>
+    <span class="nf">push</span> <span class="no">ax</span>
+    <span class="nf">push</span> <span class="no">bx</span>
+	<span class="nf">push</span> <span class="no">cx</span>
+
+    <span class="err">!下面三行通过</span><span class="nf">BIOS中断获取光标的位置</span>
+	<span class="nf">mov</span>	<span class="no">ah</span><span class="p">,</span><span class="c">#0x03		
+</span><span class="c"></span>	<span class="no">xor</span>	<span class="no">bh</span><span class="p">,</span><span class="no">bh</span>
+	<span class="nf">int</span>	<span class="mi">0x10</span>
+
+	<span class="nf">pop</span> <span class="no">cx</span>
+    <span class="nf">pop</span> <span class="no">bx</span>
+    <span class="nf">pop</span> <span class="no">ax</span>
+    <span class="nf">ret</span>
+
+<span class="err">!以16进制方式打印栈顶的16位数</span>
+<span class="nl">print_hex:</span>
+	<span class="nf">mov</span>    <span class="no">cx</span><span class="p">,</span><span class="c">#4         ! 4个十六进制数字
+</span><span class="c"></span>	<span class="no">mov</span>    <span class="no">dx</span><span class="p">,(</span><span class="no">bp</span><span class="p">)</span>     <span class="p">!</span> <span class="err">将</span><span class="p">(</span><span class="no">bp</span><span class="p">)</span><span class="err">所指的值放入</span><span class="no">dx中</span><span class="err">，如果</span><span class="no">bp是指向栈顶的话</span>
+<span class="nl">print_digit:</span>
+	<span class="nf">rol</span>    <span class="no">dx</span><span class="p">,</span><span class="c">#4        ! 循环以使低4比特用上 !! 取dx的高4比特移到低4比特处。
+</span><span class="c"></span>	<span class="no">mov</span>    <span class="no">ax</span><span class="p">,</span><span class="c">#0xe0f     ! ah = 请求的功能值，al = 半字节(4个比特)掩码。
+</span><span class="c"></span>	<span class="no">and</span>    <span class="no">al</span><span class="p">,</span><span class="no">dl</span>         <span class="p">!</span> <span class="err">取</span><span class="no">dl的低4比特值</span><span class="err">。</span>
+	<span class="nf">add</span>    <span class="no">al</span><span class="p">,</span><span class="c">#0x30     ! 给al数字加上十六进制0x30
+</span><span class="c"></span>	<span class="no">cmp</span>    <span class="no">al</span><span class="p">,</span><span class="c">#0x3a
+</span><span class="c"></span>	<span class="no">jl</span>    <span class="no">outp</span>          <span class="p">!</span><span class="err">是一个不大于十的数字</span>
+	<span class="nf">add</span>    <span class="no">al</span><span class="p">,</span><span class="c">#0x07      !是a～f，要多加7
+</span><span class="c"></span><span class="no">outp</span><span class="p">:</span> 
+	<span class="no">int</span>    <span class="mi">0x10</span>
+	<span class="nf">loop</span>    <span class="no">print_digit</span>
+	<span class="nf">ret</span>
+
+<span class="err">!打印回车换行</span>
+<span class="nl">print_nl:</span>
+	<span class="nf">push</span> <span class="no">ax</span>
+	<span class="nf">push</span> <span class="no">bx</span>
+	<span class="nf">mov</span> <span class="no">ax</span><span class="p">,</span> <span class="c">#0x0e0d		! CR
+</span><span class="c"></span>	<span class="no">int</span> <span class="mi">0x10</span>
+	<span class="nf">mov</span> <span class="no">ax</span><span class="p">,</span> <span class="c">#0x0e0A		! LR
+</span><span class="c"></span>	<span class="no">int</span> <span class="mi">0x10</span>
+	<span class="nf">pop</span> <span class="no">bx</span>
+	<span class="nf">pop</span> <span class="no">ax</span>
+	<span class="nf">ret</span>
+
+<span class="err">!打印空格</span>
+<span class="nl">print_backspace:</span>
+	<span class="nf">push</span> <span class="no">ax</span>
+	<span class="nf">push</span> <span class="no">bx</span>
+	<span class="nf">push</span> <span class="no">cx</span>
+	<span class="nf">call</span> <span class="no">get_cursor</span>
+	<span class="nf">mov</span> <span class="no">ax</span><span class="p">,</span><span class="c">#0x1301
+</span><span class="c"></span>	<span class="no">mov</span> <span class="no">bp</span><span class="p">,</span><span class="c">#back_space
+</span><span class="c"></span>	<span class="no">mov</span> <span class="no">cx</span><span class="p">,</span><span class="c">#1
+</span><span class="c"></span>	<span class="no">int</span> <span class="mi">0x10</span>
+	<span class="nf">pop</span> <span class="no">cx</span>
+	<span class="nf">pop</span> <span class="no">bx</span>
+	<span class="nf">pop</span> <span class="no">ax</span>
+	<span class="nf">ret</span>
+
+<span class="err">!死循环，等待关机</span>
+<span class="nl">death_loop:</span>
+    <span class="nf">j</span> <span class="no">death_loop</span>
+
+<span class="nl">msg:</span>
+    <span class="na">.byte</span> <span class="mi">13</span><span class="p">,</span><span class="mi">10</span>
+    <span class="na">.ascii</span> <span class="s">&#34;Now, in Setup...&#34;</span>
+    <span class="na">.byte</span> <span class="mi">13</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">13</span><span class="p">,</span><span class="mi">10</span>
+
+<span class="nl">position:</span>
+	<span class="na">.ascii</span> <span class="s">&#34;Position: &#34;</span>
+
+<span class="nl">memory_size:</span>
+	<span class="na">.ascii</span> <span class="s">&#34;Memory Size: &#34;</span>
+
+<span class="nl">video_card:</span>
+	<span class="na">.ascii</span> <span class="s">&#34;Video-card: &#34;</span>
+
+<span class="nl">VGA:</span>
+	<span class="na">.ascii</span> <span class="s">&#34;VGA: &#34;</span>
+
+<span class="nl">back_space:</span>
+	<span class="na">.ascii</span> <span class="s">&#34; &#34;</span>
+</code></pre></div><h3 id="编译和链接">编译和链接</h3>
+<p>将两个程序编译并合并为一个镜像，单个操作比较麻烦。因此可以借助make自动化工具，Makefile文件可以之间使用linux-0.11自带的，使用其中的 BootImage 目标即可。</p>
+<p>不过linux-0.11的build工具在不指定内核镜像时无法之间构建，因此对build.c稍作修改，就可以了。</p>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="k">if</span><span class="p">(</span><span class="n">strcmp</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="s">&#34;none&#34;</span><span class="p">)){</span>
+		<span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="s">&#34;Will Write System</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+		<span class="k">if</span> <span class="p">((</span><span class="n">id</span><span class="o">=</span><span class="n">open</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span><span class="n">O_RDONLY</span><span class="p">,</span><span class="mi">0</span><span class="p">))</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">)</span>
+			<span class="n">die</span><span class="p">(</span><span class="s">&#34;Unable to open &#39;system&#39;&#34;</span><span class="p">);</span>
+		<span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="o">=</span><span class="mi">0</span> <span class="p">;</span> <span class="p">(</span><span class="n">c</span><span class="o">=</span><span class="n">read</span><span class="p">(</span><span class="n">id</span><span class="p">,</span><span class="n">buf</span><span class="p">,</span><span class="k">sizeof</span> <span class="n">buf</span><span class="p">))</span><span class="o">&gt;</span><span class="mi">0</span> <span class="p">;</span> <span class="n">i</span><span class="o">+=</span><span class="n">c</span> <span class="p">)</span>
+			<span class="k">if</span> <span class="p">(</span><span class="n">write</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">buf</span><span class="p">,</span><span class="n">c</span><span class="p">)</span><span class="o">!=</span><span class="n">c</span><span class="p">)</span>
+				<span class="n">die</span><span class="p">(</span><span class="s">&#34;Write call failed&#34;</span><span class="p">);</span>
+		<span class="n">close</span><span class="p">(</span><span class="n">id</span><span class="p">);</span>
+		<span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span><span class="s">&#34;System is %d bytes.</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span><span class="n">i</span><span class="p">);</span>
+		<span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="o">&gt;</span> <span class="n">SYS_SIZE</span><span class="o">*</span><span class="mi">16</span><span class="p">)</span>
+			<span class="n">die</span><span class="p">(</span><span class="s">&#34;System is too big&#34;</span><span class="p">);</span>
+	<span class="p">}</span><span class="k">else</span><span class="p">{</span>
+		<span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="s">&#34;No write System</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+	<span class="p">}</span>
+</code></pre></div><p>接着直接使用make进行构建：</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">make BootImage
+tools/build boot/bootsect boot/setup none  &gt; Image
+Root device is <span class="o">(</span>3, 1<span class="o">)</span>
+Boot sector <span class="m">512</span> bytes.
+Setup is <span class="m">356</span> bytes.
+No write System
+sync
+</code></pre></div><p>不出错，构建成功。</p>
+<h3 id="实验结果">实验结果</h3>
+<p><img src="%E5%9B%BE%E7%89%87/Snipaste_2020-04-22_23-47-35.png" alt=""></p>
+<h2 id="实验总结">实验总结</h2>
+<p>这里只给出了最简单的bootsec程序过程，setup只实现了读取内存、video card和VGA等参数及配置。这里会涉及系统启动的很多理论知识，包括BIOS、读盘、磁盘构成等，具体详情见[1]。</p>
+<p>实验过程大部分参考了[2]，这里给出了完整的实验过程，尤其是给出了16进制打印参数的函数。</p>
+<p>最后经过多次调试，了解了bootsect程序和 setup程序的基本功能，尤其是bootsect必须尽量简单，完成加载setup并设置栈等即可，其它能省就省，比如打印字符串。</p>
+<h2 id="参考">参考</h2>
+<p>[1] <a href="https://github.com/Wangzhike/HIT-Linux-0.11/blob/master/1-boot/OS-booting.md">https://github.com/Wangzhike/HIT-Linux-0.11/blob/master/1-boot/OS-booting.md</a></p>
+<p>[2] <a href="https://hoverwinter.gitbooks.io/hit-oslab-manual/sy1_boot.html">https://hoverwinter.gitbooks.io/hit-oslab-manual/sy1_boot.html</a></p>
+
+    
+	</div>
+  <footer class="article-footer clearfix">
+  
+
+<div class="article-tags">
+  <span></span>
+  
+  <a href="/tags/bootsect">bootsect</a>
+  
+  <a href="/tags/setup">setup</a>
+  
+  <a href="/tags/"></a>
+  
+</div>
+
+
+
+
+
+<div class="article-categories">
+  <span></span>
+  
+  <a class="article-category-link" href="/categories/%E5%86%85%E6%A0%B8%E5%AE%9E%E9%AA%8C">内核实验</a>
+  
+</div>
+
+
+
+  <div class="article-share" id="share">
+    <div data-url="/post/oslab_experiment_01/" data-title="Linux内核学习 ———— 系统引导" data-tsina="123" class="share clearfix">
+    </div>
+  </div>
+</footer>
+
+	</article>
+  
+
+
+
+</div>
+
+    <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+  
+
+<div class="categorieslist">
+  <p class="asidetitle">分类</p>
+  <ul>
+    
+    <li><a href="/categories/%e5%86%85%e5%ad%98%e7%ae%a1%e7%90%86" title="内存管理">内存管理<sup>1</sup></a></li>
+    
+    <li><a href="/categories/%e5%86%85%e6%a0%b8%e5%ae%9e%e9%aa%8c" title="内核实验">内核实验<sup>2</sup></a></li>
+    
+    <li><a href="/categories/%e5%91%bd%e4%bb%a4%e8%a1%8c%e8%89%ba%e6%9c%af" title="命令行艺术">命令行艺术<sup>3</sup></a></li>
+    
+    <li><a href="/categories/%e5%ad%a6%e4%b9%a0%e7%ac%94%e8%ae%b0" title="学习笔记">学习笔记<sup>13</sup></a></li>
+    
+    <li><a href="/categories/%e6%93%8d%e4%bd%9c%e7%b3%bb%e7%bb%9f" title="操作系统">操作系统<sup>1</sup></a></li>
+    
+    <li><a href="/categories/%e6%95%88%e7%8e%87%e5%b7%a5%e5%85%b7" title="效率工具">效率工具<sup>1</sup></a></li>
+    
+    <li><a href="/categories/%e6%95%b0%e6%8d%ae%e7%bb%93%e6%9e%84" title="数据结构">数据结构<sup>1</sup></a></li>
+    
+    <li><a href="/categories/%e6%b8%a9%e6%95%85%e7%9f%a5%e6%96%b0" title="温故知新">温故知新<sup>1</sup></a></li>
+    
+    <li><a href="/categories/%e7%bd%91%e7%bb%9c%e7%bc%96%e7%a8%8b" title="网络编程">网络编程<sup>1</sup></a></li>
+    
+    <li><a href="/categories/%e9%a1%b9%e7%9b%ae%e5%ae%9e%e6%88%98" title="项目实战">项目实战<sup>5</sup></a></li>
+    
+  </ul>
+</div>
+
+
+
+  
+
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+      
+			<li><a href="/tags/bochs" title="bochs">bochs<sup>1</sup></a></li>
+      
+			<li><a href="/tags/bootsect" title="bootsect">bootsect<sup>1</sup></a></li>
+      
+			<li><a href="/tags/c&#43;&#43;" title="c&#43;&#43;">c&#43;&#43;<sup>10</sup></a></li>
+      
+			<li><a href="/tags/command" title="command">command<sup>3</sup></a></li>
+      
+			<li><a href="/tags/conclusion" title="conclusion">conclusion<sup>1</sup></a></li>
+      
+			<li><a href="/tags/data_struct" title="data_struct">data_struct<sup>1</sup></a></li>
+      
+			<li><a href="/tags/funny" title="funny">funny<sup>1</sup></a></li>
+      
+			<li><a href="/tags/gentoo" title="gentoo">gentoo<sup>1</sup></a></li>
+      
+			<li><a href="/tags/jemalloc" title="jemalloc">jemalloc<sup>1</sup></a></li>
+      
+			<li><a href="/tags/kernel" title="kernel">kernel<sup>8</sup></a></li>
+      
+			<li><a href="/tags/linux" title="linux">linux<sup>13</sup></a></li>
+      
+			<li><a href="/tags/linux%e5%86%85%e6%a0%b8" title="linux内核">linux内核<sup>1</sup></a></li>
+      
+			<li><a href="/tags/pmalloc2" title="pmalloc2">pmalloc2<sup>1</sup></a></li>
+      
+			<li><a href="/tags/setup" title="setup">setup<sup>1</sup></a></li>
+      
+			<li><a href="/tags/shell" title="shell">shell<sup>4</sup></a></li>
+      
+			<li><a href="/tags/snippets" title="snippets">snippets<sup>1</sup></a></li>
+      
+			<li><a href="/tags/tcmalloc" title="tcmalloc">tcmalloc<sup>1</sup></a></li>
+      
+			<li><a href="/tags/terminal" title="terminal">terminal<sup>5</sup></a></li>
+      
+			<li><a href="/tags/text_editor" title="text_editor">text_editor<sup>1</sup></a></li>
+      
+			<li><a href="/tags/textor" title="textor">textor<sup>3</sup></a></li>
+      
+			<li><a href="/tags/tree" title="tree">tree<sup>1</sup></a></li>
+      
+			<li><a href="/tags/vfs" title="vfs">vfs<sup>1</sup></a></li>
+      
+			<li><a href="/tags/vscode" title="vscode">vscode<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e4%b8%ad%e6%96%ad" title="中断">中断<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e5%86%85%e5%ad%98%e7%ae%a1%e7%90%86" title="内存管理">内存管理<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e5%86%85%e6%a0%b8%e5%90%8c%e6%ad%a5" title="内核同步">内核同步<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e5%a5%97%e6%8e%a5%e5%ad%97" title="套接字">套接字<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e5%af%b9%e8%b1%a1%e6%a8%a1%e5%9e%8b" title="对象模型">对象模型<sup>3</sup></a></li>
+      
+			<li><a href="/tags/%e6%88%90%e5%91%98%e5%87%bd%e6%95%b0" title="成员函数">成员函数<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e6%95%b0%e6%8d%ae%e7%bb%93%e6%9e%84" title="数据结构">数据结构<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e6%96%87%e4%bb%b6%e6%8f%8f%e8%bf%b0%e7%ac%a6" title="文件描述符">文件描述符<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e6%97%b6%e9%97%b4%e7%ae%a1%e7%90%86" title="时间管理">时间管理<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e7%b3%bb%e7%bb%9f%e8%b0%83%e7%94%a8" title="系统调用">系统调用<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e7%bb%a7%e6%89%bf" title="继承">继承<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e7%bc%96%e7%a8%8b%e8%af%ad%e8%a8%80" title="编程语言">编程语言<sup>3</sup></a></li>
+      
+			<li><a href="/tags/%e8%bf%9b%e7%a8%8b%e7%ae%a1%e7%90%86" title="进程管理">进程管理<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e8%bf%9b%e7%a8%8b%e8%b0%83%e5%ba%a6" title="进程调度">进程调度<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e9%9d%a2%e5%90%91%e5%af%b9%e8%b1%a1" title="面向对象">面向对象<sup>2</sup></a></li>
+      
+		</ul>
+</div>
+
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle">归档</p>
+    <ul class="archive-list">
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2020-04">2020年04月</a><span class="archive-list-count">3</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2019-09">2019年09月</a><span class="archive-list-count">1</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2019-07">2019年07月</a><span class="archive-list-count">1</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2019-06">2019年06月</a><span class="archive-list-count">7</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2019-05">2019年05月</a><span class="archive-list-count">5</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2019-04">2019年04月</a><span class="archive-list-count">1</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2019-03">2019年03月</a><span class="archive-list-count">2</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2019-02">2019年02月</a><span class="archive-list-count">4</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2019-01">2019年01月</a><span class="archive-list-count">4</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2018-12">2018年12月</a><span class="archive-list-count">1</span>
+      </li>
+      
+    </ul>
+
+  </div>
+
+
+  
+
+<div class="tagcloudlist">
+  <p class="asidetitle">标签云</p>
+  <div class="tagcloudlist clearfix">
+    
+    <a href="/tags/bochs" style="font-size: 12px;">bochs</a>
+    
+    <a href="/tags/bootsect" style="font-size: 12px;">bootsect</a>
+    
+    <a href="/tags/c&#43;&#43;" style="font-size: 12px;">c&#43;&#43;</a>
+    
+    <a href="/tags/command" style="font-size: 12px;">command</a>
+    
+    <a href="/tags/conclusion" style="font-size: 12px;">conclusion</a>
+    
+    <a href="/tags/data_struct" style="font-size: 12px;">data_struct</a>
+    
+    <a href="/tags/funny" style="font-size: 12px;">funny</a>
+    
+    <a href="/tags/gentoo" style="font-size: 12px;">gentoo</a>
+    
+    <a href="/tags/jemalloc" style="font-size: 12px;">jemalloc</a>
+    
+    <a href="/tags/kernel" style="font-size: 12px;">kernel</a>
+    
+    <a href="/tags/linux" style="font-size: 12px;">linux</a>
+    
+    <a href="/tags/linux%e5%86%85%e6%a0%b8" style="font-size: 12px;">linux内核</a>
+    
+    <a href="/tags/pmalloc2" style="font-size: 12px;">pmalloc2</a>
+    
+    <a href="/tags/setup" style="font-size: 12px;">setup</a>
+    
+    <a href="/tags/shell" style="font-size: 12px;">shell</a>
+    
+    <a href="/tags/snippets" style="font-size: 12px;">snippets</a>
+    
+    <a href="/tags/tcmalloc" style="font-size: 12px;">tcmalloc</a>
+    
+    <a href="/tags/terminal" style="font-size: 12px;">terminal</a>
+    
+    <a href="/tags/text_editor" style="font-size: 12px;">text_editor</a>
+    
+    <a href="/tags/textor" style="font-size: 12px;">textor</a>
+    
+    <a href="/tags/tree" style="font-size: 12px;">tree</a>
+    
+    <a href="/tags/vfs" style="font-size: 12px;">vfs</a>
+    
+    <a href="/tags/vscode" style="font-size: 12px;">vscode</a>
+    
+    <a href="/tags/%e4%b8%ad%e6%96%ad" style="font-size: 12px;">中断</a>
+    
+    <a href="/tags/%e5%86%85%e5%ad%98%e7%ae%a1%e7%90%86" style="font-size: 12px;">内存管理</a>
+    
+    <a href="/tags/%e5%86%85%e6%a0%b8%e5%90%8c%e6%ad%a5" style="font-size: 12px;">内核同步</a>
+    
+    <a href="/tags/%e5%a5%97%e6%8e%a5%e5%ad%97" style="font-size: 12px;">套接字</a>
+    
+    <a href="/tags/%e5%af%b9%e8%b1%a1%e6%a8%a1%e5%9e%8b" style="font-size: 12px;">对象模型</a>
+    
+    <a href="/tags/%e6%88%90%e5%91%98%e5%87%bd%e6%95%b0" style="font-size: 12px;">成员函数</a>
+    
+    <a href="/tags/%e6%95%b0%e6%8d%ae%e7%bb%93%e6%9e%84" style="font-size: 12px;">数据结构</a>
+    
+    <a href="/tags/%e6%96%87%e4%bb%b6%e6%8f%8f%e8%bf%b0%e7%ac%a6" style="font-size: 12px;">文件描述符</a>
+    
+    <a href="/tags/%e6%97%b6%e9%97%b4%e7%ae%a1%e7%90%86" style="font-size: 12px;">时间管理</a>
+    
+    <a href="/tags/%e7%b3%bb%e7%bb%9f%e8%b0%83%e7%94%a8" style="font-size: 12px;">系统调用</a>
+    
+    <a href="/tags/%e7%bb%a7%e6%89%bf" style="font-size: 12px;">继承</a>
+    
+    <a href="/tags/%e7%bc%96%e7%a8%8b%e8%af%ad%e8%a8%80" style="font-size: 12px;">编程语言</a>
+    
+    <a href="/tags/%e8%bf%9b%e7%a8%8b%e7%ae%a1%e7%90%86" style="font-size: 12px;">进程管理</a>
+    
+    <a href="/tags/%e8%bf%9b%e7%a8%8b%e8%b0%83%e5%ba%a6" style="font-size: 12px;">进程调度</a>
+    
+    <a href="/tags/%e9%9d%a2%e5%90%91%e5%af%b9%e8%b1%a1" style="font-size: 12px;">面向对象</a>
+    
+  </div>
+</div>
+
+
+
+  
+
+</aside>
+</div>
+
+  </div>
+  <footer><div id="footer" >
+  
+  <div class="line">
+    <span></span>
+    <div style='background:no-repeat url("/img/author.jpg") left top;-webkit-background-size:6.875em 6.875em;-moz-background-size:6.875em 6.875em;background-size:6.875em 6.875em;' class="author" ></div>
+  </div>
+  
+  
+  <section class="info">
+    <p>码农一枚 <br/> 混口饭吃</p>
+  </section>
+  
+  <div class="social-font clearfix">
+    
+    
+    
+    <a href="https://github.com/Jerling" target="_blank" title="github"></a>
+    
+    
+    
+  </div>
+  <p class="copyright">Powered by <a href="http://gohugo.io" target="_blank" title="hugo">hugo</a> and Theme by <a href="https://github.com/coderzh/hugo-pacman-theme" target="_blank" title="hugo-pacman-theme">hugo-pacman-theme</a> © 2020
+    
+    <a href="/" title="北极狼徒">北极狼徒</a>
+    
+  </p>
+</div>
+</footer>
+  <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+done = false;
+$(document).ready(function(){
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize();
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  $('form.search').on('submit', function (event) {
+    if (false === done) {
+      event.preventDefault();
+      var orgVal = $(this).find('#search').val();
+      $(this).find('#search').val('site:\/ ' + orgVal);
+      done = true;
+      $(this).submit();
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://b.bshare.cn/barCode?site=weixin&url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});
+</script>
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+});
+</script>
+
+
+
+
+</body>
+</html>

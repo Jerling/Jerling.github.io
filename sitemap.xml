@@ -3,23 +3,43 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>/tags/bootsect/</loc>
+    <lastmod>2020-04-23T00:00:00+08:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/categories/</loc>
-    <lastmod>2020-04-21T00:11:54+08:00</lastmod>
+    <lastmod>2020-04-23T00:00:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/post/oslab_experiment_01/</loc>
+    <lastmod>2020-04-23T00:00:00+08:00</lastmod>
   </url>
   
   <url>
     <loc>/post/</loc>
-    <lastmod>2020-04-21T00:11:54+08:00</lastmod>
+    <lastmod>2020-04-23T00:00:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/setup/</loc>
+    <lastmod>2020-04-23T00:00:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/</loc>
+    <lastmod>2020-04-23T00:00:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/categories/%E5%86%85%E6%A0%B8%E5%AE%9E%E9%AA%8C/</loc>
+    <lastmod>2020-04-23T00:00:00+08:00</lastmod>
   </url>
   
   <url>
     <loc>/tags/snippets/</loc>
     <lastmod>2020-04-21T00:00:00+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/tags/</loc>
-    <lastmod>2020-04-21T00:11:54+08:00</lastmod>
   </url>
   
   <url>
@@ -54,11 +74,6 @@
   
   <url>
     <loc>/post/oslab_env/</loc>
-    <lastmod>2020-04-21T00:11:54+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/categories/%E5%86%85%E6%A0%B8%E5%AE%9E%E9%AA%8C/</loc>
     <lastmod>2020-04-21T00:11:54+08:00</lastmod>
   </url>
   

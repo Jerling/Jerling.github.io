@@ -12,6 +12,15 @@
     
     
     <item>
+      <title>Linux内核学习 ———— 系统引导</title>
+      <link>/post/oslab_experiment_01/</link>
+      <pubDate>Thu, 23 Apr 2020 00:00:00 +0800</pubDate>
+      
+      <guid>/post/oslab_experiment_01/</guid>
+      <description>实验目的 了解操作系统的加载过程 实验内容 修改bootsect.s程序：实现打印一个字符串 修改setup.s 程序：实现打印字符串并打印至少一个硬</description>
+    </item>
+    
+    <item>
       <title>代码片段 For VSCode</title>
       <link>/post/my_snippets/</link>
       <pubDate>Tue, 21 Apr 2020 00:00:00 +0800</pubDate>
