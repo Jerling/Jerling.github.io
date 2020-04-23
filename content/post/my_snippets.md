@@ -66,23 +66,25 @@ toc = "true"
 ```
 
 ### hugo相关
-```json
+```json	
 "Hugo head": {
-    "prefix": "hugo_head",
-    "body": [
-        "title = \"$1\"",
-        "author = [\"Jerling\"]",
-        "description = \"$2\"",
-        "date = $CURRENT_YEAR-$CURRENT_MONTH-$CURRENT_DATE $CURRENT_HOUR:$CURRENT_MINUTE:$CURRENT_SECOND",
-        "lastmod = $CURRENT_YEAR-$CURRENT_MONTH-$CURRENT_DATE $CURRENT_HOUR:$CURRENT_MINUTE:$CURRENT_SECOND",
-        "tags = [\"$3\"]",
-        "categories = [\"$4\"]",
-        "type = \"post\"",
-        "draft = false",
-        "author_homepage = \"https://github.com/Jerling\"",
-        "toc = \"true\""
-    ]
-},
+		"prefix": "hugo_head",
+		"body": [
+			"+++",
+			"title = \"$1\"",
+			"author = [\"Jerling\"]",
+			"description = \"$2\"",
+			"date = $CURRENT_YEAR-$CURRENT_MONTH-${CURRENT_DATE}T$CURRENT_HOUR:$CURRENT_MINUTE:$CURRENT_SECOND+08:00",
+			"lastmod = $CURRENT_YEAR-$CURRENT_MONTH-${CURRENT_DATE}T$CURRENT_HOUR:$CURRENT_MINUTE:$CURRENT_SECOND+08:00",
+			"tags = [\"$4\", \"$5\", \"$6\"]",
+			"categories = [\"$7\"]",
+			"type = \"post\"",
+			"draft = false",
+			"author_homepage = \"https://github.com/Jerling\"",
+			"toc = \"true\"",
+			"+++\n\n# $8"
+		]
+	},
 ```
 
 ```json
