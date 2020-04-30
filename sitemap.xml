@@ -3,12 +3,47 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>/post/oslab_syscall/</loc>
-    <lastmod>2020-04-23T17:36:13+08:00</lastmod>
+    <loc>/categories/</loc>
+    <lastmod>2020-04-30T19:58:52+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/make/</loc>
+    <lastmod>2020-04-30T19:58:52+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/makefile/</loc>
+    <lastmod>2020-04-30T19:58:52+08:00</lastmod>
   </url>
   
   <url>
     <loc>/post/</loc>
+    <lastmod>2020-04-30T19:58:52+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/project/</loc>
+    <lastmod>2020-04-30T19:58:52+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/</loc>
+    <lastmod>2020-04-30T19:58:52+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/post/manage_project_with_make/</loc>
+    <lastmod>2020-04-30T19:58:52+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/categories/%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/</loc>
+    <lastmod>2020-04-30T19:58:52+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/post/oslab_syscall/</loc>
     <lastmod>2020-04-23T17:36:13+08:00</lastmod>
   </url>
   
@@ -18,17 +53,7 @@
   </url>
   
   <url>
-    <loc>/tags/</loc>
-    <lastmod>2020-04-23T17:36:13+08:00</lastmod>
-  </url>
-  
-  <url>
     <loc>/tags/bootsect/</loc>
-    <lastmod>2020-04-23T00:00:00+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/categories/</loc>
     <lastmod>2020-04-23T00:00:00+08:00</lastmod>
   </url>
   

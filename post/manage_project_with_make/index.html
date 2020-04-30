@@ -1,0 +1,1112 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>使用 make 管理工程项目 - 北极狼徒</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+  
+  <meta name="description" content="C工程项目Makefile实践">
+  
+  <meta itemprop="name" content="使用 make 管理工程项目 - 北极狼徒">
+  <meta itemprop="description" content="C工程项目Makefile实践">
+  <meta itemprop="image" content="/img/author.jpg">
+  
+  <meta name="twitter:description" content="C工程项目Makefile实践" />
+  
+  <link rel="shortcut icon" href="/img/favicon.ico"/>
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png" />
+  <link rel="stylesheet" href="/highlight/styles/github.css">
+  <script src="/highlight/highlight.pack.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  
+  <link rel="stylesheet" href="/font/hack/css/hack.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <header>
+    <div>
+  
+  <div id="imglogo">
+    <a href="/"><img src="/img/logo.svg" alt="北极狼徒" title="北极狼徒"/></a>
+  </div>
+  
+  <div id="textlogo">
+    <h1 class="site-name"><a href="/" title="北极狼徒">北极狼徒</a></h1>
+    <h2 class="blog-motto">个人博客</h2>
+  </div>
+  <div class="navbar"><a class="navbutton navmobile" href="#" title="menu"></a></div>
+  <nav class="animated">
+    <ul>
+      
+      <li><a href="/">首页</a></li>
+      
+      <li><a href="/about">关于</a></li>
+      
+      <li>
+        <form class="search" method="get" action="https://www.google.com/search">
+          <div>
+            <input type="text" id="search" name="q" placeholder="搜索">
+          </div>
+        </form>
+      </li>
+    </ul>
+  </nav>
+</div>
+
+  </header>
+  <div id="container">
+    <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody">
+    <header class="article-info clearfix">
+  <h1 itemprop="name">
+      <a href="/post/manage_project_with_make/" title="使用 make 管理工程项目" itemprop="url">使用 make 管理工程项目</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="https://github.com/Jerling" title="[Jerling]">[Jerling]</a>
+    
+  </p>
+  <p class="article-time">
+    <time datetime="2020-04-30 19:58:52 &#43;0800 CST" itemprop="datePublished">2020年04月30日</time>
+  </p>
+</header>
+
+	<div class="article-content">
+    
+		<div class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#简单例子">简单例子</a></li>
+    <li><a href="#聊聊变量">聊聊变量</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#工程组织">工程组织</a>
+      <ul>
+        <li><a href="#根目录管理模板">根目录管理模板</a></li>
+        <li><a href="#静态库文件">静态库文件</a></li>
+        <li><a href="#共享库文件">共享库文件</a></li>
+        <li><a href="#可执行文件">可执行文件</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+		</div>
+    
+    <h1 id="谈谈-make">谈谈 make</h1>
+<p>首先简单讲讲 <code>make</code> 吧，但感觉又没必要讲，几乎所有的程序都知道，尤其是在linux环境下工作过的程序员。<code>make</code> 就是一个自动化构建工具，用于有条不紊地构建整个工程项目。通常在构建之前，会定义一个配置文件，<code>make</code> 命令会根据配置文件定义的规则按部就班地执行构建过程。因此，我们最关注的应该是这个配置文件，因为它是工程构建的指南，一般命名为 <code>Makefile</code>。</p>
+<h1 id="简单了解-makefile">简单了解 Makefile</h1>
+<p><strong>Makefile</strong> 文件是 <code>make</code> 程序构建工程的指南。简单来说， <code>Makefile</code> 是一系列规则的组合，一般一个 <code>Makefile</code> 有一个最终的目标，而最终的目标它有依赖项，以及如何组织这些依赖项的命令组合。如下：</p>
+<div class="highlight"><pre class="chroma"><code class="language-plain" data-lang="plain">目标：依赖项
+    命令
+</code></pre></div><p>而依赖项又可以是依赖于其它项的目标，因此 <code>Makefile</code> 是一种倒推的工作模式，从最终目标，依次寻找它之前的依赖。</p>
+<h2 id="简单例子">简单例子</h2>
+<p>以编译一个简单的 hello 程序为例，为了模拟复杂的工程，这里将编译的步骤分开做，分为编译、汇编、链接三个步骤：
+<figure>
+    <img src="/images/Snipaste_2020-04-30_20-44-47.png"/> 
+</figure>
+
+使用 Makefile 如下：</p>
+<div class="highlight"><pre class="chroma"><code class="language-plain" data-lang="plain">hello: hello.o
+    gcc -o hello hello.o
+
+hello.o: hello.s
+    gcc -c -o hello.o hello.s
+
+hello.s: hello.c
+    gcc -S -o hello.s hello.c
+
+</code></pre></div><figure>
+    <img src="/images/Snipaste_2020-04-30_20-50-54.png"/> 
+</figure>
+
+<p>值得注意的是：这里的命令前面必须是 <strong>tab</strong> 键，因为 <code>make</code> 会将以 <code>tab</code> 键开头的视为命令，供 <code>shell</code> 执行。因此，如果不是命令，不能以 <code>tab</code> 开头，语句中间可以。</p>
+<h2 id="聊聊变量">聊聊变量</h2>
+<p>通常一个项目的 <code>Makefile</code> 会比较复杂，而如果测试不同编译程序的版本，就需要大量修改引用编译程序的地方。因此，为了减小修改量，可以使用变量。例如使用 <code>CC := gcc</code> 代替上述的 <code>gcc</code> 程序，那么就只需要改一个地方就行了。</p>
+<div class="highlight"><pre class="chroma"><code class="language-plain" data-lang="plain">CC := gcc
+hello: hello.o
+    $(CC) -o hello hello.o
+
+hello.o: hello.s
+    $(CC) -c -o hello.o hello.s
+
+hello.s: hello.c
+    $(CC) -S -o hello.s hello.c
+
+</code></pre></div><h1 id="进入正题">进入正题</h1>
+<p>前面主要是对 <code>make</code> 程序做了简单的介绍，本文主要目的是提供一份最佳实践，而不是讨论 <code>Makefile</code> 的全部，毕竟它有很多内容，感兴趣可以直接看参考手册。</p>
+<h2 id="工程组织">工程组织</h2>
+<p>一般工程项目最基本的构成有头文件、源文件、库文件、测试文件以及实例文件，因此这里定义了基本的目录组织形式：</p>
+<pre><code>include
+    -- 工程的头文件
+src
+    -- 工程源文件
+lib
+    -- 工程库文件
+share
+    -- 共享库文件
+tests
+    -- 测试文件
+samples
+    -- 样本文件
+</code></pre><p>其中 <code>lib</code> 和 <code>share</code> 可以只要一个。</p>
+<p>因此，我们需要为除<code>include</code> 和 <code>src</code> 目录外的所有目录建立一份 <code>Makefile</code> 文件，让 <code>make</code> 程序递归地处理每一个文件夹。其次，需要在根目录建立一个管理整个项目的 <code>Makefile</code>。</p>
+<p>听起来有点麻烦，但是实践中，根据最终目标用途可以分为四类，根目录的管理文件、lib 静态库文件、share 共享库文件以及可执行文件。只要建立相应地模板，适当修改相关变量，就可以管理简单的工程，如果有特殊需求，只需要添加即可。</p>
+<h3 id="根目录管理模板">根目录管理模板</h3>
+<div class="highlight"><pre class="chroma"><code class="language-Makefile" data-lang="Makefile"><span class="c">######################################
+</span><span class="c"># Author: Jerling Li
+</span><span class="c"># Email : linjieli001@qq.com
+</span><span class="c"># Description: build project 
+</span><span class="c">######################################
+</span><span class="c"></span>
+<span class="c"># 包好定义颜色的文件
+</span><span class="c"></span><span class="err">include</span> <span class="err">color/color.make</span>
+
+<span class="c"># 定义相关目录名称
+</span><span class="c"></span><span class="nv">LIB_DIR</span>		<span class="o">:=</span> lib
+<span class="nv">SHARE_DIR</span>	<span class="o">:=</span> share
+<span class="nv">SAMPLE_DIR</span>	<span class="o">:=</span> samples
+<span class="nv">TEST_DIR</span>	<span class="o">:=</span> tests
+
+<span class="c"># 定义 make 的目标列表，默认为第一项
+</span><span class="c"></span><span class="nf">.PHONY </span><span class="o">:</span> <span class="n">build</span> <span class="n">build_test</span> <span class="n">build_sample</span> <span class="n">build_all</span> <span class="n">run_test</span> <span class="n">run_sample</span> <span class="n">run</span> <span class="n">all</span> <span class="n">clean</span> <span class="n">dist</span>-<span class="n">clean</span>
+
+<span class="nf">build </span><span class="o">:</span>
+	<span class="o">(</span><span class="nb">cd</span> lib<span class="p">;</span> make<span class="o">)</span>
+	@echo <span class="k">$(</span>LIGHT_GREEN<span class="k">)</span><span class="s2">&#34;Static library building finish !!!&#34;</span><span class="k">$(</span>NONE<span class="k">)</span>
+	<span class="o">(</span><span class="nb">cd</span> share<span class="p">;</span> make<span class="o">)</span>
+	@echo <span class="k">$(</span>LIGHT_GREEN<span class="k">)</span><span class="s2">&#34;Share library building finish !!!&#34;</span><span class="k">$(</span>NONE<span class="k">)</span>
+
+<span class="nf">build_test</span><span class="o">:</span>
+	<span class="o">(</span><span class="nb">cd</span> tests<span class="p">;</span> make<span class="o">)</span>
+	@echo <span class="k">$(</span>LIGHT_GREEN<span class="k">)</span><span class="s2">&#34;Tests building finish !!!&#34;</span><span class="k">$(</span>NONE<span class="k">)</span>
+
+<span class="nf">build_samples</span><span class="o">:</span>
+	<span class="o">(</span><span class="nb">cd</span> samples<span class="p">;</span> make<span class="o">)</span>
+	@echo <span class="k">$(</span>LIGHT_GREEN<span class="k">)</span><span class="s2">&#34;Tests building finish !!!&#34;</span><span class="k">$(</span>NONE<span class="k">)</span>
+
+<span class="nf">build_all </span><span class="o">:</span> <span class="n">build</span> <span class="n">build_test</span> <span class="n">build_sample</span>
+	@echo <span class="k">$(</span>LIGHT_GREEN<span class="k">)</span><span class="s2">&#34;Build all Finish !!!&#34;</span><span class="k">$(</span>NONE<span class="k">)</span>
+
+<span class="nf">run_test</span><span class="o">:</span> <span class="n">build</span> <span class="n">build_test</span>
+	<span class="k">$(</span>TEST_DIR<span class="k">)</span>/test_log
+	@echo <span class="k">$(</span>LIGHT_GREEN<span class="k">)</span><span class="s2">&#34;Test Finish !!!&#34;</span><span class="k">$(</span>NONE<span class="k">)</span>
+
+<span class="nf">run_sample</span><span class="o">:</span> <span class="n">build</span> <span class="n">build_sample</span>
+	<span class="k">$(</span>SAMPLE_DIR<span class="k">)</span>/test_log
+	@echo <span class="k">$(</span>LIGHT_GREEN<span class="k">)</span><span class="s2">&#34;Test Finish !!!&#34;</span><span class="k">$(</span>NONE<span class="k">)</span>
+    
+<span class="nf">run_all</span><span class="o">:</span> <span class="n">run_test</span> <span class="n">run_sample</span>
+
+<span class="nf">clean</span><span class="o">:</span>
+	<span class="o">(</span><span class="nb">cd</span> lib<span class="p">;</span> make clean<span class="o">)</span>
+	@echo <span class="k">$(</span>YELLOW<span class="k">)</span><span class="s2">&#34;Only clean library OBJS&#34;</span><span class="k">$(</span>NONE<span class="k">)</span>
+	<span class="o">(</span><span class="nb">cd</span> share<span class="p">;</span> make clean<span class="o">)</span>
+	@echo <span class="k">$(</span>YELLOW<span class="k">)</span><span class="s2">&#34;Only clean share OBJS&#34;</span><span class="k">$(</span>NONE<span class="k">)</span>
+	<span class="o">(</span><span class="nb">cd</span> tests<span class="p">;</span> make clean<span class="o">)</span>
+	@echo <span class="k">$(</span>YELLOW<span class="k">)</span><span class="s2">&#34;Only clean test OBJS&#34;</span><span class="k">$(</span>NONE<span class="k">)</span>
+	<span class="o">(</span><span class="nb">cd</span> samples<span class="p">;</span> make clean<span class="o">)</span>
+	@echo <span class="k">$(</span>YELLOW<span class="k">)</span><span class="s2">&#34;Only clean test OBJS&#34;</span><span class="k">$(</span>NONE<span class="k">)</span>
+
+<span class="nf">dist-clean</span><span class="o">:</span> <span class="n">clean</span>
+	<span class="o">(</span><span class="nb">cd</span> lib<span class="p">;</span> make dist-clean<span class="o">)</span>
+	@echo <span class="k">$(</span>RED<span class="k">)</span><span class="s2">&#34;Clean library all things&#34;</span><span class="k">$(</span>NONE<span class="k">)</span>
+	<span class="o">(</span><span class="nb">cd</span> share<span class="p">;</span> make dist-clean<span class="o">)</span>
+	@echo <span class="k">$(</span>RED<span class="k">)</span><span class="s2">&#34;Clean share all things&#34;</span><span class="k">$(</span>NONE<span class="k">)</span>
+	<span class="o">(</span><span class="nb">cd</span> tests<span class="p">;</span> make dist-clean<span class="o">)</span>
+	@echo <span class="k">$(</span>RED<span class="k">)</span><span class="s2">&#34;Clean test all things&#34;</span><span class="k">$(</span>NONE<span class="k">)</span>
+	<span class="o">(</span><span class="nb">cd</span> samples<span class="p">;</span> make dist-clean<span class="o">)</span>
+	@echo <span class="k">$(</span>RED<span class="k">)</span><span class="s2">&#34;Clean test all things&#34;</span><span class="k">$(</span>NONE<span class="k">)</span>
+</code></pre></div><h3 id="静态库文件">静态库文件</h3>
+<div class="highlight"><pre class="chroma"><code class="language-Makefile" data-lang="Makefile"><span class="c">######################################
+</span><span class="c"># Author: Jerling Li
+</span><span class="c"># Email : linjieli001@qq.com
+</span><span class="c"># Description: build log static library
+</span><span class="c">######################################
+</span><span class="c"></span>
+<span class="err">include</span> <span class="err">../color/color.make</span>
+
+<span class="nv">TARGET</span>		<span class="o">:=</span> liblog.a
+<span class="c">#compile and lib parameter
+</span><span class="c"></span><span class="nv">CC</span>			<span class="o">:=</span> gcc
+<span class="nv">AR</span>			<span class="o">:=</span> ar
+<span class="nv">RANLIB</span>		<span class="o">:=</span> ranlib
+<span class="nv">LIBS</span>		<span class="o">:=</span>
+<span class="nv">LDFLAGS</span>		<span class="o">:=</span>
+<span class="nv">DEFINES</span> 	<span class="o">:=</span>
+<span class="nv">SRC_DIR</span>		<span class="o">:=</span> ../src
+<span class="nv">INCLUDE</span> 	<span class="o">:=</span> -I../include
+<span class="nv">CFLAGS</span>		<span class="o">:=</span> -g -Wall -O3 <span class="k">$(</span>DEFINES<span class="k">)</span> <span class="k">$(</span>INCLUDE<span class="k">)</span>
+
+<span class="c">#source file
+</span><span class="c"></span><span class="nv">SOURCE</span>		<span class="o">:=</span> <span class="k">$(</span>wildcard <span class="k">$(</span>SRC_DIR<span class="k">)</span>/*.c<span class="k">)</span>
+<span class="nv">OBJS</span>    	<span class="o">:=</span> <span class="k">$(</span>patsubst %.c,%.o,<span class="k">$(</span>SOURCE<span class="k">))</span>
+
+<span class="nf">.PHONY </span><span class="o">:</span> <span class="n">all</span> <span class="n">objs</span> <span class="n">clean</span> <span class="n">dist</span>-<span class="n">clean</span> <span class="n">rebuild</span>
+
+<span class="nf">all </span><span class="o">:</span> <span class="k">$(</span><span class="nv">TARGET</span><span class="k">)</span>
+
+<span class="nf">objs </span><span class="o">:</span> <span class="k">$(</span><span class="nv">OBJS</span><span class="k">)</span>
+
+<span class="nf">rebuild</span><span class="o">:</span> <span class="n">dist</span>-<span class="n">clean</span> <span class="n">all</span>
+
+<span class="nf">clean </span><span class="o">:</span>
+	rm -fr <span class="k">$(</span>OBJS<span class="k">)</span>
+
+<span class="nf">dist-clean </span><span class="o">:</span> <span class="n">clean</span>
+	rm -fr <span class="k">$(</span>TARGET<span class="k">)</span>
+
+<span class="nf">$(TARGET) </span><span class="o">:</span> <span class="k">$(</span><span class="nv">OBJS</span><span class="k">)</span>
+	<span class="k">$(</span>AR<span class="k">)</span> cru <span class="k">$(</span>TARGET<span class="k">)</span> <span class="k">$(</span>OBJS<span class="k">)</span>
+	<span class="k">$(</span>RANLIB<span class="k">)</span> <span class="k">$(</span>TARGET<span class="k">)</span>
+</code></pre></div><h3 id="共享库文件">共享库文件</h3>
+<div class="highlight"><pre class="chroma"><code class="language-Makefile" data-lang="Makefile"><span class="c">######################################
+</span><span class="c"># Author: Jerling Li
+</span><span class="c"># Email : linjieli001@qq.com
+</span><span class="c"># Description: build log share library
+</span><span class="c">######################################
+</span><span class="c"></span>
+<span class="err">include</span> <span class="err">../color/color.make</span>
+
+<span class="c">#target you can change test to what you want
+</span><span class="c"></span><span class="nv">TARGET</span>  <span class="o">:=</span> liblog.so
+<span class="c">#compile and lib parameter
+</span><span class="c"></span><span class="nv">CC</span>	<span class="o">:=</span> gcc
+<span class="nv">AR</span>	<span class="o">:=</span> ar
+<span class="nv">RANLIB</span>		<span class="o">:=</span> ranlib
+<span class="nv">LIBS</span>		<span class="o">:=</span>
+<span class="nv">LDFLAGS</span>		<span class="o">:=</span>
+<span class="nv">DEFINES</span> 	<span class="o">:=</span>
+<span class="nv">SRC_DIR</span>		<span class="o">:=</span> ../src
+<span class="nv">INCLUDE</span> 	<span class="o">:=</span> -I../inlude
+<span class="nv">CFLAGS</span>		<span class="o">:=</span> -g -Wall -O3 <span class="k">$(</span>DEFINES<span class="k">)</span> <span class="k">$(</span>INCLUDE<span class="k">)</span>
+<span class="nv">SHARE</span>		<span class="o">:=</span> -fPIC -shared -o
+<span class="nv">SHARE_PATH</span>	<span class="o">:=</span>/usr/lib
+
+<span class="c">#i think you should do anything here
+</span><span class="c"></span>
+<span class="c">#source file
+</span><span class="c"></span><span class="nv">SOURCE</span>  <span class="o">:=</span> <span class="k">$(</span>wildcard <span class="k">$(</span>SRC_DIR<span class="k">)</span>/*.c<span class="k">)</span>
+<span class="nv">OBJS</span>    <span class="o">:=</span> <span class="k">$(</span>patsubst %.c,%.o,<span class="k">$(</span>SOURCE<span class="k">))</span>
+
+<span class="nf">.PHONY </span><span class="o">:</span> <span class="n">all</span> <span class="n">objs</span> <span class="n">clean</span> <span class="n">dist</span>-<span class="n">clean</span> <span class="n">rebuild</span>
+
+<span class="nf">all </span><span class="o">:</span> <span class="k">$(</span><span class="nv">TARGET</span><span class="k">)</span>
+
+<span class="nf">objs </span><span class="o">:</span> <span class="k">$(</span><span class="nv">OBJS</span><span class="k">)</span>
+
+<span class="nf">rebuild</span><span class="o">:</span> <span class="n">dist</span>-<span class="n">clean</span> <span class="n">all</span>
+
+<span class="nf">clean </span><span class="o">:</span>
+	rm -fr <span class="k">$(</span>OBJS<span class="k">)</span>
+
+<span class="nf">dist-clean </span><span class="o">:</span> <span class="n">clean</span>
+	rm -fr <span class="k">$(</span>TARGET<span class="k">)</span>
+
+<span class="nf">$(TARGET) </span><span class="o">:</span> <span class="k">$(</span><span class="nv">OBJS</span><span class="k">)</span>
+	<span class="k">$(</span>CC<span class="k">)</span> <span class="k">$(</span>CXXFLAGS<span class="k">)</span> <span class="k">$(</span>SHARE<span class="k">)</span> <span class="nv">$@</span> <span class="k">$(</span>OBJS<span class="k">)</span> <span class="k">$(</span>LDFLAGS<span class="k">)</span> <span class="k">$(</span>LIBS<span class="k">)</span>
+	@echo <span class="k">$(</span>RED<span class="k">)</span><span class="s2">&#34;Copy share library to&#34;</span> <span class="k">$(</span>SHARE_PATH<span class="k">)$(</span>NONE<span class="k">)</span>
+	sudo cp <span class="k">$(</span>TARGET<span class="k">)</span> <span class="k">$(</span>SHARE_PATH<span class="k">)</span>
+</code></pre></div><h3 id="可执行文件">可执行文件</h3>
+<p>包括 samples 和 tests 目录</p>
+<div class="highlight"><pre class="chroma"><code class="language-Makefile" data-lang="Makefile"><span class="c">######################################
+</span><span class="c"># Author: Jerling Li
+</span><span class="c"># Email : linjieli001@qq.com
+</span><span class="c"># Description: build all execute obj
+</span><span class="c">######################################
+</span><span class="c"></span>
+<span class="err">include</span> <span class="err">../color/color.make</span>
+
+<span class="c">#source file
+</span><span class="c"></span><span class="nv">SOURCE</span>  <span class="o">:=</span> <span class="k">$(</span>wildcard *.c<span class="k">)</span>
+<span class="nv">OBJS</span>    <span class="o">:=</span> <span class="k">$(</span>patsubst %.c,%.o,<span class="k">$(</span>SOURCE<span class="k">))</span>
+<span class="nv">EXES</span>    <span class="o">:=</span> <span class="k">$(</span>patsubst %.o,%,<span class="k">$(</span>OBJS<span class="k">))</span>
+
+<span class="c">#target you can change test to what you want
+</span><span class="c"></span>
+<span class="nv">TARGET</span>  <span class="o">:=</span> all
+<span class="c">#compile and lib parameter
+</span><span class="c"></span><span class="nv">CC</span>      <span class="o">:=</span> gcc
+<span class="nv">LDFLAGS</span> <span class="o">:=</span>
+<span class="nv">DEFINES</span> <span class="o">:=</span>
+<span class="nv">INCLUDE</span> <span class="o">:=</span> -I../include
+<span class="nv">LIBS</span>    <span class="o">:=</span> -L../lib -llog
+<span class="nv">CFLAGS</span>  <span class="o">:=</span> -g -Wall -O3 <span class="k">$(</span>DEFINES<span class="k">)</span> <span class="k">$(</span>INCLUDE<span class="k">)</span>
+
+<span class="c"># 定义生成可执行的隐式规则
+</span><span class="c"></span><span class="nf">%</span><span class="o">:</span>%.<span class="n">o</span>
+	<span class="k">$(</span>CC<span class="k">)</span> -o <span class="nv">$@</span> $^ <span class="k">$(</span>CFLAGS<span class="k">)</span> <span class="k">$(</span>LIBS<span class="k">)</span>
+
+<span class="nf">.PHONY </span><span class="o">:</span> <span class="n">all</span> <span class="n">objs</span> <span class="n">clean</span> <span class="n">dist</span>-<span class="n">clean</span> <span class="n">rebuild</span>
+
+<span class="nf">all </span><span class="o">:</span> <span class="k">$(</span><span class="nv">EXES</span><span class="k">)</span>
+
+<span class="nf">objs </span><span class="o">:</span> <span class="k">$(</span><span class="nv">OBJS</span><span class="k">)</span>
+
+<span class="nf">rebuild</span><span class="o">:</span> <span class="n">dist</span>-<span class="n">clean</span> <span class="n">all</span>
+
+<span class="nf">clean </span><span class="o">:</span>
+	rm -fr <span class="k">$(</span>OBJS<span class="k">)</span>
+
+<span class="nf">dist-clean </span><span class="o">:</span> <span class="n">clean</span>
+	rm -fr <span class="k">$(</span>EXES<span class="k">)</span>
+</code></pre></div><p>以一个简单的日志打印为例进行验证：
+<figure>
+    <img src="/images/Snipaste_2020-04-30_22-34-15.png"/> 
+</figure>
+</p>
+<h1 id="vs-code-snippets">VS code snippets</h1>
+<p>最后为了方便，将代码段写入 vscode 的 snippets 中</p>
+<div class="highlight"><pre class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>
+	<span class="err">//</span> <span class="err">Place</span> <span class="err">your</span> <span class="err">snippets</span> <span class="err">for</span> <span class="err">makefile</span> <span class="err">here.</span> <span class="err">Each</span> <span class="err">snippet</span> <span class="err">is</span> <span class="err">defined</span> <span class="err">under</span> <span class="err">a</span> <span class="err">snippet</span> <span class="err">name</span> <span class="err">and</span> <span class="err">has</span> <span class="err">a</span> <span class="err">prefix,</span> <span class="err">body</span> <span class="err">and</span> 
+	<span class="err">//</span> <span class="err">description.</span> <span class="err">The</span> <span class="err">prefix</span> <span class="err">is</span> <span class="err">what</span> <span class="err">is</span> <span class="err">used</span> <span class="err">to</span> <span class="err">trigger</span> <span class="err">the</span> <span class="err">snippet</span> <span class="err">and</span> <span class="err">the</span> <span class="err">body</span> <span class="err">will</span> <span class="err">be</span> <span class="err">expanded</span> <span class="err">and</span> <span class="err">inserted.</span> <span class="err">Possible</span> <span class="err">variables</span> <span class="err">are:</span>
+	<span class="err">//</span> <span class="err">$1,</span> <span class="err">$2</span> <span class="err">for</span> <span class="err">tab</span> <span class="err">stops,</span> <span class="err">$0</span> <span class="err">for</span> <span class="err">the</span> <span class="err">final</span> <span class="err">cursor</span> <span class="err">position,</span> <span class="err">and</span> <span class="err">${1:label</span><span class="p">}</span><span class="err">,</span> <span class="err">$</span><span class="p">{</span><span class="err">2:another</span><span class="p">}</span> <span class="err">for</span> <span class="err">placeholders.</span> <span class="err">Placeholders</span> <span class="err">with</span> <span class="err">the</span> 
+	<span class="err">//</span> <span class="err">same</span> <span class="err">ids</span> <span class="err">are</span> <span class="err">connected.</span>
+	<span class="err">//</span> <span class="err">Example:</span>
+	<span class="err">//</span> <span class="s2">&#34;Print to console&#34;</span><span class="err">:</span> <span class="p">{</span>
+	<span class="err">//</span> 	<span class="nt">&#34;prefix&#34;</span><span class="p">:</span> <span class="s2">&#34;log&#34;</span><span class="p">,</span>
+	<span class="err">//</span> 	<span class="nt">&#34;body&#34;</span><span class="p">:</span> <span class="p">[</span>
+	<span class="err">//</span> 		<span class="s2">&#34;console.log(&#39;$1&#39;);&#34;</span><span class="p">,</span>
+	<span class="err">//</span> 		<span class="s2">&#34;$2&#34;</span>
+	<span class="err">//</span> 	<span class="p">],</span>
+	<span class="err">//</span> 	<span class="nt">&#34;description&#34;</span><span class="p">:</span> <span class="s2">&#34;Log output to console&#34;</span>
+	<span class="err">//</span> <span class="p">}</span>
+	<span class="s2">&#34;project template&#34;</span> <span class="err">:</span><span class="p">{</span>
+		<span class="nt">&#34;prefix&#34;</span><span class="p">:</span> <span class="s2">&#34;project_makefile&#34;</span><span class="p">,</span>
+		<span class="nt">&#34;body&#34;</span><span class="p">:</span> <span class="p">[</span>
+			<span class="s2">&#34;######################################&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;# Author: ${1:Jerling Li}&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;# Email : ${2:linjieli001@qq.com}&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;# Description: build project &#34;</span><span class="p">,</span>
+			<span class="s2">&#34;######################################\n\n&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;include color/color.make&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;LIB_DIR\t\t:= lib&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;SHARE_DIR\t:= share&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;SAMPLE_DIR\t:= samples&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;TEST_DIR\t:= tests&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;.PHONY : build build_sample build_test build_all run_sample run_test run_all clean dist-clean&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;build :&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;\t(cd $(LIB_DIR); make)&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;\t(cd $(SHARE_DIR); make)&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;build_sample:&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;\t(cd $(SAMPLE_DIR); make)&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;build_test:&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;\t(cd $(TEST_DIR); make)&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;run_test: build_all&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;\t$(TEST_DIR)/test_$4&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;build_all : build build_sample build_test&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;clean:&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;\t(cd $(LIB_DIR); make clean)&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;\t(cd $(SHARE_DIR); make clean)&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;\t(cd $(SAMPLE_DIR); make clean)&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;\t(cd $(TEST_DIR); make clean)&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;dist-clean: clean&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;\t(cd $(LIB_DIR); make dist-clean)&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;\t(cd $(SHARE_DIR); make dist-clean)&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;\t(cd $(SAMPLE_DIR); make dist-clean)&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;\t(cd $(TEST_DIR); make dist-clean)&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;&#34;</span>
+		<span class="p">]</span>
+	<span class="p">}</span><span class="err">,</span>
+	<span class="s2">&#34;execute template&#34;</span> <span class="err">:</span><span class="p">{</span>
+		<span class="nt">&#34;prefix&#34;</span><span class="p">:</span> <span class="s2">&#34;execute_makefile&#34;</span><span class="p">,</span>
+		<span class="nt">&#34;body&#34;</span> <span class="p">:[</span>
+			<span class="s2">&#34;######################################&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;# Author: ${1:Jerling Li}&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;# Email : ${2:linjieli001@qq.com}&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;# Description: build ${3:all} execute obj&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;######################################\n\n&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;include ../color/color.make&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;#source file&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;SOURCE  := $(wildcard *.c)&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;OBJS    := $(patsubst %.c,%.o,$(SOURCE))&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;EXES    := $(patsubst %.o,%,$(OBJS))&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;&#34;</span><span class="p">,</span>	
+			<span class="s2">&#34;#target you can change test to what you want&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;TARGET  := $3&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;#compile and lib parameter&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;CC      := gcc&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;LDFLAGS :=&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;DEFINES :=&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;INCLUDE := -I${4:../}include&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;LIBS    := -L$4lib -l$6&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;CFLAGS  := -g -Wall -O3 $(DEFINES) $(INCLUDE)&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;&#34;</span><span class="p">,</span>	
+			<span class="s2">&#34;%:%.o&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;\t$(CC) -o $@ $^ $(CFLAGS) $(LIBS)&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;.PHONY : all objs clean dist-clean rebuild&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;all : $(EXES)&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;&#34;</span><span class="p">,</span>	
+			<span class="s2">&#34;objs : $(OBJS)&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;&#34;</span><span class="p">,</span>	
+			<span class="s2">&#34;clean :&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;\trm -fr $(OBJS)&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;dist-clean : clean&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;\trm -fr $(EXES)&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;rebuild: veryclean everything&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;&#34;</span><span class="p">,</span>
+		<span class="p">]</span>
+	<span class="p">}</span><span class="err">,</span>
+	<span class="s2">&#34;static template&#34;</span> <span class="err">:</span><span class="p">{</span>
+		<span class="nt">&#34;prefix&#34;</span><span class="p">:</span> <span class="s2">&#34;static_makefile&#34;</span><span class="p">,</span>
+		<span class="nt">&#34;body&#34;</span><span class="p">:</span> <span class="p">[</span>
+			<span class="s2">&#34;######################################&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;# Author: ${1:Jerling Li}&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;# Email : ${2:linjieli001@qq.com}&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;# Description: build $3 static library&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;######################################\n\n&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;include ../color/color.make&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;TARGET\t\t:= lib$3.a&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;#compile and lib parameter&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;CC\t\t\t:= gcc&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;AR\t\t\t:= ar&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;RANLIB\t\t:= ranlib&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;LIBS\t\t:=&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;LDFLAGS\t\t:=&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;DEFINES \t:=&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;SRC_DIR\t\t:= ${4:../}src&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;INCLUDE \t:= -I$4include&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;CFLAGS\t\t:= -g -Wall -O3 $(DEFINES) $(INCLUDE)&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;#source file&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;SOURCE\t\t:= $(wildcard $(SRC_DIR)/*.c)&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;OBJS    \t:= $(patsubst %.c,%.o,$(SOURCE))&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;.PHONY : all objs clean dist-clean rebuild\n&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;all : $(TARGET)\n&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;objs : $(OBJS)\n&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;clean :&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;\trm -fr $(OBJS)\n&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;dist-clean : clean&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;\trm -fr $(TARGET)&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;$(TARGET) : $(OBJS)&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;\t$(AR) cru $(TARGET) $(OBJS)&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;\t$(RANLIB) $(TARGET)&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;rebuild: dist-clean all\n&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;&#34;</span><span class="p">,</span>
+		<span class="p">]</span>
+	<span class="p">}</span><span class="err">,</span>
+	<span class="s2">&#34;share library&#34;</span><span class="err">:</span> <span class="p">{</span>
+		<span class="nt">&#34;prefix&#34;</span><span class="p">:</span> <span class="s2">&#34;share_library&#34;</span><span class="p">,</span>
+		<span class="nt">&#34;body&#34;</span><span class="p">:</span> <span class="p">[</span>
+			<span class="s2">&#34;######################################&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;# Author: ${1:Jerling Li}&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;# Email : ${2:linjieli001@qq.com}&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;# Description: build $3 share library&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;######################################\n\n&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;include ../color/color.make&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;#target you can change test to what you want&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;TARGET  := lib$3.so&#34;</span><span class="p">,</span>
+			
+			<span class="s2">&#34;#compile and lib parameter&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;CC\t\t\t:= gcc&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;AR\t\t\t:= ar&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;RANLIB\t\t:= ranlib&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;LIBS\t\t:=&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;LDFLAGS\t\t:=&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;DEFINES \t:=&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;SRC_DIR\t\t:= ${4:../}src&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;INCLUDE \t:= -I$4include&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;CFLAGS\t\t:= -g -Wall -O3 $(DEFINES) $(INCLUDE)&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;SHARE\t\t:= -fPIC -shared -o&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;SHARE_PATH\t:=/usr/lib&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;&#34;</span><span class="p">,</span>	
+			<span class="s2">&#34;#i think you should do anything here&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;&#34;</span><span class="p">,</span>	
+			<span class="s2">&#34;#source file&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;SOURCE  := $(wildcard $(SRC_DIR)/*.c)&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;OBJS    := $(patsubst %.c,%.o,$(SOURCE))&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;.PHONY : all objs clean dist-clean rebuild&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;all : $(TARGET)&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;objs : $(OBJS)&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;clean :&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;\trm -fr $(OBJS)&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;dist-clean : clean&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;\trm -fr $(TARGET)&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;$(TARGET) : $(OBJS)&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;\t$(CC) $(CXXFLAGS) $(SHARE) $@ $(OBJS) $(LDFLAGS) $(LIBS)&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;\tsudo cp $(TARGET) $(SHARE_PATH)&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;rebuild: dist-clean all&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;&#34;</span><span class="p">,</span>
+		<span class="p">]</span>
+	<span class="p">}</span><span class="err">,</span>
+	<span class="s2">&#34;define color&#34;</span><span class="err">:</span> <span class="p">{</span>
+		<span class="nt">&#34;prefix&#34;</span><span class="p">:</span> <span class="s2">&#34;color_makefile&#34;</span><span class="p">,</span>
+		<span class="nt">&#34;body&#34;</span><span class="p">:</span> <span class="p">[</span>
+			<span class="s2">&#34;NONE\t\t:= \&#34;\\033[m\&#34;&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;RED\t\t\t:= \&#34;\\033[0;32;31m\&#34;&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;LIGHT_RED\t:= \&#34;\\033[1;31m\&#34;&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;GREEN\t\t:= \&#34;\\033[0;32;32m\&#34;&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;LIGHT_GREEN\t:= \&#34;\\033[1;32m\&#34;&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;BLUE\t\t:= \&#34;\\033[0;32;34m\&#34;&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;LIGHT_BLUE\t:= \&#34;\\033[1;34m\&#34;&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;DARY_GRAY\t:= \&#34;\\033[1;30m\&#34;&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;CYAN\t\t:= \&#34;\\033[0;36m\&#34;&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;LIGHT_CYAN\t:= \&#34;\\033[1;36m\&#34;&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;PURPLE\t\t:= \&#34;\\033[0;35m\&#34;&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;LIGHT_PURPLE:= \&#34;\\033[1;35m\&#34;&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;BROWN\t\t:= \&#34;\\033[0;33m\&#34;&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;YELLOW\t\t:= \&#34;\\033[1;33m\&#34;&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;LIGHT_GRAY\t:= \&#34;\\033[0;37m\&#34;&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;WHITE\t\t:= \&#34;\\033[1;37m\&#34;&#34;</span><span class="p">,</span>
+		<span class="p">]</span>
+	<span class="p">}</span><span class="err">,</span>
+	<span class="s2">&#34;test colcr&#34;</span><span class="err">:</span> <span class="p">{</span>
+		<span class="nt">&#34;prefix&#34;</span><span class="p">:</span> <span class="s2">&#34;test_color&#34;</span><span class="p">,</span>
+		<span class="nt">&#34;body&#34;</span><span class="p">:</span> <span class="p">[</span>
+			<span class="s2">&#34;test_color:&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;\t@echo $(NONE)\&#34;NONE\&#34;$(NONE)&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;\t@echo $(RED)\&#34;RED\&#34;$(NONE)&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;\t@echo $(LIGHT_RED)\&#34;LIGHT_RED\&#34;$(NONE)&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;\t@echo $(GREEN)\&#34;GREEN\&#34;$(NONE)&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;\t@echo $(LIGHT_GREEN)\&#34;LIGHT_GREEN\&#34;$(NONE)&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;\t@echo $(BLUE)\&#34;BLUE\&#34;$(NONE)&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;\t@echo $(LIGHT_BLUE)\&#34;LIGHT_BLUE\&#34;$(NONE)&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;\t@echo $(DARY_GRAY)\&#34;DARY_GRAY\&#34;$(NONE)&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;\t@echo $(CYAN)\&#34;CYAN\&#34;$(NONE)&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;\t@echo $(LIGHT_CYAN)\&#34;LIGHT_GRAY\&#34;$(NONE)&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;\t@echo $(PURPLE)\&#34;PURPLE\&#34;$(NONE)&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;\t@echo $(LIGHT_PURPLE)\&#34;LIGHT_PURPLE\&#34;$(NONE)&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;\t@echo $(BROWN)\&#34;BROWN\&#34;$(NONE)&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;\t@echo $(YELLOW)\&#34;YELLOW\&#34;$(NONE)&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;\t@echo $(LIGHT_GRAY)\&#34;LIGHT_GRAY\&#34;$(NONE)&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;\t@echo $(WHITE)\&#34;WHITE\&#34;$(NONE)&#34;</span><span class="p">,</span>
+		<span class="p">]</span>
+	<span class="p">}</span>
+<span class="err">}</span>
+</code></pre></div>
+    
+	</div>
+  <footer class="article-footer clearfix">
+  
+
+<div class="article-tags">
+  <span></span>
+  
+  <a href="/tags/make">make</a>
+  
+  <a href="/tags/makefile">Makefile</a>
+  
+  <a href="/tags/project">project</a>
+  
+</div>
+
+
+
+
+
+<div class="article-categories">
+  <span></span>
+  
+  <a class="article-category-link" href="/categories/%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5">最佳实践</a>
+  
+</div>
+
+
+
+  <div class="article-share" id="share">
+    <div data-url="/post/manage_project_with_make/" data-title="使用 make 管理工程项目" data-tsina="123" class="share clearfix">
+    </div>
+  </div>
+</footer>
+
+	</article>
+  
+
+
+
+</div>
+
+    <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+  
+
+<div class="categorieslist">
+  <p class="asidetitle">分类</p>
+  <ul>
+    
+    <li><a href="/categories/%e5%86%85%e5%ad%98%e7%ae%a1%e7%90%86" title="内存管理">内存管理<sup>1</sup></a></li>
+    
+    <li><a href="/categories/%e5%86%85%e6%a0%b8%e5%ae%9e%e9%aa%8c" title="内核实验">内核实验<sup>2</sup></a></li>
+    
+    <li><a href="/categories/%e5%91%bd%e4%bb%a4%e8%a1%8c%e8%89%ba%e6%9c%af" title="命令行艺术">命令行艺术<sup>3</sup></a></li>
+    
+    <li><a href="/categories/%e5%ad%a6%e4%b9%a0%e7%ac%94%e8%ae%b0" title="学习笔记">学习笔记<sup>13</sup></a></li>
+    
+    <li><a href="/categories/%e6%93%8d%e4%bd%9c%e7%b3%bb%e7%bb%9f" title="操作系统">操作系统<sup>1</sup></a></li>
+    
+    <li><a href="/categories/%e6%95%88%e7%8e%87%e5%b7%a5%e5%85%b7" title="效率工具">效率工具<sup>1</sup></a></li>
+    
+    <li><a href="/categories/%e6%95%b0%e6%8d%ae%e7%bb%93%e6%9e%84" title="数据结构">数据结构<sup>1</sup></a></li>
+    
+    <li><a href="/categories/%e6%9c%80%e4%bd%b3%e5%ae%9e%e8%b7%b5" title="最佳实践">最佳实践<sup>1</sup></a></li>
+    
+    <li><a href="/categories/%e6%b8%a9%e6%95%85%e7%9f%a5%e6%96%b0" title="温故知新">温故知新<sup>1</sup></a></li>
+    
+    <li><a href="/categories/%e7%bd%91%e7%bb%9c%e7%bc%96%e7%a8%8b" title="网络编程">网络编程<sup>1</sup></a></li>
+    
+    <li><a href="/categories/%e9%a1%b9%e7%9b%ae%e5%ae%9e%e6%88%98" title="项目实战">项目实战<sup>5</sup></a></li>
+    
+  </ul>
+</div>
+
+
+
+  
+
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+      
+			<li><a href="/tags/bochs" title="bochs">bochs<sup>1</sup></a></li>
+      
+			<li><a href="/tags/bootsect" title="bootsect">bootsect<sup>1</sup></a></li>
+      
+			<li><a href="/tags/c&#43;&#43;" title="c&#43;&#43;">c&#43;&#43;<sup>10</sup></a></li>
+      
+			<li><a href="/tags/command" title="command">command<sup>3</sup></a></li>
+      
+			<li><a href="/tags/conclusion" title="conclusion">conclusion<sup>1</sup></a></li>
+      
+			<li><a href="/tags/data_struct" title="data_struct">data_struct<sup>1</sup></a></li>
+      
+			<li><a href="/tags/funny" title="funny">funny<sup>1</sup></a></li>
+      
+			<li><a href="/tags/gentoo" title="gentoo">gentoo<sup>1</sup></a></li>
+      
+			<li><a href="/tags/jemalloc" title="jemalloc">jemalloc<sup>1</sup></a></li>
+      
+			<li><a href="/tags/kernel" title="kernel">kernel<sup>8</sup></a></li>
+      
+			<li><a href="/tags/linux" title="linux">linux<sup>13</sup></a></li>
+      
+			<li><a href="/tags/linux%e5%86%85%e6%a0%b8" title="linux内核">linux内核<sup>1</sup></a></li>
+      
+			<li><a href="/tags/make" title="make">make<sup>1</sup></a></li>
+      
+			<li><a href="/tags/makefile" title="makefile">makefile<sup>1</sup></a></li>
+      
+			<li><a href="/tags/pmalloc2" title="pmalloc2">pmalloc2<sup>1</sup></a></li>
+      
+			<li><a href="/tags/project" title="project">project<sup>1</sup></a></li>
+      
+			<li><a href="/tags/setup" title="setup">setup<sup>1</sup></a></li>
+      
+			<li><a href="/tags/shell" title="shell">shell<sup>4</sup></a></li>
+      
+			<li><a href="/tags/snippets" title="snippets">snippets<sup>1</sup></a></li>
+      
+			<li><a href="/tags/syscall" title="syscall">syscall<sup>1</sup></a></li>
+      
+			<li><a href="/tags/tcmalloc" title="tcmalloc">tcmalloc<sup>1</sup></a></li>
+      
+			<li><a href="/tags/terminal" title="terminal">terminal<sup>5</sup></a></li>
+      
+			<li><a href="/tags/text_editor" title="text_editor">text_editor<sup>1</sup></a></li>
+      
+			<li><a href="/tags/textor" title="textor">textor<sup>3</sup></a></li>
+      
+			<li><a href="/tags/tree" title="tree">tree<sup>1</sup></a></li>
+      
+			<li><a href="/tags/vfs" title="vfs">vfs<sup>1</sup></a></li>
+      
+			<li><a href="/tags/vscode" title="vscode">vscode<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e4%b8%ad%e6%96%ad" title="中断">中断<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e5%86%85%e5%ad%98%e7%ae%a1%e7%90%86" title="内存管理">内存管理<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e5%86%85%e6%a0%b8%e5%90%8c%e6%ad%a5" title="内核同步">内核同步<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e5%a5%97%e6%8e%a5%e5%ad%97" title="套接字">套接字<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e5%af%b9%e8%b1%a1%e6%a8%a1%e5%9e%8b" title="对象模型">对象模型<sup>3</sup></a></li>
+      
+			<li><a href="/tags/%e6%88%90%e5%91%98%e5%87%bd%e6%95%b0" title="成员函数">成员函数<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e6%95%b0%e6%8d%ae%e7%bb%93%e6%9e%84" title="数据结构">数据结构<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e6%96%87%e4%bb%b6%e6%8f%8f%e8%bf%b0%e7%ac%a6" title="文件描述符">文件描述符<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e6%97%b6%e9%97%b4%e7%ae%a1%e7%90%86" title="时间管理">时间管理<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e7%b3%bb%e7%bb%9f%e8%b0%83%e7%94%a8" title="系统调用">系统调用<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e7%bb%a7%e6%89%bf" title="继承">继承<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e7%bc%96%e7%a8%8b%e8%af%ad%e8%a8%80" title="编程语言">编程语言<sup>3</sup></a></li>
+      
+			<li><a href="/tags/%e8%bf%9b%e7%a8%8b%e7%ae%a1%e7%90%86" title="进程管理">进程管理<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e8%bf%9b%e7%a8%8b%e8%b0%83%e5%ba%a6" title="进程调度">进程调度<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e9%9d%a2%e5%90%91%e5%af%b9%e8%b1%a1" title="面向对象">面向对象<sup>2</sup></a></li>
+      
+		</ul>
+</div>
+
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle">归档</p>
+    <ul class="archive-list">
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2020-04">2020年04月</a><span class="archive-list-count">5</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2019-09">2019年09月</a><span class="archive-list-count">1</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2019-07">2019年07月</a><span class="archive-list-count">1</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2019-06">2019年06月</a><span class="archive-list-count">7</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2019-05">2019年05月</a><span class="archive-list-count">5</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2019-04">2019年04月</a><span class="archive-list-count">1</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2019-03">2019年03月</a><span class="archive-list-count">2</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2019-02">2019年02月</a><span class="archive-list-count">4</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2019-01">2019年01月</a><span class="archive-list-count">4</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2018-12">2018年12月</a><span class="archive-list-count">1</span>
+      </li>
+      
+    </ul>
+
+  </div>
+
+
+  
+
+<div class="tagcloudlist">
+  <p class="asidetitle">标签云</p>
+  <div class="tagcloudlist clearfix">
+    
+    <a href="/tags/bochs" style="font-size: 12px;">bochs</a>
+    
+    <a href="/tags/bootsect" style="font-size: 12px;">bootsect</a>
+    
+    <a href="/tags/c&#43;&#43;" style="font-size: 12px;">c&#43;&#43;</a>
+    
+    <a href="/tags/command" style="font-size: 12px;">command</a>
+    
+    <a href="/tags/conclusion" style="font-size: 12px;">conclusion</a>
+    
+    <a href="/tags/data_struct" style="font-size: 12px;">data_struct</a>
+    
+    <a href="/tags/funny" style="font-size: 12px;">funny</a>
+    
+    <a href="/tags/gentoo" style="font-size: 12px;">gentoo</a>
+    
+    <a href="/tags/jemalloc" style="font-size: 12px;">jemalloc</a>
+    
+    <a href="/tags/kernel" style="font-size: 12px;">kernel</a>
+    
+    <a href="/tags/linux" style="font-size: 12px;">linux</a>
+    
+    <a href="/tags/linux%e5%86%85%e6%a0%b8" style="font-size: 12px;">linux内核</a>
+    
+    <a href="/tags/make" style="font-size: 12px;">make</a>
+    
+    <a href="/tags/makefile" style="font-size: 12px;">makefile</a>
+    
+    <a href="/tags/pmalloc2" style="font-size: 12px;">pmalloc2</a>
+    
+    <a href="/tags/project" style="font-size: 12px;">project</a>
+    
+    <a href="/tags/setup" style="font-size: 12px;">setup</a>
+    
+    <a href="/tags/shell" style="font-size: 12px;">shell</a>
+    
+    <a href="/tags/snippets" style="font-size: 12px;">snippets</a>
+    
+    <a href="/tags/syscall" style="font-size: 12px;">syscall</a>
+    
+    <a href="/tags/tcmalloc" style="font-size: 12px;">tcmalloc</a>
+    
+    <a href="/tags/terminal" style="font-size: 12px;">terminal</a>
+    
+    <a href="/tags/text_editor" style="font-size: 12px;">text_editor</a>
+    
+    <a href="/tags/textor" style="font-size: 12px;">textor</a>
+    
+    <a href="/tags/tree" style="font-size: 12px;">tree</a>
+    
+    <a href="/tags/vfs" style="font-size: 12px;">vfs</a>
+    
+    <a href="/tags/vscode" style="font-size: 12px;">vscode</a>
+    
+    <a href="/tags/%e4%b8%ad%e6%96%ad" style="font-size: 12px;">中断</a>
+    
+    <a href="/tags/%e5%86%85%e5%ad%98%e7%ae%a1%e7%90%86" style="font-size: 12px;">内存管理</a>
+    
+    <a href="/tags/%e5%86%85%e6%a0%b8%e5%90%8c%e6%ad%a5" style="font-size: 12px;">内核同步</a>
+    
+    <a href="/tags/%e5%a5%97%e6%8e%a5%e5%ad%97" style="font-size: 12px;">套接字</a>
+    
+    <a href="/tags/%e5%af%b9%e8%b1%a1%e6%a8%a1%e5%9e%8b" style="font-size: 12px;">对象模型</a>
+    
+    <a href="/tags/%e6%88%90%e5%91%98%e5%87%bd%e6%95%b0" style="font-size: 12px;">成员函数</a>
+    
+    <a href="/tags/%e6%95%b0%e6%8d%ae%e7%bb%93%e6%9e%84" style="font-size: 12px;">数据结构</a>
+    
+    <a href="/tags/%e6%96%87%e4%bb%b6%e6%8f%8f%e8%bf%b0%e7%ac%a6" style="font-size: 12px;">文件描述符</a>
+    
+    <a href="/tags/%e6%97%b6%e9%97%b4%e7%ae%a1%e7%90%86" style="font-size: 12px;">时间管理</a>
+    
+    <a href="/tags/%e7%b3%bb%e7%bb%9f%e8%b0%83%e7%94%a8" style="font-size: 12px;">系统调用</a>
+    
+    <a href="/tags/%e7%bb%a7%e6%89%bf" style="font-size: 12px;">继承</a>
+    
+    <a href="/tags/%e7%bc%96%e7%a8%8b%e8%af%ad%e8%a8%80" style="font-size: 12px;">编程语言</a>
+    
+    <a href="/tags/%e8%bf%9b%e7%a8%8b%e7%ae%a1%e7%90%86" style="font-size: 12px;">进程管理</a>
+    
+    <a href="/tags/%e8%bf%9b%e7%a8%8b%e8%b0%83%e5%ba%a6" style="font-size: 12px;">进程调度</a>
+    
+    <a href="/tags/%e9%9d%a2%e5%90%91%e5%af%b9%e8%b1%a1" style="font-size: 12px;">面向对象</a>
+    
+  </div>
+</div>
+
+
+
+  
+
+</aside>
+</div>
+
+  </div>
+  <footer><div id="footer" >
+  
+  <div class="line">
+    <span></span>
+    <div style='background:no-repeat url("/img/author.jpg") left top;-webkit-background-size:6.875em 6.875em;-moz-background-size:6.875em 6.875em;background-size:6.875em 6.875em;' class="author" ></div>
+  </div>
+  
+  
+  <section class="info">
+    <p>码农一枚 <br/> 混口饭吃</p>
+  </section>
+  
+  <div class="social-font clearfix">
+    
+    
+    
+    <a href="https://github.com/Jerling" target="_blank" title="github"></a>
+    
+    
+    
+  </div>
+  <p class="copyright">Powered by <a href="http://gohugo.io" target="_blank" title="hugo">hugo</a> and Theme by <a href="https://github.com/coderzh/hugo-pacman-theme" target="_blank" title="hugo-pacman-theme">hugo-pacman-theme</a> © 2020
+    
+    <a href="/" title="北极狼徒">北极狼徒</a>
+    
+  </p>
+</div>
+</footer>
+  <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+done = false;
+$(document).ready(function(){
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize();
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  $('form.search').on('submit', function (event) {
+    if (false === done) {
+      event.preventDefault();
+      var orgVal = $(this).find('#search').val();
+      $(this).find('#search').val('site:\/ ' + orgVal);
+      done = true;
+      $(this).submit();
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://b.bshare.cn/barCode?site=weixin&url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});
+</script>
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+});
+</script>
+
+
+
+
+</body>
+</html>
