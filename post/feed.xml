@@ -6,10 +6,19 @@
     <description>Recent content in Posts on 北极狼徒</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Thu, 30 Apr 2020 19:58:52 +0800</lastBuildDate>
+    <lastBuildDate>Fri, 01 May 2020 19:18:12 +0800</lastBuildDate>
     
 	<atom:link href="/post/feed.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>像VSCode一样使用vim</title>
+      <link>/post/use_vim_as_vscode/</link>
+      <pubDate>Fri, 01 May 2020 19:18:12 +0800</pubDate>
+      
+      <guid>/post/use_vim_as_vscode/</guid>
+      <description>谈谈VSCode VScode 是微软公司开源的一款非常优秀的编辑器，本人也是非常喜欢。 但是早期养成了使用 spacemacs的习惯，后因为开启速度问题，转</description>
+    </item>
     
     <item>
       <title>使用 make 管理工程项目</title>

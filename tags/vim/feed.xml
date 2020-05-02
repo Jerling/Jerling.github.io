@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>vim on 北极狼徒</title>
+    <link>/tags/vim/</link>
+    <description>Recent content in vim on 北极狼徒</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Fri, 01 May 2020 19:18:12 +0800</lastBuildDate>
+    
+	<atom:link href="/tags/vim/feed.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>像VSCode一样使用vim</title>
+      <link>/post/use_vim_as_vscode/</link>
+      <pubDate>Fri, 01 May 2020 19:18:12 +0800</pubDate>
+      
+      <guid>/post/use_vim_as_vscode/</guid>
+      <description>谈谈VSCode VScode 是微软公司开源的一款非常优秀的编辑器，本人也是非常喜欢。 但是早期养成了使用 spacemacs的习惯，后因为开启速度问题，转</description>
+    </item>
+    
+  </channel>
+</rss>

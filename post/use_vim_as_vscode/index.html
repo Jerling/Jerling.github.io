@@ -2,18 +2,17 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <title>命令行艺术 - 北极狼徒</title>
+  <title>像VSCode一样使用vim - 北极狼徒</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
   
-  <meta name="description" content="命令行艺术">
+  <meta name="description" content="ThinkVim">
   
-  <meta itemprop="name" content="命令行艺术 - 北极狼徒">
-  <meta itemprop="description" content="命令行艺术">
+  <meta itemprop="name" content="像VSCode一样使用vim - 北极狼徒">
+  <meta itemprop="description" content="ThinkVim">
   <meta itemprop="image" content="/img/author.jpg">
   
+  <meta name="twitter:description" content="ThinkVim" />
   
-  <meta name="twitter:description" content="随便写写">
-  <link rel="alternate" href="/feed.xml" title="北极狼徒" type="application/rss+xml"/>
   <link rel="shortcut icon" href="/img/favicon.ico"/>
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
   <link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png" />
@@ -58,42 +57,156 @@
 
   </header>
   <div id="container">
-    <div id="main">
-      
-      <h2 id="2019-03">2019-03</h2>
-      
-      <section class="post" itemscope itemprop="blogPost">
-    <a href="/post/the_art_of_command_03/" title="命令行艺术(3) ~~ 文件及数据处理篇" itemprop="url">
-    <h1 itemprop="name">命令行艺术(3) ~~ 文件及数据处理篇</h1>
-    <p itemprop="description">查找 文件查找 内容查找 数据处理 文件处理 内容处理 数据统计 文件拷贝 杂项 查找 文件查找 在当前目录下通过文件名查找一个文件，使用类似于这样的命令：fin</p>
-    <time datetime="2019-03-10 09:32:42 &#43;0800 CST" itemprop="datePublished">2019年03月10日</time>
-  </a>
-</section>
+    <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody">
+    <header class="article-info clearfix">
+  <h1 itemprop="name">
+      <a href="/post/use_vim_as_vscode/" title="像VSCode一样使用vim" itemprop="url">像VSCode一样使用vim</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="https://github.com/Jerling" title="[Jerling]">[Jerling]</a>
+    
+  </p>
+  <p class="article-time">
+    <time datetime="2020-05-01 19:18:12 &#43;0800 CST" itemprop="datePublished">2020年05月01日</time>
+  </p>
+</header>
 
-      
-      <section class="post" itemscope itemprop="blogPost">
-    <a href="/post/the_art_of_command_02/" title="命令行艺术 (2) ~~ 日常使用篇" itemprop="url">
-    <h1 itemprop="name">命令行艺术 (2) ~~ 日常使用篇</h1>
-    <p itemprop="description">Table of Contens 常用快健键 一般快捷键 编辑器相关 历史命令 路径相关 少用但非常有用的命令 管理相关 使用别名 同步配置 脚本相关 善用文档 分屏管理 远程登录 杂项 常用快健</p>
-    <time datetime="2019-03-02 09:43:05 &#43;0800 CST" itemprop="datePublished">2019年03月02日</time>
-  </a>
-</section>
+	<div class="article-content">
+    
+		<div class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#coc-nvim">coc-nvim</a></li>
+    <li><a href="#thinkvim">ThinkVim</a>
+      <ul>
+        <li><a href="#安装">安装</a></li>
+        <li><a href="#配置">配置</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+		</div>
+    
+    <h1 id="谈谈vscode">谈谈VSCode</h1>
+<p><code>VScode</code> 是微软公司开源的一款非常优秀的编辑器，本人也是非常喜欢。
+但是早期养成了使用 <code>spacemacs</code>的习惯，后因为开启速度问题，转向 <code>doom emacs</code>
+。但键位还是和 <code>spacemacs</code> 差不多。可是作者的更新速度太快，导致自己的私有配置
+经常更不上，最后放弃了。</p>
+<p>因此，很多时候本人都是使用的 <code>VSCode</code>，而且插件非常丰富，几乎可以做任何想做的事。
+但由于键位习惯问题，本人将其键位映射为 <code>spacemacs</code> 一样的，这里要感谢
+：<a href="https://github.com/VSpaceCode/VSpaceCode">VSpaceCode</a>。</p>
+<p>虽然这很大程度上解决了我的键位需求。但是在使用过程中总是不舒服，例如
+我需要撤销某些改动的时候，按下 <code>u</code> 键后，它却帮我撤销了很多步骤，导致我
+不得不恢复，然后手动去删除不必要的内容。</p>
+<p>众里寻他千百度，最终终于在强大的<a href="https://github/com">github</a> 上找到一份 <code>vim</code> 配置，或许
+可以解决以上问题。</p>
+<h1 id="聊聊-thinkvim">聊聊 ThinkVim</h1>
+<p>虽然前有 <a href="https://github.com/SpaceVim/SpaceVim">SpaceVim</a>
+强大的配置，但是感觉偏离 <code>VSCode</code> 有点远。毕竟我还经常需要
+使用 <code>VSCode</code> 呢。</p>
+<h2 id="coc-nvim">coc-nvim</h2>
+<p>2018年的一匹黑马，地址：
+<a href="https://github.com/neoclide/coc.nvim">https://github.com/neoclide/coc.nvim</a>
+这个插件更像是一种胶水，可以很将 <code>VSCode</code> 上的插件应用到 <code>vim</code> 中。并且和
+<code>VSCode</code> 一样，插件使用 <code>typescript</code> 语言。本人之前没用过这个插件，没想到它
+这么强大 :)。感谢 <code>ThinkVim</code> 让我认识它。</p>
+<h2 id="thinkvim">ThinkVim</h2>
+<p>ThinkVim 以 <code>coc-nvim</code> 插件为中心，提供了一份很强的配置。人生苦短，
+本人还是选择这个配置，结合自己的私有配置进行定制。</p>
+<h3 id="安装">安装</h3>
+<p>进入
+<a href="https://github.com/hardcoreplayers/ThinkVim">https://github.com/hardcoreplayers/ThinkVim</a>
+根据它的安装步骤就可以了</p>
+<h3 id="配置">配置</h3>
+<p>这个是最重的，因为每个程序员的开发语言不一样，需求也不一样。
+作者也没有整合所有的语言配置，这样会显得臃肿。</p>
+<p>本人的主要开发语言是 c/cpp。因此，这里只添加了 <code>ccls</code> 补全支持：</p>
+<p>打开 <code>coc-nvim</code> 配置文件（~/.config/nvim/coc-settings.json）或者在 vim 中使用
+<code>CocConfig</code> 命令打开。它和 <code>VSCode</code>
+一样，使用 <code>json</code> 格式的配置。在语言服务一块增加 <code>ccls</code> 配置：</p>
+<div class="highlight"><pre class="chroma"><code class="language-json" data-lang="json">  <span class="err">//</span> <span class="err">add</span> <span class="err">your</span> <span class="err">languageServer</span> <span class="err">into</span> <span class="err">this</span> <span class="err">list</span>
+  <span class="s2">&#34;languageserver&#34;</span><span class="err">:</span> <span class="p">{</span>
+    <span class="nt">&#34;ccls&#34;</span><span class="p">:</span> <span class="p">{</span>
+      <span class="nt">&#34;command&#34;</span><span class="p">:</span> <span class="s2">&#34;ccls&#34;</span><span class="p">,</span>
+      <span class="nt">&#34;filetypes&#34;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&#34;c&#34;</span><span class="p">,</span>
+        <span class="s2">&#34;cpp&#34;</span><span class="p">,</span>
+        <span class="s2">&#34;objc&#34;</span><span class="p">,</span>
+        <span class="s2">&#34;objcpp&#34;</span>
+      <span class="p">],</span>
+      <span class="nt">&#34;rootPatterns&#34;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&#34;.ccls&#34;</span><span class="p">,</span>
+        <span class="s2">&#34;compile_commands.json&#34;</span><span class="p">,</span>
+        <span class="s2">&#34;.git/&#34;</span><span class="p">,</span>
+        <span class="s2">&#34;.hg/&#34;</span>
+      <span class="p">],</span>
+      <span class="nt">&#34;initializationOptions&#34;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&#34;cache&#34;</span><span class="p">:</span> <span class="p">{</span>
+          <span class="nt">&#34;directory&#34;</span><span class="p">:</span> <span class="s2">&#34;/tmp/ccls&#34;</span>
+        <span class="p">}</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+</code></pre></div><p>需要提前安装 ccls 服务程序。安装方法：
+<a href="https://github.com/MaskRay/ccls/wiki/Build">https://github.com/MaskRay/ccls/wiki/Build</a></p>
+<p>接着就是 <code>snippets</code> 了，coc 中提供 <code>coc-sinppets</code> 这个扩展，可以解析 <code>VSCode</code>
+的 <code>snippets</code> 文件。只需要在 <code>coc-settings</code> 中指定配置目录即可,并将你在 <code>VSCode</code>
+上写的 <code>snippets</code> 文件复制到该目录即可:</p>
+<div class="highlight"><pre class="chroma"><code class="language-json" data-lang="json">  <span class="s2">&#34;snippets.textmateSnippetsRoots&#34;</span><span class="err">:</span> <span class="p">[</span>
+    <span class="s2">&#34;/home/jer/.config/coc/vssnipts&#34;</span>
+  <span class="p">]</span><span class="err">,</span>
+</code></pre></div><h1 id="总结">总结</h1>
+<p>这份配置将 <code>VSCode</code> 的使用方式迁移到 <code>vim</code> 中，相比于将 <code>vim</code> 键位迁移到
+<code>VSCode</code> 中，难度应该更大。多亏了 <code>coc-nvim</code> 这个平台，让 <code>vim</code> 使用 <code>VSCode</code>
+的插件成为可能。而且可以直接 fork <code>VSCode</code> 的插件仓库进行适配，让开发 <code>vim</code> 插件
+更简单。同时 <code>coc-nvim</code> 还提供了一个应用商店，安装插件和 <code>VSCode</code> 一样方便。</p>
+<p><code>VSCode</code> 和 <code>vim</code> 都是好编辑器，各有所长，重点是插件丰富 :)。</p>
 
-      
-      
-      <h2 id="2019-02">2019-02</h2>
-      
-      <section class="post" itemscope itemprop="blogPost">
-    <a href="/post/the_art_of_command_01/" title="命令行艺术 (1) ~~ 基础篇" itemprop="url">
-    <h1 itemprop="name">命令行艺术 (1) ~~ 基础篇</h1>
-    <p itemprop="description">Table of Contens 什么命令行 让命令行人性化 基础命令 私人神器zsh 熟悉环境 帮助命令 编辑命令 重定向 通配符 任务管理工具 远程登录 文件管理工具 网络管理工具 版本控制</p>
-    <time datetime="2019-02-24 09:54:13 &#43;0800 CST" itemprop="datePublished">2019年02月24日</time>
-  </a>
-</section>
+    
+	</div>
+  <footer class="article-footer clearfix">
+  
 
-      
-      
+<div class="article-tags">
+  <span></span>
+  
+  <a href="/tags/vim">vim</a>
+  
+  <a href="/tags/nvim">nvim</a>
+  
+  <a href="/tags/vscode">vscode</a>
+  
+</div>
+
+
+
+
+
+<div class="article-categories">
+  <span></span>
+  
+  <a class="article-category-link" href="/categories/%E6%95%88%E7%8E%87%E5%B7%A5%E5%85%B7">效率工具</a>
+  
+</div>
+
+
+
+  <div class="article-share" id="share">
+    <div data-url="/post/use_vim_as_vscode/" data-title="像VSCode一样使用vim" data-tsina="123" class="share clearfix">
     </div>
+  </div>
+</footer>
+
+	</article>
+  
+
+
+
+</div>
+
     <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
 <div id="asidepart">
 <div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
@@ -395,10 +508,6 @@
 
 
   
-<div class="rsspart">
-  <a rel="nofollow" href="/feed.xml" type="application/rss+xml" target="_blank">RSS 订阅</a>
-</div>
-
 
 </aside>
 </div>
@@ -489,6 +598,38 @@ $(document).ready(function(){
 
 <script type="text/javascript">
 $(document).ready(function(){
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
   var $this = $('.share'),
       url = $this.attr('data-url'),
       encodedUrl = encodeURIComponent(url),
@@ -515,6 +656,27 @@ $(document).ready(function(){
 });
 </script>
 
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+});
+</script>
 
 
 

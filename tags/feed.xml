@@ -6,10 +6,37 @@
     <description>Recent content in Tags on 北极狼徒</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Thu, 30 Apr 2020 19:58:52 +0800</lastBuildDate>
+    <lastBuildDate>Fri, 01 May 2020 19:18:12 +0800</lastBuildDate>
     
 	<atom:link href="/tags/feed.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>nvim</title>
+      <link>/tags/nvim/</link>
+      <pubDate>Fri, 01 May 2020 19:18:12 +0800</pubDate>
+      
+      <guid>/tags/nvim/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>vim</title>
+      <link>/tags/vim/</link>
+      <pubDate>Fri, 01 May 2020 19:18:12 +0800</pubDate>
+      
+      <guid>/tags/vim/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>VSCode</title>
+      <link>/tags/vscode/</link>
+      <pubDate>Fri, 01 May 2020 19:18:12 +0800</pubDate>
+      
+      <guid>/tags/vscode/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>make</title>
@@ -71,15 +98,6 @@
       <pubDate>Tue, 21 Apr 2020 00:00:00 +0800</pubDate>
       
       <guid>/tags/snippets/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>VSCode</title>
-      <link>/tags/vscode/</link>
-      <pubDate>Tue, 21 Apr 2020 00:00:00 +0800</pubDate>
-      
-      <guid>/tags/vscode/</guid>
       <description></description>
     </item>
     
