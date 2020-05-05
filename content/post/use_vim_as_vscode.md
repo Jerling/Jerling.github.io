@@ -98,6 +98,21 @@ ThinkVim 以 `coc-nvim` 插件为中心，提供了一份很强的配置。人�
   ],
 ```
 
+### 私人配置
+ThinkVim 和 spacemacs
+一样，提供了一个私人配置的目录，因此很容易根据个人喜好进行定制。
+
+目录在 `~/.thinkvim.d` ，其中有两个文件，`init.vim`
+用于添加自己的配置，`plugins.yaml` 用于添加需要的vim插件
+
+而对于 `coc` 扩展，则可以使用应用商店进行安装，首先在 vim 中运行
+`:CocInstall coc-marketplance` 安装应用商店，之后就可以使用 `:CocList
+marketplance` 进行在线安装插件。
+
+配置文件地址：
+[https://github.com/Jerling/.thinkvim.d](https://github.com/Jerling/.thinkvim.d)
+, 目前只添加了少许插件，后续根据需要停用上游插件，
+
 # 总结
 这份配置将 `VSCode` 的使用方式迁移到 `vim` 中，相比于将 `vim` 键位迁移到
 `VSCode` 中，难度应该更大。多亏了 `coc-nvim` 这个平台，让 `vim` 使用 `VSCode`
