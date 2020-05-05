@@ -84,6 +84,7 @@
       <ul>
         <li><a href="#安装">安装</a></li>
         <li><a href="#配置">配置</a></li>
+        <li><a href="#私人配置">私人配置</a></li>
       </ul>
     </li>
   </ul>
@@ -158,7 +159,17 @@
 <div class="highlight"><pre class="chroma"><code class="language-json" data-lang="json">  <span class="s2">&#34;snippets.textmateSnippetsRoots&#34;</span><span class="err">:</span> <span class="p">[</span>
     <span class="s2">&#34;/home/jer/.config/coc/vssnipts&#34;</span>
   <span class="p">]</span><span class="err">,</span>
-</code></pre></div><h1 id="总结">总结</h1>
+</code></pre></div><h3 id="私人配置">私人配置</h3>
+<p>ThinkVim 和 spacemacs
+一样，提供了一个私人配置的目录，因此很容易根据个人喜好进行定制。</p>
+<p>目录在 <code>~/.thinkvim.d</code> ，其中有两个文件，<code>init.vim</code>
+用于添加自己的配置，<code>plugins.yaml</code> 用于添加需要的vim插件</p>
+<p>而对于 <code>coc</code> 扩展，则可以使用应用商店进行安装，首先在 vim 中运行
+<code>:CocInstall coc-marketplance</code> 安装应用商店，之后就可以使用 <code>:CocList marketplance</code> 进行在线安装插件。</p>
+<p>配置文件地址：
+<a href="https://github.com/Jerling/.thinkvim.d">https://github.com/Jerling/.thinkvim.d</a>
+, 目前只添加了少许插件，后续根据需要停用上游插件，</p>
+<h1 id="总结">总结</h1>
 <p>这份配置将 <code>VSCode</code> 的使用方式迁移到 <code>vim</code> 中，相比于将 <code>vim</code> 键位迁移到
 <code>VSCode</code> 中，难度应该更大。多亏了 <code>coc-nvim</code> 这个平台，让 <code>vim</code> 使用 <code>VSCode</code>
 的插件成为可能。而且可以直接 fork <code>VSCode</code> 的插件仓库进行适配，让开发 <code>vim</code> 插件

@@ -401,10 +401,17 @@ samples
 			<span class="s2">&#34;build_test:&#34;</span><span class="p">,</span>
 			<span class="s2">&#34;\t(cd $(TEST_DIR); make)&#34;</span><span class="p">,</span>
 			<span class="s2">&#34;&#34;</span><span class="p">,</span>
-			<span class="s2">&#34;run_test: build_all&#34;</span><span class="p">,</span>
-			<span class="s2">&#34;\t$(TEST_DIR)/test_$4&#34;</span><span class="p">,</span>
-			<span class="s2">&#34;&#34;</span><span class="p">,</span>
 			<span class="s2">&#34;build_all : build build_sample build_test&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;run_sample: build_sample&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;\t(cd $(SAMPLE_DIR)); make run)&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;run_test: build_test&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;\t(cd $(TEST_DIR)); make run)&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;run_test: build_all&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;\t(cd $(SAMPLE_DIR)); make run)&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;\t(cd $(TEST_DIR)); make run)&#34;</span><span class="p">,</span>
 			<span class="s2">&#34;&#34;</span><span class="p">,</span>
 			<span class="s2">&#34;clean:&#34;</span><span class="p">,</span>
 			<span class="s2">&#34;\t(cd $(LIB_DIR); make clean)&#34;</span><span class="p">,</span>
@@ -454,6 +461,9 @@ samples
 			<span class="s2">&#34;&#34;</span><span class="p">,</span>
 			<span class="s2">&#34;all : $(EXES)&#34;</span><span class="p">,</span>
 			<span class="s2">&#34;&#34;</span><span class="p">,</span>	
+			<span class="s2">&#34;run : $(EXES)&#34;</span><span class="p">,</span>
+			<span class="s2">&#34;for exe in $(EXES); do ./$$exe ; done&#34;</span><span class="p">,</span>	
+			<span class="s2">&#34;&#34;</span><span class="p">,</span>
 			<span class="s2">&#34;objs : $(OBJS)&#34;</span><span class="p">,</span>
 			<span class="s2">&#34;&#34;</span><span class="p">,</span>	
 			<span class="s2">&#34;clean :&#34;</span><span class="p">,</span>
