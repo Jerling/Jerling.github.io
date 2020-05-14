@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>cifs on 北极狼徒</title>
+    <link>/tags/cifs/</link>
+    <description>Recent content in cifs on 北极狼徒</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Thu, 14 May 2020 07:36:20 +0800</lastBuildDate>
+    
+	<atom:link href="/tags/cifs/feed.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>在win10上使用hyper-v共享文件夹给linux系统</title>
+      <link>/post/share_dir_on_hyper-v/</link>
+      <pubDate>Thu, 14 May 2020 07:36:20 +0800</pubDate>
+      
+      <guid>/post/share_dir_on_hyper-v/</guid>
+      <description>windows 文件夹共享 这里只需要简单的几步就可以实现 windows 目录的共享功能。具体过程如下： 在你需要共享的目录右键，选择属性 选择共享按钮，点击中间的高级共享 勾</description>
+    </item>
+    
+  </channel>
+</rss>

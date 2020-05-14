@@ -4,21 +4,46 @@
   
   <url>
     <loc>/categories/</loc>
-    <lastmod>2020-05-01T19:18:12+08:00</lastmod>
+    <lastmod>2020-05-14T07:36:20+08:00</lastmod>
   </url>
   
   <url>
-    <loc>/tags/nvim/</loc>
-    <lastmod>2020-05-01T19:18:12+08:00</lastmod>
+    <loc>/tags/cifs/</loc>
+    <lastmod>2020-05-14T07:36:20+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/hyper-v/</loc>
+    <lastmod>2020-05-14T07:36:20+08:00</lastmod>
   </url>
   
   <url>
     <loc>/post/</loc>
-    <lastmod>2020-05-01T19:18:12+08:00</lastmod>
+    <lastmod>2020-05-14T07:36:20+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/share/</loc>
+    <lastmod>2020-05-14T07:36:20+08:00</lastmod>
   </url>
   
   <url>
     <loc>/tags/</loc>
+    <lastmod>2020-05-14T07:36:20+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/categories/%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7/</loc>
+    <lastmod>2020-05-14T07:36:20+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/post/share_dir_on_hyper-v/</loc>
+    <lastmod>2020-05-14T07:36:20+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/nvim/</loc>
     <lastmod>2020-05-01T19:18:12+08:00</lastmod>
   </url>
   

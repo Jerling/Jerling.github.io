@@ -6,10 +6,37 @@
     <description>Recent content in Tags on 北极狼徒</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Fri, 01 May 2020 19:18:12 +0800</lastBuildDate>
+    <lastBuildDate>Thu, 14 May 2020 07:36:20 +0800</lastBuildDate>
     
 	<atom:link href="/tags/feed.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>cifs</title>
+      <link>/tags/cifs/</link>
+      <pubDate>Thu, 14 May 2020 07:36:20 +0800</pubDate>
+      
+      <guid>/tags/cifs/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>hyper-v</title>
+      <link>/tags/hyper-v/</link>
+      <pubDate>Thu, 14 May 2020 07:36:20 +0800</pubDate>
+      
+      <guid>/tags/hyper-v/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>share</title>
+      <link>/tags/share/</link>
+      <pubDate>Thu, 14 May 2020 07:36:20 +0800</pubDate>
+      
+      <guid>/tags/share/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>nvim</title>

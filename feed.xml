@@ -12,6 +12,15 @@
     
     
     <item>
+      <title>在win10上使用hyper-v共享文件夹给linux系统</title>
+      <link>/post/share_dir_on_hyper-v/</link>
+      <pubDate>Thu, 14 May 2020 07:36:20 +0800</pubDate>
+      
+      <guid>/post/share_dir_on_hyper-v/</guid>
+      <description>windows 文件夹共享 这里只需要简单的几步就可以实现 windows 目录的共享功能。具体过程如下： 在你需要共享的目录右键，选择属性 选择共享按钮，点击中间的高级共享 勾</description>
+    </item>
+    
+    <item>
       <title>像VSCode一样使用vim</title>
       <link>/post/use_vim_as_vscode/</link>
       <pubDate>Fri, 01 May 2020 19:18:12 +0800</pubDate>
