@@ -6,10 +6,37 @@
     <description>Recent content in Tags on 北极狼徒</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Thu, 14 May 2020 07:36:20 +0800</lastBuildDate>
+    <lastBuildDate>Thu, 04 Jun 2020 21:42:44 +0800</lastBuildDate>
     
 	<atom:link href="/tags/feed.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>ccls</title>
+      <link>/tags/ccls/</link>
+      <pubDate>Thu, 04 Jun 2020 21:42:44 +0800</pubDate>
+      
+      <guid>/tags/ccls/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>msys2</title>
+      <link>/tags/msys2/</link>
+      <pubDate>Thu, 04 Jun 2020 21:42:44 +0800</pubDate>
+      
+      <guid>/tags/msys2/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>windows</title>
+      <link>/tags/windows/</link>
+      <pubDate>Thu, 04 Jun 2020 21:42:44 +0800</pubDate>
+      
+      <guid>/tags/windows/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>cifs</title>

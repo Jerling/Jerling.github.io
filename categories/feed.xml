@@ -6,10 +6,19 @@
     <description>Recent content in Categories on 北极狼徒</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Thu, 14 May 2020 07:36:20 +0800</lastBuildDate>
+    <lastBuildDate>Thu, 04 Jun 2020 21:42:44 +0800</lastBuildDate>
     
 	<atom:link href="/categories/feed.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>completion</title>
+      <link>/categories/completion/</link>
+      <pubDate>Thu, 04 Jun 2020 21:42:44 +0800</pubDate>
+      
+      <guid>/categories/completion/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>使用技巧</title>
