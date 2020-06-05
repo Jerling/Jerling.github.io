@@ -6,17 +6,26 @@
     <description>Recent content in Categories on 北极狼徒</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Thu, 04 Jun 2020 21:42:44 +0800</lastBuildDate>
+    <lastBuildDate>Fri, 05 Jun 2020 22:10:46 +0800</lastBuildDate>
     
 	<atom:link href="/categories/feed.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
-      <title>completion</title>
-      <link>/categories/completion/</link>
+      <title>学习笔记</title>
+      <link>/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</link>
+      <pubDate>Fri, 05 Jun 2020 22:10:46 +0800</pubDate>
+      
+      <guid>/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>效率工具</title>
+      <link>/categories/%E6%95%88%E7%8E%87%E5%B7%A5%E5%85%B7/</link>
       <pubDate>Thu, 04 Jun 2020 21:42:44 +0800</pubDate>
       
-      <guid>/categories/completion/</guid>
+      <guid>/categories/%E6%95%88%E7%8E%87%E5%B7%A5%E5%85%B7/</guid>
       <description></description>
     </item>
     
@@ -26,15 +35,6 @@
       <pubDate>Thu, 14 May 2020 07:36:20 +0800</pubDate>
       
       <guid>/categories/%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>效率工具</title>
-      <link>/categories/%E6%95%88%E7%8E%87%E5%B7%A5%E5%85%B7/</link>
-      <pubDate>Fri, 01 May 2020 19:18:12 +0800</pubDate>
-      
-      <guid>/categories/%E6%95%88%E7%8E%87%E5%B7%A5%E5%85%B7/</guid>
       <description></description>
     </item>
     
@@ -62,15 +62,6 @@
       <pubDate>Sun, 15 Sep 2019 18:50:19 +0800</pubDate>
       
       <guid>/categories/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>学习笔记</title>
-      <link>/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</link>
-      <pubDate>Sun, 07 Jul 2019 12:48:54 +0800</pubDate>
-      
-      <guid>/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</guid>
       <description></description>
     </item>
     

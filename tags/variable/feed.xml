@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Makefile on 北极狼徒</title>
-    <link>/tags/makefile/</link>
-    <description>Recent content in Makefile on 北极狼徒</description>
+    <title>variable on 北极狼徒</title>
+    <link>/tags/variable/</link>
+    <description>Recent content in variable on 北极狼徒</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
     <lastBuildDate>Fri, 05 Jun 2020 22:10:46 +0800</lastBuildDate>
     
-	<atom:link href="/tags/makefile/feed.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="/tags/variable/feed.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
@@ -18,15 +18,6 @@
       
       <guid>/post/variable_in_makefile/</guid>
       <description>Makefile 中的变量 变量的概念比较容易理解，毕竟任何语言都存在。在 Makefile 中，变量的意义也是一样的。不过不同 语言的变量表现形式可能不大一样，比如在 Makefile 中，变量</description>
-    </item>
-    
-    <item>
-      <title>使用 make 管理工程项目</title>
-      <link>/post/manage_project_with_make/</link>
-      <pubDate>Thu, 30 Apr 2020 19:58:52 +0800</pubDate>
-      
-      <guid>/post/manage_project_with_make/</guid>
-      <description>谈谈 make 首先简单讲讲 make 吧，但感觉又没必要讲，几乎所有的程序都知道，尤其是在linux环境下工作过的程序员。make 就是一个自动化构建工具，用于</description>
     </item>
     
   </channel>

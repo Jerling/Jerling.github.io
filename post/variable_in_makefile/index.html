@@ -2,18 +2,17 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <title>terminal - 北极狼徒</title>
+  <title>Makefile 中的变量 - 北极狼徒</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
   
-  <meta name="description" content="terminal">
+  <meta name="description" content="Short description">
   
-  <meta itemprop="name" content="terminal - 北极狼徒">
-  <meta itemprop="description" content="terminal">
+  <meta itemprop="name" content="Makefile 中的变量 - 北极狼徒">
+  <meta itemprop="description" content="Short description">
   <meta itemprop="image" content="/img/author.jpg">
   
+  <meta name="twitter:description" content="Short description" />
   
-  <meta name="twitter:description" content="随便写写">
-  <link rel="alternate" href="/feed.xml" title="北极狼徒" type="application/rss+xml"/>
   <link rel="shortcut icon" href="/img/favicon.ico"/>
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
   <link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png" />
@@ -58,63 +57,163 @@
 
   </header>
   <div id="container">
-    <div id="main">
-      
-      <h2 id="2019-03">2019-03</h2>
-      
-      <section class="post" itemscope itemprop="blogPost">
-    <a href="/post/the_art_of_command_03/" title="命令行艺术(3) ~~ 文件及数据处理篇" itemprop="url">
-    <h1 itemprop="name">命令行艺术(3) ~~ 文件及数据处理篇</h1>
-    <p itemprop="description">查找 文件查找 内容查找 数据处理 文件处理 内容处理 数据统计 文件拷贝 杂项 查找 文件查找 在当前目录下通过文件名查找一个文件，使用类似于这样的命令：fin</p>
-    <time datetime="2019-03-10 09:32:42 &#43;0800 CST" itemprop="datePublished">2019年03月10日</time>
-  </a>
-</section>
+    <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody">
+    <header class="article-info clearfix">
+  <h1 itemprop="name">
+      <a href="/post/variable_in_makefile/" title="Makefile 中的变量" itemprop="url">Makefile 中的变量</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="https://github.com/Jerling" title="[Jerling]">[Jerling]</a>
+    
+  </p>
+  <p class="article-time">
+    <time datetime="2020-06-05 22:10:46 &#43;0800 CST" itemprop="datePublished">2020年06月05日</time>
+  </p>
+</header>
 
-      
-      
-      <h2 id="2019-02">2019-02</h2>
-      
-      <section class="post" itemscope itemprop="blogPost">
-    <a href="/post/write_textor_4/" title="动手写编辑器（四） ~ 文本编辑器" itemprop="url">
-    <h1 itemprop="name">动手写编辑器（四） ~ 文本编辑器</h1>
-    <p itemprop="description">Table of Contens 文本编辑器 插入字符 重新映射方向键 按键处理 插入字符 删除字符 删除字符 添加行 换行 修改提示 保存文件 退出提示 另存为 效果 总结 参考 文本编辑器 在之前的</p>
-    <time datetime="2019-02-17 16:51:33 &#43;0800 CST" itemprop="datePublished">2019年02月17日</time>
-  </a>
-</section>
+	<div class="article-content">
+    
+		<div class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#makefile-中的变量">Makefile 中的变量</a></li>
+    <li><a href="#变量的引用">变量的引用</a></li>
+    <li><a href="#变量的定义">变量的定义</a>
+      <ul>
+        <li><a href="#递归定义">递归定义</a></li>
+        <li><a href="#直接展开定义">直接展开定义</a></li>
+        <li><a href="#特殊的定义">特殊的定义</a></li>
+      </ul>
+    </li>
+    <li><a href="#高级用法">高级用法</a>
+      <ul>
+        <li><a href="#替换引用">替换引用</a></li>
+        <li><a href="#嵌套引用">嵌套引用</a></li>
+      </ul>
+    </li>
+    <li><a href="#变量取值">变量取值</a></li>
+    <li><a href="#追加变量值">追加变量值</a></li>
+    <li><a href="#override-指示符">override 指示符</a></li>
+    <li><a href="#多行定义">多行定义</a></li>
+    <li><a href="#系统环境变量">系统环境变量</a></li>
+    <li><a href="#目标指定变量">目标指定变量</a></li>
+    <li><a href="#模式指定变量">模式指定变量</a></li>
+    <li><a href="#总结">总结</a></li>
+  </ul>
+</nav>
+		</div>
+    
+    <h2 id="makefile-中的变量">Makefile 中的变量</h2>
+<p>变量的概念比较容易理解，毕竟任何语言都存在。在 Makefile 中，变量的意义也是一样的。不过不同
+语言的变量表现形式可能不大一样，比如在 Makefile 中，变量的意义和 C 语言的宏定义一样，
+在引用它的地方展开。总的来说，Makefile 中的变量有以下特征：</p>
+<ol>
+<li>展开是在 make 读取 Makefile 文件</li>
+<li>变量可以用来表示任意事物的列表，如文件名、编译选项</li>
+<li>变量名不包括 &lsquo;:', &ldquo;#&quot;,&ldquo;=&rdquo;,以及前后的空格</li>
+<li>变量名大小敏感</li>
+<li>另外有一些变量名只包含了一个或者很少的几个特殊的字符，称为自动变量</li>
+</ol>
+<h2 id="变量的引用">变量的引用</h2>
+<p>Makefile 中变量的引用有两种：</p>
+<ol>
+<li>$(VAR_NAME)</li>
+<li>${VAR_NAME}</li>
+</ol>
+<h2 id="变量的定义">变量的定义</h2>
+<p>Makefile 中主要有两种风格的定义 ,分别为递归和非递归的。</p>
+<h3 id="递归定义">递归定义</h3>
+<p>以 <code>=</code> 或者指示符 <code>define</code> 定义的变量。</p>
+<p>优点：可以引用它之前没有定义的变量</p>
+<p>缺点：</p>
+<ol>
+<li>递归导致无限展开</li>
+<li>包含函数总会被执行</li>
+</ol>
+<h3 id="直接展开定义">直接展开定义</h3>
+<p>使用 <code>:=</code> 定义的变量，在定义是就完成了变量的引用 ,因此不能引用之后定义的变量。</p>
+<h3 id="特殊的定义">特殊的定义</h3>
+<p><code>?=</code> 表示该变量若未定义，则定义，否则使用之前的定义。</p>
+<h2 id="高级用法">高级用法</h2>
+<h3 id="替换引用">替换引用</h3>
+<p>格式： $(VAR:A=B), 表示将 <code>VAR</code> 中以 &ldquo;A&rdquo; 结尾的替换为以 &ldquo;B&rdquo; 结束的字。</p>
+<h3 id="嵌套引用">嵌套引用</h3>
+<p>变量名可以包含其它变量的引用。</p>
+<h2 id="变量取值">变量取值</h2>
+<ol>
+<li>make 命令行选项定义</li>
+<li>Makefile 中变量赋值</li>
+<li>系统环境变量</li>
+<li>自动化变量</li>
+<li>一些变量的固定值</li>
+</ol>
+<h2 id="追加变量值">追加变量值</h2>
+<p>Makefile 中使用 &ldquo;+=&rdquo; 追加变量值。有几点需要注意：</p>
+<ol>
+<li>变量之前定义，则按之前定义的风格追加</li>
+<li>若未定义，那么使用 <code>=</code> 定义变量</li>
+<li>若中间有使用 <code>=</code>, 那么之前的风格不变，之后的使用 <code>==</code></li>
+</ol>
+<h2 id="override-指示符">override 指示符</h2>
+<p>通常命令行的变量会取代 Makefile 中定义的变量，因此使用 <code>override</code> 可以防止替换。</p>
+<h2 id="多行定义">多行定义</h2>
+<p>使用 <code>define</code> 指示符和 <code>endef</code> 之间可以定义多行变量。</p>
+<h2 id="系统环境变量">系统环境变量</h2>
+<ol>
+<li>Makefile 定义的变量和命令行定义的变量会取代环境变量</li>
+<li>只有环境变量和命令行变量可以传递给子 make 进程</li>
+<li>特殊的环境变量 <code>SHELL</code> 定义为 <code>/bin/sh</code></li>
+</ol>
+<h2 id="目标指定变量">目标指定变量</h2>
+<p>和局部变量的意思一样，只在本目标范围内有效。</p>
+<h2 id="模式指定变量">模式指定变量</h2>
+<p>将变量的定义在某个具体目标和由它所引发的规则上。</p>
+<h2 id="总结">总结</h2>
+<p>总的来说，与其它语言的变量相差不大，只是形式上可能有些区别。</p>
 
-      
-      <section class="post" itemscope itemprop="blogPost">
-    <a href="/post/write_textor_3/" title="动手写编辑器 (三) ~ 文件查看器" itemprop="url">
-    <h1 itemprop="name">动手写编辑器 (三) ~ 文件查看器</h1>
-    <p itemprop="description">Table of Contens 状态栏 腾出空间 写入 buffer 消息框 腾出空间 滞留时间 写入消息 写入 buffer 滚动 垂直滚动 水平滚动 修改边界检查 写入 buffer 总结 参考 状态栏 熟悉 vim 的朋友都知道, vim 有一</p>
-    <time datetime="2019-02-02 13:27:35 &#43;0800 CST" itemprop="datePublished">2019年02月02日</time>
-  </a>
-</section>
+    
+	</div>
+  <footer class="article-footer clearfix">
+  
 
-      
-      
-      <h2 id="2019-01">2019-01</h2>
-      
-      <section class="post" itemscope itemprop="blogPost">
-    <a href="/post/write_textor_2/" title="动手写编辑器（二） ~ 输入和输出" itemprop="url">
-    <h1 itemprop="name">动手写编辑器（二） ~ 输入和输出</h1>
-    <p itemprop="description">Table of Contens 窗口 Buffer 窗口 size 波浪线 欢迎界面 输入 Ctrl+q 退出 移动光标 文本内容 输出 显示 buffer 刷新屏幕 总结 参考 窗口 说到终端编辑器， vim 应该是用的最多的吧。在所有有关 Linux 基</p>
-    <time datetime="2019-01-30 11:06:21 &#43;0800 CST" itemprop="datePublished">2019年01月30日</time>
-  </a>
-</section>
+<div class="article-tags">
+  <span></span>
+  
+  <a href="/tags/makefile">makefile</a>
+  
+  <a href="/tags/variable">variable</a>
+  
+</div>
 
-      
-      <section class="post" itemscope itemprop="blogPost">
-    <a href="/post/write_textor_1/" title="动手写编辑器(一) ~ 文本模式" itemprop="url">
-    <h1 itemprop="name">动手写编辑器(一) ~ 文本模式</h1>
-    <p itemprop="description">Table of Contens 写作动机 规范模式 文本模式 设置属性 本地模式标志 ~~ c_lflag 输入模式标志 ~~ c_iflag 输出模式标志 ~~ c_oflag 杂项标志 开启和关闭文本模式 总结 参考 写作动机 因为是该项目</p>
-    <time datetime="2019-01-20 18:31:32 &#43;0800 CST" itemprop="datePublished">2019年01月20日</time>
-  </a>
-</section>
 
-      
-      
+
+
+
+<div class="article-categories">
+  <span></span>
+  
+  <a class="article-category-link" href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0">学习笔记</a>
+  
+</div>
+
+
+
+  <div class="article-share" id="share">
+    <div data-url="/post/variable_in_makefile/" data-title="Makefile 中的变量" data-tsina="123" class="share clearfix">
     </div>
+  </div>
+</footer>
+
+	</article>
+  
+
+
+
+</div>
+
     <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
 <div id="asidepart">
 <div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
@@ -451,10 +550,6 @@
 
 
   
-<div class="rsspart">
-  <a rel="nofollow" href="/feed.xml" type="application/rss+xml" target="_blank">RSS 订阅</a>
-</div>
-
 
 </aside>
 </div>
@@ -545,6 +640,38 @@ $(document).ready(function(){
 
 <script type="text/javascript">
 $(document).ready(function(){
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
   var $this = $('.share'),
       url = $this.attr('data-url'),
       encodedUrl = encodeURIComponent(url),
@@ -571,6 +698,27 @@ $(document).ready(function(){
 });
 </script>
 
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+});
+</script>
 
 
 

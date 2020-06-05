@@ -6,10 +6,19 @@
     <description>Recent content in Posts on 北极狼徒</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Thu, 04 Jun 2020 21:42:44 +0800</lastBuildDate>
+    <lastBuildDate>Fri, 05 Jun 2020 22:10:46 +0800</lastBuildDate>
     
 	<atom:link href="/post/feed.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Makefile 中的变量</title>
+      <link>/post/variable_in_makefile/</link>
+      <pubDate>Fri, 05 Jun 2020 22:10:46 +0800</pubDate>
+      
+      <guid>/post/variable_in_makefile/</guid>
+      <description>Makefile 中的变量 变量的概念比较容易理解，毕竟任何语言都存在。在 Makefile 中，变量的意义也是一样的。不过不同 语言的变量表现形式可能不大一样，比如在 Makefile 中，变量</description>
+    </item>
     
     <item>
       <title>windows 上编译 ccls</title>
