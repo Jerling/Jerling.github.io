@@ -12,7 +12,7 @@
 #+HUGO_TYPE: post
 #+HUGO_WEIGHT: auto
 #+AUTHOR: Jerling
-#+HUGO_CATEGORIES: completion
+#+HUGO_CATEGORIES: 效率工具
 #+HUGO_TAGS: ccls windows msys2
 
 * ccls
