@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>查漏补缺 on 北极狼徒</title>
+    <link>/categories/%E6%9F%A5%E6%BC%8F%E8%A1%A5%E7%BC%BA/</link>
+    <description>Recent content in 查漏补缺 on 北极狼徒</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Tue, 09 Jun 2020 16:25:16 +0800</lastBuildDate>
+    
+	<atom:link href="/categories/%E6%9F%A5%E6%BC%8F%E8%A1%A5%E7%BC%BA/feed.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>终端下的emacs问题</title>
+      <link>/post/%E7%BB%88%E7%AB%AF%E4%B8%8B%E7%9A%84emacs%E9%97%AE%E9%A2%98/</link>
+      <pubDate>Tue, 09 Jun 2020 16:25:16 +0800</pubDate>
+      
+      <guid>/post/%E7%BB%88%E7%AB%AF%E4%B8%8B%E7%9A%84emacs%E9%97%AE%E9%A2%98/</guid>
+      <description>终端下 Emacs 复制问题 正常情况下，使用图形界面进行编码的时候是可以和 GUI 其它程序进行复制粘贴的，但是到了终端下就不行了，甚至是鼠标都没法用。 解决办法</description>
+    </item>
+    
+  </channel>
+</rss>

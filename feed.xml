@@ -12,6 +12,15 @@
     
     
     <item>
+      <title>终端下的emacs问题</title>
+      <link>/post/%E7%BB%88%E7%AB%AF%E4%B8%8B%E7%9A%84emacs%E9%97%AE%E9%A2%98/</link>
+      <pubDate>Tue, 09 Jun 2020 16:25:16 +0800</pubDate>
+      
+      <guid>/post/%E7%BB%88%E7%AB%AF%E4%B8%8B%E7%9A%84emacs%E9%97%AE%E9%A2%98/</guid>
+      <description>终端下 Emacs 复制问题 正常情况下，使用图形界面进行编码的时候是可以和 GUI 其它程序进行复制粘贴的，但是到了终端下就不行了，甚至是鼠标都没法用。 解决办法</description>
+    </item>
+    
+    <item>
       <title>Makefile 中的变量</title>
       <link>/post/variable_in_makefile/</link>
       <pubDate>Fri, 05 Jun 2020 22:10:46 +0800</pubDate>
