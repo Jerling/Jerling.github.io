@@ -1,15 +1,24 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>hyper-v on 北极狼徒</title>
+    <title>Hyper-v on 北极狼徒</title>
     <link>/tags/hyper-v/</link>
-    <description>Recent content in hyper-v on 北极狼徒</description>
+    <description>Recent content in Hyper-v on 北极狼徒</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Thu, 14 May 2020 07:36:20 +0800</lastBuildDate>
+    <lastBuildDate>Wed, 10 Jun 2020 23:09:27 +0800</lastBuildDate>
     
 	<atom:link href="/tags/hyper-v/feed.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Hyper-v 下虚拟机性能问题</title>
+      <link>/post/hyper-v-%E4%B8%8B%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%80%A7%E8%83%BD%E9%97%AE%E9%A2%98/</link>
+      <pubDate>Wed, 10 Jun 2020 23:09:27 +0800</pubDate>
+      
+      <guid>/post/hyper-v-%E4%B8%8B%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%80%A7%E8%83%BD%E9%97%AE%E9%A2%98/</guid>
+      <description>Hyper-v 性能问题 之前一直使用 Hyper 下的 Arch 虚拟机，自从装上 Emacs 之后，总是感觉有点卡。刚开始以为是因为 Hyper-V 的缘故。可是，使用 Hyper 快速创建的 Ubuntu 却是很流畅。仔细观察</description>
+    </item>
     
     <item>
       <title>在win10上使用hyper-v共享文件夹给linux系统</title>

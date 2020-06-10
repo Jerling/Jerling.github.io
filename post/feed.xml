@@ -6,10 +6,19 @@
     <description>Recent content in Posts on 北极狼徒</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Tue, 09 Jun 2020 16:25:16 +0800</lastBuildDate>
+    <lastBuildDate>Wed, 10 Jun 2020 23:09:27 +0800</lastBuildDate>
     
 	<atom:link href="/post/feed.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Hyper-v 下虚拟机性能问题</title>
+      <link>/post/hyper-v-%E4%B8%8B%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%80%A7%E8%83%BD%E9%97%AE%E9%A2%98/</link>
+      <pubDate>Wed, 10 Jun 2020 23:09:27 +0800</pubDate>
+      
+      <guid>/post/hyper-v-%E4%B8%8B%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%80%A7%E8%83%BD%E9%97%AE%E9%A2%98/</guid>
+      <description>Hyper-v 性能问题 之前一直使用 Hyper 下的 Arch 虚拟机，自从装上 Emacs 之后，总是感觉有点卡。刚开始以为是因为 Hyper-V 的缘故。可是，使用 Hyper 快速创建的 Ubuntu 却是很流畅。仔细观察</description>
+    </item>
     
     <item>
       <title>终端下的emacs问题</title>
