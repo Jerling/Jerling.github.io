@@ -6,10 +6,19 @@
     <description>Recent content in Posts on 北极狼徒</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Wed, 10 Jun 2020 23:09:27 +0800</lastBuildDate>
+    <lastBuildDate>Thu, 11 Jun 2020 16:33:09 +0800</lastBuildDate>
     
 	<atom:link href="/post/feed.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Arch Linux 下搭建 Linux0.11 环境</title>
+      <link>/post/arch-linux-%E4%B8%8B%E6%90%AD%E5%BB%BA-linux0.11-%E7%8E%AF%E5%A2%83/</link>
+      <pubDate>Thu, 11 Jun 2020 16:33:09 +0800</pubDate>
+      
+      <guid>/post/arch-linux-%E4%B8%8B%E6%90%AD%E5%BB%BA-linux0.11-%E7%8E%AF%E5%A2%83/</guid>
+      <description>Bochs 模拟器 Bochs 是一个轻量级的硬件模拟器，相对于 Vmware, VirtualBox 这些软件，它显得轻巧得多。更重要的是，它有着强大的调试系统，因此成为广大操作系统编程人员的好工</description>
+    </item>
     
     <item>
       <title>Hyper-v 下虚拟机性能问题</title>

@@ -2,18 +2,17 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <title>最佳实践 - 北极狼徒</title>
+  <title>Arch Linux 下搭建 Linux0.11 环境 - 北极狼徒</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
   
-  <meta name="description" content="最佳实践">
+  <meta name="description" content="Short description">
   
-  <meta itemprop="name" content="最佳实践 - 北极狼徒">
-  <meta itemprop="description" content="最佳实践">
+  <meta itemprop="name" content="Arch Linux 下搭建 Linux0.11 环境 - 北极狼徒">
+  <meta itemprop="description" content="Short description">
   <meta itemprop="image" content="/img/author.jpg">
   
+  <meta name="twitter:description" content="Short description" />
   
-  <meta name="twitter:description" content="随便写写">
-  <link rel="alternate" href="/feed.xml" title="北极狼徒" type="application/rss+xml"/>
   <link rel="shortcut icon" href="/img/favicon.ico"/>
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
   <link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png" />
@@ -58,21 +57,134 @@
 
   </header>
   <div id="container">
-    <div id="main">
-      
-      <h2 id="2020-04">2020-04</h2>
-      
-      <section class="post" itemscope itemprop="blogPost">
-    <a href="/post/manage_project_with_make/" title="使用 make 管理工程项目" itemprop="url">
-    <h1 itemprop="name">使用 make 管理工程项目</h1>
-    <p itemprop="description">谈谈 make 首先简单讲讲 make 吧，但感觉又没必要讲，几乎所有的程序都知道，尤其是在linux环境下工作过的程序员。make 就是一个自动化构建工具，用于</p>
-    <time datetime="2020-04-30 19:58:52 &#43;0800 CST" itemprop="datePublished">2020年04月30日</time>
-  </a>
-</section>
+    <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody">
+    <header class="article-info clearfix">
+  <h1 itemprop="name">
+      <a href="/post/arch-linux-%E4%B8%8B%E6%90%AD%E5%BB%BA-linux0.11-%E7%8E%AF%E5%A2%83/" title="Arch Linux 下搭建 Linux0.11 环境" itemprop="url">Arch Linux 下搭建 Linux0.11 环境</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="https://github.com/Jerling" title="[Jerling]">[Jerling]</a>
+    
+  </p>
+  <p class="article-time">
+    <time datetime="2020-06-11 16:33:09 &#43;0800 CST" itemprop="datePublished">2020年06月11日</time>
+  </p>
+</header>
 
-      
-      
+	<div class="article-content">
+    
+		<div class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#bochs-模拟器">Bochs 模拟器</a></li>
+    <li><a href="#下载-linux0-dot-11-开发工具包">下载 Linux0.11 开发工具包</a></li>
+    <li><a href="#bochs-编译">Bochs 编译</a>
+      <ul>
+        <li><a href="#源码下载">源码下载</a></li>
+        <li><a href="#编译">编译</a></li>
+        <li><a href="#debugger-模式">Debugger 模式</a></li>
+      </ul>
+    </li>
+    <li><a href="#安装">安装</a></li>
+    <li><a href="#测试">测试</a></li>
+  </ul>
+</nav>
+		</div>
+    
+    <h2 id="bochs-模拟器">Bochs 模拟器</h2>
+<p>Bochs 是一个轻量级的硬件模拟器，相对于 Vmware, VirtualBox 这些软件，它显得轻巧得多。更重要的是，它有着强大的调试系统，因此成为广大操作系统编程人员的好工具。</p>
+<p>之前在相关实验中使用过，但是是基于一键脚本完成安装的，并不是了解其中过程。而且是基于 Ubuntu 的，而本人使用 Arch Linux 较多，因此尝试将环境搭建到 Arch Linux 系统中。</p>
+<h2 id="下载-linux0-dot-11-开发工具包">下载 Linux0.11 开发工具包</h2>
+<p>地址： <code>http://oldlinux.org/Linux.old/bochs/linux-0.11-devel-060625.zip</code></p>
+<p>最新版的开发包中的 Bochs 是 <code>2.2.1</code> 版本。</p>
+<h2 id="bochs-编译">Bochs 编译</h2>
+<p>正常情况下，Arch Linux 可以使用 pacman 进行安装。但是，安装的 Bochs 是最新版，对老版的配置文件不太支持。因此需要手动编译
+<code>bochs2.2.1</code> 版。</p>
+<h3 id="源码下载">源码下载</h3>
+<p>地址： <code>https://master.dl.sourceforge.net/project/bochs/bochs/2.2.1/bochs-2.2.1.tar.gz</code></p>
+<h3 id="编译">编译</h3>
+<p>在解压之后，运行里面的 <code>configure</code> 文件生成 <code>Makefile</code> 配置文件：</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">./configure
+make
+</code></pre></div><p>这里会出现问题：</p>
+<div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">../iodev/harddrv.h:290:8: 错误：有多余的限定‘sparse_image_t::’在成员‘get_physical_offset’上 [-fpermissive]
+  290 |        sparse_image_t::
+      |        ^~~~~~~~~~~~~~
+../iodev/harddrv.h:295:8: 错误：有多余的限定‘sparse_image_t::’在成员‘set_virtual_page’上 [-fpermissive]
+  295 |        sparse_image_t::
+</code></pre></div><p>可能是编译器语法的不兼容导致的问题，查看对应的文件的行号：</p>
+<div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">#ifndef PARANOID
+       sparse_image_t::
+#endif
+                       get_physical_offset();
+ void
+#ifndef PARANOID
+       sparse_image_t::
+#endif
+                       set_virtual_page(uint32 new_virtual_page);
+</code></pre></div><p>可以看到，当定义 <code>PARANOID</code> 宏时会加上多余的限定，导致出错。直接删除这里的限定即可。</p>
+<h3 id="debugger-模式">Debugger 模式</h3>
+<p>如果在 <code>configure</code> 的时候启用了 <code>debugger</code> 模式，那么需要 <code>hash_map</code> 的支持。这个应该是 STL 中的扩展，或许还不是校准的一部分。又或者以前是，而现在不是了。总之，在我的机器上的 std 命名空间中找不到了。但是，经过测试，发现 <code>hash_map</code> 在 <code>__gnu_cxx</code> 命名空间中，也就是说成了 GNU CXX 拓展的一部分了。</p>
+<p>暂时不管这些，能找到 <code>hash_map</code> 就行。 在 <code>bx_debug/dbg_main.cc</code> 文件前面引用 <code>__gnu_cxx</code> 即可：</p>
+<div class="highlight"><pre class="chroma"><code class="language-c++" data-lang="c++"><span class="k">using</span> <span class="k">namespace</span> <span class="n">__gnu_cxx</span><span class="p">;</span>
+</code></pre></div><h2 id="安装">安装</h2>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">sudo make install
+</code></pre></div><h2 id="测试">测试</h2>
+<p>进入 linux-0.11 开发工具包的根目录，执行以下命令：</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">bochs -q -f bochsrc-hd.bxrc
+</code></pre></div><figure>
+    <img src="/images/2020-06-11-171530_1312x865_scrot.png"/> 
+</figure>
+
+<blockquote>
+<p>如果在编译的时候启用了 <code>deugger</code> ,那么启动的时候是 debug 模式，需要在命令调试窗口执行 c 命令，否则只能看到一个空白窗口。</p>
+</blockquote>
+
+    
+	</div>
+  <footer class="article-footer clearfix">
+  
+
+<div class="article-tags">
+  <span></span>
+  
+  <a href="/tags/archlinux">ArchLinux</a>
+  
+  <a href="/tags/bochs">bochs</a>
+  
+  <a href="/tags/linux0.11">linux0.11</a>
+  
+</div>
+
+
+
+
+
+<div class="article-categories">
+  <span></span>
+  
+  <a class="article-category-link" href="/categories/%E5%86%85%E6%A0%B8%E5%AE%9E%E9%AA%8C">内核实验</a>
+  
+</div>
+
+
+
+  <div class="article-share" id="share">
+    <div data-url="/post/arch-linux-%E4%B8%8B%E6%90%AD%E5%BB%BA-linux0.11-%E7%8E%AF%E5%A2%83/" data-title="Arch Linux 下搭建 Linux0.11 环境" data-tsina="123" class="share clearfix">
     </div>
+  </div>
+</footer>
+
+	</article>
+  
+
+
+
+</div>
+
     <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
 <div id="asidepart">
 <div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
@@ -427,10 +539,6 @@
 
 
   
-<div class="rsspart">
-  <a rel="nofollow" href="/feed.xml" type="application/rss+xml" target="_blank">RSS 订阅</a>
-</div>
-
 
 </aside>
 </div>
@@ -521,6 +629,38 @@ $(document).ready(function(){
 
 <script type="text/javascript">
 $(document).ready(function(){
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
   var $this = $('.share'),
       url = $this.attr('data-url'),
       encodedUrl = encodeURIComponent(url),
@@ -547,6 +687,27 @@ $(document).ready(function(){
 });
 </script>
 
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+});
+</script>
 
 
 
