@@ -6,10 +6,37 @@
     <description>Recent content in Tags on 北极狼徒</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Thu, 11 Jun 2020 16:33:09 +0800</lastBuildDate>
+    <lastBuildDate>Sat, 13 Jun 2020 07:17:43 +0800</lastBuildDate>
     
 	<atom:link href="/tags/feed.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>emacs</title>
+      <link>/tags/emacs/</link>
+      <pubDate>Sat, 13 Jun 2020 07:17:43 +0800</pubDate>
+      
+      <guid>/tags/emacs/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>mbsync</title>
+      <link>/tags/mbsync/</link>
+      <pubDate>Sat, 13 Jun 2020 07:17:43 +0800</pubDate>
+      
+      <guid>/tags/mbsync/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>mu4e</title>
+      <link>/tags/mu4e/</link>
+      <pubDate>Sat, 13 Jun 2020 07:17:43 +0800</pubDate>
+      
+      <guid>/tags/mu4e/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>ArchLinux</title>
@@ -44,15 +71,6 @@
       <pubDate>Wed, 10 Jun 2020 23:09:27 +0800</pubDate>
       
       <guid>/tags/hyper-v/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>emacs</title>
-      <link>/tags/emacs/</link>
-      <pubDate>Tue, 09 Jun 2020 16:25:16 +0800</pubDate>
-      
-      <guid>/tags/emacs/</guid>
       <description></description>
     </item>
     

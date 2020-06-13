@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>mu4e on 北极狼徒</title>
+    <link>/tags/mu4e/</link>
+    <description>Recent content in mu4e on 北极狼徒</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Sat, 13 Jun 2020 07:17:43 +0800</lastBuildDate>
+    
+	<atom:link href="/tags/mu4e/feed.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>将Emacs作为邮件处理软件</title>
+      <link>/post/%E5%B0%86emacs%E4%BD%9C%E4%B8%BA%E9%82%AE%E4%BB%B6%E5%A4%84%E7%90%86%E8%BD%AF%E4%BB%B6/</link>
+      <pubDate>Sat, 13 Jun 2020 07:17:43 +0800</pubDate>
+      
+      <guid>/post/%E5%B0%86emacs%E4%BD%9C%E4%B8%BA%E9%82%AE%E4%BB%B6%E5%A4%84%E7%90%86%E8%BD%AF%E4%BB%B6/</guid>
+      <description>Why 在 Linux 下也有比较多的邮件客户端软件，而我只用过雷鸟，功能非常完善，常见的日历功能如事件、任务等都有。 但是为什么我还要配置 Emacs 的邮件收发功能呢。</description>
+    </item>
+    
+  </channel>
+</rss>
