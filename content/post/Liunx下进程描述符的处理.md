@@ -3,7 +3,7 @@ title = "Liunx下进程描述符的处理"
 author = ["Jerling"]
 description = "Short description"
 date = 2020-06-13T19:07:33+08:00
-lastmod = 2020-06-13T22:13:00+08:00
+lastmod = 2020-06-13T22:45:02+08:00
 tags = ["linux", "thread_info", "内核栈"]
 categories = ["学习笔记"]
 type = "post"
@@ -19,7 +19,7 @@ toc = true
 
 ## 内核栈 {#内核栈}
 
-内核栈是供内核例程使用的栈，所有的进程共用同一个内核栈，并且进入时，内核栈都是空的。
+内核栈是供内核例程使用的栈，每个进程都拥有一个独立的内核栈，并且进入时，内核栈都是空的。
 
 
 ## 共用体 {#共用体}
@@ -44,9 +44,10 @@ union thread_union{
 
 ## 获取当前进程描述符 {#获取当前进程描述符}
 
-进程中最常用的并不是 `thread_info` 结构，而是 `task_struct` 结构。 在早期，Linux 没有将进程结构和栈设置在一起，因此内核强制引入全局变量 `current` 来标识正在运行进程的描述符。
+进程中最常用的并不是 `thread_info` 结构，而是 `task_struct` 结构。 在早期，Linux 没有将进程结构和内核栈设置在一起，因此内核强制引入全局变量 `current` 来标识正在运行进程的描述符。
 
-而将 `thread_info` 设置为和内核栈一起的数据结构，那么就可以使用栈来获取当前运行的进程， `current_thread_info()->task` 。而 `current_thread_info` 其实就是将 `esp` 屏蔽低 13 位的地址，也即 `thread_info` 的地址。
+将 `thread_info` 和内核栈设置成共用体的数据结构，就可以使用内核栈的栈顶地址 `esp`
+来获取当前运行进程的描述符，即： `current_thread_info()->task` 。而 `current_thread_info` 其实就是将 `esp` 屏蔽低 13 位得到的地址，也即 `thread_info` 的地址。
 
 
 ## 总结 {#总结}
