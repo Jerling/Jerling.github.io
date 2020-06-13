@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>内核栈 on 北极狼徒</title>
+    <link>/tags/%E5%86%85%E6%A0%B8%E6%A0%88/</link>
+    <description>Recent content in 内核栈 on 北极狼徒</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Sat, 13 Jun 2020 19:07:33 +0800</lastBuildDate>
+    
+	<atom:link href="/tags/%E5%86%85%E6%A0%B8%E6%A0%88/feed.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Liunx下进程描述符的处理</title>
+      <link>/post/liunx%E4%B8%8B%E8%BF%9B%E7%A8%8B%E6%8F%8F%E8%BF%B0%E7%AC%A6%E7%9A%84%E5%A4%84%E7%90%86/</link>
+      <pubDate>Sat, 13 Jun 2020 19:07:33 +0800</pubDate>
+      
+      <guid>/post/liunx%E4%B8%8B%E8%BF%9B%E7%A8%8B%E6%8F%8F%E8%BF%B0%E7%AC%A6%E7%9A%84%E5%A4%84%E7%90%86/</guid>
+      <description>Thread_info 在 Linux 中的任务结构体 task_struct 中包含特定于体系结构的信息以及通用的信息， thread_info 结构体则是描述进程特定于体系结构的信息字段。而在 thread_info 中也包含指向 task_struct 的指针，这</description>
+    </item>
+    
+  </channel>
+</rss>
