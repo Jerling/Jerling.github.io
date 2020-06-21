@@ -1,7 +1,8 @@
 +++
 date = "2019-03-20T23:28:02+08:00"
 title = "about"
-
+author = ["Jerling"]
+author_homepage = "https://github.com/Jerling"
 +++
 
 # 教育背景
