@@ -3,6 +3,11 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>/bookmark/</loc>
+    <lastmod>2020-06-15T14:12:02+08:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/categories/</loc>
     <lastmod>2020-06-13T22:45:02+08:00</lastmod>
   </url>

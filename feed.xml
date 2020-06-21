@@ -12,6 +12,15 @@
     
     
     <item>
+      <title>Bookmarks</title>
+      <link>/bookmark/</link>
+      <pubDate>Mon, 15 Jun 2020 14:12:02 +0800</pubDate>
+      
+      <guid>/bookmark/</guid>
+      <description>Linux 内核相关 Linux 内核之旅 Linux 内核代码 Linux 邮件组 Old Linux C 语言项目 日志处理 EasyLogger</description>
+    </item>
+    
+    <item>
       <title>Liunx下进程描述符的处理</title>
       <link>/post/liunx%E4%B8%8B%E8%BF%9B%E7%A8%8B%E6%8F%8F%E8%BF%B0%E7%AC%A6%E7%9A%84%E5%A4%84%E7%90%86/</link>
       <pubDate>Sat, 13 Jun 2020 19:07:33 +0800</pubDate>
