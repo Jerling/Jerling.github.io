@@ -101,8 +101,8 @@ make menuconfig
     <img src="/images/%e6%88%aa%e5%9b%be%e5%bd%95%e5%b1%8f_%e9%80%89%e6%8b%a9%e5%8c%ba%e5%9f%9f_20200929221635.png"/> 
 </figure>
 
-<p>编译完需要安装：</p>
-<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">make install
+<p>编译并安装：</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">make -j8 <span class="o">&amp;&amp;</span> make install
 </code></pre></div><p>在 busybox 目录下会生成一个 _install 目录，主要包含一些可执行文件。</p>
 <h2 id="rootfs">rootfs</h2>
 <p>创建镜像，并格式化为 ext4 文件系统，然后挂载：</p>
@@ -110,8 +110,7 @@ make menuconfig
 mkfs.ext4 -m <span class="m">0</span> -O none -F rootfs.img
 sudo mount -o loop rootfs.img rootfs
 </code></pre></div><p>将上一步生成的 _install 目录下的文件拷贝到 rootfs.</p>
-<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">mkdir rootfs
-sudo cp Busybox目录/_install/* rootfs/ -raf
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">sudo cp Busybox目录/_install/* rootfs/ -raf
 </code></pre></div><p>在 rootfs 中新建 linux 的根目录树：</p>
 <div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">mkdir  dev  etc  lib  var  proc  tmp  home  root  mnt  sys
 </code></pre></div><p>拷贝 busybox 的配置目录：</p>
