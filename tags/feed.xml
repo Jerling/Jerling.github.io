@@ -6,17 +6,35 @@
     <description>Recent content in Tags on 北极狼徒</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Sat, 13 Jun 2020 19:07:33 +0800</lastBuildDate>
+    <lastBuildDate>Tue, 29 Sep 2020 21:53:41 +0800</lastBuildDate>
     
 	<atom:link href="/tags/feed.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
+      <title>busybox</title>
+      <link>/tags/busybox/</link>
+      <pubDate>Tue, 29 Sep 2020 21:53:41 +0800</pubDate>
+      
+      <guid>/tags/busybox/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>linux</title>
       <link>/tags/linux/</link>
-      <pubDate>Sat, 13 Jun 2020 19:07:33 +0800</pubDate>
+      <pubDate>Tue, 29 Sep 2020 21:53:41 +0800</pubDate>
       
       <guid>/tags/linux/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>rootfs</title>
+      <link>/tags/rootfs/</link>
+      <pubDate>Tue, 29 Sep 2020 21:53:41 +0800</pubDate>
+      
+      <guid>/tags/rootfs/</guid>
       <description></description>
     </item>
     
