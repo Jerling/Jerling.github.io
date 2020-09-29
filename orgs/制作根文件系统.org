@@ -31,9 +31,9 @@ make menuconfig
 [[file:../static/images/截图录屏_选择区域_20200929221635.png]]
 
 
-编译完需要安装：
+编译并安装：
 #+BEGIN_SRC sh
-make install
+make -j8 && make install
 #+END_SRC
 
 在 busybox 目录下会生成一个 _install 目录，主要包含一些可执行文件。
@@ -47,7 +47,6 @@ sudo mount -o loop rootfs.img rootfs
 
 将上一步生成的 _install 目录下的文件拷贝到 rootfs.
 #+BEGIN_SRC sh
-mkdir rootfs
 sudo cp Busybox目录/_install/* rootfs/ -raf
 #+END_SRC
 
