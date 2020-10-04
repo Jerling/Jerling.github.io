@@ -13,7 +13,7 @@
 #+HUGO_TYPE: post
 #+HUGO_WEIGHT: auto
 #+AUTHOR: Jerling
-#+HUGO_CATEGORIES: 操作系统
+#+HUGO_CATEGORIES: 虚拟化
 #+HUGO_TAGS: linux rootfs busybox
 
 ** 准备工作
@@ -76,7 +76,7 @@ PS1='[\u@\h \W]# ' #显示主机名、当前路径等信息：
 修改 initab 文件内容：
 #+BEGIN_SRC sh
 ::sysinit:/etc/init.d/rcS
-console::askfirst:-/bin/sh
+tty0::askfirst:-/bin/sh
 ::ctrlaltdel:/bin/umount -a -r
 #+END_SRC
 
@@ -108,3 +108,5 @@ sudo umount rootfs
 [[file:../static/images/截图录屏_选择区域_20200929224431.png]]
 ** 结束语
 从上面的结果来看，比较符合预期。但是还不太好用。后面将开始探索如何使用 lkvmtools hack Linux 内核。
+* kvm 系列
+00 : [[/post/使用kvmtool启动linux/][kvmtool 启动 linux 内核]]
