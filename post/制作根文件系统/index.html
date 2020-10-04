@@ -81,16 +81,21 @@
 			<strong class="toc-title">文章目录</strong>
       <nav id="TableOfContents">
   <ul>
-    <li><a href="#准备工作">准备工作</a></li>
-    <li><a href="#rootfs">rootfs</a></li>
-    <li><a href="#卸载镜像">卸载镜像</a></li>
-    <li><a href="#用-lkvmtools-启动虚拟机">用 lkvmtools 启动虚拟机：</a></li>
-    <li><a href="#结束语">结束语</a></li>
+    <li>
+      <ul>
+        <li><a href="#准备工作">准备工作</a></li>
+        <li><a href="#rootfs">rootfs</a></li>
+        <li><a href="#卸载镜像">卸载镜像</a></li>
+        <li><a href="#用-lkvmtools-启动虚拟机">用 lkvmtools 启动虚拟机：</a></li>
+        <li><a href="#结束语">结束语</a></li>
+      </ul>
+    </li>
+    <li><a href="#kvm-系列">kvm 系列</a></li>
   </ul>
 </nav>
 		</div>
     
-    <h2 id="准备工作">准备工作</h2>
+    <h3 id="准备工作">准备工作</h3>
 <p>Bbusybox 提供了一系列可以直接运行的小程序集合，因此将 busybox 编译后的产物作为 rootfs
 的工具再好不过了。这里需要说明的是，交叉编译器要和处理器架构一致。而且要以静态链接的方式进行链接，不然要将相应的动态库拷进系统中， 具体位置在 setting 菜单里。编译过程：</p>
 <div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">wget https://busybox.net/downloads/busybox-1.32.0.tar.bz2
@@ -104,7 +109,7 @@ make menuconfig
 <p>编译并安装：</p>
 <div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">make -j8 <span class="o">&amp;&amp;</span> make install
 </code></pre></div><p>在 busybox 目录下会生成一个 _install 目录，主要包含一些可执行文件。</p>
-<h2 id="rootfs">rootfs</h2>
+<h3 id="rootfs">rootfs</h3>
 <p>创建镜像，并格式化为 ext4 文件系统，然后挂载：</p>
 <div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">dd <span class="k">if</span><span class="o">=</span>/dev/zero <span class="nv">of</span><span class="o">=</span>rootfs.img <span class="nv">bs</span><span class="o">=</span>1M <span class="nv">count</span><span class="o">=</span><span class="m">1024</span>
 mkfs.ext4 -m <span class="m">0</span> -O none -F rootfs.img
@@ -127,7 +132,7 @@ sudo mount -o loop rootfs.img rootfs
 <span class="nv">PS1</span><span class="o">=</span><span class="s1">&#39;[\u@\h \W]# &#39;</span> <span class="c1">#显示主机名、当前路径等信息：</span>
 </code></pre></div><p>修改 initab 文件内容：</p>
 <div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">::sysinit:/etc/init.d/rcS
-console::askfirst:-/bin/sh
+tty0::askfirst:-/bin/sh
 ::ctrlaltdel:/bin/umount -a -r
 </code></pre></div><p>修改 fstab 内容如下 :</p>
 <div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">proc            /proc           proc    defaults <span class="m">0</span> <span class="m">0</span>
@@ -138,14 +143,16 @@ tmpfs           /dev/shm        tmpfs   defaults <span class="m">0</span> <span 
 </code></pre></div><p>/dev目录中添加必要设备：</p>
 <div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">sudo mknod dev/console c <span class="m">5</span> <span class="m">1</span>
 sudo mknod dev/null c <span class="m">1</span> <span class="m">3</span>
-</code></pre></div><h2 id="卸载镜像">卸载镜像</h2>
+</code></pre></div><h3 id="卸载镜像">卸载镜像</h3>
 <div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">sudo umount rootfs
-</code></pre></div><h2 id="用-lkvmtools-启动虚拟机">用 lkvmtools 启动虚拟机：</h2>
+</code></pre></div><h3 id="用-lkvmtools-启动虚拟机">用 lkvmtools 启动虚拟机：</h3>
 <div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">./lkvm run --kernel ../linux-5.8.9/arch/x86/boot/bzImage --disk ../rootfs.img
 </code></pre></div><p>最终结果如下：
 <img src="/images/%E6%88%AA%E5%9B%BE%E5%BD%95%E5%B1%8F_%E9%80%89%E6%8B%A9%E5%8C%BA%E5%9F%9F_20200929224431.png" alt=""></p>
-<h2 id="结束语">结束语</h2>
+<h3 id="结束语">结束语</h3>
 <p>从上面的结果来看，比较符合预期。但是还不太好用。后面将开始探索如何使用 lkvmtools hack Linux 内核。</p>
+<h2 id="kvm-系列">kvm 系列</h2>
+<p>00 : <a href="/post/%E4%BD%BF%E7%94%A8kvmtool%E5%90%AF%E5%8A%A8linux/">kvmtool 启动 linux 内核</a></p>
 
     
 	</div>
@@ -170,7 +177,7 @@ sudo mknod dev/null c <span class="m">1</span> <span class="m">3</span>
 <div class="article-categories">
   <span></span>
   
-  <a class="article-category-link" href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F">操作系统</a>
+  <a class="article-category-link" href="/categories/%E8%99%9A%E6%8B%9F%E5%8C%96">虚拟化</a>
   
 </div>
 
@@ -209,7 +216,7 @@ sudo mknod dev/null c <span class="m">1</span> <span class="m">3</span>
     
     <li><a href="/categories/%e5%ad%a6%e4%b9%a0%e7%ac%94%e8%ae%b0" title="学习笔记">学习笔记<sup>15</sup></a></li>
     
-    <li><a href="/categories/%e6%93%8d%e4%bd%9c%e7%b3%bb%e7%bb%9f" title="操作系统">操作系统<sup>2</sup></a></li>
+    <li><a href="/categories/%e6%93%8d%e4%bd%9c%e7%b3%bb%e7%bb%9f" title="操作系统">操作系统<sup>1</sup></a></li>
     
     <li><a href="/categories/%e6%95%88%e7%8e%87%e5%b7%a5%e5%85%b7" title="效率工具">效率工具<sup>5</sup></a></li>
     
@@ -222,6 +229,8 @@ sudo mknod dev/null c <span class="m">1</span> <span class="m">3</span>
     <li><a href="/categories/%e6%b8%a9%e6%95%85%e7%9f%a5%e6%96%b0" title="温故知新">温故知新<sup>1</sup></a></li>
     
     <li><a href="/categories/%e7%bd%91%e7%bb%9c%e7%bc%96%e7%a8%8b" title="网络编程">网络编程<sup>1</sup></a></li>
+    
+    <li><a href="/categories/%e8%99%9a%e6%8b%9f%e5%8c%96" title="虚拟化">虚拟化<sup>2</sup></a></li>
     
     <li><a href="/categories/%e9%a1%b9%e7%9b%ae%e5%ae%9e%e6%88%98" title="项目实战">项目实战<sup>5</sup></a></li>
     
@@ -268,7 +277,11 @@ sudo mknod dev/null c <span class="m">1</span> <span class="m">3</span>
       
 			<li><a href="/tags/kernel" title="kernel">kernel<sup>8</sup></a></li>
       
-			<li><a href="/tags/linux" title="linux">linux<sup>15</sup></a></li>
+			<li><a href="/tags/kvm" title="kvm">kvm<sup>1</sup></a></li>
+      
+			<li><a href="/tags/kvmtool" title="kvmtool">kvmtool<sup>1</sup></a></li>
+      
+			<li><a href="/tags/linux" title="linux">linux<sup>16</sup></a></li>
       
 			<li><a href="/tags/linux0.11" title="linux0.11">linux0.11<sup>1</sup></a></li>
       
@@ -370,7 +383,7 @@ sudo mknod dev/null c <span class="m">1</span> <span class="m">3</span>
       
       
       <li class="archive-list-item">
-        <a class="archive-list-link" href="/post/#2020-09">2020年09月</a><span class="archive-list-count">1</span>
+        <a class="archive-list-link" href="/post/#2020-09">2020年09月</a><span class="archive-list-count">2</span>
       </li>
       
       
@@ -475,6 +488,10 @@ sudo mknod dev/null c <span class="m">1</span> <span class="m">3</span>
     <a href="/tags/jemalloc" style="font-size: 12px;">jemalloc</a>
     
     <a href="/tags/kernel" style="font-size: 12px;">kernel</a>
+    
+    <a href="/tags/kvm" style="font-size: 12px;">kvm</a>
+    
+    <a href="/tags/kvmtool" style="font-size: 12px;">kvmtool</a>
     
     <a href="/tags/linux" style="font-size: 12px;">linux</a>
     

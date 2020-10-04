@@ -21,6 +21,15 @@
     </item>
     
     <item>
+      <title>使用kvmtool启动linux</title>
+      <link>/post/%E4%BD%BF%E7%94%A8kvmtool%E5%90%AF%E5%8A%A8linux/</link>
+      <pubDate>Tue, 29 Sep 2020 10:46:44 +0800</pubDate>
+      
+      <guid>/post/%E4%BD%BF%E7%94%A8kvmtool%E5%90%AF%E5%8A%A8linux/</guid>
+      <description>前言 所谓学以致用，学习的目的就是为了使用。那么相反的，好用可以反过来督促进一步深入学习。本文是 linux kvm 虚拟化子系统的开篇，主要讲如何搭建一个基础</description>
+    </item>
+    
+    <item>
       <title>Liunx下进程描述符的处理</title>
       <link>/post/liunx%E4%B8%8B%E8%BF%9B%E7%A8%8B%E6%8F%8F%E8%BF%B0%E7%AC%A6%E7%9A%84%E5%A4%84%E7%90%86/</link>
       <pubDate>Sat, 13 Jun 2020 19:07:33 +0800</pubDate>
