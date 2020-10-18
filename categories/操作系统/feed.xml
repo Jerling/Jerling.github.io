@@ -6,11 +6,7 @@
     <description>Recent content in 操作系统 on 北极狼徒</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Sat, 22 Dec 2018 00:00:00 +0800</lastBuildDate>
-    
-	<atom:link href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/feed.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Sat, 22 Dec 2018 00:00:00 +0800</lastBuildDate><atom:link href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/feed.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Gentoo 系统初探</title>
       <link>/post/gentoo_linux_first_try/</link>

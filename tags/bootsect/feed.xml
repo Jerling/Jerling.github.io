@@ -6,11 +6,7 @@
     <description>Recent content in bootsect on 北极狼徒</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Thu, 23 Apr 2020 00:00:00 +0800</lastBuildDate>
-    
-	<atom:link href="/tags/bootsect/feed.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Thu, 23 Apr 2020 00:00:00 +0800</lastBuildDate><atom:link href="/tags/bootsect/feed.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Linux内核学习 ———— 系统引导</title>
       <link>/post/oslab_experiment_01/</link>

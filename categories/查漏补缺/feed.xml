@@ -6,11 +6,7 @@
     <description>Recent content in 查漏补缺 on 北极狼徒</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Tue, 09 Jun 2020 16:25:16 +0800</lastBuildDate>
-    
-	<atom:link href="/categories/%E6%9F%A5%E6%BC%8F%E8%A1%A5%E7%BC%BA/feed.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Tue, 09 Jun 2020 16:25:16 +0800</lastBuildDate><atom:link href="/categories/%E6%9F%A5%E6%BC%8F%E8%A1%A5%E7%BC%BA/feed.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>终端下的emacs问题</title>
       <link>/post/%E7%BB%88%E7%AB%AF%E4%B8%8B%E7%9A%84emacs%E9%97%AE%E9%A2%98/</link>

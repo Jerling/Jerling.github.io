@@ -6,11 +6,7 @@
     <description>Recent content in ccls on 北极狼徒</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Thu, 04 Jun 2020 21:42:44 +0800</lastBuildDate>
-    
-	<atom:link href="/tags/ccls/feed.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Thu, 04 Jun 2020 21:42:44 +0800</lastBuildDate><atom:link href="/tags/ccls/feed.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>windows 上编译 ccls</title>
       <link>/post/build_ccls_on_windows/</link>

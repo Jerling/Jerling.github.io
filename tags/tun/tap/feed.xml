@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>tun/tap on 北极狼徒</title>
+    <link>/tags/tun/tap/</link>
+    <description>Recent content in tun/tap on 北极狼徒</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language><atom:link href="/tags/tun/tap/feed.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>kvmtool 开启网络功能</title>
+      <link>/post/kvmtool_network/</link>
+      <pubDate>Sun, 11 Oct 2020 00:00:00 +0800</pubDate>
+      
+      <guid>/post/kvmtool_network/</guid>
+      <description>前言 在用 kvmtool 启动 kvm 中的虚拟机之后，会进入一个终端窗口，而由于这个窗口是模拟的终端 窗口。因此通常会存在一些使用不便的问题，比如说虚拟机的窗口大小</description>
+    </item>
+    
+  </channel>
+</rss>

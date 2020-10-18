@@ -6,10 +6,24 @@
     <description>Recent content in 虚拟化 on 北极狼徒</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Tue, 29 Sep 2020 21:53:41 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 12 Oct 2020 00:00:00 +0800</lastBuildDate><atom:link href="/categories/%E8%99%9A%E6%8B%9F%E5%8C%96/feed.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>kvmtool 中的数据结构</title>
+      <link>/post/kvmtool_datastruct/</link>
+      <pubDate>Mon, 12 Oct 2020 00:00:00 +0800</pubDate>
+      
+      <guid>/post/kvmtool_datastruct/</guid>
+      <description>前言 本文是 kvm 虚拟化系列的第 4 篇，前三篇介绍了 kvmtool 的基本使用以及linux 根文件系统的制作。 接下来我们将正式进入副主题，也就是 kvm 的用户态管理程序</description>
+    </item>
     
-	<atom:link href="/categories/%E8%99%9A%E6%8B%9F%E5%8C%96/feed.xml" rel="self" type="application/rss+xml" />
-    
+    <item>
+      <title>kvmtool 开启网络功能</title>
+      <link>/post/kvmtool_network/</link>
+      <pubDate>Sun, 11 Oct 2020 00:00:00 +0800</pubDate>
+      
+      <guid>/post/kvmtool_network/</guid>
+      <description>前言 在用 kvmtool 启动 kvm 中的虚拟机之后，会进入一个终端窗口，而由于这个窗口是模拟的终端 窗口。因此通常会存在一些使用不便的问题，比如说虚拟机的窗口大小</description>
+    </item>
     
     <item>
       <title>制作根文件系统</title>

@@ -6,11 +6,7 @@
     <description>Recent content in ArchLinux on 北极狼徒</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Thu, 11 Jun 2020 16:33:09 +0800</lastBuildDate>
-    
-	<atom:link href="/tags/archlinux/feed.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Thu, 11 Jun 2020 16:33:09 +0800</lastBuildDate><atom:link href="/tags/archlinux/feed.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Arch Linux 下搭建 Linux0.11 环境</title>
       <link>/post/arch-linux-%E4%B8%8B%E6%90%AD%E5%BB%BA-linux0.11-%E7%8E%AF%E5%A2%83/</link>

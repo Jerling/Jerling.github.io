@@ -6,10 +6,15 @@
     <description>Recent content in linux on 北极狼徒</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Tue, 29 Sep 2020 21:53:41 +0800</lastBuildDate>
-    
-	<atom:link href="/tags/linux/feed.xml" rel="self" type="application/rss+xml" />
-    
+    <lastBuildDate>Sun, 18 Oct 2020 00:00:00 +0800</lastBuildDate><atom:link href="/tags/linux/feed.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Linux Arm64 下的早期打印</title>
+      <link>/post/linux_arm64_earlycon/</link>
+      <pubDate>Sun, 18 Oct 2020 00:00:00 +0800</pubDate>
+      
+      <guid>/post/linux_arm64_earlycon/</guid>
+      <description>前言 最近遇到一个 Linux 无法启动的问题，没有任何输出信息。为了摸清到底是 卡在哪儿了，需要查看 Linux 的启动消息。正常情况下，Linux 的 printk 函数是基于 console 的</description>
+    </item>
     
     <item>
       <title>制作根文件系统</title>

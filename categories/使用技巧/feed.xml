@@ -6,11 +6,7 @@
     <description>Recent content in 使用技巧 on 北极狼徒</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Thu, 14 May 2020 07:36:20 +0800</lastBuildDate>
-    
-	<atom:link href="/categories/%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7/feed.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Thu, 14 May 2020 07:36:20 +0800</lastBuildDate><atom:link href="/categories/%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7/feed.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>在win10上使用hyper-v共享文件夹给linux系统</title>
       <link>/post/share_dir_on_hyper-v/</link>

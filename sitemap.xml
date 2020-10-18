@@ -3,22 +3,82 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>/tags/busybox/</loc>
-    <lastmod>2020-10-04T15:44:34+08:00</lastmod>
+    <loc>/tags/arm64/</loc>
+    <lastmod>2020-10-18T00:00:00+08:00</lastmod>
   </url>
   
   <url>
     <loc>/categories/</loc>
-    <lastmod>2020-10-04T15:44:34+08:00</lastmod>
+    <lastmod>2020-10-18T00:00:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/earycon/</loc>
+    <lastmod>2020-10-18T00:00:00+08:00</lastmod>
   </url>
   
   <url>
     <loc>/tags/linux/</loc>
-    <lastmod>2020-10-04T15:44:34+08:00</lastmod>
+    <lastmod>2020-10-18T00:00:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/post/linux_arm64_earlycon/</loc>
+    <lastmod>2020-10-18T00:00:00+08:00</lastmod>
   </url>
   
   <url>
     <loc>/post/</loc>
+    <lastmod>2020-10-18T00:00:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/</loc>
+    <lastmod>2020-10-18T00:00:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/categories/%E5%86%85%E6%A0%B8%E8%B0%83%E8%AF%95/</loc>
+    <lastmod>2020-10-18T00:00:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/</loc>
+    <lastmod>2020-10-18T00:00:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/kvm/</loc>
+    <lastmod>2020-10-12T00:00:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/kvmtool/</loc>
+    <lastmod>2020-10-12T00:00:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/post/kvmtool_datastruct/</loc>
+    <lastmod>2020-10-12T00:00:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/categories/%E8%99%9A%E6%8B%9F%E5%8C%96/</loc>
+    <lastmod>2020-10-12T00:00:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/post/kvmtool_network/</loc>
+    <lastmod>2020-10-11T00:00:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/ssh/</loc>
+    <lastmod>2020-10-11T00:00:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/busybox/</loc>
     <lastmod>2020-10-04T15:44:34+08:00</lastmod>
   </url>
   
@@ -28,33 +88,8 @@
   </url>
   
   <url>
-    <loc>/tags/</loc>
-    <lastmod>2020-10-04T15:44:34+08:00</lastmod>
-  </url>
-  
-  <url>
     <loc>/post/%E5%88%B6%E4%BD%9C%E6%A0%B9%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/</loc>
     <lastmod>2020-10-04T15:44:34+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/</loc>
-    <lastmod>2020-10-04T15:44:34+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/categories/%E8%99%9A%E6%8B%9F%E5%8C%96/</loc>
-    <lastmod>2020-10-04T15:44:34+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/tags/kvm/</loc>
-    <lastmod>2020-10-04T15:30:32+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/tags/kvmtool/</loc>
-    <lastmod>2020-10-04T15:30:32+08:00</lastmod>
   </url>
   
   <url>
@@ -625,6 +660,10 @@
   <url>
     <loc>/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/</loc>
     <lastmod>2019-02-02T19:53:51+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/tun/tap/</loc>
   </url>
   
 </urlset>

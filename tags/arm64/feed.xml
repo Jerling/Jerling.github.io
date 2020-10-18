@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>arm64 on 北极狼徒</title>
+    <link>/tags/arm64/</link>
+    <description>Recent content in arm64 on 北极狼徒</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Sun, 18 Oct 2020 00:00:00 +0800</lastBuildDate><atom:link href="/tags/arm64/feed.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Linux Arm64 下的早期打印</title>
+      <link>/post/linux_arm64_earlycon/</link>
+      <pubDate>Sun, 18 Oct 2020 00:00:00 +0800</pubDate>
+      
+      <guid>/post/linux_arm64_earlycon/</guid>
+      <description>前言 最近遇到一个 Linux 无法启动的问题，没有任何输出信息。为了摸清到底是 卡在哪儿了，需要查看 Linux 的启动消息。正常情况下，Linux 的 printk 函数是基于 console 的</description>
+    </item>
+    
+  </channel>
+</rss>

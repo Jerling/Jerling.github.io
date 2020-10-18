@@ -1,0 +1,881 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>kvmtool 中的数据结构 - 北极狼徒</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+  
+  <meta name="description" content="kvmtool">
+  
+  <meta itemprop="name" content="kvmtool 中的数据结构 - 北极狼徒">
+  <meta itemprop="description" content="kvmtool">
+  <meta itemprop="image" content="/img/author.jpg">
+  
+  <meta name="twitter:description" content="kvmtool" />
+  
+  <link rel="shortcut icon" href="/img/favicon.ico"/>
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png" />
+  <link rel="stylesheet" href="/highlight/styles/github.css">
+  <script src="/highlight/highlight.pack.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  
+  <link rel="stylesheet" href="/font/hack/css/hack.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <header>
+    <div>
+  
+  <div id="imglogo">
+    <a href="/"><img src="/img/logo.svg" alt="北极狼徒" title="北极狼徒"/></a>
+  </div>
+  
+  <div id="textlogo">
+    <h1 class="site-name"><a href="/" title="北极狼徒">北极狼徒</a></h1>
+    <h2 class="blog-motto">个人博客</h2>
+  </div>
+  <div class="navbar"><a class="navbutton navmobile" href="#" title="menu"></a></div>
+  <nav class="animated">
+    <ul>
+      
+      <li><a href="/post">首页</a></li>
+      
+      <li><a href="/about">关于</a></li>
+      
+      <li><a href="/bookmark">收藏</a></li>
+      
+      <li>
+        <form class="search" method="get" action="https://www.google.com/search">
+          <div>
+            <input type="text" id="search" name="q" placeholder="搜索">
+          </div>
+        </form>
+      </li>
+    </ul>
+  </nav>
+</div>
+
+  </header>
+  <div id="container">
+    <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody">
+    <header class="article-info clearfix">
+  <h1 itemprop="name">
+      <a href="/post/kvmtool_datastruct/" title="kvmtool 中的数据结构" itemprop="url">kvmtool 中的数据结构</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="https://github.com/Jerling" title="[Jerling]">[Jerling]</a>
+    
+  </p>
+  <p class="article-time">
+    <time datetime="2020-10-12 00:00:00 &#43;0800 CST" itemprop="datePublished">2020年10月12日</time>
+  </p>
+</header>
+
+	<div class="article-content">
+    
+		<div class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#前言">前言</a></li>
+    <li><a href="#kvm">kvm</a></li>
+    <li><a href="#kvm_arch">kvm_arch</a></li>
+    <li><a href="#kvm_config">kvm_config</a></li>
+    <li><a href="#cpu">cpu</a>
+      <ul>
+        <li><a href="#kvm_cpu_task">kvm_cpu_task</a></li>
+      </ul>
+    </li>
+    <li><a href="#disk_image">disk_image</a></li>
+  </ul>
+</nav>
+		</div>
+    
+    <h2 id="前言">前言</h2>
+<p>本文是 kvm 虚拟化系列的第 4 篇，前三篇介绍了 kvmtool 的基本使用以及linux 根文件系统的制作。
+接下来我们将正式进入副主题，也就是 kvm 的用户态管理程序，即本系列第一篇的 kvmtool。
+最后才是 kvm 子系统。kvmtool 中涉及的数据结构主要有 kvm/kvm_arch/kvm_config 等。</p>
+<h2 id="kvm">kvm</h2>
+<p>定义：</p>
+<div class="highlight"><pre class="chroma"><code class="language-cpp" data-lang="cpp"><span class="k">struct</span> <span class="nc">kvm</span> <span class="p">{</span>
+    <span class="k">struct</span> <span class="nc">kvm_arch</span>        <span class="n">arch</span><span class="p">;</span>               <span class="cm">/* 和 cpu 架构相关的结构体 */</span>
+    <span class="k">struct</span> <span class="nc">kvm_config</span>      <span class="n">cfg</span><span class="p">;</span>                <span class="cm">/* kvm 配置结构体 */</span>
+    <span class="kt">int</span>                    <span class="n">sys_fd</span><span class="p">;</span>             <span class="cm">/* 用于系统 ioctls(), i.e. /dev/kvm */</span>
+    <span class="kt">int</span>                    <span class="n">vm_fd</span><span class="p">;</span>              <span class="cm">/* 用于虚拟机 ioctls() */</span>
+    <span class="n">timer_t</span>                <span class="n">timerid</span><span class="p">;</span>            <span class="cm">/* Posix 定时器，用于中断 */</span>
+
+    <span class="kt">int</span>                    <span class="n">nrcpus</span><span class="p">;</span>             <span class="cm">/* 运行的 cpu 数量 */</span>
+    <span class="k">struct</span> <span class="nc">kvm_cpu</span>        <span class="o">**</span><span class="n">cpus</span><span class="p">;</span>
+
+    <span class="n">u32</span>                    <span class="n">mem_slots</span><span class="p">;</span>          <span class="cm">/* 内存槽， 用于 KVM_SET_USER_MEMORY_REGION */</span>
+    <span class="n">u64</span>                    <span class="n">ram_size</span><span class="p">;</span>           <span class="cm">/* 内存大小 */</span>
+    <span class="kt">void</span>                   <span class="o">*</span><span class="n">ram_start</span><span class="p">;</span>         <span class="cm">/* 内存起始地址 */</span>
+    <span class="n">u64</span>                    <span class="n">ram_pagesize</span><span class="p">;</span>       <span class="cm">/* 内存页大小 */</span>
+    <span class="k">struct</span> <span class="nc">mutex</span>           <span class="n">mem_banks_lock</span><span class="p">;</span>     <span class="cm">/* 内存互斥锁 */</span>
+    <span class="k">struct</span> <span class="nc">list_head</span>       <span class="n">mem_banks</span><span class="p">;</span>          <span class="cm">/* 内存链表 */</span>
+
+    <span class="kt">bool</span>                   <span class="n">nmi_disabled</span><span class="p">;</span>       <span class="cm">/* 是否禁用 NMI */</span>
+    <span class="kt">bool</span>                   <span class="n">msix_needs_devid</span><span class="p">;</span>   <span class="cm">/* 是否需要 devid */</span>
+
+    <span class="k">const</span> <span class="kt">char</span>             <span class="o">*</span><span class="n">vmlinux</span><span class="p">;</span>           <span class="cm">/* 内核镜像 */</span>
+    <span class="k">struct</span> <span class="nc">disk_image</span>      <span class="o">**</span><span class="n">disks</span><span class="p">;</span>            <span class="cm">/* 磁盘镜像指针数组 */</span>
+    <span class="kt">int</span>                    <span class="n">nr_disks</span><span class="p">;</span>           <span class="cm">/* 磁盘个数 */</span>
+
+    <span class="kt">int</span>                    <span class="n">vm_state</span><span class="p">;</span>           <span class="cm">/* 虚拟机状态 */</span>
+
+<span class="cp">#ifdef KVM_BRLOCK_DEBUG
+</span><span class="cp"></span>    <span class="n">pthread_rwlock_t</span>       <span class="n">brlock_sem</span><span class="p">;</span>         <span class="cm">/* 读写信号量 */</span>
+<span class="cp">#endif
+</span><span class="cp"></span><span class="p">};</span>
+</code></pre></div><p>kvm 是 kvmtool 中最重要的数据结构之一，它描述了虚拟机所需要的所有硬件、配置以及虚拟机的状态等。
+接下来以 kvm 为中心，介绍其相关的结构体。</p>
+<h2 id="kvm_arch">kvm_arch</h2>
+<p>kvm_arch 结构体用于描述CPU特定架构的信息，以 x86 为例：</p>
+<p>定义：</p>
+<div class="highlight"><pre class="chroma"><code class="language-cpp" data-lang="cpp"><span class="k">struct</span> <span class="nc">kvm_arch</span> <span class="p">{</span>
+    <span class="n">u16</span>                       <span class="n">boot_selector</span><span class="p">;</span>    <span class="cm">/* 启动扇区 */</span>
+    <span class="n">u16</span>                       <span class="n">boot_ip</span><span class="p">;</span>          <span class="cm">/* ip 地址 */</span>
+    <span class="n">u16</span>                       <span class="n">boot_sp</span><span class="p">;</span>          <span class="cm">/* sp 地址 */</span>
+
+    <span class="k">struct</span> <span class="nc">interrupt_table</span>    <span class="n">interrupt_table</span><span class="p">;</span>  <span class="cm">/* 中断向量表 */</span>
+<span class="p">};</span>
+</code></pre></div><h2 id="kvm_config">kvm_config</h2>
+<p>定义：</p>
+<div class="highlight"><pre class="chroma"><code class="language-cpp" data-lang="cpp"><span class="k">struct</span> <span class="nc">kvm_config</span> <span class="p">{</span>
+    <span class="k">struct</span> <span class="nc">kvm_config_arch</span> <span class="n">arch</span><span class="p">;</span>                            <span class="cm">/* 特定架构的配置 */</span>
+    <span class="k">struct</span> <span class="nc">disk_image_params</span> <span class="n">disk_image</span><span class="p">[</span><span class="n">MAX_DISK_IMAGES</span><span class="p">];</span>   <span class="cm">/* 磁盘参数配置 */</span>
+    <span class="k">struct</span> <span class="nc">vfio_device_params</span> <span class="o">*</span><span class="n">vfio_devices</span><span class="p">;</span>                <span class="cm">/* vfio 参数配置 */</span>
+    <span class="n">u64</span> <span class="n">ram_size</span><span class="p">;</span>                                           <span class="cm">/* 内存大小 */</span>
+    <span class="n">u8</span>  <span class="n">image_count</span><span class="p">;</span>                                        <span class="cm">/* 镜像数量 */</span>
+    <span class="n">u8</span> <span class="n">num_net_devices</span><span class="p">;</span>                                     <span class="cm">/* 网络设备数量 */</span>
+    <span class="n">u8</span> <span class="n">num_vfio_devices</span><span class="p">;</span>                                    <span class="cm">/* vfio 设备数量 */</span>
+    <span class="kt">bool</span> <span class="n">virtio_rng</span><span class="p">;</span>                                        <span class="cm">/* virtio 是否随机 */</span>
+    <span class="kt">int</span> <span class="n">active_console</span><span class="p">;</span>                                     <span class="cm">/* 活动控制台 */</span>
+    <span class="kt">int</span> <span class="n">debug_iodelay</span><span class="p">;</span>                                      <span class="cm">/* 调试 io 配置 */</span>
+    <span class="kt">int</span> <span class="n">nrcpus</span><span class="p">;</span>                                             <span class="cm">/* cpu 数量 */</span>
+    <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">kernel_cmdline</span><span class="p">;</span>                             <span class="cm">/* 内核启动参数 */</span>
+    <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">kernel_filename</span><span class="p">;</span>                            <span class="cm">/* 内核文件 */</span>
+    <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">vmlinux_filename</span><span class="p">;</span>                           <span class="cm">/* 解压内核文件 */</span>
+    <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">initrd_filename</span><span class="p">;</span>                            <span class="cm">/* initrd 文件 */</span>
+    <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">firmware_filename</span><span class="p">;</span>                          <span class="cm">/* fireware 文件 */</span>
+    <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">flash_filename</span><span class="p">;</span>                             <span class="cm">/* flash 文件 */</span>
+    <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">console</span><span class="p">;</span>                                    <span class="cm">/* console 文件 */</span>
+    <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">dev</span><span class="p">;</span>                                        <span class="cm">/* dev 子系统 */</span>
+    <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">network</span><span class="p">;</span>                                    <span class="cm">/* 网络子系统 */</span>
+    <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">host_ip</span><span class="p">;</span>                                    <span class="cm">/* 主机 ip */</span>
+    <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">guest_ip</span><span class="p">;</span>                                   <span class="cm">/* 客户 ip */</span>
+    <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">guest_mac</span><span class="p">;</span>                                  <span class="cm">/* 客户 mac */</span>
+    <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">host_mac</span><span class="p">;</span>                                   <span class="cm">/* 主机 mac */</span>
+    <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">script</span><span class="p">;</span>                                     <span class="cm">/* 脚本 ? */</span>
+    <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">guest_name</span><span class="p">;</span>                                 <span class="cm">/* 客户机名字 */</span>
+    <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">sandbox</span><span class="p">;</span>                                    <span class="cm">/* 沙盒 */</span>
+    <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">hugetlbfs_path</span><span class="p">;</span>                             <span class="cm">/* 大页路径 */</span>
+    <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">custom_rootfs_name</span><span class="p">;</span>                         <span class="cm">/* 自定义 rootfs */</span>
+    <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">real_cmdline</span><span class="p">;</span>                               <span class="cm">/* 实际 cmdline */</span>
+    <span class="k">struct</span> <span class="nc">virtio_net_params</span> <span class="o">*</span><span class="n">net_params</span><span class="p">;</span>                   <span class="cm">/* virtio 网络参数 */</span>
+    <span class="kt">bool</span> <span class="n">single_step</span><span class="p">;</span>                                       <span class="cm">/* 单步调试 */</span>
+    <span class="kt">bool</span> <span class="n">vnc</span><span class="p">;</span>                                               <span class="cm">/* 显示方式： vnc/gtk/sdl */</span>
+    <span class="kt">bool</span> <span class="n">gtk</span><span class="p">;</span>
+    <span class="kt">bool</span> <span class="n">sdl</span><span class="p">;</span>
+    <span class="kt">bool</span> <span class="n">balloon</span><span class="p">;</span>                                           <span class="cm">/* ? */</span>
+    <span class="kt">bool</span> <span class="n">using_rootfs</span><span class="p">;</span>                                      <span class="cm">/* 正在使用的 rootfs */</span>
+    <span class="kt">bool</span> <span class="n">custom_rootfs</span><span class="p">;</span>                                     <span class="cm">/* 是否自定义 rootfs */</span>
+    <span class="kt">bool</span> <span class="n">no_net</span><span class="p">;</span>                                            <span class="cm">/* 是否不需要网络 */</span>
+    <span class="kt">bool</span> <span class="n">no_dhcp</span><span class="p">;</span>                                           <span class="cm">/* 是否不使用 dhcp */</span>
+    <span class="kt">bool</span> <span class="n">ioport_debug</span><span class="p">;</span>                                      <span class="cm">/* io 端口调试 */</span>
+    <span class="kt">bool</span> <span class="n">mmio_debug</span><span class="p">;</span>                                        <span class="cm">/* mmio 调试 */</span>
+<span class="p">};</span>
+</code></pre></div><p>从配置结构体的定义可以看出，包含了虚拟机的所需要的所有配置信息，如架构、调试、外设参数等。</p>
+<h2 id="cpu">cpu</h2>
+<p>用于描述 vcpu 的上下文信息。</p>
+<p>定义：</p>
+<div class="highlight"><pre class="chroma"><code class="language-cpp" data-lang="cpp"><span class="k">struct</span> <span class="nc">kvm_cpu</span> <span class="p">{</span>
+    <span class="n">pthread_t</span>                           <span class="kr">thread</span><span class="p">;</span>        <span class="cm">/* VCPU 线程 */</span>
+
+    <span class="kt">unsigned</span> <span class="kt">long</span>                       <span class="n">cpu_id</span><span class="p">;</span>        <span class="cm">/* cpu id */</span>
+
+    <span class="k">struct</span> <span class="nc">kvm</span>                          <span class="o">*</span><span class="n">kvm</span><span class="p">;</span>          <span class="cm">/* 指向 KVM */</span>
+    <span class="kt">int</span>                                 <span class="n">vcpu_fd</span><span class="p">;</span>       <span class="cm">/* 用于 VCPU ioctls() */</span>
+    <span class="k">struct</span> <span class="nc">kvm_run</span>                      <span class="o">*</span><span class="n">kvm_run</span><span class="p">;</span>      <span class="cm">/* 运行时上下文 */</span>
+    <span class="k">struct</span> <span class="nc">kvm_cpu_task</span>                 <span class="o">*</span><span class="n">task</span><span class="p">;</span>         <span class="cm">/* 任务 */</span>
+
+    <span class="k">struct</span> <span class="nc">kvm_regs</span>                     <span class="n">regs</span><span class="p">;</span>          <span class="cm">/* kvm 通用寄存器 */</span>
+    <span class="k">struct</span> <span class="nc">kvm_sregs</span>                    <span class="n">sregs</span><span class="p">;</span>         <span class="cm">/* kvm 系统寄存器 */</span>
+    <span class="k">struct</span> <span class="nc">kvm_fpu</span>                      <span class="n">fpu</span><span class="p">;</span>           <span class="cm">/* kvm 浮点处理器 */</span>
+
+    <span class="k">struct</span> <span class="nc">kvm_msrs</span>                     <span class="o">*</span><span class="n">msrs</span><span class="p">;</span>         <span class="cm">/* ? */</span>
+
+    <span class="n">u8</span>                                  <span class="n">is_running</span><span class="p">;</span>    <span class="cm">/* 是否正在运行 */</span>
+    <span class="n">u8</span>                                  <span class="n">paused</span><span class="p">;</span>        <span class="cm">/* 暂停 */</span>
+    <span class="n">u8</span>                                  <span class="n">needs_nmi</span><span class="p">;</span>     <span class="cm">/* 是否有 NMI */</span>
+
+    <span class="k">struct</span> <span class="nc">kvm_coalesced_mmio_ring</span>      <span class="o">*</span><span class="n">ring</span><span class="p">;</span>         <span class="cm">/* 模拟环形io总线 */</span>
+<span class="p">};</span>
+</code></pre></div><p>kvm_run 结构体是 kvm 子系统的数据结构之一，后续文章再详细讲解。
+kvm_regs/kvm_sregs/kvm_fpu/kvm_msrs 都是用于保存从内核态获取的 kvm 子系统中的上下文。
+kvm_coalesced_mmio_ring 这个结构体用于分配环形 io 内存地址。</p>
+<h3 id="kvm_cpu_task">kvm_cpu_task</h3>
+<p>定义：</p>
+<div class="highlight"><pre class="chroma"><code class="language-cpp" data-lang="cpp"><span class="k">struct</span> <span class="nc">kvm_cpu_task</span> <span class="p">{</span>
+    <span class="kt">void</span> <span class="p">(</span><span class="o">*</span><span class="n">func</span><span class="p">)(</span><span class="k">struct</span> <span class="nc">kvm_cpu</span> <span class="o">*</span><span class="n">vcpu</span><span class="p">,</span> <span class="kt">void</span> <span class="o">*</span><span class="n">data</span><span class="p">);</span>  <span class="cm">/* 任务函数指针 */</span>
+    <span class="kt">void</span> <span class="o">*</span><span class="n">data</span><span class="p">;</span>                                      <span class="cm">/* 任务参数 */</span>
+<span class="p">};</span>
+</code></pre></div><p>这个结构的作用在后续章节详细分析。</p>
+<h2 id="disk_image">disk_image</h2>
+<p>磁盘镜像文件数据结构。</p>
+<p>定义：</p>
+<div class="highlight"><pre class="chroma"><code class="language-cpp" data-lang="cpp"><span class="k">struct</span> <span class="nc">disk_image</span> <span class="p">{</span>
+    <span class="kt">int</span>                             <span class="n">fd</span><span class="p">;</span>                                      <span class="cm">/* 描述符 */</span>
+    <span class="n">u64</span>                             <span class="n">size</span><span class="p">;</span>                                    <span class="cm">/* 大小 */</span>
+    <span class="k">struct</span> <span class="nc">disk_image_operations</span>    <span class="o">*</span><span class="n">ops</span><span class="p">;</span>                                    <span class="cm">/* 操作函数 */</span>
+    <span class="kt">void</span>                            <span class="o">*</span><span class="n">priv</span><span class="p">;</span>                                   <span class="cm">/* 优先级 */</span>
+    <span class="kt">void</span>                            <span class="o">*</span><span class="n">disk_req_cb_param</span><span class="p">;</span>                      <span class="cm">/* 请求回调函数参数 */</span>
+    <span class="kt">void</span>                            <span class="p">(</span><span class="o">*</span><span class="n">disk_req_cb</span><span class="p">)(</span><span class="kt">void</span> <span class="o">*</span><span class="n">param</span><span class="p">,</span> <span class="kt">long</span> <span class="n">len</span><span class="p">);</span>   <span class="cm">/* 请求回调函数  */</span>
+    <span class="kt">bool</span>                            <span class="n">readonly</span><span class="p">;</span>                                <span class="cm">/* 只读 */</span>
+    <span class="kt">bool</span>                            <span class="n">async</span><span class="p">;</span>                                   <span class="cm">/* 支持异步 */</span>
+<span class="cp">#ifdef CONFIG_HAS_AIO
+</span><span class="cp"></span>    <span class="n">io_context_t</span>                    <span class="n">ctx</span><span class="p">;</span>                                     <span class="cm">/* 上下文 */</span>
+    <span class="kt">int</span>                             <span class="n">evt</span><span class="p">;</span>                                     <span class="cm">/* 异步事件 */</span>
+    <span class="n">pthread_t</span>                       <span class="kr">thread</span><span class="p">;</span>                                  <span class="cm">/* 线程 */</span>
+    <span class="n">u64</span>                             <span class="n">aio_inflight</span><span class="p">;</span>                            <span class="cm">/* ? */</span>
+<span class="cp">#endif </span><span class="cm">/* CONFIG_HAS_AIO */</span><span class="cp">
+</span><span class="cp"></span>    <span class="k">const</span> <span class="kt">char</span>                      <span class="o">*</span><span class="n">wwpn</span><span class="p">;</span>                                   <span class="cm">/* ? */</span>
+    <span class="k">const</span> <span class="kt">char</span>                      <span class="o">*</span><span class="n">tpgt</span><span class="p">;</span>                                   <span class="cm">/* ? */</span>
+    <span class="kt">int</span>                             <span class="n">debug_iodelay</span><span class="p">;</span>                           <span class="cm">/* 调试 io */</span>
+<span class="p">};</span>
+</code></pre></div>
+    
+	</div>
+  <footer class="article-footer clearfix">
+  
+
+<div class="article-tags">
+  <span></span>
+  
+  <a href="/tags/kvm">kvm</a>
+  
+  <a href="/tags/kvmtool">kvmtool</a>
+  
+</div>
+
+
+
+
+
+<div class="article-categories">
+  <span></span>
+  
+  <a class="article-category-link" href="/categories/%E8%99%9A%E6%8B%9F%E5%8C%96">虚拟化</a>
+  
+</div>
+
+
+
+  <div class="article-share" id="share">
+    <div data-url="/post/kvmtool_datastruct/" data-title="kvmtool 中的数据结构" data-tsina="123" class="share clearfix">
+    </div>
+  </div>
+</footer>
+
+	</article>
+  
+
+
+
+</div>
+
+    <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+  
+
+<div class="categorieslist">
+  <p class="asidetitle">分类</p>
+  <ul>
+    
+    <li><a href="/categories/%e4%bd%bf%e7%94%a8%e6%8a%80%e5%b7%a7" title="使用技巧">使用技巧<sup>1</sup></a></li>
+    
+    <li><a href="/categories/%e5%86%85%e5%ad%98%e7%ae%a1%e7%90%86" title="内存管理">内存管理<sup>1</sup></a></li>
+    
+    <li><a href="/categories/%e5%86%85%e6%a0%b8%e5%ae%9e%e9%aa%8c" title="内核实验">内核实验<sup>3</sup></a></li>
+    
+    <li><a href="/categories/%e5%86%85%e6%a0%b8%e8%b0%83%e8%af%95" title="内核调试">内核调试<sup>1</sup></a></li>
+    
+    <li><a href="/categories/%e5%91%bd%e4%bb%a4%e8%a1%8c%e8%89%ba%e6%9c%af" title="命令行艺术">命令行艺术<sup>3</sup></a></li>
+    
+    <li><a href="/categories/%e5%ad%a6%e4%b9%a0%e7%ac%94%e8%ae%b0" title="学习笔记">学习笔记<sup>15</sup></a></li>
+    
+    <li><a href="/categories/%e6%93%8d%e4%bd%9c%e7%b3%bb%e7%bb%9f" title="操作系统">操作系统<sup>1</sup></a></li>
+    
+    <li><a href="/categories/%e6%95%88%e7%8e%87%e5%b7%a5%e5%85%b7" title="效率工具">效率工具<sup>5</sup></a></li>
+    
+    <li><a href="/categories/%e6%95%b0%e6%8d%ae%e7%bb%93%e6%9e%84" title="数据结构">数据结构<sup>1</sup></a></li>
+    
+    <li><a href="/categories/%e6%9c%80%e4%bd%b3%e5%ae%9e%e8%b7%b5" title="最佳实践">最佳实践<sup>1</sup></a></li>
+    
+    <li><a href="/categories/%e6%9f%a5%e6%bc%8f%e8%a1%a5%e7%bc%ba" title="查漏补缺">查漏补缺<sup>1</sup></a></li>
+    
+    <li><a href="/categories/%e6%b8%a9%e6%95%85%e7%9f%a5%e6%96%b0" title="温故知新">温故知新<sup>1</sup></a></li>
+    
+    <li><a href="/categories/%e7%bd%91%e7%bb%9c%e7%bc%96%e7%a8%8b" title="网络编程">网络编程<sup>1</sup></a></li>
+    
+    <li><a href="/categories/%e8%99%9a%e6%8b%9f%e5%8c%96" title="虚拟化">虚拟化<sup>4</sup></a></li>
+    
+    <li><a href="/categories/%e9%a1%b9%e7%9b%ae%e5%ae%9e%e6%88%98" title="项目实战">项目实战<sup>5</sup></a></li>
+    
+  </ul>
+</div>
+
+
+
+  
+
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+      
+			<li><a href="/tags/archlinux" title="archlinux">archlinux<sup>1</sup></a></li>
+      
+			<li><a href="/tags/arm64" title="arm64">arm64<sup>1</sup></a></li>
+      
+			<li><a href="/tags/bochs" title="bochs">bochs<sup>2</sup></a></li>
+      
+			<li><a href="/tags/bootsect" title="bootsect">bootsect<sup>1</sup></a></li>
+      
+			<li><a href="/tags/busybox" title="busybox">busybox<sup>1</sup></a></li>
+      
+			<li><a href="/tags/c&#43;&#43;" title="c&#43;&#43;">c&#43;&#43;<sup>10</sup></a></li>
+      
+			<li><a href="/tags/ccls" title="ccls">ccls<sup>1</sup></a></li>
+      
+			<li><a href="/tags/cifs" title="cifs">cifs<sup>1</sup></a></li>
+      
+			<li><a href="/tags/command" title="command">command<sup>3</sup></a></li>
+      
+			<li><a href="/tags/conclusion" title="conclusion">conclusion<sup>1</sup></a></li>
+      
+			<li><a href="/tags/data_struct" title="data_struct">data_struct<sup>1</sup></a></li>
+      
+			<li><a href="/tags/earycon" title="earycon">earycon<sup>1</sup></a></li>
+      
+			<li><a href="/tags/emacs" title="emacs">emacs<sup>2</sup></a></li>
+      
+			<li><a href="/tags/funny" title="funny">funny<sup>1</sup></a></li>
+      
+			<li><a href="/tags/gentoo" title="gentoo">gentoo<sup>1</sup></a></li>
+      
+			<li><a href="/tags/hyper-v" title="hyper-v">hyper-v<sup>2</sup></a></li>
+      
+			<li><a href="/tags/jemalloc" title="jemalloc">jemalloc<sup>1</sup></a></li>
+      
+			<li><a href="/tags/kernel" title="kernel">kernel<sup>8</sup></a></li>
+      
+			<li><a href="/tags/kvm" title="kvm">kvm<sup>3</sup></a></li>
+      
+			<li><a href="/tags/kvmtool" title="kvmtool">kvmtool<sup>2</sup></a></li>
+      
+			<li><a href="/tags/linux" title="linux">linux<sup>17</sup></a></li>
+      
+			<li><a href="/tags/linux0.11" title="linux0.11">linux0.11<sup>1</sup></a></li>
+      
+			<li><a href="/tags/linux%e5%86%85%e6%a0%b8" title="linux内核">linux内核<sup>1</sup></a></li>
+      
+			<li><a href="/tags/make" title="make">make<sup>1</sup></a></li>
+      
+			<li><a href="/tags/makefile" title="makefile">makefile<sup>2</sup></a></li>
+      
+			<li><a href="/tags/mbsync" title="mbsync">mbsync<sup>1</sup></a></li>
+      
+			<li><a href="/tags/msys2" title="msys2">msys2<sup>1</sup></a></li>
+      
+			<li><a href="/tags/mu4e" title="mu4e">mu4e<sup>1</sup></a></li>
+      
+			<li><a href="/tags/nvim" title="nvim">nvim<sup>1</sup></a></li>
+      
+			<li><a href="/tags/pmalloc2" title="pmalloc2">pmalloc2<sup>1</sup></a></li>
+      
+			<li><a href="/tags/project" title="project">project<sup>1</sup></a></li>
+      
+			<li><a href="/tags/rootfs" title="rootfs">rootfs<sup>1</sup></a></li>
+      
+			<li><a href="/tags/setup" title="setup">setup<sup>1</sup></a></li>
+      
+			<li><a href="/tags/share" title="share">share<sup>1</sup></a></li>
+      
+			<li><a href="/tags/shell" title="shell">shell<sup>4</sup></a></li>
+      
+			<li><a href="/tags/snippets" title="snippets">snippets<sup>1</sup></a></li>
+      
+			<li><a href="/tags/ssh" title="ssh">ssh<sup>1</sup></a></li>
+      
+			<li><a href="/tags/syscall" title="syscall">syscall<sup>1</sup></a></li>
+      
+			<li><a href="/tags/tcmalloc" title="tcmalloc">tcmalloc<sup>1</sup></a></li>
+      
+			<li><a href="/tags/terminal" title="terminal">terminal<sup>5</sup></a></li>
+      
+			<li><a href="/tags/text_editor" title="text_editor">text_editor<sup>1</sup></a></li>
+      
+			<li><a href="/tags/textor" title="textor">textor<sup>3</sup></a></li>
+      
+			<li><a href="/tags/thread_info" title="thread_info">thread_info<sup>1</sup></a></li>
+      
+			<li><a href="/tags/tmux" title="tmux">tmux<sup>1</sup></a></li>
+      
+			<li><a href="/tags/tree" title="tree">tree<sup>1</sup></a></li>
+      
+			<li><a href="/tags/tun/tap" title="tun/tap">tun/tap<sup>1</sup></a></li>
+      
+			<li><a href="/tags/variable" title="variable">variable<sup>1</sup></a></li>
+      
+			<li><a href="/tags/vfs" title="vfs">vfs<sup>1</sup></a></li>
+      
+			<li><a href="/tags/vim" title="vim">vim<sup>1</sup></a></li>
+      
+			<li><a href="/tags/vscode" title="vscode">vscode<sup>2</sup></a></li>
+      
+			<li><a href="/tags/windows" title="windows">windows<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e4%b8%ad%e6%96%ad" title="中断">中断<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e5%86%85%e5%ad%98%e7%ae%a1%e7%90%86" title="内存管理">内存管理<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e5%86%85%e6%a0%b8%e5%90%8c%e6%ad%a5" title="内核同步">内核同步<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e5%86%85%e6%a0%b8%e6%a0%88" title="内核栈">内核栈<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e5%a5%97%e6%8e%a5%e5%ad%97" title="套接字">套接字<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e5%af%b9%e8%b1%a1%e6%a8%a1%e5%9e%8b" title="对象模型">对象模型<sup>3</sup></a></li>
+      
+			<li><a href="/tags/%e6%88%90%e5%91%98%e5%87%bd%e6%95%b0" title="成员函数">成员函数<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e6%95%b0%e6%8d%ae%e7%bb%93%e6%9e%84" title="数据结构">数据结构<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e6%96%87%e4%bb%b6%e6%8f%8f%e8%bf%b0%e7%ac%a6" title="文件描述符">文件描述符<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e6%97%b6%e9%97%b4%e7%ae%a1%e7%90%86" title="时间管理">时间管理<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e7%b3%bb%e7%bb%9f%e8%b0%83%e7%94%a8" title="系统调用">系统调用<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e7%bb%a7%e6%89%bf" title="继承">继承<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e7%bc%96%e7%a8%8b%e8%af%ad%e8%a8%80" title="编程语言">编程语言<sup>3</sup></a></li>
+      
+			<li><a href="/tags/%e8%bf%9b%e7%a8%8b%e7%ae%a1%e7%90%86" title="进程管理">进程管理<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e8%bf%9b%e7%a8%8b%e8%b0%83%e5%ba%a6" title="进程调度">进程调度<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e9%9d%a2%e5%90%91%e5%af%b9%e8%b1%a1" title="面向对象">面向对象<sup>2</sup></a></li>
+      
+		</ul>
+</div>
+
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle">归档</p>
+    <ul class="archive-list">
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2020-10">2020年10月</a><span class="archive-list-count">3</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2020-09">2020年09月</a><span class="archive-list-count">2</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2020-06">2020年06月</a><span class="archive-list-count">7</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2020-05">2020年05月</a><span class="archive-list-count">2</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2020-04">2020年04月</a><span class="archive-list-count">5</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2019-09">2019年09月</a><span class="archive-list-count">1</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2019-07">2019年07月</a><span class="archive-list-count">1</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2019-06">2019年06月</a><span class="archive-list-count">7</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2019-05">2019年05月</a><span class="archive-list-count">5</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2019-04">2019年04月</a><span class="archive-list-count">1</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2019-03">2019年03月</a><span class="archive-list-count">2</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2019-02">2019年02月</a><span class="archive-list-count">4</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2019-01">2019年01月</a><span class="archive-list-count">4</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2018-12">2018年12月</a><span class="archive-list-count">1</span>
+      </li>
+      
+    </ul>
+
+  </div>
+
+
+  
+
+<div class="tagcloudlist">
+  <p class="asidetitle">标签云</p>
+  <div class="tagcloudlist clearfix">
+    
+    <a href="/tags/archlinux" style="font-size: 12px;">archlinux</a>
+    
+    <a href="/tags/arm64" style="font-size: 12px;">arm64</a>
+    
+    <a href="/tags/bochs" style="font-size: 12px;">bochs</a>
+    
+    <a href="/tags/bootsect" style="font-size: 12px;">bootsect</a>
+    
+    <a href="/tags/busybox" style="font-size: 12px;">busybox</a>
+    
+    <a href="/tags/c&#43;&#43;" style="font-size: 12px;">c&#43;&#43;</a>
+    
+    <a href="/tags/ccls" style="font-size: 12px;">ccls</a>
+    
+    <a href="/tags/cifs" style="font-size: 12px;">cifs</a>
+    
+    <a href="/tags/command" style="font-size: 12px;">command</a>
+    
+    <a href="/tags/conclusion" style="font-size: 12px;">conclusion</a>
+    
+    <a href="/tags/data_struct" style="font-size: 12px;">data_struct</a>
+    
+    <a href="/tags/earycon" style="font-size: 12px;">earycon</a>
+    
+    <a href="/tags/emacs" style="font-size: 12px;">emacs</a>
+    
+    <a href="/tags/funny" style="font-size: 12px;">funny</a>
+    
+    <a href="/tags/gentoo" style="font-size: 12px;">gentoo</a>
+    
+    <a href="/tags/hyper-v" style="font-size: 12px;">hyper-v</a>
+    
+    <a href="/tags/jemalloc" style="font-size: 12px;">jemalloc</a>
+    
+    <a href="/tags/kernel" style="font-size: 12px;">kernel</a>
+    
+    <a href="/tags/kvm" style="font-size: 12px;">kvm</a>
+    
+    <a href="/tags/kvmtool" style="font-size: 12px;">kvmtool</a>
+    
+    <a href="/tags/linux" style="font-size: 12px;">linux</a>
+    
+    <a href="/tags/linux0.11" style="font-size: 12px;">linux0.11</a>
+    
+    <a href="/tags/linux%e5%86%85%e6%a0%b8" style="font-size: 12px;">linux内核</a>
+    
+    <a href="/tags/make" style="font-size: 12px;">make</a>
+    
+    <a href="/tags/makefile" style="font-size: 12px;">makefile</a>
+    
+    <a href="/tags/mbsync" style="font-size: 12px;">mbsync</a>
+    
+    <a href="/tags/msys2" style="font-size: 12px;">msys2</a>
+    
+    <a href="/tags/mu4e" style="font-size: 12px;">mu4e</a>
+    
+    <a href="/tags/nvim" style="font-size: 12px;">nvim</a>
+    
+    <a href="/tags/pmalloc2" style="font-size: 12px;">pmalloc2</a>
+    
+    <a href="/tags/project" style="font-size: 12px;">project</a>
+    
+    <a href="/tags/rootfs" style="font-size: 12px;">rootfs</a>
+    
+    <a href="/tags/setup" style="font-size: 12px;">setup</a>
+    
+    <a href="/tags/share" style="font-size: 12px;">share</a>
+    
+    <a href="/tags/shell" style="font-size: 12px;">shell</a>
+    
+    <a href="/tags/snippets" style="font-size: 12px;">snippets</a>
+    
+    <a href="/tags/ssh" style="font-size: 12px;">ssh</a>
+    
+    <a href="/tags/syscall" style="font-size: 12px;">syscall</a>
+    
+    <a href="/tags/tcmalloc" style="font-size: 12px;">tcmalloc</a>
+    
+    <a href="/tags/terminal" style="font-size: 12px;">terminal</a>
+    
+    <a href="/tags/text_editor" style="font-size: 12px;">text_editor</a>
+    
+    <a href="/tags/textor" style="font-size: 12px;">textor</a>
+    
+    <a href="/tags/thread_info" style="font-size: 12px;">thread_info</a>
+    
+    <a href="/tags/tmux" style="font-size: 12px;">tmux</a>
+    
+    <a href="/tags/tree" style="font-size: 12px;">tree</a>
+    
+    <a href="/tags/tun/tap" style="font-size: 12px;">tun/tap</a>
+    
+    <a href="/tags/variable" style="font-size: 12px;">variable</a>
+    
+    <a href="/tags/vfs" style="font-size: 12px;">vfs</a>
+    
+    <a href="/tags/vim" style="font-size: 12px;">vim</a>
+    
+    <a href="/tags/vscode" style="font-size: 12px;">vscode</a>
+    
+    <a href="/tags/windows" style="font-size: 12px;">windows</a>
+    
+    <a href="/tags/%e4%b8%ad%e6%96%ad" style="font-size: 12px;">中断</a>
+    
+    <a href="/tags/%e5%86%85%e5%ad%98%e7%ae%a1%e7%90%86" style="font-size: 12px;">内存管理</a>
+    
+    <a href="/tags/%e5%86%85%e6%a0%b8%e5%90%8c%e6%ad%a5" style="font-size: 12px;">内核同步</a>
+    
+    <a href="/tags/%e5%86%85%e6%a0%b8%e6%a0%88" style="font-size: 12px;">内核栈</a>
+    
+    <a href="/tags/%e5%a5%97%e6%8e%a5%e5%ad%97" style="font-size: 12px;">套接字</a>
+    
+    <a href="/tags/%e5%af%b9%e8%b1%a1%e6%a8%a1%e5%9e%8b" style="font-size: 12px;">对象模型</a>
+    
+    <a href="/tags/%e6%88%90%e5%91%98%e5%87%bd%e6%95%b0" style="font-size: 12px;">成员函数</a>
+    
+    <a href="/tags/%e6%95%b0%e6%8d%ae%e7%bb%93%e6%9e%84" style="font-size: 12px;">数据结构</a>
+    
+    <a href="/tags/%e6%96%87%e4%bb%b6%e6%8f%8f%e8%bf%b0%e7%ac%a6" style="font-size: 12px;">文件描述符</a>
+    
+    <a href="/tags/%e6%97%b6%e9%97%b4%e7%ae%a1%e7%90%86" style="font-size: 12px;">时间管理</a>
+    
+    <a href="/tags/%e7%b3%bb%e7%bb%9f%e8%b0%83%e7%94%a8" style="font-size: 12px;">系统调用</a>
+    
+    <a href="/tags/%e7%bb%a7%e6%89%bf" style="font-size: 12px;">继承</a>
+    
+    <a href="/tags/%e7%bc%96%e7%a8%8b%e8%af%ad%e8%a8%80" style="font-size: 12px;">编程语言</a>
+    
+    <a href="/tags/%e8%bf%9b%e7%a8%8b%e7%ae%a1%e7%90%86" style="font-size: 12px;">进程管理</a>
+    
+    <a href="/tags/%e8%bf%9b%e7%a8%8b%e8%b0%83%e5%ba%a6" style="font-size: 12px;">进程调度</a>
+    
+    <a href="/tags/%e9%9d%a2%e5%90%91%e5%af%b9%e8%b1%a1" style="font-size: 12px;">面向对象</a>
+    
+  </div>
+</div>
+
+
+
+  
+
+</aside>
+</div>
+
+  </div>
+  <footer><div id="footer" >
+  
+  <div class="line">
+    <span></span>
+    <div style='background:no-repeat url("/img/author.jpg") left top;-webkit-background-size:6.875em 6.875em;-moz-background-size:6.875em 6.875em;background-size:6.875em 6.875em;' class="author" ></div>
+  </div>
+  
+  
+  <section class="info">
+    <p>码农一枚 <br/> 混口饭吃</p>
+  </section>
+  
+  <div class="social-font clearfix">
+    
+    
+    
+    <a href="https://github.com/Jerling" target="_blank" title="github"></a>
+    
+    
+    
+  </div>
+  <p class="copyright">Powered by <a href="http://gohugo.io" target="_blank" title="hugo">hugo</a> and Theme by <a href="https://github.com/coderzh/hugo-pacman-theme" target="_blank" title="hugo-pacman-theme">hugo-pacman-theme</a> © 2020
+    
+    <a href="/" title="北极狼徒">北极狼徒</a>
+    
+  </p>
+</div>
+</footer>
+  <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+done = false;
+$(document).ready(function(){
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize();
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  $('form.search').on('submit', function (event) {
+    if (false === done) {
+      event.preventDefault();
+      var orgVal = $(this).find('#search').val();
+      $(this).find('#search').val('site:\/ ' + orgVal);
+      done = true;
+      $(this).submit();
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://b.bshare.cn/barCode?site=weixin&url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});
+</script>
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+});
+</script>
+
+
+
+
+</body>
+</html>
