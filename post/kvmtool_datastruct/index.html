@@ -91,6 +91,8 @@
       </ul>
     </li>
     <li><a href="#disk_image">disk_image</a></li>
+    <li><a href="#结束语">结束语</a></li>
+    <li><a href="#kvm-系列">kvm 系列</a></li>
   </ul>
 </nav>
 		</div>
@@ -247,7 +249,13 @@ kvm_coalesced_mmio_ring 这个结构体用于分配环形 io 内存地址。</p>
     <span class="k">const</span> <span class="kt">char</span>                      <span class="o">*</span><span class="n">tpgt</span><span class="p">;</span>                                   <span class="cm">/* ? */</span>
     <span class="kt">int</span>                             <span class="n">debug_iodelay</span><span class="p">;</span>                           <span class="cm">/* 调试 io */</span>
 <span class="p">};</span>
-</code></pre></div>
+</code></pre></div><h2 id="结束语">结束语</h2>
+<p>这篇文章以基础数据结构 kvm 为中心，介绍了相关的数据结构。</p>
+<h2 id="kvm-系列">kvm 系列</h2>
+<p>00 : <a href="/post/%E4%BD%BF%E7%94%A8kvmtool%E5%90%AF%E5%8A%A8linux/">kvmtool 启动 linux 内核</a><br>
+01 : <a href="/post/%E5%88%B6%E4%BD%9C%E6%A0%B9%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/">制作根文件系统</a><br>
+02 : <a href="/post/kvmtool_network/">kvmtool 开启网络功能</a></p>
+
     
 	</div>
   <footer class="article-footer clearfix">
@@ -324,7 +332,7 @@ kvm_coalesced_mmio_ring 这个结构体用于分配环形 io 内存地址。</p>
     
     <li><a href="/categories/%e7%bd%91%e7%bb%9c%e7%bc%96%e7%a8%8b" title="网络编程">网络编程<sup>1</sup></a></li>
     
-    <li><a href="/categories/%e8%99%9a%e6%8b%9f%e5%8c%96" title="虚拟化">虚拟化<sup>4</sup></a></li>
+    <li><a href="/categories/%e8%99%9a%e6%8b%9f%e5%8c%96" title="虚拟化">虚拟化<sup>5</sup></a></li>
     
     <li><a href="/categories/%e9%a1%b9%e7%9b%ae%e5%ae%9e%e6%88%98" title="项目实战">项目实战<sup>5</sup></a></li>
     
@@ -375,15 +383,17 @@ kvm_coalesced_mmio_ring 这个结构体用于分配环形 io 内存地址。</p>
       
 			<li><a href="/tags/kernel" title="kernel">kernel<sup>8</sup></a></li>
       
-			<li><a href="/tags/kvm" title="kvm">kvm<sup>3</sup></a></li>
+			<li><a href="/tags/kvm" title="kvm">kvm<sup>4</sup></a></li>
       
 			<li><a href="/tags/kvmtool" title="kvmtool">kvmtool<sup>2</sup></a></li>
       
-			<li><a href="/tags/linux" title="linux">linux<sup>17</sup></a></li>
+			<li><a href="/tags/linux" title="linux">linux<sup>18</sup></a></li>
       
 			<li><a href="/tags/linux0.11" title="linux0.11">linux0.11<sup>1</sup></a></li>
       
 			<li><a href="/tags/linux%e5%86%85%e6%a0%b8" title="linux内核">linux内核<sup>1</sup></a></li>
+      
+			<li><a href="/tags/lkvm" title="lkvm">lkvm<sup>1</sup></a></li>
       
 			<li><a href="/tags/make" title="make">make<sup>1</sup></a></li>
       
@@ -482,6 +492,11 @@ kvm_coalesced_mmio_ring 这个结构体用于分配环形 io 内存地址。</p>
   <div class="archiveslist">
     <p class="asidetitle">归档</p>
     <ul class="archive-list">
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2020-11">2020年11月</a><span class="archive-list-count">1</span>
+      </li>
       
       
       <li class="archive-list-item">
@@ -609,6 +624,8 @@ kvm_coalesced_mmio_ring 这个结构体用于分配环形 io 内存地址。</p>
     <a href="/tags/linux0.11" style="font-size: 12px;">linux0.11</a>
     
     <a href="/tags/linux%e5%86%85%e6%a0%b8" style="font-size: 12px;">linux内核</a>
+    
+    <a href="/tags/lkvm" style="font-size: 12px;">lkvm</a>
     
     <a href="/tags/make" style="font-size: 12px;">make</a>
     

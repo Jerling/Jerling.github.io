@@ -2,16 +2,17 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <title>Linux Arm64 下的早期打印 - 北极狼徒</title>
+  <title>kvmtool 的初始化 - 北极狼徒</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
   
-  <meta name="description" content="Description">
+  <meta name="description" content="前言 在 kvm 学习的前一篇文章 kvmtool 中的数据结构 介绍了 kvmtool 中常用的数据结构。接下来这篇文章介绍在 kvmtool 是如何初始化这些数据结构，并搭建一个基本的虚拟化硬件环">
   
-  <meta itemprop="name" content="Linux Arm64 下的早期打印 - 北极狼徒">
-  <meta itemprop="description" content="Description">
+  <meta itemprop="name" content="kvmtool 的初始化 - 北极狼徒">
+  <meta itemprop="description" content="前言 在 kvm 学习的前一篇文章 kvmtool 中的数据结构 介绍了 kvmtool 中常用的数据结构。接下来这篇文章介绍在 kvmtool 是如何初始化这些数据结构，并搭建一个基本的虚拟化硬件环">
   <meta itemprop="image" content="/img/author.jpg">
   
-  <meta name="twitter:description" content="Description" />
+  
+  <meta name="twitter:description" content="随便写写">
   
   <link rel="shortcut icon" href="/img/favicon.ico"/>
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
@@ -63,7 +64,7 @@
 	<article itemprop="articleBody">
     <header class="article-info clearfix">
   <h1 itemprop="name">
-      <a href="/post/linux_arm64_earlycon/" title="Linux Arm64 下的早期打印" itemprop="url">Linux Arm64 下的早期打印</a>
+      <a href="/post/lkvm%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96/" title="kvmtool 的初始化" itemprop="url">kvmtool 的初始化</a>
   </h1>
   <p class="article-author">By
     
@@ -71,7 +72,7 @@
     
   </p>
   <p class="article-time">
-    <time datetime="2020-10-18 00:00:00 &#43;0800 CST" itemprop="datePublished">2020年10月18日</time>
+    <time datetime="2020-11-01 00:00:00 &#43;0800 CST" itemprop="datePublished">2020年11月01日</time>
   </p>
 </header>
 
@@ -82,53 +83,214 @@
       <nav id="TableOfContents">
   <ul>
     <li><a href="#前言">前言</a></li>
-    <li><a href="#打开-earycon-宏控">打开 earycon 宏控</a></li>
-    <li><a href="#使用-earycon">使用 earycon</a></li>
-    <li><a href="#实验结果">实验结果</a>
+    <li><a href="#kvmtool-命令介绍">kvmtool 命令介绍</a></li>
+    <li><a href="#run-命令之前发生了什么">run 命令之前发生了什么</a></li>
+    <li><a href="#正式的-run-命令">正式的 run 命令</a></li>
+    <li><a href="#初始化流程">初始化流程</a>
       <ul>
-        <li><a href="#问题定位">问题定位</a></li>
-        <li><a href="#实验结果-1">实验结果</a></li>
+        <li><a href="#构建配置">构建配置</a></li>
+        <li><a href="#正式初始化">正式初始化</a></li>
       </ul>
     </li>
     <li><a href="#结束语">结束语</a></li>
-    <li><a href="#参考">参考</a></li>
+    <li><a href="#kvm-系列">kvm 系列</a></li>
   </ul>
 </nav>
 		</div>
     
     <h2 id="前言">前言</h2>
-<p>最近遇到一个 Linux 无法启动的问题，没有任何输出信息。为了摸清到底是
-卡在哪儿了，需要查看 Linux 的启动消息。正常情况下，Linux 的 <code>printk</code>
-函数是基于 console 的，但是在 linux 的启动过程中总有个初始化顺序。
-因此在 console 初始化之前，所有的 printk 函数的数据都存在内核缓冲区
-里，当 console 初始化之后，这些消息可能就会显示到控制台中。</p>
-<p>为了显示早期的 Linux 启动流程，打开 linux 的 earycon 功能即可。</p>
-<p>本篇文章不会探讨 earycon 的实现原理，只讲如何使用。因为原理网上已经
-有很多博客写过了。</p>
-<h2 id="打开-earycon-宏控">打开 earycon 宏控</h2>
-<div class="highlight"><pre class="chroma"><code class="language-cpp" data-lang="cpp"><span class="n">CONFIG_SERIAL_EARLYCON</span>
-<span class="n">CONFIG_OF_EARLY_FLATTREE</span>
-</code></pre></div><h2 id="使用-earycon">使用 earycon</h2>
-<p>earycon 的使用也是非常简单，在串口对应的 dts 文件的 chosen 节点中的 bootargs
-中加入 &ldquo;earycon&rdquo; 开启，之后的 printk 函数将直接使用 earycon 直接写入控制台中。</p>
-<p>这里本文使用 qemu 进行实验，在 cmdline 参数中加入 &ldquo;earycon&rdquo; 也是可行的。</p>
-<h2 id="实验结果">实验结果</h2>
-<h3 id="问题定位">问题定位</h3>
-<p>通过使用正常的镜像进行定位，使用一个死循环模拟卡住现象。实验发现控制台能打印小是在
-<em><code>head.S -&gt;start_kernel-&gt;arch_call_rest_init-&gt;rest_init</code> 的</em> <code>schedule_preempt_disabled</code>
-函数前后。也就是说，如果卡在这个函数之后，是会正常打印信息的。而在这个函数之前卡住
-，控制台信息依旧会存在缓冲区里，而不会打印在控制台上。</p>
-<h3 id="实验结果-1">实验结果</h3>
-<p><img src="/images/Snipaste_2020-10-18_14-15-13.png" alt=""></p>
-<p><img src="/images/Snipaste_2020-10-18_14-16-02.png" alt=""></p>
+<p>在 kvm 学习的前一篇文章 <a href="/post/kvmtool_datastruct">kvmtool 中的数据结构</a> 介绍了 kvmtool 中常用的数据结构。接下来这篇文章介绍在 kvmtool 是如何初始化这些数据结构，并搭建一个基本的虚拟化硬件环境，这也是进入虚拟世界的准备工作。</p>
+<h2 id="kvmtool-命令介绍">kvmtool 命令介绍</h2>
+<p>在进入讲解初始化之前，先简单地介绍一下 lkvm 提供的内置命令。</p>
+<p>回想一下，在本系列第一篇文章的时候，我们是不是参考文档里的命令启动了一个简单的虚拟机。类似这样的：</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">lkvm run --kernel ../x86/bzImage --disk ../initrd.img
+</code></pre></div><p>上面只是个例子，不一定和之前的一模一样。但是我们可以很明显的看到，这里使用了 kvmtool 的 run 命令。但是实际上， kvmtool 提供了好几个命令，
+几乎满足我们控制虚拟机的所有操作。下面通过万能的 <code>--help</code> 来看都有哪些命令吧。</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">$ lkvm --help
+
+ To start a simple non-privileged shell run <span class="s1">&#39;lkvm run&#39;</span>
+
+usage: lkvm COMMAND <span class="o">[</span>ARGS<span class="o">]</span>
+
+ The most commonly used lkvm commands are:
+   run       Start the virtual machine
+   setup     Setup a new virtual machine
+   pause     Pause the virtual machine
+   resume    Resume the virtual machine
+   version   Print the version of the kernel tree kvm tools
+   list      Print a list of running instances on the host.
+   debug     Print debug information from a running instance
+   balloon   Inflate or deflate the virtio balloon
+   stop      Stop a running instance
+   stat      Print statistics about a running instance
+   sandbox   Run a <span class="nb">command</span> in a sandboxed guest
+
+ See <span class="s1">&#39;lkvm help COMMAND&#39;</span> <span class="k">for</span> more information on a specific command.
+</code></pre></div><p>每个命令都有基本的使用介绍，比如 <code>run</code> 就是启动一个虚拟机。</p>
+<h2 id="run-命令之前发生了什么">run 命令之前发生了什么</h2>
+<p>现在我们先看看 <code>run</code> 的基本流程，那么其他命令的流程也就可以类推了。</p>
+<p>首先在使用    <code>run</code> 的时候，<code>run</code> 是通过参数传递给 lkvm 的，看看 lkvm 解析 <code>run</code> 的过程：</p>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="k">static</span> <span class="kt">int</span> <span class="nf">handle_kvm_command</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="k">return</span> <span class="n">handle_command</span><span class="p">(</span><span class="n">kvm_commands</span><span class="p">,</span> <span class="n">argc</span><span class="p">,</span> <span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">**</span><span class="p">)</span> <span class="o">&amp;</span><span class="n">argv</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">argv</span><span class="p">[])</span>
+<span class="p">{</span>
+	<span class="n">kvm__set_dir</span><span class="p">(</span><span class="s">&#34;%s/%s&#34;</span><span class="p">,</span> <span class="n">HOME_DIR</span><span class="p">,</span> <span class="n">KVM_PID_FILE_PATH</span><span class="p">);</span>
+
+	<span class="k">return</span> <span class="n">handle_kvm_command</span><span class="p">(</span><span class="n">argc</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+<span class="p">}</span>
+<span class="p">...</span>
+<span class="kt">int</span> <span class="n">handle_command</span><span class="p">(</span><span class="k">struct</span> <span class="n">cmd_struct</span> <span class="o">*</span><span class="n">command</span><span class="p">,</span> <span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="k">struct</span> <span class="n">cmd_struct</span> <span class="o">*</span><span class="n">p</span><span class="p">;</span>
+	<span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">prefix</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+	<span class="kt">int</span> <span class="n">ret</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">...</span>
+	<span class="n">ret</span> <span class="o">=</span> <span class="n">p</span><span class="o">-&gt;</span><span class="n">fn</span><span class="p">(</span><span class="n">argc</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">prefix</span><span class="p">);</span>
+	<span class="k">if</span> <span class="p">(</span><span class="n">ret</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+		<span class="k">if</span> <span class="p">(</span><span class="n">errno</span> <span class="o">==</span> <span class="n">EPERM</span><span class="p">)</span>
+			<span class="n">die</span><span class="p">(</span><span class="s">&#34;Permission error - are you root?&#34;</span><span class="p">);</span>
+	<span class="p">}</span>
+
+	<span class="k">return</span> <span class="n">ret</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="p">...</span>
+<span class="k">struct</span> <span class="n">cmd_struct</span> <span class="o">*</span><span class="n">kvm_get_command</span><span class="p">(</span><span class="k">struct</span> <span class="n">cmd_struct</span> <span class="o">*</span><span class="n">command</span><span class="p">,</span>
+		<span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">cmd</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="k">struct</span> <span class="n">cmd_struct</span> <span class="o">*</span><span class="n">p</span> <span class="o">=</span> <span class="n">command</span><span class="p">;</span>
+
+	<span class="k">while</span> <span class="p">(</span><span class="n">p</span><span class="o">-&gt;</span><span class="n">cmd</span><span class="p">)</span> <span class="p">{</span>
+		<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">p</span><span class="o">-&gt;</span><span class="n">cmd</span><span class="p">,</span> <span class="n">cmd</span><span class="p">))</span>
+			<span class="k">return</span> <span class="n">p</span><span class="p">;</span>
+		<span class="n">p</span><span class="o">++</span><span class="p">;</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="nb">NULL</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="p">...</span>
+<span class="k">struct</span> <span class="n">cmd_struct</span> <span class="n">kvm_commands</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span>
+	<span class="p">{</span> <span class="s">&#34;pause&#34;</span><span class="p">,</span>	<span class="n">kvm_cmd_pause</span><span class="p">,</span>		<span class="n">kvm_pause_help</span><span class="p">,</span>		<span class="mi">0</span> <span class="p">},</span>
+	<span class="p">{</span> <span class="s">&#34;resume&#34;</span><span class="p">,</span>	<span class="n">kvm_cmd_resume</span><span class="p">,</span>		<span class="n">kvm_resume_help</span><span class="p">,</span>	<span class="mi">0</span> <span class="p">},</span>
+	<span class="p">{</span> <span class="s">&#34;debug&#34;</span><span class="p">,</span>	<span class="n">kvm_cmd_debug</span><span class="p">,</span>		<span class="n">kvm_debug_help</span><span class="p">,</span>		<span class="mi">0</span> <span class="p">},</span>
+	<span class="p">{</span> <span class="s">&#34;balloon&#34;</span><span class="p">,</span>	<span class="n">kvm_cmd_balloon</span><span class="p">,</span>	<span class="n">kvm_balloon_help</span><span class="p">,</span>	<span class="mi">0</span> <span class="p">},</span>
+	<span class="p">{</span> <span class="s">&#34;list&#34;</span><span class="p">,</span>	<span class="n">kvm_cmd_list</span><span class="p">,</span>		<span class="n">kvm_list_help</span><span class="p">,</span>		<span class="mi">0</span> <span class="p">},</span>
+	<span class="p">{</span> <span class="s">&#34;version&#34;</span><span class="p">,</span>	<span class="n">kvm_cmd_version</span><span class="p">,</span>	<span class="nb">NULL</span><span class="p">,</span>			<span class="mi">0</span> <span class="p">},</span>
+	<span class="p">{</span> <span class="s">&#34;--version&#34;</span><span class="p">,</span>	<span class="n">kvm_cmd_version</span><span class="p">,</span>	<span class="nb">NULL</span><span class="p">,</span>			<span class="mi">0</span> <span class="p">},</span>
+	<span class="p">{</span> <span class="s">&#34;stop&#34;</span><span class="p">,</span>	<span class="n">kvm_cmd_stop</span><span class="p">,</span>		<span class="n">kvm_stop_help</span><span class="p">,</span>		<span class="mi">0</span> <span class="p">},</span>
+	<span class="p">{</span> <span class="s">&#34;stat&#34;</span><span class="p">,</span>	<span class="n">kvm_cmd_stat</span><span class="p">,</span>		<span class="n">kvm_stat_help</span><span class="p">,</span>		<span class="mi">0</span> <span class="p">},</span>
+	<span class="p">{</span> <span class="s">&#34;help&#34;</span><span class="p">,</span>	<span class="n">kvm_cmd_help</span><span class="p">,</span>		<span class="nb">NULL</span><span class="p">,</span>			<span class="mi">0</span> <span class="p">},</span>
+	<span class="p">{</span> <span class="s">&#34;setup&#34;</span><span class="p">,</span>	<span class="n">kvm_cmd_setup</span><span class="p">,</span>		<span class="n">kvm_setup_help</span><span class="p">,</span>		<span class="mi">0</span> <span class="p">},</span>
+	<span class="p">{</span> <span class="s">&#34;run&#34;</span><span class="p">,</span>	<span class="n">kvm_cmd_run</span><span class="p">,</span>		<span class="n">kvm_run_help</span><span class="p">,</span>		<span class="mi">0</span> <span class="p">},</span>
+	<span class="p">{</span> <span class="s">&#34;sandbox&#34;</span><span class="p">,</span>	<span class="n">kvm_cmd_sandbox</span><span class="p">,</span>	<span class="n">kvm_run_help</span><span class="p">,</span>		<span class="mi">0</span> <span class="p">},</span>
+	<span class="p">{</span> <span class="nb">NULL</span><span class="p">,</span>		<span class="nb">NULL</span><span class="p">,</span>			<span class="nb">NULL</span><span class="p">,</span>			<span class="mi">0</span> <span class="p">},</span>
+<span class="p">};</span>
+</code></pre></div><p>可以看到，在解析的时候，它是从全局变量 <code>kvm_commands</code> 里取得的，通常如果取不到上述的命令，默认会打印 help 信息。</p>
+<p>接下来通过字符判断，会执行 <code>run</code> 对应的函数 <code>kvm_cmd_run</code>。</p>
+<h2 id="正式的-run-命令">正式的 run 命令</h2>
+<p>通过上一章节的追溯，我们知道 <code>run</code> 命令的入口函数是 <code>kvm_cmd_run</code>。看看这个函数是如何实现的：</p>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">int</span> <span class="nf">kvm_cmd_run</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">prefix</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="kt">int</span> <span class="n">ret</span> <span class="o">=</span> <span class="o">-</span><span class="n">EFAULT</span><span class="p">;</span>
+	<span class="k">struct</span> <span class="n">kvm</span> <span class="o">*</span><span class="n">kvm</span><span class="p">;</span>
+
+	<span class="n">kvm</span> <span class="o">=</span> <span class="n">kvm_cmd_run_init</span><span class="p">(</span><span class="n">argc</span><span class="p">,</span> <span class="n">argv</span><span class="p">);</span>
+	<span class="k">if</span> <span class="p">(</span><span class="n">IS_ERR</span><span class="p">(</span><span class="n">kvm</span><span class="p">))</span>
+		<span class="k">return</span> <span class="n">PTR_ERR</span><span class="p">(</span><span class="n">kvm</span><span class="p">);</span>
+
+	<span class="n">ret</span> <span class="o">=</span> <span class="n">kvm_cmd_run_work</span><span class="p">(</span><span class="n">kvm</span><span class="p">);</span>
+	<span class="n">kvm_cmd_run_exit</span><span class="p">(</span><span class="n">kvm</span><span class="p">,</span> <span class="n">ret</span><span class="p">);</span>
+
+	<span class="k">return</span> <span class="n">ret</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div><p>可以看到，run 命令主要由三部分组成， 分别是 <code>init</code> <code>run</code> 和 <code>exit</code> 。其中 <code>init</code> 就是本篇文章要介绍的。</p>
+<h2 id="初始化流程">初始化流程</h2>
+<p>该函数的代码比较多，就不在这里贴了。直接分析里面的主要结构的初始化机制。</p>
+<h3 id="构建配置">构建配置</h3>
+<p>kvmtool 提供了一个配置结构体，内容可以参考上篇文章。在正式进行初始化之前，需要构建一个完整的配置，大部分使用默认配置即可。</p>
+<h4 id="kvm-初始化">kvm 初始化</h4>
+<p>由于配置需要保存在 kvm 结构体中传递给各个初始化模块。因此需要先构建一个 kvm ：</p>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="k">struct</span> <span class="n">kvm</span> <span class="o">*</span><span class="nf">kvm__new</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="k">struct</span> <span class="n">kvm</span> <span class="o">*</span><span class="n">kvm</span> <span class="o">=</span> <span class="n">calloc</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="o">*</span><span class="n">kvm</span><span class="p">));</span>
+	<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">kvm</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">ERR_PTR</span><span class="p">(</span><span class="o">-</span><span class="n">ENOMEM</span><span class="p">);</span>
+
+	<span class="n">mutex_init</span><span class="p">(</span><span class="o">&amp;</span><span class="n">kvm</span><span class="o">-&gt;</span><span class="n">mem_banks_lock</span><span class="p">);</span>
+	<span class="n">kvm</span><span class="o">-&gt;</span><span class="n">sys_fd</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+	<span class="n">kvm</span><span class="o">-&gt;</span><span class="n">vm_fd</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+<span class="p">...</span>
+<span class="p">}</span>
+</code></pre></div><p>首先分配动态内存用于存贮 kvm 结构体，这里只需要将 sys_fd 和 vm_fd 初始化为 -1 即可。这两个 fd 是控制虚拟机的接口，必须初始化为无效值。</p>
+<p>接下来就是根据命令行参数，逐个的修改配置的值。</p>
+<h4 id="内核镜像">内核镜像</h4>
+<p>默认情况下，会在搜索以下几个文件：</p>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="k">static</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">default_kernels</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span>
+	<span class="s">&#34;./bzImage&#34;</span><span class="p">,</span>
+	<span class="s">&#34;arch/&#34;</span> <span class="n">BUILD_ARCH</span> <span class="s">&#34;/boot/bzImage&#34;</span><span class="p">,</span>
+	<span class="s">&#34;../../arch/&#34;</span> <span class="n">BUILD_ARCH</span> <span class="s">&#34;/boot/bzImage&#34;</span><span class="p">,</span>
+	<span class="nb">NULL</span>
+<span class="p">};</span>
+</code></pre></div><h4 id="cpu-数量">CPU 数量</h4>
+<p>默认情况下内存的值等于当前系统可用的 cpu 数。</p>
+<h4 id="内存大小">内存大小</h4>
+<p>默认等于 <code>mem = 64 * (cpus + 3) MB</code>。当然最后还是要和物理内存进行比较，取两者的较小者。</p>
+<h4 id="外设">外设</h4>
+<p>接下来就是外设的初始值，包括串口、网络配置、显示方式等。</p>
+<h4 id="内核启动参数">内核启动参数</h4>
+<p>当然还需要构建 内核的启动参数，用于告诉内核需要启动哪些东西，如根文件系统等。</p>
+<h3 id="正式初始化">正式初始化</h3>
+<p>在上述配置初构建好之后，开始进入一系列的模块初始化。</p>
+<h4 id="kvm-初始化-1">kvm 初始化</h4>
+<ol>
+<li>首先判断主机 CPU 是否支持硬件虚拟化</li>
+<li>打开 kvm 子系统提供的系统接口 <code>/dev/kvm</code></li>
+<li>根据系统接口获取 kvm 的版本号，和 kvmtool 支持的版本进行比较，看是否匹配</li>
+<li>接着调用 KVM_CREATE_VM 命令创建一个虚拟机</li>
+<li>检查主机系统是否支持kvm扩展</li>
+<li>接着进行架构初始化，包括申请虚拟机需要的内存和终端芯片</li>
+<li>初始化虚拟机的内存</li>
+</ol>
+<h4 id="ipc初始化">IPC初始化</h4>
+<ol>
+<li>首先在自己的本地创建一个Unix 域 socket 进行监听，并用 epoll 进行管理</li>
+<li>注册一系列用于处理来自其它进程的消息，如暂停、重启等。</li>
+</ol>
+<h4 id="ioevent-初始化">IOEVENT 初始化</h4>
+<ol>
+<li>检查 kvm 是否支持  ioeventfd 扩展</li>
+<li>同理使用 epoll 监控 ioevntfd 请求</li>
+</ol>
+<h4 id="cpu-初始化">cpu 初始化</h4>
+<ol>
+<li>根据配置和 kvm 能提供的vcpu资源设置最大 cpus 数量</li>
+<li>接着分别初始化每一个 cpu</li>
+</ol>
+<h4 id="其它模块初始化">其它模块初始化</h4>
+<ol>
+<li>对虚拟机的中断芯片进行初始化</li>
+<li>pci 设备初始化</li>
+<li>io 端口初始化</li>
+<li>对键盘进行初始化</li>
+<li>终端初始化</li>
+<li>串口初始化</li>
+<li>实时时钟初始化</li>
+<li>p9协议网络初始化</li>
+<li>虚拟网络设备初始化</li>
+<li>虚拟控制台初始化</li>
+<li>虚拟 scsi 设备初始化</li>
+<li>虚拟块设备初始化</li>
+<li>多处理器规范表初始化</li>
+<li>帧率初始化</li>
+</ol>
 <h2 id="结束语">结束语</h2>
-<p>虽然 earycon 可以解决早期打印问题，但是 printk 函数无法使用在 head.S 中，如果
-如要使用汇编级的早期打印，可能需要自己适配一个汇编级的打印函数。不过好在 Head.S
-的工作不复杂，所以代码也比较少。Linux 的启动问题一般都会在 C 语言层面，所以
-对于定位问题已经足够。</p>
-<h2 id="参考">参考</h2>
-<p>[1] <a href="http://www.lujun.org.cn/?p=3511">http://www.lujun.org.cn/?p=3511</a><br>
-[2] <a href="https://blog.csdn.net/ooonebook/article/details/52654191">https://blog.csdn.net/ooonebook/article/details/52654191</a></p>
+<p>这篇文章初步梳理了在正式开启虚拟机之前，kvmtool 所做的一些准备工作。可以看到，整个初始化流程的的步骤是比较多。由于篇幅原因，这里也不细分析各个子模块的初始化流程。后续如果有时间，再继续探索各个子模块。</p>
+<h2 id="kvm-系列">kvm 系列</h2>
+<p>00 : <a href="/post/%E4%BD%BF%E7%94%A8kvmtool%E5%90%AF%E5%8A%A8linux/">kvmtool 启动 linux 内核</a><br>
+01 : <a href="/post/%E5%88%B6%E4%BD%9C%E6%A0%B9%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/">制作根文件系统</a><br>
+02 : <a href="/post/kvmtool_network/">kvmtool 开启网络功能</a><br>
+03 : <a href="/post/kvmtool_datastruct/">kvmtool 数据结构</a></p>
 
     
 	</div>
@@ -138,11 +300,11 @@
 <div class="article-tags">
   <span></span>
   
-  <a href="/tags/arm64">arm64</a>
+  <a href="/tags/kvm">kvm</a>
   
   <a href="/tags/linux">linux</a>
   
-  <a href="/tags/earycon">earycon</a>
+  <a href="/tags/lkvm">lkvm</a>
   
 </div>
 
@@ -153,14 +315,14 @@
 <div class="article-categories">
   <span></span>
   
-  <a class="article-category-link" href="/categories/%E5%86%85%E6%A0%B8%E8%B0%83%E8%AF%95">内核调试</a>
+  <a class="article-category-link" href="/categories/%E8%99%9A%E6%8B%9F%E5%8C%96">虚拟化</a>
   
 </div>
 
 
 
   <div class="article-share" id="share">
-    <div data-url="/post/linux_arm64_earlycon/" data-title="Linux Arm64 下的早期打印" data-tsina="123" class="share clearfix">
+    <div data-url="/post/lkvm%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96/" data-title="kvmtool 的初始化" data-tsina="123" class="share clearfix">
     </div>
   </div>
 </footer>
