@@ -194,3 +194,12 @@ struct disk_image {
     int                             debug_iodelay;                           /* 调试 io */
 };
 ```
+
+## 结束语
+这篇文章以基础数据结构 kvm 为中心，介绍了相关的数据结构。
+
+## kvm 系列 {#kvm-系列}
+
+00 : [kvmtool 启动 linux 内核](/post/使用kvmtool启动linux/)  
+01 : [制作根文件系统](/post/制作根文件系统/)  
+02 : [kvmtool 开启网络功能](/post/kvmtool_network/)
