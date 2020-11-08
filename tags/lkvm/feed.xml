@@ -16,5 +16,14 @@
       <description>前言 在 kvm 学习的前一篇文章 kvmtool 中的数据结构 介绍了 kvmtool 中常用的数据结构。接下来这篇文章介绍在 kvmtool 是如何初始化这些数据结构，并搭建一个基本的虚拟化硬件环</description>
     </item>
     
+    <item>
+      <title>kvmtool正式运行kvm</title>
+      <link>/post/kvmtool%E8%BF%90%E8%A1%8Ckvm/</link>
+      <pubDate>Sun, 01 Nov 2020 00:00:00 +0800</pubDate>
+      
+      <guid>/post/kvmtool%E8%BF%90%E8%A1%8Ckvm/</guid>
+      <description>前言 在上一篇文章中介绍了 kvmtool 的 run 命令的初始化流程，其中涉及多个子模块的初始化，包括 cpu、内存已经外设等。这些都是正式启动系统构建的虚拟硬件环</description>
+    </item>
+    
   </channel>
 </rss>

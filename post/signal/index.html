@@ -1,0 +1,1121 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>Linux 中的信号处理流程 - 北极狼徒</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+  
+  <meta name="description" content="信号处理">
+  
+  <meta itemprop="name" content="Linux 中的信号处理流程 - 北极狼徒">
+  <meta itemprop="description" content="信号处理">
+  <meta itemprop="image" content="/img/author.jpg">
+  
+  <meta name="twitter:description" content="信号处理" />
+  
+  <link rel="shortcut icon" href="/img/favicon.ico"/>
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png" />
+  <link rel="stylesheet" href="/highlight/styles/github.css">
+  <script src="/highlight/highlight.pack.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  
+  <link rel="stylesheet" href="/font/hack/css/hack.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <header>
+    <div>
+  
+  <div id="imglogo">
+    <a href="/"><img src="/img/logo.svg" alt="北极狼徒" title="北极狼徒"/></a>
+  </div>
+  
+  <div id="textlogo">
+    <h1 class="site-name"><a href="/" title="北极狼徒">北极狼徒</a></h1>
+    <h2 class="blog-motto">个人博客</h2>
+  </div>
+  <div class="navbar"><a class="navbutton navmobile" href="#" title="menu"></a></div>
+  <nav class="animated">
+    <ul>
+      
+      <li><a href="/post">首页</a></li>
+      
+      <li><a href="/about">关于</a></li>
+      
+      <li><a href="/bookmark">收藏</a></li>
+      
+      <li>
+        <form class="search" method="get" action="https://www.google.com/search">
+          <div>
+            <input type="text" id="search" name="q" placeholder="搜索">
+          </div>
+        </form>
+      </li>
+    </ul>
+  </nav>
+</div>
+
+  </header>
+  <div id="container">
+    <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody">
+    <header class="article-info clearfix">
+  <h1 itemprop="name">
+      <a href="/post/signal/" title="Linux 中的信号处理流程" itemprop="url">Linux 中的信号处理流程</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="https://github.com/Jerling" title="[Jerling]">[Jerling]</a>
+    
+  </p>
+  <p class="article-time">
+    <time datetime="2020-11-08 00:00:00 &#43;0800 CST" itemprop="datePublished">2020年11月08日</time>
+  </p>
+</header>
+
+	<div class="article-content">
+    
+		<div class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#前言">前言</a></li>
+    <li><a href="#小试牛刀">小试牛刀</a></li>
+    <li><a href="#注册信号处理函数">注册信号处理函数</a></li>
+    <li><a href="#发送信号">发送信号</a></li>
+    <li><a href="#信号处理函数">信号处理函数</a></li>
+    <li><a href="#信号处理的返回">信号处理的返回</a></li>
+    <li><a href="#结束语">结束语</a></li>
+  </ul>
+</nav>
+		</div>
+    
+    <h2 id="前言">前言</h2>
+<p>信号处理是操作系统很重要的工作之一，信号是一种异步软中断，在进程间通信中有着很大的应用。
+例如，你在运行一个程序，它陷入了死循环，无法对其进行操作时，就可以通过 kill 命令向该进程
+发送一个信号杀死该进程，从而结束死循环。</p>
+<h2 id="小试牛刀">小试牛刀</h2>
+<p>首先我们以一个简单的例子来说明信号的捕获以及处理，对应代码如下：</p>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;signal.h&gt;</span><span class="cp">
+</span><span class="cp"></span>
+<span class="kt">void</span> <span class="nf">test_hander</span><span class="p">(</span><span class="kt">int</span> <span class="n">scno</span><span class="p">)</span> <span class="p">{</span>
+	<span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="n">printf</span><span class="p">(</span><span class="s">&#34;Get a signal, scno=%d</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">scno</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="k">const</span><span class="o">*</span> <span class="n">argv</span><span class="p">[])</span>
+<span class="p">{</span>
+	<span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="n">signal</span><span class="p">(</span><span class="n">SIGIO</span><span class="p">,</span> <span class="n">test_hander</span><span class="p">);</span>
+	<span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="n">raise</span><span class="p">(</span><span class="n">SIGIO</span><span class="p">);</span>
+	<span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="n">printf</span><span class="p">(</span><span class="s">&#34;Test end</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+	<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div><p>结果如下：
+<img src="/images/Snipaste_2020-11-08_20-31-21.png" alt=""></p>
+<p>接着，使用 strace 跟踪一下系统调用：</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">rt_sigaction<span class="o">(</span>SIGIO, <span class="o">{</span><span class="nv">sa_handler</span><span class="o">=</span>0x56112336d169, <span class="nv">sa_mask</span><span class="o">=[</span>IO<span class="o">]</span>, <span class="nv">sa_flags</span><span class="o">=</span>SA_RESTORER<span class="p">|</span>SA_RESTART, <span class="nv">sa_restorer</span><span class="o">=</span>0x7f9f17cb36a0<span class="o">}</span>, <span class="o">{</span><span class="nv">sa_handler</span><span class="o">=</span>SIG_DFL, <span class="nv">sa_mask</span><span class="o">=[]</span>, <span class="nv">sa_flags</span><span class="o">=</span>0<span class="o">}</span>, 8<span class="o">)</span> <span class="o">=</span> <span class="m">0</span>
+rt_sigprocmask<span class="o">(</span>SIG_BLOCK, ~<span class="o">[</span>RTMIN RT_1<span class="o">]</span>, <span class="o">[]</span>, 8<span class="o">)</span> <span class="o">=</span> <span class="m">0</span>
+getpid<span class="o">()</span>                                <span class="o">=</span> <span class="m">11913</span>
+gettid<span class="o">()</span>                                <span class="o">=</span> <span class="m">11913</span>
+tgkill<span class="o">(</span>11913, 11913, SIGIO<span class="o">)</span>             <span class="o">=</span> <span class="m">0</span>
+rt_sigprocmask<span class="o">(</span>SIG_SETMASK, <span class="o">[]</span>, NULL, 8<span class="o">)</span> <span class="o">=</span> <span class="m">0</span>
+--- SIGIO <span class="o">{</span><span class="nv">si_signo</span><span class="o">=</span>SIGIO, <span class="nv">si_code</span><span class="o">=</span>SI_TKILL, <span class="nv">si_pid</span><span class="o">=</span>11913, <span class="nv">si_uid</span><span class="o">=</span>1000<span class="o">}</span> ---
+fstat<span class="o">(</span>1, <span class="o">{</span><span class="nv">st_mode</span><span class="o">=</span>S_IFCHR<span class="p">|</span>0620, <span class="nv">st_rdev</span><span class="o">=</span>makedev<span class="o">(</span>0x88, 0x1<span class="o">)</span>, ...<span class="o">})</span> <span class="o">=</span> <span class="m">0</span>
+brk<span class="o">(</span>NULL<span class="o">)</span>                               <span class="o">=</span> 0x561124bdc000
+brk<span class="o">(</span>0x561124bfd000<span class="o">)</span>                     <span class="o">=</span> 0x561124bfd000
+write<span class="o">(</span>1, <span class="s2">&#34;Get a signal, scno=29\n&#34;</span>, 22Get a signal, <span class="nv">scno</span><span class="o">=</span><span class="m">29</span>
+		<span class="o">)</span> <span class="o">=</span> <span class="m">22</span>
+rt_sigreturn<span class="o">({</span><span class="nv">mask</span><span class="o">=[]})</span>                 <span class="o">=</span> <span class="m">0</span>
+write<span class="o">(</span>1, <span class="s2">&#34;Test end\n&#34;</span>, 9Test end
+		<span class="o">)</span>               <span class="o">=</span> <span class="m">9</span>
+exit_group<span class="o">(</span>0<span class="o">)</span>                           <span class="o">=</span> ?
++++ exited with <span class="m">0</span> +++
+</code></pre></div><p>这里只截取主要的部分，其它的不用关注。</p>
+<p>可以看到，信号处理的大致流程是这样的：注册处理函数(rt_sigaction)-&gt;发送信号(tgkill)
+-&gt;信号处理(sa_handler)-&gt;信号返回(rt_sigreturn)。</p>
+<h2 id="注册信号处理函数">注册信号处理函数</h2>
+<p>信号处理函数的的参数为信号数值，返回值为 void，因此简单实现一下对应的处理函数即可。
+如上述的 <code>test_hander</code>。</p>
+<p>通过库函数 <code>signal</code> 将处理函数注册到内核的对应信号处理上，具体通过 <code>rt_sigaction</code>
+系统调用实现。</p>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="cm">/**
+</span><span class="cm"> *  sys_rt_sigaction - alter an action taken by a process
+</span><span class="cm"> *  @sig: signal to be sent
+</span><span class="cm"> *  @act: new sigaction
+</span><span class="cm"> *  @oact: used to save the previous sigaction
+</span><span class="cm"> *  @sigsetsize: size of sigset_t type
+</span><span class="cm"> */</span>
+<span class="n">SYSCALL_DEFINE4</span><span class="p">(</span><span class="n">rt_sigaction</span><span class="p">,</span> <span class="kt">int</span><span class="p">,</span> <span class="n">sig</span><span class="p">,</span>
+    <span class="k">const</span> <span class="k">struct</span> <span class="n">sigaction</span> <span class="n">__user</span> <span class="o">*</span><span class="p">,</span> <span class="n">act</span><span class="p">,</span>
+    <span class="k">struct</span> <span class="n">sigaction</span> <span class="n">__user</span> <span class="o">*</span><span class="p">,</span> <span class="n">oact</span><span class="p">,</span>
+    <span class="n">size_t</span><span class="p">,</span> <span class="n">sigsetsize</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="k">struct</span> <span class="n">k_sigaction</span> <span class="n">new_sa</span><span class="p">,</span> <span class="n">old_sa</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">ret</span><span class="p">;</span>
+
+  <span class="cm">/* XXX: Don&#39;t preclude handling different sized sigset_t&#39;s.  */</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">sigsetsize</span> <span class="o">!=</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">sigset_t</span><span class="p">))</span>
+    <span class="k">return</span> <span class="o">-</span><span class="n">EINVAL</span><span class="p">;</span>
+
+  <span class="k">if</span> <span class="p">(</span><span class="n">act</span> <span class="o">&amp;&amp;</span> <span class="n">copy_from_user</span><span class="p">(</span><span class="o">&amp;</span><span class="n">new_sa</span><span class="p">.</span><span class="n">sa</span><span class="p">,</span> <span class="n">act</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">new_sa</span><span class="p">.</span><span class="n">sa</span><span class="p">)))</span>
+    <span class="k">return</span> <span class="o">-</span><span class="n">EFAULT</span><span class="p">;</span>
+
+  <span class="n">ret</span> <span class="o">=</span> <span class="n">do_sigaction</span><span class="p">(</span><span class="n">sig</span><span class="p">,</span> <span class="n">act</span> <span class="o">?</span> <span class="o">&amp;</span><span class="nl">new_sa</span> <span class="p">:</span> <span class="nb">NULL</span><span class="p">,</span> <span class="n">oact</span> <span class="o">?</span> <span class="o">&amp;</span><span class="nl">old_sa</span> <span class="p">:</span> <span class="nb">NULL</span><span class="p">);</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">ret</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ret</span><span class="p">;</span>
+
+  <span class="k">if</span> <span class="p">(</span><span class="n">oact</span> <span class="o">&amp;&amp;</span> <span class="n">copy_to_user</span><span class="p">(</span><span class="n">oact</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">old_sa</span><span class="p">.</span><span class="n">sa</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">old_sa</span><span class="p">.</span><span class="n">sa</span><span class="p">)))</span>
+    <span class="k">return</span> <span class="o">-</span><span class="n">EFAULT</span><span class="p">;</span>
+
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div><p>可以看到，该函数的实现实际上是交给了 <code>do_sigaction</code> 函数：</p>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">int</span> <span class="nf">do_sigaction</span><span class="p">(</span><span class="kt">int</span> <span class="n">sig</span><span class="p">,</span> <span class="k">struct</span> <span class="n">k_sigaction</span> <span class="o">*</span><span class="n">act</span><span class="p">,</span> <span class="k">struct</span> <span class="n">k_sigaction</span> <span class="o">*</span><span class="n">oact</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="k">struct</span> <span class="n">task_struct</span> <span class="o">*</span><span class="n">p</span> <span class="o">=</span> <span class="n">current</span><span class="p">,</span> <span class="o">*</span><span class="n">t</span><span class="p">;</span>
+  <span class="k">struct</span> <span class="n">k_sigaction</span> <span class="o">*</span><span class="n">k</span><span class="p">;</span>
+  <span class="n">sigset_t</span> <span class="n">mask</span><span class="p">;</span>
+
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">valid_signal</span><span class="p">(</span><span class="n">sig</span><span class="p">)</span> <span class="o">||</span> <span class="n">sig</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="o">||</span> <span class="p">(</span><span class="n">act</span> <span class="o">&amp;&amp;</span> <span class="n">sig_kernel_only</span><span class="p">(</span><span class="n">sig</span><span class="p">)))</span>
+    <span class="k">return</span> <span class="o">-</span><span class="n">EINVAL</span><span class="p">;</span>
+
+  <span class="n">k</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">p</span><span class="o">-&gt;</span><span class="n">sighand</span><span class="o">-&gt;</span><span class="n">action</span><span class="p">[</span><span class="n">sig</span><span class="o">-</span><span class="mi">1</span><span class="p">];</span>
+
+  <span class="n">spin_lock_irq</span><span class="p">(</span><span class="o">&amp;</span><span class="n">p</span><span class="o">-&gt;</span><span class="n">sighand</span><span class="o">-&gt;</span><span class="n">siglock</span><span class="p">);</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">oact</span><span class="p">)</span>
+    <span class="o">*</span><span class="n">oact</span> <span class="o">=</span> <span class="o">*</span><span class="n">k</span><span class="p">;</span>
+
+  <span class="n">sigaction_compat_abi</span><span class="p">(</span><span class="n">act</span><span class="p">,</span> <span class="n">oact</span><span class="p">);</span>
+
+  <span class="k">if</span> <span class="p">(</span><span class="n">act</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">sigdelsetmask</span><span class="p">(</span><span class="o">&amp;</span><span class="n">act</span><span class="o">-&gt;</span><span class="n">sa</span><span class="p">.</span><span class="n">sa_mask</span><span class="p">,</span>
+      <span class="err">┊</span> <span class="err">┊</span> <span class="err">┊</span> <span class="n">sigmask</span><span class="p">(</span><span class="n">SIGKILL</span><span class="p">)</span> <span class="o">|</span> <span class="n">sigmask</span><span class="p">(</span><span class="n">SIGSTOP</span><span class="p">));</span>
+    <span class="o">*</span><span class="n">k</span> <span class="o">=</span> <span class="o">*</span><span class="n">act</span><span class="p">;</span>
+    <span class="cm">/*
+</span><span class="cm">    ┊* POSIX 3.3.1.3:
+</span><span class="cm">    ┊*  &#34;Setting a signal action to SIG_IGN for a signal that is
+</span><span class="cm">    ┊*   pending shall cause the pending signal to be discarded,
+</span><span class="cm">    ┊*   whether or not it is blocked.&#34;
+</span><span class="cm">    ┊*
+</span><span class="cm">    ┊*  &#34;Setting a signal action to SIG_DFL for a signal that is
+</span><span class="cm">    ┊*   pending and whose default action is to ignore the signal
+</span><span class="cm">    ┊*   (for example, SIGCHLD), shall cause the pending signal to
+</span><span class="cm">    ┊*   be discarded, whether or not it is blocked&#34;
+</span><span class="cm">    ┊*/</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">sig_handler_ignored</span><span class="p">(</span><span class="n">sig_handler</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">sig</span><span class="p">),</span> <span class="n">sig</span><span class="p">))</span> <span class="p">{</span>
+      <span class="n">sigemptyset</span><span class="p">(</span><span class="o">&amp;</span><span class="n">mask</span><span class="p">);</span>                                                                   
+      <span class="n">sigaddset</span><span class="p">(</span><span class="o">&amp;</span><span class="n">mask</span><span class="p">,</span> <span class="n">sig</span><span class="p">);</span>
+      <span class="n">flush_sigqueue_mask</span><span class="p">(</span><span class="o">&amp;</span><span class="n">mask</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">p</span><span class="o">-&gt;</span><span class="n">signal</span><span class="o">-&gt;</span><span class="n">shared_pending</span><span class="p">);</span>
+      <span class="n">for_each_thread</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+        <span class="n">flush_sigqueue_mask</span><span class="p">(</span><span class="o">&amp;</span><span class="n">mask</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">t</span><span class="o">-&gt;</span><span class="n">pending</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+
+  <span class="n">spin_unlock_irq</span><span class="p">(</span><span class="o">&amp;</span><span class="n">p</span><span class="o">-&gt;</span><span class="n">sighand</span><span class="o">-&gt;</span><span class="n">siglock</span><span class="p">);</span>
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div><p>这个函数直接将信号处理函数赋值给 <code>sighand</code> 对应位置。接着会判断设置的 handler
+是不是 ignore 类函数, 是的话需要做进一步处理。</p>
+<h2 id="发送信号">发送信号</h2>
+<p>对于信号机制来说，发送信号是第一步。在 Linux 下通常使用 kill 命令向某个进行发送信号。
+在本例中，直接使用库函数 raise 进行发送信号。通过 man 手册查看 raise
+的作用，可以知道，在单线程中，raise 等价于 kill(gettid(), scno),而在多线程中，则等价于
+kill(pthread_self(), scno)。其本质就是向当前线程发送一个信号。</p>
+<p>根据 strace 结果，可以看到，内核最终通过 tgkill 系统调用实现发送信号的动作。而该函数
+直接调用了 <code>do_tkill</code> 函数：</p>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="k">static</span> <span class="kt">int</span> <span class="nf">do_tkill</span><span class="p">(</span><span class="n">pid_t</span> <span class="n">tgid</span><span class="p">,</span> <span class="n">pid_t</span> <span class="n">pid</span><span class="p">,</span> <span class="kt">int</span> <span class="n">sig</span><span class="p">)</span>                                         
+<span class="p">{</span>
+  <span class="k">struct</span> <span class="n">kernel_siginfo</span> <span class="n">info</span><span class="p">;</span>
+
+  <span class="n">clear_siginfo</span><span class="p">(</span><span class="o">&amp;</span><span class="n">info</span><span class="p">);</span>
+  <span class="n">info</span><span class="p">.</span><span class="n">si_signo</span> <span class="o">=</span> <span class="n">sig</span><span class="p">;</span>
+  <span class="n">info</span><span class="p">.</span><span class="n">si_errno</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="n">info</span><span class="p">.</span><span class="n">si_code</span> <span class="o">=</span> <span class="n">SI_TKILL</span><span class="p">;</span>
+  <span class="n">info</span><span class="p">.</span><span class="n">si_pid</span> <span class="o">=</span> <span class="n">task_tgid_vnr</span><span class="p">(</span><span class="n">current</span><span class="p">);</span>
+  <span class="n">info</span><span class="p">.</span><span class="n">si_uid</span> <span class="o">=</span> <span class="n">from_kuid_munged</span><span class="p">(</span><span class="n">current_user_ns</span><span class="p">(),</span> <span class="n">current_uid</span><span class="p">());</span>
+
+  <span class="k">return</span> <span class="n">do_send_specific</span><span class="p">(</span><span class="n">tgid</span><span class="p">,</span> <span class="n">pid</span><span class="p">,</span> <span class="n">sig</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">info</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div><p><code>do_tkill</code> 先是给对应的信号构建了了一个 kernel_siginfo 的结构体，接着调用 <code>do_send_specific</code>
+发送信号。</p>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="k">static</span> <span class="kt">int</span>
+<span class="nf">do_send_specific</span><span class="p">(</span><span class="n">pid_t</span> <span class="n">tgid</span><span class="p">,</span> <span class="n">pid_t</span> <span class="n">pid</span><span class="p">,</span> <span class="kt">int</span> <span class="n">sig</span><span class="p">,</span> <span class="k">struct</span> <span class="n">kernel_siginfo</span> <span class="o">*</span><span class="n">info</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="k">struct</span> <span class="n">task_struct</span> <span class="o">*</span><span class="n">p</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">error</span> <span class="o">=</span> <span class="o">-</span><span class="n">ESRCH</span><span class="p">;</span>                                                                       
+
+  <span class="n">rcu_read_lock</span><span class="p">();</span>
+  <span class="n">p</span> <span class="o">=</span> <span class="n">find_task_by_vpid</span><span class="p">(</span><span class="n">pid</span><span class="p">);</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">p</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">tgid</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="o">||</span> <span class="n">task_tgid_vnr</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">==</span> <span class="n">tgid</span><span class="p">))</span> <span class="p">{</span>
+    <span class="n">error</span> <span class="o">=</span> <span class="n">check_kill_permission</span><span class="p">(</span><span class="n">sig</span><span class="p">,</span> <span class="n">info</span><span class="p">,</span> <span class="n">p</span><span class="p">);</span>
+    <span class="cm">/*
+</span><span class="cm">    ┊* The null signal is a permissions and process existence
+</span><span class="cm">    ┊* probe.  No signal is actually delivered.
+</span><span class="cm">    ┊*/</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">error</span> <span class="o">&amp;&amp;</span> <span class="n">sig</span><span class="p">)</span> <span class="p">{</span>
+      <span class="n">error</span> <span class="o">=</span> <span class="n">do_send_sig_info</span><span class="p">(</span><span class="n">sig</span><span class="p">,</span> <span class="n">info</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">PIDTYPE_PID</span><span class="p">);</span>
+      <span class="cm">/*
+</span><span class="cm">      ┊* If lock_task_sighand() failed we pretend the task
+</span><span class="cm">      ┊* dies after receiving the signal. The window is tiny,
+</span><span class="cm">      ┊* and the signal is private anyway.
+</span><span class="cm">      ┊*/</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">unlikely</span><span class="p">(</span><span class="n">error</span> <span class="o">==</span> <span class="o">-</span><span class="n">ESRCH</span><span class="p">))</span>
+        <span class="n">error</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+  <span class="n">rcu_read_unlock</span><span class="p">();</span>
+
+  <span class="k">return</span> <span class="n">error</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div><p>根据 pid 获取对应的 <code>task_struct</code> 结构体，接着是一些判断，如 tgid、权限等。
+之后调用 <code>do_send_sig_info</code></p>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">int</span> <span class="nf">do_send_sig_info</span><span class="p">(</span><span class="kt">int</span> <span class="n">sig</span><span class="p">,</span> <span class="k">struct</span> <span class="n">kernel_siginfo</span> <span class="o">*</span><span class="n">info</span><span class="p">,</span> <span class="k">struct</span> <span class="n">task_struct</span> <span class="o">*</span><span class="n">p</span><span class="p">,</span>           
+      <span class="k">enum</span> <span class="n">pid_type</span> <span class="n">type</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">flags</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">ret</span> <span class="o">=</span> <span class="o">-</span><span class="n">ESRCH</span><span class="p">;</span>
+
+  <span class="k">if</span> <span class="p">(</span><span class="n">lock_task_sighand</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">flags</span><span class="p">))</span> <span class="p">{</span>
+    <span class="n">ret</span> <span class="o">=</span> <span class="n">send_signal</span><span class="p">(</span><span class="n">sig</span><span class="p">,</span> <span class="n">info</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">type</span><span class="p">);</span>
+    <span class="n">unlock_task_sighand</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">flags</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="k">return</span> <span class="n">ret</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div><p>接着调用 <code>send_signal</code>, 而<code>send_signal</code>最终调用 <code>__send_signal</code> 实现真正的发送信号。</p>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="k">static</span> <span class="kt">int</span> <span class="nf">__send_signal</span><span class="p">(</span><span class="kt">int</span> <span class="n">sig</span><span class="p">,</span> <span class="k">struct</span> <span class="n">kernel_siginfo</span> <span class="o">*</span><span class="n">info</span><span class="p">,</span> <span class="k">struct</span> <span class="n">task_struct</span> <span class="o">*</span><span class="n">t</span><span class="p">,</span>
+			<span class="k">enum</span> <span class="n">pid_type</span> <span class="n">type</span><span class="p">,</span> <span class="kt">bool</span> <span class="n">force</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="k">struct</span> <span class="n">sigpending</span> <span class="o">*</span><span class="n">pending</span><span class="p">;</span>
+	<span class="k">struct</span> <span class="n">sigqueue</span> <span class="o">*</span><span class="n">q</span><span class="p">;</span>
+	<span class="kt">int</span> <span class="n">override_rlimit</span><span class="p">;</span>
+	<span class="kt">int</span> <span class="n">ret</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">result</span><span class="p">;</span>
+
+	<span class="n">assert_spin_locked</span><span class="p">(</span><span class="o">&amp;</span><span class="n">t</span><span class="o">-&gt;</span><span class="n">sighand</span><span class="o">-&gt;</span><span class="n">siglock</span><span class="p">);</span>
+
+	<span class="n">result</span> <span class="o">=</span> <span class="n">TRACE_SIGNAL_IGNORED</span><span class="p">;</span>
+	<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">prepare_signal</span><span class="p">(</span><span class="n">sig</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">force</span><span class="p">))</span>
+		<span class="k">goto</span> <span class="n">ret</span><span class="p">;</span>
+
+	<span class="n">pending</span> <span class="o">=</span> <span class="p">(</span><span class="n">type</span> <span class="o">!=</span> <span class="n">PIDTYPE_PID</span><span class="p">)</span> <span class="o">?</span> <span class="o">&amp;</span><span class="n">t</span><span class="o">-&gt;</span><span class="n">signal</span><span class="o">-&gt;</span><span class="nl">shared_pending</span> <span class="p">:</span> <span class="o">&amp;</span><span class="n">t</span><span class="o">-&gt;</span><span class="n">pending</span><span class="p">;</span>
+	<span class="cm">/*
+</span><span class="cm">	 * Short-circuit ignored signals and support queuing
+</span><span class="cm">	 * exactly one non-rt signal, so that we can get more
+</span><span class="cm">	 * detailed information about the cause of the signal.
+</span><span class="cm">	 */</span>
+	<span class="n">result</span> <span class="o">=</span> <span class="n">TRACE_SIGNAL_ALREADY_PENDING</span><span class="p">;</span>
+	<span class="k">if</span> <span class="p">(</span><span class="n">legacy_queue</span><span class="p">(</span><span class="n">pending</span><span class="p">,</span> <span class="n">sig</span><span class="p">))</span>
+		<span class="k">goto</span> <span class="n">ret</span><span class="p">;</span>
+
+	<span class="n">result</span> <span class="o">=</span> <span class="n">TRACE_SIGNAL_DELIVERED</span><span class="p">;</span>
+	<span class="cm">/*
+</span><span class="cm">	 * Skip useless siginfo allocation for SIGKILL and kernel threads.
+</span><span class="cm">	 */</span>
+	<span class="k">if</span> <span class="p">((</span><span class="n">sig</span> <span class="o">==</span> <span class="n">SIGKILL</span><span class="p">)</span> <span class="o">||</span> <span class="p">(</span><span class="n">t</span><span class="o">-&gt;</span><span class="n">flags</span> <span class="o">&amp;</span> <span class="n">PF_KTHREAD</span><span class="p">))</span>
+		<span class="k">goto</span> <span class="n">out_set</span><span class="p">;</span>
+
+	<span class="cm">/*
+</span><span class="cm">	 * Real-time signals must be queued if sent by sigqueue, or
+</span><span class="cm">	 * some other real-time mechanism.  It is implementation
+</span><span class="cm">	 * defined whether kill() does so.  We attempt to do so, on
+</span><span class="cm">	 * the principle of least surprise, but since kill is not
+</span><span class="cm">	 * allowed to fail with EAGAIN when low on memory we just
+</span><span class="cm">	 * make sure at least one signal gets delivered and don&#39;t
+</span><span class="cm">	 * pass on the info struct.
+</span><span class="cm">	 */</span>
+	<span class="k">if</span> <span class="p">(</span><span class="n">sig</span> <span class="o">&lt;</span> <span class="n">SIGRTMIN</span><span class="p">)</span>
+		<span class="n">override_rlimit</span> <span class="o">=</span> <span class="p">(</span><span class="n">is_si_special</span><span class="p">(</span><span class="n">info</span><span class="p">)</span> <span class="o">||</span> <span class="n">info</span><span class="o">-&gt;</span><span class="n">si_code</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">);</span>
+	<span class="k">else</span>
+		<span class="n">override_rlimit</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+	<span class="n">q</span> <span class="o">=</span> <span class="n">__sigqueue_alloc</span><span class="p">(</span><span class="n">sig</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">GFP_ATOMIC</span><span class="p">,</span> <span class="n">override_rlimit</span><span class="p">);</span>
+	<span class="k">if</span> <span class="p">(</span><span class="n">q</span><span class="p">)</span> <span class="p">{</span>
+		<span class="n">list_add_tail</span><span class="p">(</span><span class="o">&amp;</span><span class="n">q</span><span class="o">-&gt;</span><span class="n">list</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">pending</span><span class="o">-&gt;</span><span class="n">list</span><span class="p">);</span>
+		<span class="k">switch</span> <span class="p">((</span><span class="kt">unsigned</span> <span class="kt">long</span><span class="p">)</span> <span class="n">info</span><span class="p">)</span> <span class="p">{</span>
+		<span class="k">case</span> <span class="p">(</span><span class="kt">unsigned</span> <span class="kt">long</span><span class="p">)</span> <span class="nl">SEND_SIG_NOINFO</span><span class="p">:</span>
+			<span class="n">clear_siginfo</span><span class="p">(</span><span class="o">&amp;</span><span class="n">q</span><span class="o">-&gt;</span><span class="n">info</span><span class="p">);</span>
+			<span class="n">q</span><span class="o">-&gt;</span><span class="n">info</span><span class="p">.</span><span class="n">si_signo</span> <span class="o">=</span> <span class="n">sig</span><span class="p">;</span>
+			<span class="n">q</span><span class="o">-&gt;</span><span class="n">info</span><span class="p">.</span><span class="n">si_errno</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+			<span class="n">q</span><span class="o">-&gt;</span><span class="n">info</span><span class="p">.</span><span class="n">si_code</span> <span class="o">=</span> <span class="n">SI_USER</span><span class="p">;</span>
+			<span class="n">q</span><span class="o">-&gt;</span><span class="n">info</span><span class="p">.</span><span class="n">si_pid</span> <span class="o">=</span> <span class="n">task_tgid_nr_ns</span><span class="p">(</span><span class="n">current</span><span class="p">,</span>
+							<span class="n">task_active_pid_ns</span><span class="p">(</span><span class="n">t</span><span class="p">));</span>
+			<span class="n">rcu_read_lock</span><span class="p">();</span>
+			<span class="n">q</span><span class="o">-&gt;</span><span class="n">info</span><span class="p">.</span><span class="n">si_uid</span> <span class="o">=</span>
+				<span class="n">from_kuid_munged</span><span class="p">(</span><span class="n">task_cred_xxx</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">user_ns</span><span class="p">),</span>
+						 <span class="n">current_uid</span><span class="p">());</span>
+			<span class="n">rcu_read_unlock</span><span class="p">();</span>
+			<span class="k">break</span><span class="p">;</span>
+		<span class="k">case</span> <span class="p">(</span><span class="kt">unsigned</span> <span class="kt">long</span><span class="p">)</span> <span class="nl">SEND_SIG_PRIV</span><span class="p">:</span>
+			<span class="n">clear_siginfo</span><span class="p">(</span><span class="o">&amp;</span><span class="n">q</span><span class="o">-&gt;</span><span class="n">info</span><span class="p">);</span>
+			<span class="n">q</span><span class="o">-&gt;</span><span class="n">info</span><span class="p">.</span><span class="n">si_signo</span> <span class="o">=</span> <span class="n">sig</span><span class="p">;</span>
+			<span class="n">q</span><span class="o">-&gt;</span><span class="n">info</span><span class="p">.</span><span class="n">si_errno</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+			<span class="n">q</span><span class="o">-&gt;</span><span class="n">info</span><span class="p">.</span><span class="n">si_code</span> <span class="o">=</span> <span class="n">SI_KERNEL</span><span class="p">;</span>
+			<span class="n">q</span><span class="o">-&gt;</span><span class="n">info</span><span class="p">.</span><span class="n">si_pid</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+			<span class="n">q</span><span class="o">-&gt;</span><span class="n">info</span><span class="p">.</span><span class="n">si_uid</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+			<span class="k">break</span><span class="p">;</span>
+		<span class="k">default</span><span class="o">:</span>
+			<span class="n">copy_siginfo</span><span class="p">(</span><span class="o">&amp;</span><span class="n">q</span><span class="o">-&gt;</span><span class="n">info</span><span class="p">,</span> <span class="n">info</span><span class="p">);</span>
+			<span class="k">break</span><span class="p">;</span>
+		<span class="p">}</span>
+	<span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">is_si_special</span><span class="p">(</span><span class="n">info</span><span class="p">)</span> <span class="o">&amp;&amp;</span>
+		   <span class="n">sig</span> <span class="o">&gt;=</span> <span class="n">SIGRTMIN</span> <span class="o">&amp;&amp;</span> <span class="n">info</span><span class="o">-&gt;</span><span class="n">si_code</span> <span class="o">!=</span> <span class="n">SI_USER</span><span class="p">)</span> <span class="p">{</span>
+		<span class="cm">/*
+</span><span class="cm">		 * Queue overflow, abort.  We may abort if the
+</span><span class="cm">		 * signal was rt and sent by user using something
+</span><span class="cm">		 * other than kill().
+</span><span class="cm">		 */</span>
+		<span class="n">result</span> <span class="o">=</span> <span class="n">TRACE_SIGNAL_OVERFLOW_FAIL</span><span class="p">;</span>
+		<span class="n">ret</span> <span class="o">=</span> <span class="o">-</span><span class="n">EAGAIN</span><span class="p">;</span>
+		<span class="k">goto</span> <span class="n">ret</span><span class="p">;</span>
+	<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+		<span class="cm">/*
+</span><span class="cm">		 * This is a silent loss of information.  We still
+</span><span class="cm">		 * send the signal, but the *info bits are lost.
+</span><span class="cm">		 */</span>
+		<span class="n">result</span> <span class="o">=</span> <span class="n">TRACE_SIGNAL_LOSE_INFO</span><span class="p">;</span>
+	<span class="p">}</span>
+
+<span class="nl">out_set</span><span class="p">:</span>
+	<span class="n">signalfd_notify</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">sig</span><span class="p">);</span>
+	<span class="n">sigaddset</span><span class="p">(</span><span class="o">&amp;</span><span class="n">pending</span><span class="o">-&gt;</span><span class="n">signal</span><span class="p">,</span> <span class="n">sig</span><span class="p">);</span>
+
+	<span class="cm">/* Let multiprocess signals appear after on-going forks */</span>
+	<span class="k">if</span> <span class="p">(</span><span class="n">type</span> <span class="o">&gt;</span> <span class="n">PIDTYPE_TGID</span><span class="p">)</span> <span class="p">{</span>
+		<span class="k">struct</span> <span class="n">multiprocess_signals</span> <span class="o">*</span><span class="n">delayed</span><span class="p">;</span>
+		<span class="n">hlist_for_each_entry</span><span class="p">(</span><span class="n">delayed</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">t</span><span class="o">-&gt;</span><span class="n">signal</span><span class="o">-&gt;</span><span class="n">multiprocess</span><span class="p">,</span> <span class="n">node</span><span class="p">)</span> <span class="p">{</span>
+			<span class="n">sigset_t</span> <span class="o">*</span><span class="n">signal</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">delayed</span><span class="o">-&gt;</span><span class="n">signal</span><span class="p">;</span>
+			<span class="cm">/* Can&#39;t queue both a stop and a continue signal */</span>
+			<span class="k">if</span> <span class="p">(</span><span class="n">sig</span> <span class="o">==</span> <span class="n">SIGCONT</span><span class="p">)</span>
+				<span class="n">sigdelsetmask</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="n">SIG_KERNEL_STOP_MASK</span><span class="p">);</span>
+			<span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">sig_kernel_stop</span><span class="p">(</span><span class="n">sig</span><span class="p">))</span>
+				<span class="n">sigdelset</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="n">SIGCONT</span><span class="p">);</span>
+			<span class="n">sigaddset</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="n">sig</span><span class="p">);</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+
+	<span class="n">complete_signal</span><span class="p">(</span><span class="n">sig</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">type</span><span class="p">);</span>
+<span class="nl">ret</span><span class="p">:</span>
+	<span class="n">trace_signal_generate</span><span class="p">(</span><span class="n">sig</span><span class="p">,</span> <span class="n">info</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">type</span> <span class="o">!=</span> <span class="n">PIDTYPE_PID</span><span class="p">,</span> <span class="n">result</span><span class="p">);</span>
+	<span class="k">return</span> <span class="n">ret</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div><p>这个函数虽然长，但是对于普通的信号来说，它就做了三件事：1、申请并设置对应的
+信号队列，并将其插入到 pending 队列中；2、将 sigset_t 对应的信号位置位;3、通过
+发送 ipi 中断唤醒对应的进程。</p>
+<p>自此就完成了信号的发送。</p>
+<p>在发送信号的前先阻塞了该信号，处理完之后才重新打开。至于为什么要这么做，笔者还没弄懂。</p>
+<h2 id="信号处理函数">信号处理函数</h2>
+<p>内核进行信号处理的时机是从内核返回用户态的时候，因此和什么时候收到信号无关，也即异步的。
+上述。在执行 <code>rt_sigprocmask</code> 系统调用返回到用户态之前，线程收到了刚刚发送给自己的
+信号，转而进入信号处理流程。</p>
+<p>内核在信号处理流程时主要工作是开栈，用于信号处理。接着返回到用户态定义的信号处理函数中
+执行相应的处理。</p>
+<h2 id="信号处理的返回">信号处理的返回</h2>
+<p>从 strace 的结果中，可以看到。执行完用户态的处理函数之后，内核并不是直接回到系统调用的
+地方，而是进入 <code>rt_sigreturn</code> 做进一步的处理。</p>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="n">SYSCALL_DEFINE0</span><span class="p">(</span><span class="n">rt_sigreturn</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="k">struct</span> <span class="n">rt_sigframe</span> <span class="n">__user</span> <span class="o">*</span><span class="n">sf</span><span class="p">;</span>
+	<span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">magic</span><span class="p">;</span>
+	<span class="k">struct</span> <span class="n">pt_regs</span> <span class="o">*</span><span class="n">regs</span> <span class="o">=</span> <span class="n">current_pt_regs</span><span class="p">();</span>
+
+	<span class="cm">/* Always make any pending restarted system calls return -EINTR */</span>
+	<span class="n">current</span><span class="o">-&gt;</span><span class="n">restart_block</span><span class="p">.</span><span class="n">fn</span> <span class="o">=</span> <span class="n">do_no_restart_syscall</span><span class="p">;</span>
+
+	<span class="cm">/* Since we stacked the signal on a word boundary,
+</span><span class="cm">	 * then &#39;sp&#39; should be word aligned here.  If it&#39;s
+</span><span class="cm">	 * not, then the user is trying to mess with us.
+</span><span class="cm">	 */</span>
+	<span class="k">if</span> <span class="p">(</span><span class="n">regs</span><span class="o">-&gt;</span><span class="n">sp</span> <span class="o">&amp;</span> <span class="mi">3</span><span class="p">)</span>
+		<span class="k">goto</span> <span class="n">badframe</span><span class="p">;</span>
+
+	<span class="n">sf</span> <span class="o">=</span> <span class="p">(</span><span class="k">struct</span> <span class="n">rt_sigframe</span> <span class="n">__force</span> <span class="n">__user</span> <span class="o">*</span><span class="p">)(</span><span class="n">regs</span><span class="o">-&gt;</span><span class="n">sp</span><span class="p">);</span>
+
+	<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">access_ok</span><span class="p">(</span><span class="n">sf</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="o">*</span><span class="n">sf</span><span class="p">)))</span>
+		<span class="k">goto</span> <span class="n">badframe</span><span class="p">;</span>
+
+	<span class="k">if</span> <span class="p">(</span><span class="n">__get_user</span><span class="p">(</span><span class="n">magic</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">sf</span><span class="o">-&gt;</span><span class="n">sigret_magic</span><span class="p">))</span>
+		<span class="k">goto</span> <span class="n">badframe</span><span class="p">;</span>
+
+	<span class="k">if</span> <span class="p">(</span><span class="n">unlikely</span><span class="p">(</span><span class="n">is_do_ss_needed</span><span class="p">(</span><span class="n">magic</span><span class="p">)))</span>
+		<span class="k">if</span> <span class="p">(</span><span class="n">restore_altstack</span><span class="p">(</span><span class="o">&amp;</span><span class="n">sf</span><span class="o">-&gt;</span><span class="n">uc</span><span class="p">.</span><span class="n">uc_stack</span><span class="p">))</span>
+			<span class="k">goto</span> <span class="n">badframe</span><span class="p">;</span>
+
+	<span class="k">if</span> <span class="p">(</span><span class="n">restore_usr_regs</span><span class="p">(</span><span class="n">regs</span><span class="p">,</span> <span class="n">sf</span><span class="p">))</span>
+		<span class="k">goto</span> <span class="n">badframe</span><span class="p">;</span>
+
+	<span class="cm">/* Don&#39;t restart from sigreturn */</span>
+	<span class="n">syscall_wont_restart</span><span class="p">(</span><span class="n">regs</span><span class="p">);</span>
+
+	<span class="cm">/*
+</span><span class="cm">	 * Ensure that sigreturn always returns to user mode (in case the
+</span><span class="cm">	 * regs saved on user stack got fudged between save and sigreturn)
+</span><span class="cm">	 * Otherwise it is easy to panic the kernel with a custom
+</span><span class="cm">	 * signal handler and/or restorer which clobberes the status32/ret
+</span><span class="cm">	 * to return to a bogus location in kernel mode.
+</span><span class="cm">	 */</span>
+	<span class="n">regs</span><span class="o">-&gt;</span><span class="n">status32</span> <span class="o">|=</span> <span class="n">STATUS_U_MASK</span><span class="p">;</span>
+
+	<span class="k">return</span> <span class="n">regs</span><span class="o">-&gt;</span><span class="n">r0</span><span class="p">;</span>
+
+<span class="nl">badframe</span><span class="p">:</span>
+	<span class="n">force_sig</span><span class="p">(</span><span class="n">SIGSEGV</span><span class="p">);</span>
+	<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div><p>做的工作就是清栈并恢复用户态上下文。</p>
+<h2 id="结束语">结束语</h2>
+<p>本篇文章以 strace 提供的系统调用信息，简单的跟踪了信号处理的基本流程。</p>
+
+    
+	</div>
+  <footer class="article-footer clearfix">
+  
+
+<div class="article-tags">
+  <span></span>
+  
+  <a href="/tags/linux">linux</a>
+  
+  <a href="/tags/signal">signal</a>
+  
+  <a href="/tags/sigreturn">sigreturn</a>
+  
+</div>
+
+
+
+
+
+<div class="article-categories">
+  <span></span>
+  
+  <a class="article-category-link" href="/categories/%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86">信号处理</a>
+  
+</div>
+
+
+
+  <div class="article-share" id="share">
+    <div data-url="/post/signal/" data-title="Linux 中的信号处理流程" data-tsina="123" class="share clearfix">
+    </div>
+  </div>
+</footer>
+
+	</article>
+  
+
+
+
+</div>
+
+    <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+  
+
+<div class="categorieslist">
+  <p class="asidetitle">分类</p>
+  <ul>
+    
+    <li><a href="/categories/%e4%bd%bf%e7%94%a8%e6%8a%80%e5%b7%a7" title="使用技巧">使用技巧<sup>1</sup></a></li>
+    
+    <li><a href="/categories/%e4%bf%a1%e5%8f%b7%e5%a4%84%e7%90%86" title="信号处理">信号处理<sup>1</sup></a></li>
+    
+    <li><a href="/categories/%e5%86%85%e5%ad%98%e7%ae%a1%e7%90%86" title="内存管理">内存管理<sup>1</sup></a></li>
+    
+    <li><a href="/categories/%e5%86%85%e6%a0%b8%e5%ae%9e%e9%aa%8c" title="内核实验">内核实验<sup>3</sup></a></li>
+    
+    <li><a href="/categories/%e5%86%85%e6%a0%b8%e8%b0%83%e8%af%95" title="内核调试">内核调试<sup>1</sup></a></li>
+    
+    <li><a href="/categories/%e5%91%bd%e4%bb%a4%e8%a1%8c%e8%89%ba%e6%9c%af" title="命令行艺术">命令行艺术<sup>3</sup></a></li>
+    
+    <li><a href="/categories/%e5%ad%a6%e4%b9%a0%e7%ac%94%e8%ae%b0" title="学习笔记">学习笔记<sup>15</sup></a></li>
+    
+    <li><a href="/categories/%e6%93%8d%e4%bd%9c%e7%b3%bb%e7%bb%9f" title="操作系统">操作系统<sup>1</sup></a></li>
+    
+    <li><a href="/categories/%e6%95%88%e7%8e%87%e5%b7%a5%e5%85%b7" title="效率工具">效率工具<sup>5</sup></a></li>
+    
+    <li><a href="/categories/%e6%95%b0%e6%8d%ae%e7%bb%93%e6%9e%84" title="数据结构">数据结构<sup>1</sup></a></li>
+    
+    <li><a href="/categories/%e6%9c%80%e4%bd%b3%e5%ae%9e%e8%b7%b5" title="最佳实践">最佳实践<sup>1</sup></a></li>
+    
+    <li><a href="/categories/%e6%9f%a5%e6%bc%8f%e8%a1%a5%e7%bc%ba" title="查漏补缺">查漏补缺<sup>1</sup></a></li>
+    
+    <li><a href="/categories/%e6%b8%a9%e6%95%85%e7%9f%a5%e6%96%b0" title="温故知新">温故知新<sup>1</sup></a></li>
+    
+    <li><a href="/categories/%e7%bd%91%e7%bb%9c%e7%bc%96%e7%a8%8b" title="网络编程">网络编程<sup>1</sup></a></li>
+    
+    <li><a href="/categories/%e8%99%9a%e6%8b%9f%e5%8c%96" title="虚拟化">虚拟化<sup>6</sup></a></li>
+    
+    <li><a href="/categories/%e9%a1%b9%e7%9b%ae%e5%ae%9e%e6%88%98" title="项目实战">项目实战<sup>5</sup></a></li>
+    
+  </ul>
+</div>
+
+
+
+  
+
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+      
+			<li><a href="/tags/archlinux" title="archlinux">archlinux<sup>1</sup></a></li>
+      
+			<li><a href="/tags/arm64" title="arm64">arm64<sup>1</sup></a></li>
+      
+			<li><a href="/tags/bochs" title="bochs">bochs<sup>2</sup></a></li>
+      
+			<li><a href="/tags/bootsect" title="bootsect">bootsect<sup>1</sup></a></li>
+      
+			<li><a href="/tags/busybox" title="busybox">busybox<sup>1</sup></a></li>
+      
+			<li><a href="/tags/c&#43;&#43;" title="c&#43;&#43;">c&#43;&#43;<sup>10</sup></a></li>
+      
+			<li><a href="/tags/ccls" title="ccls">ccls<sup>1</sup></a></li>
+      
+			<li><a href="/tags/cifs" title="cifs">cifs<sup>1</sup></a></li>
+      
+			<li><a href="/tags/command" title="command">command<sup>3</sup></a></li>
+      
+			<li><a href="/tags/conclusion" title="conclusion">conclusion<sup>1</sup></a></li>
+      
+			<li><a href="/tags/data_struct" title="data_struct">data_struct<sup>1</sup></a></li>
+      
+			<li><a href="/tags/earycon" title="earycon">earycon<sup>1</sup></a></li>
+      
+			<li><a href="/tags/emacs" title="emacs">emacs<sup>2</sup></a></li>
+      
+			<li><a href="/tags/funny" title="funny">funny<sup>1</sup></a></li>
+      
+			<li><a href="/tags/gentoo" title="gentoo">gentoo<sup>1</sup></a></li>
+      
+			<li><a href="/tags/hyper-v" title="hyper-v">hyper-v<sup>2</sup></a></li>
+      
+			<li><a href="/tags/jemalloc" title="jemalloc">jemalloc<sup>1</sup></a></li>
+      
+			<li><a href="/tags/kernel" title="kernel">kernel<sup>8</sup></a></li>
+      
+			<li><a href="/tags/kvm" title="kvm">kvm<sup>5</sup></a></li>
+      
+			<li><a href="/tags/kvmtool" title="kvmtool">kvmtool<sup>2</sup></a></li>
+      
+			<li><a href="/tags/linux" title="linux">linux<sup>20</sup></a></li>
+      
+			<li><a href="/tags/linux0.11" title="linux0.11">linux0.11<sup>1</sup></a></li>
+      
+			<li><a href="/tags/linux%e5%86%85%e6%a0%b8" title="linux内核">linux内核<sup>1</sup></a></li>
+      
+			<li><a href="/tags/lkvm" title="lkvm">lkvm<sup>2</sup></a></li>
+      
+			<li><a href="/tags/make" title="make">make<sup>1</sup></a></li>
+      
+			<li><a href="/tags/makefile" title="makefile">makefile<sup>2</sup></a></li>
+      
+			<li><a href="/tags/mbsync" title="mbsync">mbsync<sup>1</sup></a></li>
+      
+			<li><a href="/tags/msys2" title="msys2">msys2<sup>1</sup></a></li>
+      
+			<li><a href="/tags/mu4e" title="mu4e">mu4e<sup>1</sup></a></li>
+      
+			<li><a href="/tags/nvim" title="nvim">nvim<sup>1</sup></a></li>
+      
+			<li><a href="/tags/pmalloc2" title="pmalloc2">pmalloc2<sup>1</sup></a></li>
+      
+			<li><a href="/tags/project" title="project">project<sup>1</sup></a></li>
+      
+			<li><a href="/tags/rootfs" title="rootfs">rootfs<sup>1</sup></a></li>
+      
+			<li><a href="/tags/setup" title="setup">setup<sup>1</sup></a></li>
+      
+			<li><a href="/tags/share" title="share">share<sup>1</sup></a></li>
+      
+			<li><a href="/tags/shell" title="shell">shell<sup>4</sup></a></li>
+      
+			<li><a href="/tags/signal" title="signal">signal<sup>1</sup></a></li>
+      
+			<li><a href="/tags/sigreturn" title="sigreturn">sigreturn<sup>1</sup></a></li>
+      
+			<li><a href="/tags/snippets" title="snippets">snippets<sup>1</sup></a></li>
+      
+			<li><a href="/tags/ssh" title="ssh">ssh<sup>1</sup></a></li>
+      
+			<li><a href="/tags/syscall" title="syscall">syscall<sup>1</sup></a></li>
+      
+			<li><a href="/tags/tcmalloc" title="tcmalloc">tcmalloc<sup>1</sup></a></li>
+      
+			<li><a href="/tags/terminal" title="terminal">terminal<sup>5</sup></a></li>
+      
+			<li><a href="/tags/text_editor" title="text_editor">text_editor<sup>1</sup></a></li>
+      
+			<li><a href="/tags/textor" title="textor">textor<sup>3</sup></a></li>
+      
+			<li><a href="/tags/thread_info" title="thread_info">thread_info<sup>1</sup></a></li>
+      
+			<li><a href="/tags/tmux" title="tmux">tmux<sup>1</sup></a></li>
+      
+			<li><a href="/tags/tree" title="tree">tree<sup>1</sup></a></li>
+      
+			<li><a href="/tags/tun/tap" title="tun/tap">tun/tap<sup>1</sup></a></li>
+      
+			<li><a href="/tags/variable" title="variable">variable<sup>1</sup></a></li>
+      
+			<li><a href="/tags/vfs" title="vfs">vfs<sup>1</sup></a></li>
+      
+			<li><a href="/tags/vim" title="vim">vim<sup>1</sup></a></li>
+      
+			<li><a href="/tags/vscode" title="vscode">vscode<sup>2</sup></a></li>
+      
+			<li><a href="/tags/windows" title="windows">windows<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e4%b8%ad%e6%96%ad" title="中断">中断<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e5%86%85%e5%ad%98%e7%ae%a1%e7%90%86" title="内存管理">内存管理<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e5%86%85%e6%a0%b8%e5%90%8c%e6%ad%a5" title="内核同步">内核同步<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e5%86%85%e6%a0%b8%e6%a0%88" title="内核栈">内核栈<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e5%a5%97%e6%8e%a5%e5%ad%97" title="套接字">套接字<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e5%af%b9%e8%b1%a1%e6%a8%a1%e5%9e%8b" title="对象模型">对象模型<sup>3</sup></a></li>
+      
+			<li><a href="/tags/%e6%88%90%e5%91%98%e5%87%bd%e6%95%b0" title="成员函数">成员函数<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e6%95%b0%e6%8d%ae%e7%bb%93%e6%9e%84" title="数据结构">数据结构<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e6%96%87%e4%bb%b6%e6%8f%8f%e8%bf%b0%e7%ac%a6" title="文件描述符">文件描述符<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e6%97%b6%e9%97%b4%e7%ae%a1%e7%90%86" title="时间管理">时间管理<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e7%b3%bb%e7%bb%9f%e8%b0%83%e7%94%a8" title="系统调用">系统调用<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e7%bb%a7%e6%89%bf" title="继承">继承<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e7%bc%96%e7%a8%8b%e8%af%ad%e8%a8%80" title="编程语言">编程语言<sup>3</sup></a></li>
+      
+			<li><a href="/tags/%e8%bf%9b%e7%a8%8b%e7%ae%a1%e7%90%86" title="进程管理">进程管理<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e8%bf%9b%e7%a8%8b%e8%b0%83%e5%ba%a6" title="进程调度">进程调度<sup>1</sup></a></li>
+      
+			<li><a href="/tags/%e9%9d%a2%e5%90%91%e5%af%b9%e8%b1%a1" title="面向对象">面向对象<sup>2</sup></a></li>
+      
+		</ul>
+</div>
+
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle">归档</p>
+    <ul class="archive-list">
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2020-11">2020年11月</a><span class="archive-list-count">3</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2020-10">2020年10月</a><span class="archive-list-count">3</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2020-09">2020年09月</a><span class="archive-list-count">2</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2020-06">2020年06月</a><span class="archive-list-count">7</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2020-05">2020年05月</a><span class="archive-list-count">2</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2020-04">2020年04月</a><span class="archive-list-count">5</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2019-09">2019年09月</a><span class="archive-list-count">1</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2019-07">2019年07月</a><span class="archive-list-count">1</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2019-06">2019年06月</a><span class="archive-list-count">7</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2019-05">2019年05月</a><span class="archive-list-count">5</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2019-04">2019年04月</a><span class="archive-list-count">1</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2019-03">2019年03月</a><span class="archive-list-count">2</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2019-02">2019年02月</a><span class="archive-list-count">4</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2019-01">2019年01月</a><span class="archive-list-count">4</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="/post/#2018-12">2018年12月</a><span class="archive-list-count">1</span>
+      </li>
+      
+    </ul>
+
+  </div>
+
+
+  
+
+<div class="tagcloudlist">
+  <p class="asidetitle">标签云</p>
+  <div class="tagcloudlist clearfix">
+    
+    <a href="/tags/archlinux" style="font-size: 12px;">archlinux</a>
+    
+    <a href="/tags/arm64" style="font-size: 12px;">arm64</a>
+    
+    <a href="/tags/bochs" style="font-size: 12px;">bochs</a>
+    
+    <a href="/tags/bootsect" style="font-size: 12px;">bootsect</a>
+    
+    <a href="/tags/busybox" style="font-size: 12px;">busybox</a>
+    
+    <a href="/tags/c&#43;&#43;" style="font-size: 12px;">c&#43;&#43;</a>
+    
+    <a href="/tags/ccls" style="font-size: 12px;">ccls</a>
+    
+    <a href="/tags/cifs" style="font-size: 12px;">cifs</a>
+    
+    <a href="/tags/command" style="font-size: 12px;">command</a>
+    
+    <a href="/tags/conclusion" style="font-size: 12px;">conclusion</a>
+    
+    <a href="/tags/data_struct" style="font-size: 12px;">data_struct</a>
+    
+    <a href="/tags/earycon" style="font-size: 12px;">earycon</a>
+    
+    <a href="/tags/emacs" style="font-size: 12px;">emacs</a>
+    
+    <a href="/tags/funny" style="font-size: 12px;">funny</a>
+    
+    <a href="/tags/gentoo" style="font-size: 12px;">gentoo</a>
+    
+    <a href="/tags/hyper-v" style="font-size: 12px;">hyper-v</a>
+    
+    <a href="/tags/jemalloc" style="font-size: 12px;">jemalloc</a>
+    
+    <a href="/tags/kernel" style="font-size: 12px;">kernel</a>
+    
+    <a href="/tags/kvm" style="font-size: 12px;">kvm</a>
+    
+    <a href="/tags/kvmtool" style="font-size: 12px;">kvmtool</a>
+    
+    <a href="/tags/linux" style="font-size: 12px;">linux</a>
+    
+    <a href="/tags/linux0.11" style="font-size: 12px;">linux0.11</a>
+    
+    <a href="/tags/linux%e5%86%85%e6%a0%b8" style="font-size: 12px;">linux内核</a>
+    
+    <a href="/tags/lkvm" style="font-size: 12px;">lkvm</a>
+    
+    <a href="/tags/make" style="font-size: 12px;">make</a>
+    
+    <a href="/tags/makefile" style="font-size: 12px;">makefile</a>
+    
+    <a href="/tags/mbsync" style="font-size: 12px;">mbsync</a>
+    
+    <a href="/tags/msys2" style="font-size: 12px;">msys2</a>
+    
+    <a href="/tags/mu4e" style="font-size: 12px;">mu4e</a>
+    
+    <a href="/tags/nvim" style="font-size: 12px;">nvim</a>
+    
+    <a href="/tags/pmalloc2" style="font-size: 12px;">pmalloc2</a>
+    
+    <a href="/tags/project" style="font-size: 12px;">project</a>
+    
+    <a href="/tags/rootfs" style="font-size: 12px;">rootfs</a>
+    
+    <a href="/tags/setup" style="font-size: 12px;">setup</a>
+    
+    <a href="/tags/share" style="font-size: 12px;">share</a>
+    
+    <a href="/tags/shell" style="font-size: 12px;">shell</a>
+    
+    <a href="/tags/signal" style="font-size: 12px;">signal</a>
+    
+    <a href="/tags/sigreturn" style="font-size: 12px;">sigreturn</a>
+    
+    <a href="/tags/snippets" style="font-size: 12px;">snippets</a>
+    
+    <a href="/tags/ssh" style="font-size: 12px;">ssh</a>
+    
+    <a href="/tags/syscall" style="font-size: 12px;">syscall</a>
+    
+    <a href="/tags/tcmalloc" style="font-size: 12px;">tcmalloc</a>
+    
+    <a href="/tags/terminal" style="font-size: 12px;">terminal</a>
+    
+    <a href="/tags/text_editor" style="font-size: 12px;">text_editor</a>
+    
+    <a href="/tags/textor" style="font-size: 12px;">textor</a>
+    
+    <a href="/tags/thread_info" style="font-size: 12px;">thread_info</a>
+    
+    <a href="/tags/tmux" style="font-size: 12px;">tmux</a>
+    
+    <a href="/tags/tree" style="font-size: 12px;">tree</a>
+    
+    <a href="/tags/tun/tap" style="font-size: 12px;">tun/tap</a>
+    
+    <a href="/tags/variable" style="font-size: 12px;">variable</a>
+    
+    <a href="/tags/vfs" style="font-size: 12px;">vfs</a>
+    
+    <a href="/tags/vim" style="font-size: 12px;">vim</a>
+    
+    <a href="/tags/vscode" style="font-size: 12px;">vscode</a>
+    
+    <a href="/tags/windows" style="font-size: 12px;">windows</a>
+    
+    <a href="/tags/%e4%b8%ad%e6%96%ad" style="font-size: 12px;">中断</a>
+    
+    <a href="/tags/%e5%86%85%e5%ad%98%e7%ae%a1%e7%90%86" style="font-size: 12px;">内存管理</a>
+    
+    <a href="/tags/%e5%86%85%e6%a0%b8%e5%90%8c%e6%ad%a5" style="font-size: 12px;">内核同步</a>
+    
+    <a href="/tags/%e5%86%85%e6%a0%b8%e6%a0%88" style="font-size: 12px;">内核栈</a>
+    
+    <a href="/tags/%e5%a5%97%e6%8e%a5%e5%ad%97" style="font-size: 12px;">套接字</a>
+    
+    <a href="/tags/%e5%af%b9%e8%b1%a1%e6%a8%a1%e5%9e%8b" style="font-size: 12px;">对象模型</a>
+    
+    <a href="/tags/%e6%88%90%e5%91%98%e5%87%bd%e6%95%b0" style="font-size: 12px;">成员函数</a>
+    
+    <a href="/tags/%e6%95%b0%e6%8d%ae%e7%bb%93%e6%9e%84" style="font-size: 12px;">数据结构</a>
+    
+    <a href="/tags/%e6%96%87%e4%bb%b6%e6%8f%8f%e8%bf%b0%e7%ac%a6" style="font-size: 12px;">文件描述符</a>
+    
+    <a href="/tags/%e6%97%b6%e9%97%b4%e7%ae%a1%e7%90%86" style="font-size: 12px;">时间管理</a>
+    
+    <a href="/tags/%e7%b3%bb%e7%bb%9f%e8%b0%83%e7%94%a8" style="font-size: 12px;">系统调用</a>
+    
+    <a href="/tags/%e7%bb%a7%e6%89%bf" style="font-size: 12px;">继承</a>
+    
+    <a href="/tags/%e7%bc%96%e7%a8%8b%e8%af%ad%e8%a8%80" style="font-size: 12px;">编程语言</a>
+    
+    <a href="/tags/%e8%bf%9b%e7%a8%8b%e7%ae%a1%e7%90%86" style="font-size: 12px;">进程管理</a>
+    
+    <a href="/tags/%e8%bf%9b%e7%a8%8b%e8%b0%83%e5%ba%a6" style="font-size: 12px;">进程调度</a>
+    
+    <a href="/tags/%e9%9d%a2%e5%90%91%e5%af%b9%e8%b1%a1" style="font-size: 12px;">面向对象</a>
+    
+  </div>
+</div>
+
+
+
+  
+
+</aside>
+</div>
+
+  </div>
+  <footer><div id="footer" >
+  
+  <div class="line">
+    <span></span>
+    <div style='background:no-repeat url("/img/author.jpg") left top;-webkit-background-size:6.875em 6.875em;-moz-background-size:6.875em 6.875em;background-size:6.875em 6.875em;' class="author" ></div>
+  </div>
+  
+  
+  <section class="info">
+    <p>码农一枚 <br/> 混口饭吃</p>
+  </section>
+  
+  <div class="social-font clearfix">
+    
+    
+    
+    <a href="https://github.com/Jerling" target="_blank" title="github"></a>
+    
+    
+    
+  </div>
+  <p class="copyright">Powered by <a href="http://gohugo.io" target="_blank" title="hugo">hugo</a> and Theme by <a href="https://github.com/coderzh/hugo-pacman-theme" target="_blank" title="hugo-pacman-theme">hugo-pacman-theme</a> © 2020
+    
+    <a href="/" title="北极狼徒">北极狼徒</a>
+    
+  </p>
+</div>
+</footer>
+  <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+done = false;
+$(document).ready(function(){
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize();
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  $('form.search').on('submit', function (event) {
+    if (false === done) {
+      event.preventDefault();
+      var orgVal = $(this).find('#search').val();
+      $(this).find('#search').val('site:\/ ' + orgVal);
+      done = true;
+      $(this).submit();
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://b.bshare.cn/barCode?site=weixin&url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});
+</script>
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+});
+</script>
+
+
+
+
+</body>
+</html>

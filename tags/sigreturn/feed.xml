@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>sigreturn on 北极狼徒</title>
+    <link>/tags/sigreturn/</link>
+    <description>Recent content in sigreturn on 北极狼徒</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Sun, 08 Nov 2020 00:00:00 +0800</lastBuildDate><atom:link href="/tags/sigreturn/feed.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Linux 中的信号处理流程</title>
+      <link>/post/signal/</link>
+      <pubDate>Sun, 08 Nov 2020 00:00:00 +0800</pubDate>
+      
+      <guid>/post/signal/</guid>
+      <description>前言 信号处理是操作系统很重要的工作之一，信号是一种异步软中断，在进程间通信中有着很大的应用。 例如，你在运行一个程序，它陷入了死循环，无法对其</description>
+    </item>
+    
+  </channel>
+</rss>
